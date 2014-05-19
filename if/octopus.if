@@ -1,0 +1,190 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2012, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+interface octopus "octopus RPC Interface" {
+
+    alias mode uint64;
+    alias trigger_id uint64;
+    typedef enum {BINDING_RPC, BINDING_EVENT} binding_type;
+
+    // XXX: No flounder support for pointer values
+    typedef struct {
+        errval in_case;
+        binding_type send_to;
+        mode m;
+        uint64 trigger;
+        uint64 st;
+    } trigger;
+
+    //
+    // Binding Identification
+    //
+    rpc get_identifier(out uint64 id);
+    rpc identify(in uint64 id, in binding_type type);
+    
+    
+    //
+    // Get/Set API
+    //
+
+    /**
+     * \param query Records to find.
+     * \param t Additional trigger to watch for future events.
+     * \param output Comma separated string of record names or NULL on error.
+     * \param tid Id of registered trigger (0 in case no trigger registered).
+     * \param error_code Error value of request.
+     */
+    rpc get_names(in string query, in trigger t, out string output,
+                  out trigger_id tid, out errval error_code);
+    
+    /**
+     * \param query Record to find.
+     * \param t Additional trigger to watch for future events.
+     * \param output Retrieved record or NULL on error.
+     * \param tid Id of registered trigger (0 in case no trigger registered).
+     * \param error_code Error value of request.
+     */
+    rpc get(in string query, in trigger t, out string output,
+            out trigger_id tid, out errval error_code);
+        
+    /**
+     * \param query Record to set.
+     * \param mode Set mode (see getset.h).
+     * \param t Additional trigger to watch for future events.
+     * \param get Return record if it has been set.
+     * \param record In case get is true and no error_code is ok 
+     * contains record, otherwise NULL
+     * \param tid Id of registered trigger (0 in case no trigger registered).
+     * \param error_code Error value of request
+     */
+    rpc set(in string query, in uint64 mode, in trigger t, in bool get,
+            out string record, out trigger_id tid, out errval error_code);
+
+    /**
+     * Find a record using an ID capability as the key/name of the record.
+     *
+     * \param idcap ID capability used as the name of the record.
+     * \param t Additional trigger to watch for future events.
+     * \param output Retrieved record or NULL on error.
+     * \param tid Id of registered trigger (0 in case no trigger registered).
+     * \param error_code Error value of request.
+     */
+    rpc get_with_idcap(in cap idcap, in trigger t, out string output,
+                       out trigger_id tid, out errval error_code);
+
+    /**
+     * Set a record using an ID capability as the key/name of the record.
+     *
+     * \param idcap ID capability used as the key/name of the record.
+     * \param attributes Attributes to store in the record.
+     * \param mode Set mode (see getset.h).
+     * \param t Additional trigger to watch for future events.
+     * \param get Return record if it has been set.
+     * \param record In case get is true and no error_code is ok
+     *               contains record, otherwise NULL
+     * \param tid Id of registered trigger (0 in case no trigger registered).
+     * \param error_code Error value of request
+     */
+    rpc set_with_idcap(in cap idcap, in string attributes, in uint64 mode,
+                       in trigger t, in bool get, out string record,
+                       out trigger_id tid, out errval error_code);
+    
+    /**
+     * \param query Record(s) to delete.
+     * \param t Additional trigger to watch for future events.
+     * \param tid Id of registered trigger (0 in case no trigger registered).
+     * \param error_code Error value of request
+     */
+    rpc del(in string query, in trigger t, out trigger_id tid,
+            out errval error_code);
+    
+    /**
+     * \param query
+     * \param t Additional trigger to watch for future events.
+     * \param tid Id of registered trigger (0 in case no trigger registered).
+     * \param error_code Error value of request.
+     */
+    rpc exists(in string query, in trigger t, out trigger_id tid,
+               out errval error_code);
+    
+    /**
+     * \brief Blocks until a record matching the provided query is registered.
+     *
+     * This was introduced specifically for the nameserver API
+     * due to limitations of the memory allocation during bootstrapping we
+     * can't use THC but need to support nameservice blocking lookup.
+     * If you use this call you might want to consider using
+     * a combination of get and triggers.
+     *
+     * \param query
+     * \param record
+     * \param error_code
+     */
+    rpc wait_for(in string query, out string record, out errval error_code);
+    
+    /**
+     * \brief Used to remove Triggers in case they are not needed anymore.
+     *
+     * Note that non persistent trigger are removed automatically after 
+     * they have fired. For persistent triggers be aware that you might
+     * still get a notification after the trigger has been removed because
+     * trigger events are sent over another binding.
+     *
+     * \param id Trigger ID to remove
+     * \param error_code Error of operation
+     */
+    rpc remove_trigger(in uint64 id, out errval error_code);
+    
+
+    //
+    // Publish/Subscribe API
+    //
+    
+    /**
+     * \param query
+     * \param client_state Additional state supplied by client.
+     * \param id Identifier for this subscription supplied by server.
+     * \param error_code Status of request.
+     */
+    rpc subscribe(in string query, in uint64 trigger_fn, in uint64 state,
+                  out uint64 id, out errval error_code);
+    
+    /**
+     * \param id Id for the subscription
+     * \param error_code Status of request
+     */
+    rpc unsubscribe(in uint64 id, out errval error_code);
+    
+    /**
+     * \param record Message to publish.
+     * \param error_code Status of request.
+     */
+    rpc publish(in string record, out errval error_code);
+
+
+    //
+    // Async events (sent by server to client)
+    //
+    message trigger(trigger_id id, uint64 trigger_fn, mode m, string record,
+                    uint64 state);
+
+    message subscription(trigger_id id, uint64 trigger_fn, mode m,
+                         string record, uint64 state);
+    
+
+    //
+    // Backward compability with chips
+    //
+    
+    // Simple capability storage
+    rpc get_cap(in string key, out cap retcap, out errval reterr);
+    rpc put_cap(in string key, in cap storecap, out errval reterr);
+    rpc remove_cap(in string key, out errval reterr);
+};

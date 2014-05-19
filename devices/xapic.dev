@@ -1,0 +1,247 @@
+/*
+ * Copyright (c) 2007, 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * xapic.dev
+ *
+ * DESCRIPTION: Local eXtended APIC hardware description
+ * 
+ * Numbers in comments refer to the Intel Software Development Manual
+ * volume 3, October 2007.
+ */
+
+
+device xapic lsbfirst ( addr base ) "Local APIC" {
+
+  // 8.4.6
+  register id rw addr(base, 0x0020) "Local APIC ID" {
+    _   24;
+    id  8 "apic id";
+  };
+
+  // 8.4.8
+  register version ro addr(base, 0x0030) "Local APIC Version" {
+    ver         8 "version";
+    _           8;
+    max_lvt     8 "max LVT entry";
+    _           8;
+  };
+
+  // 8.5.1
+  constants timer_mode "Timer mode" {
+    one_shot	= 0;
+    periodic	= 1;
+  };
+
+  constants int_mask "Interrupt mask" {
+    not_masked	= 0 "Not masked";
+    masked	= 1 "Masked";
+  };
+
+  register lvt_timer rw addr(base, 0x0320) "LVT Timer" {
+    vector      8 "Vector";
+    _           4;
+    status      1 "Delivery status";
+    _           3;
+    mask        1 type(int_mask) "Masked";
+    mode        1 type(timer_mode) "Mode";
+    _           14;
+  };
+
+  constants vdm "Vector delivery mode" { 
+    fixed   = 0b000 "Fixed";
+    lowest  = 0b001 "Lowest priority";
+    smi     = 0b010 "SMI";
+    nmi     = 0b100 "NMI";
+    init    = 0b101 "INIT";
+    startup = 0b110 "Start Up";
+    extint  = 0b111 "ExtINT";
+  };
+
+  constants trigm "Trigger mode" {
+    edge	= 0 "Edge";
+    level	= 1 "Level";
+  };
+
+  regtype lvt_lint "LVT Int" {
+    vector      8 "Vector";
+    dlv_mode    4 type(vdm) "Delivery mode";
+    _           1;
+    status      1 "Delivery status";
+    pinpol      1 "Pin polarity";
+    rirr        1 "Remote IRR";
+    trig_mode   1 type(trigm) "Trigger mode";
+    mask        1 type(int_mask) "Mask";
+    _           14;
+  };
+
+  register lvt_lint0 rw addr(base, 0x0350) type (lvt_lint);
+  register lvt_lint1 rw addr(base, 0x0360) type (lvt_lint);
+
+  register lvt_err rw addr(base, 0x0370) { 
+    vector      8 "Vector";
+    _           4;
+    status      1 "Delivery status";
+    _           3;
+    mask        1 type(int_mask) "Mask";
+    _           15;
+  };
+
+  regtype lvt_mon "LVT monitor" {
+    vector      8 "Vector";
+    msgType     3;
+    _           1;
+    status      1 "Delivery status";
+    _           3;
+    mask        1 type(int_mask) "Masked";
+    _           15;
+  };
+  
+  register lvt_perf_cnt rw addr(base, 0x0340) type (lvt_mon);
+  register lvt_thermal rw addr(base, 0x0330) type (lvt_mon);
+
+  // 8.5.3
+  register esr rw addr(base, 0x0280) "Error Status" {
+    sce         1 "Send checksum error";
+    rce         1 "Receive checksum error";
+    sae         1 "Send accept error";
+    rae         1 "Receive accept error";
+    _           1;
+    siv         1 "Send illegal vector";
+    riv         1 "Receive illegal vector";
+    ira         1 "Illegal register address";
+    _           24;
+  };
+
+  // 8.5.4
+  constants divide "Timer Divide values" {
+    by1         = 0b1011;
+    by2         = 0b0000;
+    by4         = 0b0001;
+    by8         = 0b0010;
+    by16        = 0b0011;
+    by32        = 0b1000;
+    by64        = 0b1001;
+    by128       = 0b1010;
+  };
+  register dcr rw addr(base, 0x03e0) "Divide Configuration" {
+    div_val     4 "Timer divide value";
+    _           28;
+  };
+  register init_count rw addr(base, 0x0380) "Initial Count" type(uint32);
+  register cur_count rw addr(base, 0x0390) "Current Count" type(uint32) ;
+
+  // 8.6.1
+  constants dst_shorthand "Destination shorthand" {
+    none    = 0b00 "No shorthand";
+    self    = 0b01 "Self";
+    all_inc = 0b10 "All including self";
+    all_exc = 0b11 "All excluding self";
+  };
+
+  constants dst_mode "Destination mode" {
+    dst_phys	= 0b00 "Physical";
+    dst_log	= 0b01 "Logical";
+  };
+
+  constants int_level "Interrupt level" {
+    lvl_clr	= 0b00 "Clear";
+    lvl_set	= 0b01 "Set";
+  };
+
+  register icr_lo rw addr(base, 0x0300) "Interrupt Command (lo)" {
+    vector      8 "Vector";
+    dlv_mode    3 type(vdm) "Delivery mode";
+    dst_mode    1 type(dst_mode) "Destination mode";
+    dlv_stat    1 ro "Delivery status";
+    _           1;
+    level       1 type(int_level) "Level";
+    trig_mode   1 type(trigm) "Trigger mode";
+    _           2;
+    dst_short   2 type(dst_shorthand) "Destination shorthand";
+    _           12;
+  };
+  register icr_hi rw addr(base, 0x0310) "Interrupt Commmand (hi)" {
+    _           24;
+    dest        8 "Destination field";
+  };
+
+  // 8.6.2
+  register ldr rw addr(base, 0x00d0) "Logical Destination" {
+    _           24;
+    log_id      8 "Logical APIC ID";
+  };
+  constants model_type "Destination model type" {
+    flat        = 0b1111;
+    cluster     = 0b0000;
+  };
+  register dfr rw addr(base, 0x00e0) "Destination Format" {
+    _           28 mb1;
+    model       4 type(model_type) "Model";
+  };
+  regtype priority "Various priorities" {
+    sub_class   4 "Priority subclass";
+    priority    4 "Priority";
+    _           24;
+  };
+  register apr ro addr(base, 0x0090) "Arbitration priority" type(priority);
+
+  // 8.8.3
+  register tpr rw addr(base, 0x0080) "Task priority" type(priority);
+  register ppr ro addr(base, 0x00A0) "Processor priority" type(priority);
+
+  // 8.8.4
+  regarray isr ro addr(base, 0x0100) [8; 0x10] "ISR" type(uint32);
+  regarray tmr ro addr(base, 0x0180) [8; 0x10] "TMR" type(uint32);
+  regarray irr ro addr(base, 0x0200) [8; 0x10] "IRR" type(uint32);
+
+  // 8.8.5
+  register eoi wo addr(base, 0x00b0) "End Of Interrupt" type(uint32);
+  
+  // 8.9
+  register svr rw addr(base, 0x00f0) "Spurious Interrupt Vector Register" {
+    vector      8 "Vector";
+    enable      1 "APIC Software Enable/Disable";
+    focus       1 "Focus Processor Checking";
+    _           22;
+  };
+
+  /*
+   * AMD extensions: see AMD64 Architecture Programmer's Manual,
+   * vol. 2 rev 3.14 (September 2007). 
+   */
+
+  // 16.7.1
+  register eafr ro addr(base, 0x0400) "Extended APIC feature" {
+    inc		1 "Interrupt enable register capable";
+    snic	1 "Specific EOI capable";
+    xaidc	1 "Extended APIC ID capability";
+    _		13 mbz;
+    xlc		8 "Extended LVT count";
+    _		8 mbz;
+  };
+
+  // 16.3.5
+  register eacr addr(base, 0x0410) "Extended APIC control" {
+    iern	1 "Enable interrupt enable registers";
+    sn		1 "Enable SEOI generation";
+    xaidn	1 "Extended APIC ID enable";
+    _		29;
+  };
+
+  // 16.7.2
+  register seoi wo addr(base, 0x0420) "Specific end-of-interrupt" {
+    vector	8 "Vector";
+    _		24 mbz;
+  };
+  
+  // 16.7.3
+  regarray ier ro addr(base, 0x0480) [8; 0x10] "IER" type(uint32);
+
+};
+

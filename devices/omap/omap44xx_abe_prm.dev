@@ -1,0 +1,308 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_abe_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_abe_prm msbfirst ( addr base ) "" {
+    
+
+    constants periphmem_onstate_status width(2) "" {
+        PERIPHMEM_ONSTATE_3_r = 3 "Memory bank is on when the domain is ON.";
+    };
+
+    constants periphmem_retstate_status width(1) "" {
+        PERIPHMEM_RETSTATE_0_r = 0 "Memory bank is off when the domain is in the RETENTION state.";
+    };
+
+    constants aessmem_retstate_status width(1) "" {
+        AESSMEM_RETSTATE_1_r = 1 "Memory bank is retained when domain is in RETENTION state.";
+    };
+
+    constants lowpowerstatechange_status width(1) "" {
+        LOWPOWERSTATECHANGE_0 = 0 "Do not request a low power state change.";
+        LOWPOWERSTATECHANGE_1 = 1 "Request a low power state change. This bit is automatically cleared when the power state is effectively changed or when power state is ON.";
+    };
+
+    constants powerstate_status width(2) "" {
+        POWERSTATE_0 = 0 "OFF state";
+        POWERSTATE_1 = 1 "RETENTION state";
+        POWERSTATE_2 = 2 "INACTIVE state";
+        POWERSTATE_3 = 3 "ON State";
+    };
+    
+    register pm_abe_pwrstctrl addr(base, 0x0) "This register controls the ABE domain power state to reach upon a domain sleep transition" {
+        _ 10 mbz;
+        periphmem_onstate 2 ro type(periphmem_onstate_status) "PERIPHMEM memory state when domain is ON.";
+        _ 2 mbz;
+        aessmem_onstate 2 ro type(periphmem_onstate_status) "AESSMEM memory state when domain is ON.";
+        _ 5 mbz;
+        periphmem_retstate 1 ro type(periphmem_retstate_status) "PERIPHMEM memory state when domain is RETENTION.";
+        _ 1 mbz;
+        aessmem_retstate 1 ro type(aessmem_retstate_status) "AESSMEM memory state when domain is RETENTION.";
+        _ 3 mbz;
+        lowpowerstatechange 1 rw type(lowpowerstatechange_status) "Power state change request when domain has already performed a sleep transition. Allows going into deeper low power state without waking up the power domain.";
+        _ 1 mbz;
+        logicretstate 1 ro type(periphmem_retstate_status) "Logic state when power domain is RETENTION";
+        powerstate 2 rw type(powerstate_status) "Power state control";
+    };
+
+    constants lastpowerstateentered_status width(2) "" {
+        LASTPOWERSTATEENTERED_3_r = 3 "Power domain was previously ON-ACTIVE";
+        LASTPOWERSTATEENTERED_2_r = 2 "Power domain was previously ON-INACTIVE";
+        LASTPOWERSTATEENTERED_1_r = 1 "Power domain was previously in RETENTION";
+        LASTPOWERSTATEENTERED_0_r = 0 "Power domain was previously OFF";
+    };
+
+    constants intransition_status width(1) "" {
+        INTRANSITION_0_r = 0 "No ongoing transition on power domain";
+        INTRANSITION_1_r = 1 "Power domain transition is in progress.";
+    };
+
+    constants periphmem_statest_status width(2) "" {
+        PERIPHMEM_STATEST_0_r = 0 "Memory is OFF";
+        PERIPHMEM_STATEST_1_r = 1 "Reserved";
+        PERIPHMEM_STATEST_2_r = 2 "Reserved";
+        PERIPHMEM_STATEST_3_r = 3 "Memory is ON";
+    };
+
+    constants aessmem_statest_status width(2) "" {
+        AESSMEM_STATEST_0_r = 0 "Memory is OFF";
+        AESSMEM_STATEST_1_r = 1 "Memory is RETENTION";
+        AESSMEM_STATEST_2_r = 2 "Reserved";
+        AESSMEM_STATEST_3_r = 3 "Memory is ON";
+    };
+
+    constants logicstatest_status width(1) "" {
+        LOGICSTATEST_0_r = 0 "Logic in domain is OFF";
+        LOGICSTATEST_1_r = 1 "Logic in domain is ON";
+    };
+
+    constants powerstatest_status width(2) "" {
+        POWERSTATEST_0_r = 0 "Power domain is OFF";
+        POWERSTATEST_1_r = 1 "Power domain is in RETENTION";
+        POWERSTATEST_2_r = 2 "Power domain is ON-INACTIVE";
+        POWERSTATEST_3_r = 3 "Power domain is ON-ACTIVE";
+    };
+    
+    register pm_abe_pwrstst addr(base, 0x4) "This register provides a status on the ABE domain current power domain state. [warm reset insensitive]" {
+        _ 6 mbz;
+        lastpowerstateentered 2 rw type(lastpowerstateentered_status) "Last low power state entered. Set to 0x3 upon write of the same only. This register is intended for debug purpose only.";
+        _ 3 mbz;
+        intransition 1 ro type(intransition_status) "Domain transition status";
+        _ 10 mbz;
+        periphmem_statest 2 ro type(periphmem_statest_status) "PERIPHMEM memory state status";
+        _ 2 mbz;
+        aessmem_statest 2 ro type(aessmem_statest_status) "AESSMEM memory state status";
+        _ 1 mbz;
+        logicstatest 1 ro type(logicstatest_status) "Logic state status";
+        powerstatest 2 ro type(powerstatest_status) "Current power state status";
+    };
+
+    constants lostmem_aessmem_status width(1) "" {
+        LOSTMEM_AESSMEM_0 = 0 "Context has been maintained";
+        LOSTMEM_AESSMEM_1 = 1 "Context has been lost";
+    };
+    
+    register rm_abe_aess_context addr(base, 0x2C) "This register contains dedicated AESS context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_aessmem 1 rw1c type(lostmem_aessmem_status) "Specify if memory-based context in AESSMEM memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+
+    constants wkupdep_pdm_dma_sdma_status width(1) "" {
+        WKUPDEP_PDM_DMA_SDMA_0 = 0 "Dependency is disabled";
+        WKUPDEP_PDM_DMA_SDMA_1 = 1 "Dependency is enabled";
+    };
+    
+    register pm_abe_pdm_wkdep addr(base, 0x30) "This register controls wakeup dependency based on PDM service requests." {
+        _ 24 mbz;
+        wkupdep_pdm_dma_sdma 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from PDM module (softwareakeup_dma signal) towards SDMA + L3_2 + L3_1 domains";
+        wkupdep_pdm_dma_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from PDM module (softwareakeup_dma signal) towards DSP domain";
+        _ 3 mbz;
+        wkupdep_pdm_irq_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from PDM module (softwareakeup_irq signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_pdm_irq_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from PDM module (softwareakeup_irq signal) towards MPU domain";
+    };
+    
+    register rm_abe_pdm_context addr(base, 0x34) "This register contains dedicated PDM context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_perihpmem 1 rw1c type(lostmem_aessmem_status) "Specify if memory-based context in PERIHPMEM memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_dmic_wkdep addr(base, 0x38) "This register controls wakeup dependency based on DMIC service requests." {
+        _ 24 mbz;
+        wkupdep_dmic_dma_sdma 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from DMIC module (softwareakeup_dma signal) towards SDMA + L3_2 + L3_1 domains";
+        wkupdep_dmic_dma_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from DMIC module (softwareakeup_dma signal) towards DSP domain";
+        _ 3 mbz;
+        wkupdep_dmic_irq_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from DMIC module (softwareakeup_irq signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_dmic_irq_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from DMIC module (softwareakeup_irq signal) towards MPU domain";
+    };
+    
+    register rm_abe_dmic_context addr(base, 0x3C) "This register contains dedicated DMIC context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_perihpmem 1 rw1c type(lostmem_aessmem_status) "Specify if memory-based context in PERIHPMEM memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_mcasp_wkdep addr(base, 0x40) "This register controls wakeup dependency based on MCASP service requests." {
+        _ 24 mbz;
+        wkupdep_mcasp1_dma_sdma 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCASP1 module (softwareakeup_dma signal) towards SDMA + L3_2 + L3_1 domains";
+        wkupdep_mcasp1_dma_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCASP1 module (softwareakeup_dma signal) towards DSP domain";
+        _ 3 mbz;
+        wkupdep_mcasp1_irq_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCASP1 module (softwareakeup_irq signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_mcasp1_irq_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCASP1 module (softwareakeup_irq signal) towards MPU domain";
+    };
+    
+    register rm_abe_mcasp_context addr(base, 0x44) "This register contains dedicated MCASP context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_mcbsp1_wkdep addr(base, 0x48) "This register controls wakeup dependency based on MCBSP1 service requests." {
+        _ 28 mbz;
+        wkupdep_mcbsp1_sdma 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCBSP1 module (softwareakeup signal) towards SDMA + L3_2 + L3_1 domains";
+        wkupdep_mcbsp1_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCBSP1 module (softwareakeup signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_mcbsp1_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCBSP1 module (softwareakeup signal) towards MPU domain";
+    };
+    
+    register rm_abe_mcbsp1_context addr(base, 0x4C) "This register contains dedicated MCBSP1 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_perihpmem 1 rw1c type(lostmem_aessmem_status) "Specify if memory-based context in PERIHPMEM memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_mcbsp2_wkdep addr(base, 0x50) "This register controls wakeup dependency based on MCBSP2 service requests." {
+        _ 28 mbz;
+        wkupdep_mcbsp2_sdma 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCBSP2 module (softwareakeup signal) towards SDMA + L3_2 + L3_1 domains";
+        wkupdep_mcbsp2_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCBSP2 module (softwareakeup signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_mcbsp2_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCBSP2 module (softwareakeup signal) towards MPU domain";
+    };
+    
+    register rm_abe_mcbsp2_context addr(base, 0x54) "This register contains dedicated MCBSP2 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_perihpmem 1 rw1c type(lostmem_aessmem_status) "Specify if memory-based context in PERIHPMEM memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_mcbsp3_wkdep addr(base, 0x58) "This register controls wakeup dependency based on MCBSP3 service requests." {
+        _ 28 mbz;
+        wkupdep_mcbsp3_sdma 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCBSP3 module (softwareakeup signal) towards SDMA + L3_2 + L3_1 domains";
+        wkupdep_mcbsp3_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCBSP3 module (softwareakeup signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_mcbsp3_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from MCBSP3 module (softwareakeup signal) towards MPU domain";
+    };
+    
+    register rm_abe_mcbsp3_context addr(base, 0x5C) "This register contains dedicated MCBSP3 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_perihpmem 1 rw1c type(lostmem_aessmem_status) "Specify if memory-based context in PERIHPMEM memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_slimbus_wkdep addr(base, 0x60) "This register controls wakeup dependency based on SLIMBUS service requests." {
+        _ 24 mbz;
+        wkupdep_slimbus1_dma_sdma 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from SLIMBUS1 module (softwareakeup_dma signal) towards SDMA + L3_2 + L3_1 domains";
+        wkupdep_slimbus1_dma_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from SLIMBUS1 module (softwareakeup_dma signal) towards DSP domain";
+        _ 3 mbz;
+        wkupdep_slimbus1_irq_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from SLIMBUS1 module (softwareakeup_irq signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_slimbus1_irq_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from SLIMBUS1 module (softwareakeup_irq signal) towards MPU domain";
+    };
+    
+    register rm_abe_slimbus_context addr(base, 0x64) "This register contains dedicated SLIMBUS context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_perihpmem 1 rw1c type(lostmem_aessmem_status) "Specify if memory-based context in PERIHPMEM memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_gptimer5_wkdep addr(base, 0x68) "This register controls wakeup dependency based on TIMER5 service requests." {
+        _ 29 mbz;
+        wkupdep_timer5_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from TIMER5 module (softwareakeup signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_timer5_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from TIMER5 module (softwareakeup signal) towards MPU domain";
+    };
+    
+    register rm_abe_gptimer5_context addr(base, 0x6C) "This register contains dedicated TIMER5 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_gptimer6_wkdep addr(base, 0x70) "This register controls wakeup dependency based on TIMER6 service requests." {
+        _ 29 mbz;
+        wkupdep_timer6_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from TIMER6 module (softwareakeup signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_timer6_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from TIMER6 module (softwareakeup signal) towards MPU domain";
+    };
+    
+    register rm_abe_gptimer6_context addr(base, 0x74) "This register contains dedicated TIMER6 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_gptimer7_wkdep addr(base, 0x78) "This register controls wakeup dependency based on TIMER7 service requests." {
+        _ 29 mbz;
+        wkupdep_timer7_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from TIMER7 module (softwareakeup signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_timer7_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from TIMER7 module (softwareakeup signal) towards MPU domain";
+    };
+    
+    register rm_abe_gptimer7_context addr(base, 0x7C) "This register contains dedicated TIMER7 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_gptimer8_wkdep addr(base, 0x80) "This register controls wakeup dependency based on TIMER8 service requests." {
+        _ 29 mbz;
+        wkupdep_timer8_dsp 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from TIMER8 module (softwareakeup signal) towards DSP domain";
+        _ 1 mbz;
+        wkupdep_timer8_mpu 1 rw type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from TIMER8 module (softwareakeup signal) towards MPU domain";
+    };
+    
+    register rm_abe_gptimer8_context addr(base, 0x84) "This register contains dedicated TIMER8 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+    
+    register pm_abe_wdtimer3_wkdep addr(base, 0x88) "This register controls wakeup dependency based on WDT3 service requests." {
+        _ 31 mbz;
+        wkupdep_wdt3_mpu 1 ro type(wkupdep_pdm_dma_sdma_status) "Wakeup dependency from WDT3 module (softwareakeup signal) towards MPU domain";
+    };
+    
+    register rm_abe_wdtimer3_context addr(base, 0x8C) "This register contains dedicated WDT3 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_aessmem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of AUDIO_RST signal)";
+    };
+};

@@ -1,0 +1,189 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, 2011, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface monitor "The monitor to client Interface" {
+          alias vci_t uint64;
+          alias capid_t uint32;
+
+          call alloc_iref_request(
+                        uintptr service_id);
+
+          response alloc_iref_reply(
+                        uintptr service_id,
+                        iref iref,
+                        errval err);
+
+          /* TODO: move to monitor_blocking as RPC? */
+	  call boot_core_request(uint8 id, int hwid, int type, string cmdline);
+	  response boot_core_reply(errval err);
+
+          /* TODO: move to monitor_blocking as RPC? */
+	  call boot_initialize_request();
+	  response boot_initialize_reply();
+
+          call new_monitor_binding_request(
+                        uintptr st);
+
+          response new_monitor_binding_reply(
+                        errval err,
+                        cap ep,
+                        uintptr st);
+
+         // a client sends this to the monitor to initiate a bind
+         message bind_lmp_client_request(
+                        iref iref,
+                        uintptr conn_id,
+                        size buflen,
+                        cap ep);
+
+	 // Request multiboot caps from the monitor.
+	 // I imagine only a file system doing this.
+          /* TODO: move to monitor_blocking as RPC? */
+         message multiboot_cap_request(uint32 slot);
+         message multiboot_cap_reply(cap cap, errval err);
+
+         // the monitor sends this to a service to pass on a bind request
+         message bind_lmp_service_request(
+                        uintptr service_id,
+                        uintptr mon_id,
+                        size buflen,
+                        cap ep);
+
+
+         message bind_lmp_reply_monitor(
+                        errval err,
+                        uintptr mon_id,
+                        uintptr conn_id,
+                        cap ep);
+
+         message bind_lmp_reply_client(
+                        errval err,
+                        uintptr mon_id,
+                        uintptr conn_id,
+                        cap ep);
+
+         // a client sends this to the monitor to initiate a bind
+          message bind_ump_client_request(
+                        iref iref,
+                        uintptr conn_id,
+                        cap frame,
+                        size channel_length_in,
+                        size channel_length_out,
+			cap notify);
+
+         // the monitor sends this to a service to pass on a bind request
+          message bind_ump_service_request(
+                        uintptr service_id,
+                        uintptr mon_id,
+                        cap frame,
+                        size channel_length_in,
+                        size channel_length_out,
+			cap notify);
+
+          call bind_ump_reply_monitor(
+                        uintptr mon_id,
+                        uintptr conn_id,
+                        errval err,
+			cap notify);
+
+          response bind_ump_reply_client(
+                        uintptr mon_id,
+                        uintptr conn_id,
+                        errval err,
+			cap notify);
+
+          call ipi_alloc_notify_request(cap ep, uintptr state);
+	  response ipi_alloc_notify_reply(uintptr state, cap notify, errval err);
+
+          call get_mem_iref_request();
+          response get_mem_iref_reply(
+                        iref iref);
+
+          call get_name_iref_request(uintptr st);
+          response get_name_iref_reply(iref iref, uintptr st);
+          
+          call get_ramfs_iref_request(uintptr st);
+          response get_ramfs_iref_reply(iref iref, uintptr st);
+          call set_ramfs_iref_request(iref iref);
+
+          call set_mem_iref_request(
+                        iref iref);
+
+          call set_name_iref_request(
+                        iref iref);
+          response set_name_iref_reply(
+                        errval err);
+
+          call get_monitor_rpc_iref_request(uintptr st);
+          response get_monitor_rpc_iref_reply(iref iref, uintptr st);
+
+          /* for UMP/BMP cap tx */
+          call cap_send_request(
+                        uintptr mon_id,
+                        cap cap,
+                        capid_t capid,
+ 			uint8 give_away);
+          response cap_receive_request(
+                        uintptr conn_id,
+                        errval err,
+                        cap cap,
+                        capid_t capid);
+
+          call span_domain_request(
+                        uintptr domain_id,
+                        uint8 core_id,
+                        cap vroot,
+			cap disp);
+          response span_domain_reply(
+                        errval err,
+                        uintptr domain_id);
+
+          /* TODO: move to monitor_blocking as RPC? */
+          call num_cores_request();
+          response num_cores_reply(uint8 num);
+          
+          /* Multi-hop interconnect driver */
+          
+          // Send routing table
+          // First message, which describes the set of valid core IDs
+          call multihop_routing_table_new(coreid max_coreid, coreid nentries);
+          // Subsequent messages (repeated) which each contain a portion of the routing table from a single core
+          call multihop_routing_table_set(coreid from, coreid to[len]);
+
+          // Connection set-up between monitor and client
+          call multihop_bind_client_request(iref iref, vci_t sender_vci);
+          response multihop_bind_client_reply(vci_t receiver_vci, vci_t sender_vci, errval err);
+
+          // Connection set-up between monitor and service
+          call multihop_bind_service_request(uintptr service_id, vci_t sender_vci);
+          response multihop_bind_service_reply(vci_t receiver_vci , vci_t sender_vci, errval err);
+
+          // user message
+          message multihop_message(vci_t vci, uint8 direction, uint8 flags, uint32 ack, uint8 payload[size]);
+          
+          // cap transfer
+          call multihop_cap_send(vci_t vci, uint8 direction, errval err, cap cap, capid_t capid);
+
+          /* Tracing Framework */
+
+         // Notify a core that it should prepare the tracing state. The origin core
+         // is the one who initiated the preparation request.
+         message trace_prepare(coreid origin_core);
+
+         // Notify the core who initiated the preparation that it is finished.
+         message trace_prepare_finished();
+
+         /* bfscope - the tracing server */
+
+         // Send a message to bfscope, to notify that it should flush
+         call bfscope_flush_send(iref iref);
+
+         // Notify the initiatior of the flush request that it has been completed.
+         response bfscope_flush_ack();
+};

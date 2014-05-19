@@ -1,0 +1,153 @@
+#!/bin/bash
+
+PAPERPATH=~/hg/papers/asplos11/barrelfish/plots
+
+ALGORITHMS="bridge_page.pl bridge_postorder.pl bridge_postorder_sorted.pl bridge_postorder_sorted_sum.pl bridge_postorder_sorted_ascending.pl bridge_postorder_sorted_sum_ascending.pl"
+ALGONAMES[0]="CLP"
+ALGONAMES[1]="postorder"
+ALGONAMES[2]="postorder_sorted"
+ALGONAMES[3]="postorder_sum"
+ALGONAMES[4]="postorder_asc"
+ALGONAMES[5]="postorder_asc_sum"
+
+SYSTEMS="nos3 nos4 nos5 nos6 gruyere sbrinz1 sbrinz2 ziger1 ziger2";
+SYSTEMNAMES="sys1 sys2 sys3 sys4 sys5 sys6 sys7 sys8 sys9";
+
+OUTFILE="algos_systems.dat"
+GNUPLOTFILE="algos_systems.gnuplot"
+PNGOUTPUT="algos_systems.eps"
+
+
+echo -n "" > $OUTFILE
+
+
+# allgemeine einstellungen
+echo "clear" > $GNUPLOTFILE
+echo "reset" >> $GNUPLOTFILE
+echo "set terminal postscript eps enhanced dashed color" >> $GNUPLOTFILE
+echo "set output \"$PNGOUTPUT\"" >> $GNUPLOTFILE
+echo "set boxwidth 0.1" >> $GNUPLOTFILE
+echo "set xlabel \"System\"" >> $GNUPLOTFILE
+echo "set ylabel \"Physical address size needed [bytes]\"" >> $GNUPLOTFILE
+#echo "set key bottom right" >> $GNUPLOTFILE
+
+echo -n "set xtics (" >> $GNUPLOTFILE
+count=0;
+for i in $SYSTEMNAMES; do
+    if [ 0 -ne $count ]; then
+        echo -n "," >> $GNUPLOTFILE;
+    fi
+    echo -n "\"$i\" " >> $GNUPLOTFILE;
+    echo -n "$count" >> $GNUPLOTFILE;
+    count=$[$count+1];
+done
+echo ")" >> $GNUPLOTFILE;
+
+echo "set output \"algos_systems_padding.eps\"" >> tmp1.$GNUPLOTFILE;
+echo "set xlabel \"System\""  >> tmp1.$GNUPLOTFILE;
+echo "set ylabel \"Padding overhead [bytes]\""  >> tmp1.$GNUPLOTFILE;
+echo -n "plot "  >> tmp1.$GNUPLOTFILE;
+
+echo "set output \"algos_systems_difference.eps\""  >> tmp2.$GNUPLOTFILE;
+echo "set xlabel \"System\""  >> tmp2.$GNUPLOTFILE;
+echo "set ylabel \"Difference to root limit\""  >> tmp2.$GNUPLOTFILE;
+echo "set key bottom right"  >> tmp2.$GNUPLOTFILE;
+echo -n "plot " >> tmp2.$GNUPLOTFILE;
+
+echo -n "plot \"algos_systems.dat\" index 0 using (\$0-0.1):8 title \"Root size\" with boxes, " >> $GNUPLOTFILE;
+count=0;
+for i in $ALGORITHMS; do
+    echo $i;
+    for j in $SYSTEMS; do
+        echo $j;
+        ./mach $i ../data/data_$j.txt > tmp.out.dat;
+        egrep Abort tmp.out.dat;
+        if [ 0 -eq $? ]; then
+            echo "ECLIPSE-Fehler";
+            echo "Algorithm: $i, count: $count";
+            exit 1;
+        fi
+
+        egrep No tmp.out.dat;
+        if [ 0 -eq $? ]; then
+            echo "ECLIPSE did not find a solution";
+            echo "Algorithm: $i, count: $count";
+            exit 1;
+        fi
+        zahlen=$(sed -r -e '/^res.*/!d' -e 's/res[\t]//' -e 's/\n//g' tmp.out.dat)
+        echo "$zahlen" >> $OUTFILE
+    done
+    echo "" >> $OUTFILE;
+    echo "" >> $OUTFILE;
+
+    if [ 0 -ne $count ]; then
+        echo -n "," >> $GNUPLOTFILE;
+        echo -n "," >> tmp1.$GNUPLOTFILE;
+        echo -n "," >> tmp2.$GNUPLOTFILE;
+    fi    
+    nama=$(echo ${ALGONAMES[$count]}|sed -r -e 's/_/\\_/g');
+    fillpattern=$[$count+1];
+    echo -n " \"./algos_systems.dat\" index $count using (\$0+0.1*$count):3 title '$nama' with boxes fill pattern $fillpattern" >> $GNUPLOTFILE;
+    echo -n " \"./algos_systems.dat\" index $count using (\$0+0.1*$count):5 title '$nama' with boxes fill pattern $fillpattern" >> tmp1.$GNUPLOTFILE;
+    echo -n " \"./algos_systems.dat\" index $count using (\$0+0.1*$count):12 title '$nama' with boxes fill pattern $fillpattern" >> tmp2.$GNUPLOTFILE;
+    count=$[$count+1];
+done
+
+echo "linux:"
+for j in $SYSTEMS; do
+    echo $j;
+    ./linux2skb_conversion ../data/data_linux_$j.txt
+    grep 'rootbridge(' ../data/data_$j.txt >> ../data/data_linux_$j.txt.pl.tmp;
+    echo -e "[compute_required_resources],[\"../data/data_linux_$j.txt.pl.tmp\"],[bridge_linux],bridge_programming(B,_)," \
+         "compute_required_resources([B], ResList, nodot).\n\nhalt." | eclipse-clp > tmp.out.dat;
+    egrep Abort tmp.out.dat;
+    if [ 0 -eq $? ]; then
+        echo "ECLIPSE-Fehler";
+        echo "Algorithm: Linux, count: $count";
+        exit 1;
+    fi
+
+    egrep No tmp.out.dat;
+    if [ 0 -eq $? ]; then
+        echo "ECLIPSE did not find a solution";
+        echo "Algorithm: Linux, count: $count";
+        exit 1;
+    fi
+    zahlen=$(sed -r -e '/^res.*/!d' -e 's/res[\t]//' -e 's/\n//g' tmp.out.dat)
+    echo "$zahlen" >> $OUTFILE
+done
+echo "" >> $OUTFILE;
+echo "" >> $OUTFILE;
+if [ 0 -ne $count ]; then
+    echo -n "," >> $GNUPLOTFILE;
+    echo -n "," >> tmp1.$GNUPLOTFILE;
+    echo -n "," >> tmp2.$GNUPLOTFILE;
+fi    
+nama="Linux";
+fillpattern=$[$count+1];
+echo -n " \"./algos_systems.dat\" index $count using (\$0+0.1*$count):3 title '$nama' with boxes fill pattern $fillpattern" >> $GNUPLOTFILE;
+echo -n " \"./algos_systems.dat\" index $count using (\$0+0.1*$count):5 title '$nama' with boxes fill pattern $fillpattern" >> tmp1.$GNUPLOTFILE;
+echo -n " \"./algos_systems.dat\" index $count using (\$0+0.1*$count):12 title '$nama' with boxes fill pattern $fillpattern" >> tmp2.$GNUPLOTFILE;
+count=$[$count+1];
+
+
+
+
+echo "" >> $GNUPLOTFILE;
+echo "" >> $GNUPLOTFILE;
+
+cat tmp1.$GNUPLOTFILE >> $GNUPLOTFILE;
+echo "" >> $GNUPLOTFILE;
+echo "" >> $GNUPLOTFILE;
+
+cat tmp2.$GNUPLOTFILE >> $GNUPLOTFILE;
+
+
+rm tmp1.$GNUPLOTFILE;
+rm tmp2.$GNUPLOTFILE;
+gnuplot $GNUPLOTFILE
+#cp $PNGOUTPUT $PAPERPATH
+#cp $OUTFILE $PAPERPATH
+cp *.eps $PAPERPATH
+echo "Fertig."
+

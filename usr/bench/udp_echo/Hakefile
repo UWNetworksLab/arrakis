@@ -1,0 +1,52 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2011, 2013, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/tests/e10ktest
+-- 
+--------------------------------------------------------------------------
+
+[ build application { target = "udpecho_e1000",
+                      cFiles = [ "udp_echo.c" ],
+                      addLibraries = libDeps [ "posixcompat", "lwip_arrakis", "e1000n" ]
+                    },
+  build application { target = "udpecho_e10kvf",
+                      cFiles = [ "udp_echo.c" ],
+                      addLibraries = libDeps [ "posixcompat", "lwip_arrakis", "e10k_vf" ]
+                    },
+  build application { target = "udpecho_e10k",
+                      cFiles = [ "udp_echo.c" ],
+                      addLibraries = libDeps [ "posixcompat", "lwip_arrakis", "e10k" ]
+                    },
+  build application { target = "udpecho_arranet_e10k_recvfrom",
+                      cFiles = [ "udp_echo.c" ],
+                      addLibraries = libDeps [ "posixcompat", "arranet", "e10k" ],
+                      addCFlags = [ "-DARRANET_RECVFROM" ]
+                    },
+  build application { target = "udpecho_arranet_e10kvf_recvfrom",
+                      cFiles = [ "udp_echo.c" ],
+                      addLibraries = libDeps [ "posixcompat", "arranet", "e10k_vf" ],
+                      addCFlags = [ "-DARRANET_RECVFROM" ]
+                    },
+  build application { target = "udpecho_arranet_e1000_recvfrom",
+                      cFiles = [ "udp_echo.c" ],
+                      addLibraries = libDeps [ "posixcompat", "arranet", "e1000n" ],
+                      addCFlags = [ "-DARRANET_RECVFROM" ]
+                    },
+  build application { target = "udpecho_arranet_e10k",
+                      cFiles = [ "udp_echo.c" ],
+                      addLibraries = libDeps [ "posixcompat", "arranet", "e10k" ]
+                    },
+  build application { target = "udpecho_arranet_e10kvf",
+                      cFiles = [ "udp_echo.c" ],
+                      addLibraries = libDeps [ "posixcompat", "arranet", "e10k_vf" ]
+                    },
+  build application { target = "udpecho_arranet_e1000",
+                      cFiles = [ "udp_echo.c" ],
+                      addLibraries = libDeps [ "posixcompat", "arranet", "e1000n" ]
+                    }
+]

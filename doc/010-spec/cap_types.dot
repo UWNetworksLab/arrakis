@@ -1,0 +1,17 @@
+digraph {
+	PhysAddr -> PhysAddr [arrowhead=normal];
+	PhysAddr -> RAM [arrowhead=normal];
+	PhysAddr -> DevFrame [arrowhead=normal];
+
+	RAM -> RAM [arrowhead=normal];
+	RAM -> Frame [arrowhead=normal];
+	RAM -> CNode[arrowhead=normal];
+	RAM -> VNode [arrowhead=normal];
+	RAM -> Dispatcher [arrowhead=normal];
+
+	Frame -> Frame [arrowhead=normal];
+	DevFrame -> DevFrame [arrowhead=normal];
+
+	Dispatcher -> EndPoint [arrowhead=normal];
+	Dispatcher -> Dispatcher [arrowhead=dot];
+};

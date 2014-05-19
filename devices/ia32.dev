@@ -1,0 +1,634 @@
+/*
+ * Copyright (c) 2008, 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ia32.dev
+ *
+ * DESCRIPTION: ia32 Architectural definitions, including Architectural MSRs
+ * 
+ * Numbers in comments refer to the Intel Architecture Manual, August 2007 
+ */
+
+device ia32 lsbfirst () "ia32 / Intel64 core architecture" {
+
+    /*
+     * ***********************
+     * Exception vectors
+     * ***********************
+     */
+    constants exc_vec width(8) "Exception vectors" {
+	vec_de  = 0	"divide error";
+	vec_db  = 1	"debug exception";
+	vec_nmi = 2	"non-maskable interrupt";
+	vec_bp  = 3	"breakpoint";
+	vec_of  = 4	"overflow";
+	vec_br  = 5	"BOUND range exceeded";
+	vec_ud  = 6	"invalid opcode";
+	vec_nm  = 7	"device not available";
+
+	vec_df = 8	"double fault";
+	vec_cso = 9	"coprocessor segment overrun";
+	vec_ts = 10	"invalid TSS";
+	vec_np = 11	"segment not present";
+	vec_ss = 12	"stack fault";
+	vec_gp = 13	"general protection fault";
+	vec_pf = 14	"page fault";
+	//		15 reserved to intel
+   
+	vec_mf = 16	"x87 FPU floating-point error";
+	vec_ac = 17	"alignment check";
+	vec_mc = 18	"machine check";
+	vec_xf = 19	"SIMD floating-point exception";
+    };
+
+    /*
+     * ***********************
+     * Address space for model-Specific registers
+     * ***********************
+     */
+    space msr(index) valuewise "Model-specific Registers";
+
+    /*
+     * ***********************
+     * Architectural MSRs
+     * ***********************
+     */
+
+    // 7.11.5
+    register mon_filter_size msr(0x06) "Monitor/Mwait filter size" type(uint64);
+    
+    // Appendix B.1
+    register platform_id ro msr(0x17) "Platform ID" {
+	_	50;
+	id	3 "platform id";
+	_	11;
+    };
+
+    register apic_base msr(0x1b) "APIC base" {
+	_	8;
+	bsp	1 ro "BSP flag";
+	_	2;
+	global	1 rw "APIC global enable";
+	base	52 rw "APIC base";
+    };
+
+    register feature_cntl rw msr(0x3a) "Feature control" {
+	lock		1 rwo "lock";
+	vmxinsmx	1 rwl "enable VMX inside SMX";
+	vmxoutsmx	1 rwl "enable VMX outside SMX";
+	_		5;
+	senter_loc	7 rwl "SENTER local function";
+	senter_glob	1 rwl "SENTER global enable";
+	_		48;
+    };
+
+    register bios_updt_trig rw msr(0x79) "BIOS update trigger" type(uint64);
+    register bios_sign_id rw msr(0x8b) "BIOS update signature" type(uint64);
+    register smm_monitor_ctl rw msr(0x9b) "SMM Monitor config" type(uint64);
+
+    register misc_enable rw msr(0x1a0) "Enable misc. features" {
+	fse		1 rw "Fast-Strings enable";
+	_		2;
+	atcce		1 rw "Automatic thermal control circuit enable";
+	_		3;
+	pma		1 ro "Performance monitoring available";
+	_		1;
+	hpd		1 rw "Hardware prefetcher disable";
+	feme		1 rw "FERR# multiplexing enable";
+	btsu		1 ro "Branch trace storage unavailable";
+	pebsu		1 ro "Precise event-based sampling unavailable";
+	tm2e		1 rw "Thermal monitor 2 enable";
+	_		2;
+	eiste		1 rw "Enhanced Intel SpeedStep tech enable";
+	_		1;
+	emfsm		1 rw "Enable monitor FSM";
+	aclpd		1 rw "Adjacent cache line prefetch disable";
+	eistsl		1 rwo "Enhanced SpeedStep select lock";
+	_		1;
+	lcmax		1 rw "Limit CPUID max val";
+	xmd		1 rw "xTPR message disable";
+	_		10;
+	xdbd		1 rw "XD bit disable";
+	_		2;
+	dcupd		1 rw "DCU prefetcher disable";
+	idad		1 rw "IDA disable";
+	ippd		1 rw "IP prefetcher disable";
+	_		24;
+    };
+
+    /*
+     * ***********************
+     * Machine check MSRs
+     * ***********************
+     */
+
+    // 14.8.3
+    register p5_mc_addr msr(0x0) "P5 MC ADDR" type(uint64);
+    register p5_mc_type msr(0x1) "P5 MC Type" type(uint64);
+
+    // 14.3.1.1
+    register mcg_cap ro msr(0x179) "Global machine check capabilities" {
+	count		8 "Num. reporting banks available";
+	ctl_p		1 "Implements MCG_CTL MSR";
+	exp_p		1 "Implements extended MC regs";
+	_		1;
+	tes_p		1 "Threshold-based error status present";
+	_		4;
+	ext_cnt		8 "Num. extended MC regs present";
+	_		40;
+    };
+
+    // 14.3.1.2
+    register mcg_status msr(0x17a) "Global machine check status" {
+	ripv		1 ro "Restart IP valid";
+	eipv		1 ro "Error IP valid";
+	mcip		1 rw "Machine check in progress";
+	_		61;
+    };
+
+    // 14.3.1.3 
+    constants mcg_ctl_val width(64) "Global MC control values" {
+	mc_enable	= 1s;
+	mc_disable	= 0x0;
+    };
+    register mcg_ctl rw msr(0x17b) "Global machine check control" 
+	type(mcg_ctl_val);
+
+    // 14.3.2.5
+    register mcg_rax rwzc msr(0x180) "State of RAX at MC" type(uint64);
+    register mcg_rbx rwzc msr(0x181) "State of RBX at MC" type(uint64);
+    register mcg_rcx rwzc msr(0x182) "State of RCX at MC" type(uint64);
+    register mcg_rdx rwzc msr(0x183) "State of RDX at MC" type(uint64);
+    register mcg_rsi rwzc msr(0x184) "State of RSI at MC" type(uint64);
+    register mcg_rdi rwzc msr(0x185) "State of RDI at MC" type(uint64);
+    register mcg_rbp rwzc msr(0x186) "State of RBP at MC" type(uint64);
+    register mcg_rsp rwzc msr(0x187) "State of RSP at MC" type(uint64);
+    register mcg_rflags rwzc msr(0x188) "State of RFLAGS at MC" type(uint64);
+    register mcg_rip rwzc msr(0x189) "State of RIP at MC" type(uint64);
+    register mcg_misc rwzc msr(0x18a) "Page fault/assist during DS" type(uint64);
+    register mcg_r8 rwzc msr(0x190) "State of R8 at MC" type(uint64);
+    register mcg_r9 rwzc msr(0x191) "State of R9 at MC" type(uint64);
+    register mcg_r10 rwzc msr(0x192) "State of R10 at MC" type(uint64);
+    register mcg_r11 rwzc msr(0x193) "State of R11 at MC" type(uint64);
+    register mcg_r12 rwzc msr(0x194) "State of R12 at MC" type(uint64);
+    register mcg_r13 rwzc msr(0x195) "State of R13 at MC" type(uint64);
+    register mcg_r14 rwzc msr(0x196) "State of R14 at MC" type(uint64);
+    register mcg_r15 rwzc msr(0x197) "State of R15 at MC" type(uint64);
+
+    // 14.3.2
+    constants tbtrk "Threshold-based error status" {
+	notrack = 0b00 "No hw status tracking";
+	green	= 0b01 "current status green";
+	yellow	= 0b10 "current status yellow";
+    };
+
+    regarray mc_ctl rw msr(0x400)[5; 4] "Machine check control" type(uint64);
+    regarray mc_status rwzc msr(0x401)[5; 4] "Machine check unit status" {
+	mca_ec		16 "MCA error code";
+	ms_ec		16 "Model-specific error code";
+	other		21 "Other information";
+	tbes		2 type(tbtrk) "Threshold-based error status";
+	_		2 mbz; // Seems to need to be written zero to
+			       // work (otherwise a GPF) but doesn't
+			       // always read as zero on 
+			       // some AMD-based processors. 
+	pcc		1 "Processor context corrupt";
+	addrv		1 "MCi_ADDR register valid";
+	miscv		1 "MCi_MISC register valid";
+	en		1 "Error enabled";
+	uc		1 "Error uncorrected";
+	over		1 "Error overflow";
+	val		1 "MCi_STATUS register valid";
+    };
+    regarray mc_addr rwzc msr(0x402)[5; 4] "Machine check addr" type(uint64);
+    regarray mc_misc rwzc msr(0x403)[5; 4] "Machine check misc" type(uint64);
+    
+
+    /*
+     * ***********************
+     * Debugging and performance
+     * ***********************
+     */
+    
+    // 18.5.1
+    register debugctl rw msr(0x1d9) "Debug control" {
+	lbr			1 "Last branch/int/exception";
+	btf			1 "Single-step on branches";
+	_			4;
+	tr			1 "Trace messages enable";
+	bts			1 "Branch trace store";
+	btint			1 "Branch trace interrupt";
+	bts_off_os		1 "BTS off in OS";
+	bts_off_usr		1 "BTS off in user code";
+	freeze_lbrs_on_pmi	1;
+	freeze_perfmon_on_pmi	1; 
+	_			19;
+    };
+
+    // 18.10
+    register tsc msr(0x10) "Time stamp counter" type(uint64);
+    
+    // 18.12.1.1
+    regtype perfevtsel "Perfmon event select" {
+	evsel		8 "Event select";
+	umask		8 "Unit mask";
+	usr		1 "User mode";
+	os		1 "OS mode";
+	e		1 "Edge detect";
+	pc		1 "Pin control";
+	intr		1 "APIC interrupt enable";
+	_		1;
+	en		1 "Enable counters";
+	inv		1 "Invert counter mask";
+	cmask		8 "Counter mask";
+	_		32;
+    };
+    register pmc0 msr(0xc1) "Perfmon counter 0" type(uint64);
+    register pmc1 msr(0xc2) "Perfmon counter 1" type(uint64);
+    register perfevtsel0 also msr(0x186) "Perfmon event select 0" type(perfevtsel);
+    register perfevtsel1 also msr(0x187) "Perfmon event select 1" type(perfevtsel);
+
+    // 18.14.1
+    regtype fixed_ctr "Fixed counter" {
+	v	40 "Value";
+	_	24;
+    };
+    register fixed_ctr0 rw msr(0x309) "Fixed-funct. counter 0" type(fixed_ctr);
+    register fixed_ctr1 rw msr(0x30a) "Fixed-funct. counter 1" type(fixed_ctr);
+    register fixed_ctr2 rw msr(0x30b) "Fixed-funct. counter 2" type(fixed_ctr);
+
+    //345 perf_capabilities
+    
+    //18.12.2.1
+    register fixed_ctr_ctl msr(0x38d) "Fixed counter control" {
+	enos0		1 "Enable 0 for OS";
+	enusrs0		1 "Enable 0 for user";
+	_		1;
+	pmi0		1 "Enable PMI on overflow 0";
+	enos1		1 "Enable 1 for OS";
+	enusrs1		1 "Enable 1 for user";
+	_		1;
+	pmi1		1 "Enable PMI on overflow 1";
+	enos2		1 "Enable 2 for OS";
+	enusrs2		1 "Enable 2 for user";
+	_		1;
+	pmi2		1 "Enable PMI on overflow 2";
+	_		52;
+    };	
+
+    regtype perf_global "Perfmon global status/overflow" {
+	pmc0		1 "PMC0 overflow";
+	pmc1		1 "PMC1 overflow";
+	_		30;
+	ctr0		1 "Fixed CTR0 overflow";
+	ctr1		1 "Fixed CTR1 overflow";
+	ctr2		1 "Fixed CTR2 overflow";
+	_		27;
+	ovfbuf		1 "Overflow buffer";
+	condchgd	1 "Condition changed";
+    };
+
+    register perf_global_status ro msr(0x38e) "Perfmon global status" 
+	type(perf_global);
+    register perf_global_over rwzc msr(0x390) "Perfmon global overlflow control" 
+	type(perf_global);
+
+    register perf_global_ctrl msr(0x38f) "Perfmon global control" {
+	pmc0		1 "PMC0 enable";
+	pmc1		1 "PMC1 enable";
+	_		30;
+	ctr0		1 "Fixed CTR0 enable";
+	ctr1		1 "Fixed CTR1 enable";
+	ctr2		1 "Fixed CTR2 enable";
+	_		29;
+    };
+
+    // 18.14.4.1
+    register pebs_enable rw msr(0x3f1) "Precise event-based sampling enable" {
+	en		1 "enable";
+	_		63;
+    };
+
+    /*
+     * ***********************
+     * Long mode operation
+     * ***********************
+     */
+
+    // 4.13
+    register efer msr(0xc0000080) "Extended features enable" {
+	sce	1 rw "SYSCALL enable";
+	_	7;
+	lme	1 rw "Long mode enable";
+	_	1;
+	lma	1 rw "Long mode active"; // Should be rw, but must be
+					 // preserved in practice!
+	nxe	1 rw "No-execute enable";
+	_	52;
+    };
+
+    // 4.8.8
+    register star msr(0xc0000081) "Syscall target address" {
+	_	32;
+	call	16 "SYSCALL CS and SS";
+	ret	16 "SYSRET CS and SS";
+    };
+
+    register lstar msr(0xc0000082) "Long mode Syscall target address" 
+	type(uint64);
+
+    register fmask msr(0xc0000084) "SYSCALL EFLAGS mask" {
+	v	32 "Value";
+	_	32;
+    };
+    register fs_base msr(0xc0000100) "FS base" type(uint64);
+    register gs_base msr(0xc0000101) "GS base" type(uint64);
+    register kernel_gs_base msr(0xc0000102) "Swap target of GS base" type(uint64);
+
+
+    /*
+     * ***********************
+     * Memory type range registers
+     * ***********************
+     */
+
+    // 10.11.1
+    register mtrrcap ro msr(0xfe) "MTRR Capabilities" {
+	vcnt	8 "Number of variable range registers";
+	fix	1 "Fixed range registers supported";
+	_	1;
+	wc	1 "Write-combining memory type supported";
+	_	53;
+    };
+
+    // 10.11.2
+    register mtrr_def_type rw msr(0x2ff) "MTRR type definition" {
+	tpe	8 "Default memory type";
+	_	2;
+	fe	1 "Fixed-range MTRRs enable/disable";
+	e	1 "MTRR enable/disable";
+	_	52;
+    };
+
+    regarray mtrr_physbase rw msr(0x200)[8;2] "MTRR physical base" {
+	tpe	8 "Type";
+	_	4;
+	base	52 "Physical base address";
+    };
+
+    regarray mtrr_physmask rw msr(0x201)[8;2] "MTRR physical mask" {
+	_	11;
+	v	1 "Valid";
+	mask	52 "Physical mask";
+    };
+
+    register mtrr_fix64k_00000 rw msr(0x250) "MTRR fix64k_00000" type(uint64);
+    register mtrr_fix16k_80000 rw msr(0x258) "MTRR fix16k_80000" type(uint64);
+    register mtrr_fix16k_a0000 rw msr(0x259) "MTRR fix16k_a0000" type(uint64);
+    register mtrr_fix4k_c0000 rw msr(0x268) "MTRR fix4k_c0000" type(uint64);
+    register mtrr_fix4k_c8000 rw msr(0x269) "MTRR fix4k_c8000" type(uint64);
+    register mtrr_fix4k_d0000 rw msr(0x26a) "MTRR fix4k_d0000" type(uint64);
+    register mtrr_fix4k_d8000 rw msr(0x26b) "MTRR fix4k_d8000" type(uint64);
+    register mtrr_fix4k_e0000 rw msr(0x26c) "MTRR fix4k_e0000" type(uint64);
+    register mtrr_fix4k_e8000 rw msr(0x26d) "MTRR fix4k_e8000" type(uint64);
+    register mtrr_fix4k_f0000 rw msr(0x26e) "MTRR fix4k_f0000" type(uint64);
+    register mtrr_fix4k_f8000 rw msr(0x26f) "MTRR fix4k_f8000" type(uint64);
+
+    // 10.12
+    constants pat_val "Page attribute table values" {
+	uc	= 0x00 "Uncacheable";
+	wc	= 0x01 "Write combining";
+	wt	= 0x04 "Write through";
+	wp	= 0x05 "Write protected";
+	wb	= 0x06 "Write back";
+	ucd	= 0x07 "Uncached";
+    };
+    register cr_pat rw msr(0x277) "Page attribute table control" {
+	pa0	8 type(pat_val);
+	pa1	8 type(pat_val);
+	pa2	8 type(pat_val);
+	pa3	8 type(pat_val);
+	pa4	8 type(pat_val);
+	pa5	8 type(pat_val);
+	pa6	8 type(pat_val);
+	pa7	8 type(pat_val);
+    };
+
+
+    /*
+     * ***********************
+     * Power and thermal
+     * ***********************
+     */
+
+    // 13.2
+    register mperf rw msr(0xe7) "Measured performance" type(uint64);
+    register aperf rw msr(0xe8) "Actual performance" type(uint64);
+
+    // 13.3
+    regtype perf_pnt "Performance point" {
+	eist	16 "EIST transition target";
+	_	16;
+	ida	1 "IDA disengage";
+	_	31;
+    };
+    register perf_ctl rw msr(0x198) "Performance control" type(perf_pnt);
+    register perf_status ro msr(0x199) "Performance status" type(perf_pnt);
+
+    // 13.5.3
+    register clock_modulation rw msr(0x19a) "Clock modulation" {
+	_	1;
+	dc	2 "On-Demand clock modulation duty cycle (x12.5%)";
+	en	1 "Enable";
+	_	60;
+    };
+
+    // 13.5.5.2
+    register therm_interrupt rw msr(0x19b) "Thermal monitor interrupt" {
+	ht	1 "High-temperature enable";
+	lt	1 "Low-temperature enable";
+	prochot	1 "PROCHOT# enable";
+	forcpr	1 "FORCEPR# enable";
+	over	1 "Overheat enable";
+	_	3;
+	tt1	7 "Thermal threshold 1 value";
+	tt1int	1 "Thermal threshold 1 enable";
+	tt2	7 "Thermal threshold 2 value";
+	tt2int	1 "Thermal threshold 2 enable";
+	_	40;
+    };
+    register therm_status msr(0x19c) "Thermal status" {
+	therm	1 ro "Status flag";
+	thermlg	1 rwzc "Log flag";
+	porf	1 ro "PROCHOT# or FORCEPR# asserted";
+	porflg	1 rwzc "PROCHOT# or FORCEPR# log";
+	cts	1 ro "Critical temperature status";
+	ctslg	1 rwzc "Critical temperature log";
+	tt1	1 ro "Thermal threshold status 1";
+	tt1lg	1 rwzc "Thermal threshold log 1";
+	tt2	1 ro "Thermal threshold status 2";
+	tt2lg	1 rwzc "Thermal threshold log 2";
+	_	6;
+	dig	7 ro "Digital readout in Celsius";
+	_	4;
+	res	4 ro "Resolution in degrees Celsius";
+	rv	1 ro "Reading valid";
+	_	32;
+    };
+    
+
+    /*
+     * ***********************
+     * AMD Performance Monitoring (Family 10h CPUs)
+     * ***********************
+     */
+
+     // 3.12
+     regtype amd_perfevtsel "Perfmon event select" {
+          evsel		8 "Event select";
+          umask		8 "Unit mask";
+          usr		1 "User mode";
+          os		1 "OS mode";
+          e		1 "Edge detect";
+	  _		1;
+          intr		1 "APIC interrupt enable";
+          _		1;
+          en		1 "Enable counters";
+          inv		1 "Invert counter mask";
+          cmask		8 "Counter mask";
+	  evsel_hi	4 "Event select Hi";
+	  _		4;
+	  guestonly	1 "Guest only counter";
+	  hostonly	1 "Host only counter";
+          _		22;
+     };
+
+     // 10.1
+     register perfctr0 msr(0xc0010004) "Performance Counter 0" type(uint64);
+     register perfctr1 msr(0xc0010005) "Performance Counter 1" type(uint64);
+     register perfctr2 msr(0xc0010006) "Performance Counter 2" type(uint64);
+     register perfctr3 msr(0xc0010007) "Performance Counter 3" type(uint64);
+
+     // 10.2
+     register amd_perfevtsel0 msr(0xc0010000) "Performance Event Select 0" type(amd_perfevtsel);
+     register amd_perfevtsel1 msr(0xc0010001) "Performance Event Select 1" type(amd_perfevtsel);
+     register amd_perfevtsel2 msr(0xc0010002) "Performance Event Select 2" type(amd_perfevtsel);
+     register amd_perfevtsel3 msr(0xc0010003) "Performance Event Select 3" type(amd_perfevtsel);
+
+     /*
+      * AMD Hardware Configuration (Athlon XP and Opteron)
+      *
+      * BIOS and Kernel Developer's Guide for AMD NPT Family 0fh Processors
+      * BIOS and Kernel Developer's Guide for AMD NPT Family 10h Processors
+      */
+
+     // 14.2.1.3
+     register amd_hwcr msr(0xc0010015) "Hardware Configuration" {
+     	      smmlock  		       1 "SMM code lock";
+	      slowfence		       1 "Slow SFENCE Enable";
+	      _			       1 mbz;
+	      tlbcachedis	       1 "Cacheable Memory Disable";
+	      invd_wbinvd	       1 "INVD to WBINVD conversion";
+	      _			       1;
+	      ffdis		       1 "TLB flush filter disable";
+	      dislock		       1 "Disable x86 LOCK prefix functionality";
+	      ignneem		       1 "IGNNE port emulation enable";
+	      monmwaitdis	       1 "MONITOR and MWAIT disable";
+	      monmwaituseren	       1 "MONITOR/MWAIT user mode enable";
+	      limitcpuidstdmaxval      1 "Limit CPUID standard maximum value";
+	      hltxspcycen	       1 "Halt-exit special bus cycle enable";
+	      smispcycdis	       1 "SMI special bus cycle disable";
+	      rsmspcycdis	       1 "RSM special bus cycle disable";
+	      ssedis		       1 "SSE instructions disable";
+	      _			       1;
+	      wrap32dis		       1 "32-bit address wrap disable";
+	      mcstatuswren	       1 "Machine check status write enable";
+	      _			       1;
+	      iocfggpfault	       1 "IO-space configuration cause GP fault";
+	      misalignssedis	       1 "Misaligned SSE mode disable";
+	      _			       1;
+	      forceusrdwrszprb	       1 "Force probes for upstream RdSized/WrSized";
+	      tscfreqsel	       1 "TSC frequency select";
+	      _			       39;
+     };
+
+    /*
+     * ***********************
+     * Not yet typed in!
+     * ***********************
+     */
+
+    //600 ds_area
+
+    /*
+     * ***********************
+     * AND64/Intel64 paged virtual memory
+     * ***********************
+     */
+
+     datatype vaddr_4k "4kB virtual address (long mode)" {
+	 ppo	12 "Physical page offset";
+	 pto	9  "Page-table offset";
+	 pdo	9  "Page-directory offset";
+	 pdpo	9  "Page-directory-pointer offset";
+	 pml4o  9  "Page-map-level-4 offset";
+	 se	16 "Sign extend";
+     };
+
+     datatype pte_4k "Any-level page table entry, 4kB mapping" {
+	 p	1  "Present";
+	 rw	1  "Read/write";
+	 us	1  "User/Supervisor";
+	 pwt	1  "Page-level writethrough";
+	 pcd	1  "Page-level cache disable";
+	 a	1  "Accessed";
+	 d	1  "Dirty";
+	 ps	1  "Page size";
+	 g	1  "Global page";
+	 base	42 "Base address of next level";
+	 avail	12 "Available";
+	 nx	1  "Np execute";
+     };
+
+     datatype pde_2M "Page directory entry, 2MB mapping" {
+	 p	1  "Present";
+	 rw	1  "Read/write";
+	 us	1  "User/Supervisor";
+	 pwt	1  "Page-level writethrough";
+	 pcd	1  "Page-level cache disable";
+	 a	1  "Accessed";
+	 d	1  "Dirty";
+	 ps	1  "Page size (must be 1)";
+	 g	1  "Global page";
+	 _	3;
+	 pat	1  "Page-attribute table";
+	 _	8;
+	 base	30 "Physical page base address";
+	 avail	12 "Available";
+	 nx	1  "Np execute";
+     };
+
+     datatype pdpe_1G "Page directory ptr entry, 1GB mapping" {
+	 p	1  "Present";
+	 rw	1  "Read/write";
+	 us	1  "User/Supervisor";
+	 pwt	1  "Page-level writethrough";
+	 pcd	1  "Page-level cache disable";
+	 a	1  "Accessed";
+	 d	1  "Dirty";
+	 ps	1  "Page size (must be 1)";
+	 g	1  "Global page";
+	 _	3;
+	 pat	1  "Page-attribute table";
+	 _	16;
+	 base	22 "Physical page base address";
+	 avail	12 "Available";
+	 nx	1  "Np execute";
+     };
+    
+};

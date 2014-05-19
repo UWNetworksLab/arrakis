@@ -1,0 +1,46 @@
+%% 
+%%  Template for Barrelfish technical notes.
+%%
+%%  Modified from the University of Stirling LaTeX technical report
+%%  style file and template with much gratitude.
+%%  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (c) 2011, ETH Zurich.
+% All rights reserved.
+%
+% This file is distributed under the terms in the attached LICENSE file.
+% If you do not find this file, copies can be found by writing to:
+% ETH Zurich D-INFK, Universitaetstr. 6, CH-8092 Zurich. Attn: Systems Group.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \documentclass[a4paper]{article} 
+\documentclass[a4paper,twoside]{report} % If you want a report
+\usepackage{bftn}
+
+\title{Barrelfish Glossary}
+\author{Barrelfish Project}
+\email{info@barrelfish.org}
+\tnnumber{001}
+\tnkey{Glossary}
+
+\begin{document}
+\maketitle			% Uncomment for final draft
+
+\begin{versionhistory}
+\vhEntry{1.0}{31.05.2010}{TR}{Initial version}
+\vhEntry{2.0}{01.12.2013}{TR}{Updated with new developments}
+\end{versionhistory}
+
+% \intro{Abstract}		% Insert abstract here
+% \intro{Acknowledgements}	% Uncomment (if needed) for acknowledgements
+% \tableofcontents		% Uncomment (if needed) for final draft
+% \listoffigures		% Uncomment (if needed) for final draft
+% \listoftables			% Uncomment (if needed) for final draft
+\chapter*{Glossary}		% Modify as required for article
+
+\begin{description}
+\input{gloss-from-haskell}
+\end{description}
+
+\end{document}

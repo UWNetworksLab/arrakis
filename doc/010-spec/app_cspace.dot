@@ -1,0 +1,15 @@
+digraph cspace {
+	rankdir=LR;
+
+	node [shape = record, height = .1];
+	dcb [label = "<n>DCB|<0>rootcn|<1>dispatcher", style=bold];
+	rootcn [label = "<n>\N|<0>0x0 taskcn|<1>0x1 pagecn|<2>0x2 smallcn|...|<4>0x4 segcn"];
+	taskcn [label = "<n>\N|<0>0x0 NULL|<1>0x1 DCB|<2>0x2 rootcn||<4>0x4 dispframe|0x5 IRQTable|0x6 IO|0x7 BootInfo|0x8 Kernel|0x9 VMM request EP|0xa self EP|0xb Args frame|0xc Init EP|..."];
+	pagecn [label = "<n>\N|0x0 PML4|0x1 PDPT|...|PDIR|...|PTABLE|..."];
+	rootcn:0 -> taskcn:n [label = "0...0 (20 bits)"];
+	rootcn:0 -> pagecn:n;
+	dcb:0 -> rootcn:n;
+        dcb:1 -> taskcn:4;
+	taskcn:1 -> dcb:n;
+	taskcn:2 -> rootcn:n;
+}

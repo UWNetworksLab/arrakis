@@ -1,0 +1,89 @@
+Port of OpenSSH 6.0p1 to Barrelfish
+================================================================================
+Disclamer: This port is not secure, do not use in any production environment.
+
+This port of OpenSSH 6.0p1 to Barrelfish does not support all the features of
+the vanilla OpenSSH 6.0p1. See *Notes about the Barrelfish Port* and *Known
+Issues*
+
+Setup in real hardware
+--------------------------------------------------------------------------------
+1) Adjust menu.lst. Replace
+
+  module	/x86_32/sbin/serial
+  module	/x86_32/sbin/angler serial0.terminal xterm
+
+  by
+
+  modulenounzip /sshd_ramfs.cpio.gz nospawn
+  module  /x86_64/sbin/sshd -d -d -d
+
+2) Start Barrelfish and watch the boot messages to get the IP address.
+  This will start up the OpenSSH server sshd. If everything goes well, you
+  see the following message.
+
+  sshd.0: Server listening on 0.0.0.0 port 22.
+
+3) Restrict the permissions of the private key in usr/openssh/ramdisk/id_rsa.
+
+   chmod 600 usr/openssh/ramdisk/id_rsa
+
+   Otherwise ssh will isse the following warning and ignore the key.
+
+   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+   @         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+   Permissions 0664 for 'id_rsa' are too open.
+   It is required that your private key files are NOT accessible by others.
+   This private key will be ignored.
+
+4) Connect to the OpenSSH server using
+
+  ssh user@<server_ip> -i <identity_file> -v -v -v
+
+  where <server_ip> is the IP address of the sshd server and <identity_file> is
+  the private key found in usr/openssh/ramdisk/id_rsa.
+
+
+Setup in QEMU
+--------------------------------------------------------------------------------
+Step 1), 2) and 3) are the same as on real hardware.
+
+4) Adjust the QEMU_CMD in <build_dir>/symbolic_targets.mk to forward a port, for
+   example port 2222, on your localhost to port 22 of Barrelfish running inside
+   QEMU. This can be achieved by adding "-net hostfwd=tcp::2222-:22" to
+   QEMU_CMD. The full QEMU_CMD for x86_64 then looks as follows:
+
+   QEMU_CMD=qemu-system-x86_64 -smp 2 -m 1024 -net nic,model=ne2k_pci \
+            -net user,hostfwd=tcp::2222-:22 $(AHCI) -net dump \
+            -fda $(SRCDIR)/tools/grub-qemu.img -tftp $(PWD) -nographic
+
+5) Connect to the OpenSSH server using
+
+   ssh user@localhost -i <identify_file> -v -v -v -p 2222
+
+Notes about the Barrelfish Port
+--------------------------------------------------------------------------------
+* This port of OpenSSH to Barrelfish is not secure. Since Barrelfish currently
+  does not have /dev/random or any other source of entropy, we use a static
+  seed at initialization time.
+
+* Privilege Separation as described in usr/openssh/src/README.privsep is
+  not supported.
+
+* Host key verification via DNS as described in usr/openssh/src/README.dns is
+  not supported.
+
+* The only supported authentication method is using public key cryptography.
+
+* All modifications done to the vanilla OpenSSH 6.0p1 code are guarded with
+  #ifdef BARRELFISH ... #endif. As Barrelfish evolves and gets more
+  mature, it might be possible to remove some of the modifications.
+
+Known Issues
+--------------------------------------------------------------------------------
+* When using QEMU, sshd crashes sometimes during serving the banner with the
+  following error message. This only occured in QEMU but not on real hardware.
+
+  Assertion "tcp_receive: valid queue length" failed at line 939 in ../lib/lwip/src/core/tcp_in.c
+  Aborted

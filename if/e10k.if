@@ -1,0 +1,69 @@
+/*
+ * Copyright (c) 2007-2011, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * This interface is used in the e10k driver for the device specific
+ * communication between the device manager and the queue manager. It is
+ * exposed by the device manager, and every queue manager connects to it.
+ */
+interface e10k "e10k queue management interface" {
+    typedef enum {PORT_TCP, PORT_UDP} port_type;
+    alias qid uint8;
+
+    call request_device_info();
+    response queue_init_data(cap registers, uint64 macaddr);
+
+    /* Upon initialization the queue driver registers its memory with
+       the device manager. */
+    call register_queue_memory(qid    id,
+                               cap    tx,
+                               cap    txhwb,
+                               cap    rx,
+                               uint32 rxbufsz,
+                               int16  msix_intvec,
+                               uint8  msix_intdest,
+                               bool   use_irq,
+                               bool   use_rsc,
+			       uint64 tx_va,
+			       uint64 rx_va,
+			       uint64 txhwb_va);
+    response queue_memory_registered();
+
+    /* Modify interrupt rate for a particular queue */
+    call set_interrupt_rate(qid id, uint16 rate);
+
+    /* FIXME: this is not technically a response, but a request by the server,
+              hope this works anyway... I'd like the dev mgr to be server. */
+    /* Tells queue driver to write the tail pointers for the rx and
+       tx queues after initialization or reset */
+    response write_queue_tails();
+
+    /* Called by queue manager if it is done, and is going to terminate. */
+    call terminate_queue(qid id);
+    response queue_terminated();
+
+    /*****************************************************
+     * Filter management (used by device  manager library)
+     *****************************************************/
+
+    call register_port_filter(uint64    buf_id_rx,
+                              uint64    buf_id_tx,
+                              qid       queue,
+                              port_type type,
+                              uint16    port);
+    response filter_registered(uint64    buf_id_rx,
+                               uint64    buf_id_tx,
+                               errval err,
+                               uint64 filter);
+
+    call unregister_filter(uint64 filter);
+    response filter_unregistered(uint64 filter, errval err);
+
+                            
+};

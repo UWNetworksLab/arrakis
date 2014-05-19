@@ -1,0 +1,142 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_csi2_a_regs2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_csi2_a_regs2 msbfirst ( addr base ) "" {
+    
+    
+    register csi2_ctx_transcodeh_i_0 addr(base, 0x0) "Transcode configuration register: defines horizontal frame cropping" {
+        _ 3 mbz;
+        hcount 13 rw "Pixels to output per line when the values is between 1 and 8191. Pixels HSKIP-WIDTH pixels are output when HCOUNT=0. WIDTH corresponds to the image width provided by the sensor.";
+        _ 3 mbz;
+        hskip 13 rw "Pixel to skip horizontally. Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodeh_i_1 addr(base, 0x8) "Transcode configuration register: defines horizontal frame cropping" {
+        _ 3 mbz;
+        hcount 13 rw "Pixels to output per line when the values is between 1 and 8191. Pixels HSKIP-WIDTH pixels are output when HCOUNT=0. WIDTH corresponds to the image width provided by the sensor.";
+        _ 3 mbz;
+        hskip 13 rw "Pixel to skip horizontally. Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodeh_i_2 addr(base, 0x10) "Transcode configuration register: defines horizontal frame cropping" {
+        _ 3 mbz;
+        hcount 13 rw "Pixels to output per line when the values is between 1 and 8191. Pixels HSKIP-WIDTH pixels are output when HCOUNT=0. WIDTH corresponds to the image width provided by the sensor.";
+        _ 3 mbz;
+        hskip 13 rw "Pixel to skip horizontally. Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodeh_i_3 addr(base, 0x18) "Transcode configuration register: defines horizontal frame cropping" {
+        _ 3 mbz;
+        hcount 13 rw "Pixels to output per line when the values is between 1 and 8191. Pixels HSKIP-WIDTH pixels are output when HCOUNT=0. WIDTH corresponds to the image width provided by the sensor.";
+        _ 3 mbz;
+        hskip 13 rw "Pixel to skip horizontally. Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodeh_i_4 addr(base, 0x20) "Transcode configuration register: defines horizontal frame cropping" {
+        _ 3 mbz;
+        hcount 13 rw "Pixels to output per line when the values is between 1 and 8191. Pixels HSKIP-WIDTH pixels are output when HCOUNT=0. WIDTH corresponds to the image width provided by the sensor.";
+        _ 3 mbz;
+        hskip 13 rw "Pixel to skip horizontally. Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodeh_i_5 addr(base, 0x28) "Transcode configuration register: defines horizontal frame cropping" {
+        _ 3 mbz;
+        hcount 13 rw "Pixels to output per line when the values is between 1 and 8191. Pixels HSKIP-WIDTH pixels are output when HCOUNT=0. WIDTH corresponds to the image width provided by the sensor.";
+        _ 3 mbz;
+        hskip 13 rw "Pixel to skip horizontally. Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodeh_i_6 addr(base, 0x30) "Transcode configuration register: defines horizontal frame cropping" {
+        _ 3 mbz;
+        hcount 13 rw "Pixels to output per line when the values is between 1 and 8191. Pixels HSKIP-WIDTH pixels are output when HCOUNT=0. WIDTH corresponds to the image width provided by the sensor.";
+        _ 3 mbz;
+        hskip 13 rw "Pixel to skip horizontally. Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodeh_i_7 addr(base, 0x38) "Transcode configuration register: defines horizontal frame cropping" {
+        _ 3 mbz;
+        hcount 13 rw "Pixels to output per line when the values is between 1 and 8191. Pixels HSKIP-WIDTH pixels are output when HCOUNT=0. WIDTH corresponds to the image width provided by the sensor.";
+        _ 3 mbz;
+        hskip 13 rw "Pixel to skip horizontally. Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodev_i_0 addr(base, 0x4) "Transcode configuration register: defines vertical frame cropping" {
+        _ 3 mbz;
+        vcount 13 rw "Lines to output per frame when the values is between 1 and 8191. Pixels VSKIP-HEIGHT pixels are output when VCOUNT=0. HEIGHT corresponds to the image height provided by the sensor.";
+        _ 3 mbz;
+        vskip 13 rw "Pixel to skip vertically Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodev_i_1 addr(base, 0xC) "Transcode configuration register: defines vertical frame cropping" {
+        _ 3 mbz;
+        vcount 13 rw "Lines to output per frame when the values is between 1 and 8191. Pixels VSKIP-HEIGHT pixels are output when VCOUNT=0. HEIGHT corresponds to the image height provided by the sensor.";
+        _ 3 mbz;
+        vskip 13 rw "Pixel to skip vertically Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodev_i_2 addr(base, 0x14) "Transcode configuration register: defines vertical frame cropping" {
+        _ 3 mbz;
+        vcount 13 rw "Lines to output per frame when the values is between 1 and 8191. Pixels VSKIP-HEIGHT pixels are output when VCOUNT=0. HEIGHT corresponds to the image height provided by the sensor.";
+        _ 3 mbz;
+        vskip 13 rw "Pixel to skip vertically Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodev_i_3 addr(base, 0x1C) "Transcode configuration register: defines vertical frame cropping" {
+        _ 3 mbz;
+        vcount 13 rw "Lines to output per frame when the values is between 1 and 8191. Pixels VSKIP-HEIGHT pixels are output when VCOUNT=0. HEIGHT corresponds to the image height provided by the sensor.";
+        _ 3 mbz;
+        vskip 13 rw "Pixel to skip vertically Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodev_i_4 addr(base, 0x24) "Transcode configuration register: defines vertical frame cropping" {
+        _ 3 mbz;
+        vcount 13 rw "Lines to output per frame when the values is between 1 and 8191. Pixels VSKIP-HEIGHT pixels are output when VCOUNT=0. HEIGHT corresponds to the image height provided by the sensor.";
+        _ 3 mbz;
+        vskip 13 rw "Pixel to skip vertically Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodev_i_5 addr(base, 0x2C) "Transcode configuration register: defines vertical frame cropping" {
+        _ 3 mbz;
+        vcount 13 rw "Lines to output per frame when the values is between 1 and 8191. Pixels VSKIP-HEIGHT pixels are output when VCOUNT=0. HEIGHT corresponds to the image height provided by the sensor.";
+        _ 3 mbz;
+        vskip 13 rw "Pixel to skip vertically Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodev_i_6 addr(base, 0x34) "Transcode configuration register: defines vertical frame cropping" {
+        _ 3 mbz;
+        vcount 13 rw "Lines to output per frame when the values is between 1 and 8191. Pixels VSKIP-HEIGHT pixels are output when VCOUNT=0. HEIGHT corresponds to the image height provided by the sensor.";
+        _ 3 mbz;
+        vskip 13 rw "Pixel to skip vertically Valid values: 0-8191";
+    };
+    
+    register csi2_ctx_transcodev_i_7 addr(base, 0x3C) "Transcode configuration register: defines vertical frame cropping" {
+        _ 3 mbz;
+        vcount 13 rw "Lines to output per frame when the values is between 1 and 8191. Pixels VSKIP-HEIGHT pixels are output when VCOUNT=0. HEIGHT corresponds to the image height provided by the sensor.";
+        _ 3 mbz;
+        vskip 13 rw "Pixel to skip vertically Valid values: 0-8191";
+    };
+};

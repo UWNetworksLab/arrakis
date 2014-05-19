@@ -1,0 +1,27 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+--------------------------------------------------------------------------
+
+[ build library { target = "phoenix",
+                  cFiles = [ "iterator.c", "locality.c", "map_reduce.c",
+                           "mcs.c", "memory.c", "processor.c", "pt_mutex.c",
+                           "scheduler.c", "synch.c", "taskQ.c", "tpool.c" ],
+		  omitCFlags = [ "-Wshadow", "-Wstrict-prototypes", 
+                                 "-Wmissing-prototypes",
+                                 "-Wmissing-declarations",
+                                 "-Werror", "-Wold-style-definitions",
+                                 "-Wmissing-field-initializers",
+                                 "-Wredundant-decls", "-std=c99" ],
+                  addCFlags = [ "-Wno-unused", 
+                                "-Wno-old-style-definition", 
+                                "-Wno-implicit-function-declaration", 
+                                "-Wno-aggregate-return", "-std=gnu99" ],
+                  architectures = [ "x86_64" ]
+                }
+]

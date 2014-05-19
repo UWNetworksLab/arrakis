@@ -1,0 +1,182 @@
+/*
+ * Copyright (c) 2010, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * rck.dev
+ *
+ * DESCRIPTION: Intel Rock Creek (Single Chip Cloud Computer) tile registers
+ * 
+ * Numbers in comments refer to the "Intel Rock Creek External
+ * Architecture Specification" (EAS) Revision 0.91, September 16, 2009
+ * (Contacts: Yatin Hoskote and Greg Ruhl).  See also: "Rock Creek
+ * Platform - Quick Reference Guide" (QRG), Michael Riepen, Intel
+ * Braunschweig, September 2009.
+ * 
+ * Updated based on the "Intel SCC External Architecture Specification"
+ * (EAS) Revision 0.97, June 21, 2010. 
+ * 
+ */
+
+device rck msbfirst ( addr base ) "Intel Rock Creek Tile registers" {
+
+  // 3.2.6.1.2
+  regarray glcfg addr(base, 0x0010)[2;0x8] "Gauss Lake (core) config" {
+    _		6 mbz;
+    bp3		1 ro		"Breakpoint 3 detected";
+    bp2		1 ro		"Breakpoint 2 detected";
+    bp1		1 ro		"Breakpoint 1 or CTR1 PM event detected";
+    bp0		1 ro		"Breakpoint 0 or CTR0 PM event detected";
+    ierr	1 rwc		"0 if internal error detected";
+    ferr	1 rwc		"0 if FPU error detected";
+    prdy	1 ro		"Processor in probe mode";
+    smiact	1 ro		"0 if System Mgmt Mode active";
+    shutdown	1 rwc		"Shutdown captured on internal FSB";
+    flushc	1 rwc		"Flush captured on internal FSB";
+    halt	1 rwc		"Halt captured on internal FSB";
+    wrback	1 rwc		"Write back captured on internal FSB";
+    flushack	1 rwc		"Flush ack captured on internal FSB";
+    btrcmsg	1 rwc		"Branch Trace Msg captured on internal FSB";
+    apic1en	1 rw		"Core 1 APIC enable";
+    apic0en	1 rw		"Core 0 APIC enable";
+    cputyp	1 rw		"Dual processor mode (do not use!)";
+    a20m	1 rw		"Disable physical A20 mask";
+    smi		1 rw		"SMI disable";
+    stpclk	1 rw		"Enable processor clock";
+    rs		1 rw		"Normal mode (0=probe mode)";
+    ignne	1 rw		"Core freezes on FP error";
+    flush	1 rw		"Flush is inactive";
+    init	1 rw		"Soft-reset active";
+    intr	1 rw		"Maskable interrupt active";
+    nmi		1 rw		"NMI active";
+  };
+
+  // 3.2.6.1.3
+  regarray l2cfg rw addr(base, 0x0020)[2;0x8] "L2 cache config" {
+    _			18 mbz;
+    stopl2ccclk		1 	"Clock gates the cache controller";
+    stopl2arrayclk	1 	"Clock gates the data/tag array prtn";
+    blfloaten		1 	"Bit line float enable (to save power)";
+    wlslpen		1 	"Word line driver sleep enable";
+    wtslpen		1 	"Write bit line driver sleep enable";
+    flipen		1 	"UNUSED";
+    dataeccen		1 	"Enable data ECC";
+    tageccen		1 	"Enable tag ECC";
+    slpbypass		1 	"Disable sleep";
+    waydisable		1 	"Disable L2 cache";
+    bbl2slppgm		4 	"Programmable sleep state";
+  };
+
+  // The two documents seem at odds here.  Both agree on a sensor
+  // control register, the fields are from QRG:
+  register sensor rw addr(base, 0x0040) "Sensor register" {
+    _			18 mbz;
+    en			1		"Sensor enable";
+    pulsecnt		13		"Gate pulse counter";
+  };
+  // ... but only the EAS has a value register here, without defining
+  // it: 
+  register sensval rw addr(base, 0x0048) "Sensor value" {
+    _			6 mbz;
+    val			26		"Sensor value";
+  };
+
+  // 3.2.6.1.1
+  register gcbcfg rw addr(base, 0x0080) "Global Clock Unit Config" {
+    _		6 mbz;
+    rcrs	7 	"Router clock ratio setting";
+    tcrs	7 	"Tile clock ratio setting";
+    tcds	4 	"Tile clock divider setting";
+    srel20	1 		"Synch. reset enable for L2 0";
+    srel21	1 		"Synch. reset enable for L2 1";
+    srec1	1 		"Synch. reset enable for core 1";
+    srec0	1 		"Synch. reset enable for core 0";
+    resl21	1 		"Reset for L2 1";
+    resl20	1 		"Reset for L2 0";
+    resc1	1 		"Reset for core 1";
+    resc0	1 		"Reset for core 0";
+  };
+
+  constants subid "Tile port identifiers" {
+    core0	= 0b000		"Core 0 or RTG";
+    core1	= 0b001		"Core 1";
+    crb		= 0b010		"CRB";
+    mpb		= 0b011		"MPB";
+    east	= 0b100		"East";
+    south	= 0b101		"South";
+    west	= 0b110		"West";
+    north	= 0b111		"North";
+  };
+
+  // Defined in the QRG:
+  register tileid ro addr(base, 0x0100) "Tile id" {
+    _		21;
+    y		4		"Y coordinate of tile";
+    x		4		"X coordinate of tile";
+    reqid	3 type(subid)	"Requester sub-id";
+  }; 
+
+  // Define in both EAS and QRG:
+  regarray tas rwc addr(base, 0x0200)[2;0x200] "Test and Set" {
+    _		31 mbz;
+    val		1 rwc	"Test-and-set bit";
+  };
+  
+  // Lookup table entries
+  constants mcdests "Memory controller tile identifiers" {
+    mc1_tile	= 0x00		"Tile of MC 1";
+    mc2_tile	= 0x50		"Tile of MC 2";
+    mc3_tile	= 0x02		"Tile of MC 3";
+    mc4_tile	= 0x52		"Tile of MC 4";
+    sif_tile	= 0x30		"Tile of System Interface";
+    // FIXME: This is probably wrong!
+    rpc_tile	= 0x32		"Tile of Rock Creek Power Controller";
+  };
+  constants mcsubdests "Subdestinations for memory controllers" {
+    mc1_sd	= 0b110		"MC1: West of 0,0";
+    mc2_sd	= 0b100		"MC2: East of 5,0";
+    // FIXME: Need values for commented out parts
+//    mc3_sd	= 0b110		"MC3: West of 0,2";
+//    mc4_sd	= 0b100		"MC4: East of 5,2";
+    sif_sd	= 0b101		"System Interface: South of 3,0";
+//    rpc_sd	= 0b101		"RPC Interface: South of 0,0";
+  };
+
+  regtype lute "Lookup table entry" {
+    _		10 mbz;
+    bypass	1		"Bypass";
+    route	8		"Core identifier (x,y)";
+    subdest	3 type(subid)	"Destination sub-id";
+    addrbits	10		"Top 10 bits of new 34-bit physical address";
+  };
+  regarray lut0 rw addr(base, 0x0800)[256;8] "Core 0 lookup table" type(lute);
+  regarray lut1 rw addr(base, 0x1000)[256;8] "Core 1 lookup table" type(lute);
+
+
+  // 3.2.9.  Writing the RPC actually requires a large physical
+  // address, since you need to route a request across the fabric to
+  // it.  See the QRG for (some) details. 
+  constants visland "Voltage island identifier" {
+    vi_ul	= 0b000		"Upper left group of 4";
+    vi_um	= 0b001		"Upper middle group of 4";
+    vi_rs	= 0b010		"Router supply";
+    vi_ur	= 0b011		"Upper right group of 4";
+    vi_ll	= 0b100		"Lower left group of 4";
+    vi_lm	= 0b101		"Lower middle group of 4";
+    vi_ur_	= 0b110		"Router supply";
+    vi_lr	= 0b111		"Lower right group of 4";
+  };
+
+  regtype rpc "Rock Creek power controller" {
+    _		18 mbz;
+    _		1 mb1;
+    _		2;
+    vid		3 wo type(visland)	"Voltage island";
+    val		8 wo			"Value (x 6.25mV)";
+  };
+
+};

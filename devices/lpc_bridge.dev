@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2007, 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * lpc_bridge.dev
+ *
+ * DESCRIPTION: this maps to the PCI configuration space of the LPC bridge
+ *              and maps currently only the RCBA register, so that we can
+ *              access the base of the chipset configuration which we need
+ *              to implement the HPET timer
+ * 
+ */
+
+
+device lpc_bridge msbfirst ( pci base ) "LPC bridge PCI config space" {
+  register rcba rw pci( base, 0xf0 ) "RCBA" {
+    baseaddr    18 "Base Address";
+    _           13;
+    enable       1 "Enable";
+  };
+};

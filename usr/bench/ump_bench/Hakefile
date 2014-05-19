@@ -1,0 +1,42 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/bench/ump_bench
+--
+--------------------------------------------------------------------------
+
+[ build application { target = "ump_latency", cFiles = [ "main.c" , "latency.c" ],
+                      flounderDefs = [ "monitor" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] },
+
+  build application { target = "ump_latency_cache", cFiles = [ "main.c" , "latency_cache.c" ],
+                      flounderDefs = [ "monitor" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] },
+
+  build application { target = "ump_throughput", cFiles = [ "main.c" , "throughput.c" ],
+                      flounderDefs = [ "monitor" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] },
+
+  build application { target = "ump_send", cFiles = [ "main.c" , "send.c" ],
+                      flounderDefs = [ "monitor" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] },
+
+  build application { target = "ump_receive", cFiles = [ "main.c" , "receive.c" ],
+                      flounderDefs = [ "monitor" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] },
+
+  build application { target = "ump_exchange", cFiles = [ "exchange.c" ],
+                      flounderDefs = [ "monitor" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] }
+]

@@ -1,0 +1,710 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_cbuff.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_cbuff msbfirst ( addr base ) "" {
+    
+    
+    register cbuff_hl_revision ro addr(base, 0x0) "IP revision identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants contexts_status width(2) "" {
+        CONTEXTS_3_r = 3 "Reserved";
+        CONTEXTS_2_r = 2 "8 contexts";
+        CONTEXTS_1_r = 1 "4 contexts";
+        CONTEXTS_0_r = 0 "2 contexts";
+    };
+
+    constants enable_fragmentation_status width(1) "" {
+        ENABLE_FRAGMENTATION_1_r = 1 "Yes";
+        ENABLE_FRAGMENTATION_0_r = 0 "No";
+    };
+    
+    register cbuff_hl_hwinfo addr(base, 0x4) "Information about the IP module's hardware configuration." {
+        _ 29 mbz;
+        contexts 2 ro type(contexts_status) "Number of contexts";
+        enable_fragmentation 1 ro type(enable_fragmentation_status) "Provides information to software if fragmentation support is available";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle mode: local target's idle state follows (acknowledges) the system's idle requests unconditionally, that is, regardless of the IP module's internal requirements. Backup mode, for debug only.";
+        IDLEMODE_1 = 1 "No-idle mode: local target never enters IDLE state. Backup mode, for debug only.";
+        IDLEMODE_3 = 3 "Reserved";
+        IDLEMODE_2 = 2 "Smart-idle mode: local target's IDLE state eventually follows (acknowledges) the system's IDLE requests, depending on the IP module's internal requirements. IP module shall not generate (IRQ- or DMA-request-related) wake-up events.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_w = 0 "No action";
+        SOFTRESET_1_w = 1 "Initiate software reset";
+        SOFTRESET_1_r = 1 "Reset (software or other) ongoing";
+        SOFTRESET_0_r = 0 "Reset done, no pending action";
+    };
+    
+    register cbuff_hl_sysconfig addr(base, 0x10) "Clock management configuration" {
+        _ 28 mbz;
+        idlemode 2 rw type(idlemode_status) "Configuration of the local target state management mode. By definition, target can handle read/write transaction as long as it is out of IDLE state.";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Software reset";
+    };
+
+    constants irq_ctx7_ovr_status width(1) "" {
+        IRQ_CTX7_OVR_0_w = 0 "No action";
+        IRQ_CTX7_OVR_1_w = 1 "Set event (debug)";
+        IRQ_CTX7_OVR_1_r = 1 "Event pending";
+        IRQ_CTX7_OVR_0_r = 0 "No event pending";
+    };
+    
+    register cbuff_hl_irqstatus_raw addr(base, 0x20) "Per-event raw interrupt status vector. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        irq_ctx7_ovr 1 rw type(irq_ctx7_ovr_status) "Buffer overflow event.";
+        irq_ctx6_ovr 1 rw type(irq_ctx7_ovr_status) "Buffer overflow event.";
+        irq_ctx5_ovr 1 rw type(irq_ctx7_ovr_status) "Buffer overflow event.";
+        irq_ctx4_ovr 1 rw type(irq_ctx7_ovr_status) "Buffer overflow event.";
+        irq_ctx3_ovr 1 rw type(irq_ctx7_ovr_status) "Buffer overflow event.";
+        irq_ctx2_ovr 1 rw type(irq_ctx7_ovr_status) "Buffer overflow event.";
+        irq_ctx1_ovr 1 rw type(irq_ctx7_ovr_status) "Buffer overflow event.";
+        irq_ctx0_ovr 1 rw type(irq_ctx7_ovr_status) "Buffer overflow event.";
+        irq_ctx7_invalid 1 rw type(irq_ctx7_ovr_status) "Invalid access.";
+        irq_ctx6_invalid 1 rw type(irq_ctx7_ovr_status) "Invalid access.";
+        irq_ctx5_invalid 1 rw type(irq_ctx7_ovr_status) "Invalid access.";
+        irq_ctx4_invalid 1 rw type(irq_ctx7_ovr_status) "Invalid access.";
+        irq_ctx3_invalid 1 rw type(irq_ctx7_ovr_status) "Invalid access.";
+        irq_ctx2_invalid 1 rw type(irq_ctx7_ovr_status) "Invalid access.";
+        irq_ctx1_invalid 1 rw type(irq_ctx7_ovr_status) "Invalid access.";
+        irq_ctx0_invalid 1 rw type(irq_ctx7_ovr_status) "Invalid access.";
+        irq_ctx7_ready 1 rw type(irq_ctx7_ovr_status) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx6_ready 1 rw type(irq_ctx7_ovr_status) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx5_ready 1 rw type(irq_ctx7_ovr_status) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx4_ready 1 rw type(irq_ctx7_ovr_status) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx3_ready 1 rw type(irq_ctx7_ovr_status) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx2_ready 1 rw type(irq_ctx7_ovr_status) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx1_ready 1 rw type(irq_ctx7_ovr_status) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx0_ready 1 rw type(irq_ctx7_ovr_status) "The WB physical window is ready to be accessed by the CPU.";
+        _ 7 mbz;
+        irq_ocp_err 1 rw type(irq_ctx7_ovr_status) "OCP error received in the master port.";
+    };
+
+    constants irq_ctx7_ovr_status1 width(1) "" {
+        IRQ_CTX7_OVR_0_w_1 = 0 "No action";
+        IRQ_CTX7_OVR_1_w_1 = 1 "Clear (raw) event";
+        IRQ_CTX7_OVR_1_r_1 = 1 "Event pending";
+        IRQ_CTX7_OVR_0_r_1 = 0 "No (enabled) event pending";
+    };
+    
+    register cbuff_hl_irqstatus addr(base, 0x24) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        irq_ctx7_ovr 1 rw1c type(irq_ctx7_ovr_status1) "Buffer overflow event.";
+        irq_ctx6_ovr 1 rw1c type(irq_ctx7_ovr_status1) "Buffer overflow event.";
+        irq_ctx5_ovr 1 rw1c type(irq_ctx7_ovr_status1) "Buffer overflow event.";
+        irq_ctx4_ovr 1 rw1c type(irq_ctx7_ovr_status1) "Buffer overflow event.";
+        irq_ctx3_ovr 1 rw1c type(irq_ctx7_ovr_status1) "Buffer overflow event.";
+        irq_ctx2_ovr 1 rw1c type(irq_ctx7_ovr_status1) "Buffer overflow event.";
+        irq_ctx1_ovr 1 rw1c type(irq_ctx7_ovr_status1) "Buffer overflow event.";
+        irq_ctx0_ovr 1 rw1c type(irq_ctx7_ovr_status1) "Buffer overflow event.";
+        irq_ctx7_invalid 1 rw1c type(irq_ctx7_ovr_status1) "Invalid access.";
+        irq_ctx6_invalid 1 rw1c type(irq_ctx7_ovr_status1) "Invalid access.";
+        irq_ctx5_invalid 1 rw1c type(irq_ctx7_ovr_status1) "Invalid access.";
+        irq_ctx4_invalid 1 rw1c type(irq_ctx7_ovr_status1) "Invalid access.";
+        irq_ctx3_invalid 1 rw1c type(irq_ctx7_ovr_status1) "Invalid access.";
+        irq_ctx2_invalid 1 rw1c type(irq_ctx7_ovr_status1) "Invalid access.";
+        irq_ctx1_invalid 1 rw1c type(irq_ctx7_ovr_status1) "Invalid access.";
+        irq_ctx0_invalid 1 rw1c type(irq_ctx7_ovr_status1) "Invalid access.";
+        irq_ctx7_ready 1 rw1c type(irq_ctx7_ovr_status1) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx6_ready 1 rw1c type(irq_ctx7_ovr_status1) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx5_ready 1 rw1c type(irq_ctx7_ovr_status1) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx4_ready 1 rw1c type(irq_ctx7_ovr_status1) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx3_ready 1 rw1c type(irq_ctx7_ovr_status1) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx2_ready 1 rw1c type(irq_ctx7_ovr_status1) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx1_ready 1 rw1c type(irq_ctx7_ovr_status1) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx0_ready 1 rw1c type(irq_ctx7_ovr_status1) "The WB physical window is ready to be accessed by the CPU.";
+        _ 7 mbz;
+        irq_ocp_err 1 rw1c type(irq_ctx7_ovr_status1) "OCP error received in the master port.";
+    };
+
+    constants irq_ctx7_ovr_status2 width(1) "" {
+        IRQ_CTX7_OVR_0_w_2 = 0 "No action";
+        IRQ_CTX7_OVR_1_w_2 = 1 "Enable interrupt";
+        IRQ_CTX7_OVR_1_r_2 = 1 "Interrupt enabled";
+        IRQ_CTX7_OVR_0_r_2 = 0 "Interrupt disabled (masked)";
+    };
+    
+    register cbuff_hl_irqenable_set addr(base, 0x28) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        irq_ctx7_ovr 1 rw type(irq_ctx7_ovr_status2) "Buffer overflow event.";
+        irq_ctx6_ovr 1 rw type(irq_ctx7_ovr_status2) "Buffer overflow event.";
+        irq_ctx5_ovr 1 rw type(irq_ctx7_ovr_status2) "Buffer overflow event.";
+        irq_ctx4_ovr 1 rw type(irq_ctx7_ovr_status2) "Buffer overflow event.";
+        irq_ctx3_ovr 1 rw type(irq_ctx7_ovr_status2) "Buffer overflow event.";
+        irq_ctx2_ovr 1 rw type(irq_ctx7_ovr_status2) "Buffer overflow event.";
+        irq_ctx1_ovr 1 rw type(irq_ctx7_ovr_status2) "Buffer overflow event.";
+        irq_ctx0_ovr 1 rw type(irq_ctx7_ovr_status2) "Buffer overflow event.";
+        irq_ctx7_invalid 1 rw type(irq_ctx7_ovr_status2) "Invalid access.";
+        irq_ctx6_invalid 1 rw type(irq_ctx7_ovr_status2) "Invalid access.";
+        irq_ctx5_invalid 1 rw type(irq_ctx7_ovr_status2) "Invalid access.";
+        irq_ctx4_invalid 1 rw type(irq_ctx7_ovr_status2) "Invalid access.";
+        irq_ctx3_invalid 1 rw type(irq_ctx7_ovr_status2) "Invalid access.";
+        irq_ctx2_invalid 1 rw type(irq_ctx7_ovr_status2) "Invalid access.";
+        irq_ctx1_invalid 1 rw type(irq_ctx7_ovr_status2) "Invalid access.";
+        irq_ctx0_invalid 1 rw type(irq_ctx7_ovr_status2) "Invalid access.";
+        irq_ctx7_ready 1 rw type(irq_ctx7_ovr_status2) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx6_ready 1 rw type(irq_ctx7_ovr_status2) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx5_ready 1 rw type(irq_ctx7_ovr_status2) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx4_ready 1 rw type(irq_ctx7_ovr_status2) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx3_ready 1 rw type(irq_ctx7_ovr_status2) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx2_ready 1 rw type(irq_ctx7_ovr_status2) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx1_ready 1 rw type(irq_ctx7_ovr_status2) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx0_ready 1 rw type(irq_ctx7_ovr_status2) "The WB physical window is ready to be accessed by the CPU.";
+        _ 7 mbz;
+        irq_ocp_err 1 rw type(irq_ctx7_ovr_status2) "OCP error received in the master port.";
+    };
+
+    constants irq_ctx7_ovr_status3 width(1) "" {
+        IRQ_CTX7_OVR_0_w_3 = 0 "No action";
+        IRQ_CTX7_OVR_1_w_3 = 1 "Disable interrupt";
+        IRQ_CTX7_OVR_1_r_3 = 1 "Interrupt enabled";
+        IRQ_CTX7_OVR_0_r_3 = 0 "Interrupt disabled (masked)";
+    };
+    
+    register cbuff_hl_irqenable_clr addr(base, 0x2C) "Per-event interrupt enable bit vector, line 0. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        irq_ctx7_ovr 1 rw1c type(irq_ctx7_ovr_status3) "Buffer overflow event.";
+        irq_ctx6_ovr 1 rw1c type(irq_ctx7_ovr_status3) "Buffer overflow event.";
+        irq_ctx5_ovr 1 rw1c type(irq_ctx7_ovr_status3) "Buffer overflow event.";
+        irq_ctx4_ovr 1 rw1c type(irq_ctx7_ovr_status3) "Buffer overflow event.";
+        irq_ctx3_ovr 1 rw1c type(irq_ctx7_ovr_status3) "Buffer overflow event.";
+        irq_ctx2_ovr 1 rw1c type(irq_ctx7_ovr_status3) "Buffer overflow event.";
+        irq_ctx1_ovr 1 rw1c type(irq_ctx7_ovr_status3) "Buffer overflow event.";
+        irq_ctx0_ovr 1 rw1c type(irq_ctx7_ovr_status3) "Buffer overflow event.";
+        irq_ctx7_invalid 1 rw1c type(irq_ctx7_ovr_status3) "Invalid access.";
+        irq_ctx6_invalid 1 rw1c type(irq_ctx7_ovr_status3) "Invalid access.";
+        irq_ctx5_invalid 1 rw1c type(irq_ctx7_ovr_status3) "Invalid access.";
+        irq_ctx4_invalid 1 rw1c type(irq_ctx7_ovr_status3) "Invalid access.";
+        irq_ctx3_invalid 1 rw1c type(irq_ctx7_ovr_status3) "Invalid access.";
+        irq_ctx2_invalid 1 rw1c type(irq_ctx7_ovr_status3) "Invalid access.";
+        irq_ctx1_invalid 1 rw1c type(irq_ctx7_ovr_status3) "Invalid access.";
+        irq_ctx0_invalid 1 rw1c type(irq_ctx7_ovr_status3) "Invalid access.";
+        irq_ctx7_ready 1 rw1c type(irq_ctx7_ovr_status3) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx6_ready 1 rw1c type(irq_ctx7_ovr_status3) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx5_ready 1 rw1c type(irq_ctx7_ovr_status3) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx4_ready 1 rw1c type(irq_ctx7_ovr_status3) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx3_ready 1 rw1c type(irq_ctx7_ovr_status3) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx2_ready 1 rw1c type(irq_ctx7_ovr_status3) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx1_ready 1 rw1c type(irq_ctx7_ovr_status3) "The WB physical window is ready to be accessed by the CPU.";
+        irq_ctx0_ready 1 rw1c type(irq_ctx7_ovr_status3) "The WB physical window is ready to be accessed by the CPU.";
+        _ 7 mbz;
+        irq_ocp_err 1 rw1c type(irq_ctx7_ovr_status3) "OCP error received in the master port.";
+    };
+    
+    register cbuff_frag_addr_j_0 addr(base, 0x80) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_1 addr(base, 0x84) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_2 addr(base, 0x88) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_3 addr(base, 0x8C) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_4 addr(base, 0x90) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_5 addr(base, 0x94) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_6 addr(base, 0x98) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_7 addr(base, 0x9C) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_8 addr(base, 0xA0) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_9 addr(base, 0xA4) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_10 addr(base, 0xA8) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_11 addr(base, 0xAC) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_12 addr(base, 0xB0) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_13 addr(base, 0xB4) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_14 addr(base, 0xB8) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_frag_addr_j_15 addr(base, 0xBC) "Start address of the physical buffer of the CBUFF context 0. This register only exists when fragmentation support is enabled." {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+
+    constants done_status width(1) "" {
+        DONE_0_w = 0 "No effect.";
+        DONE_1_w = 1 "The CPU has completely processed the WB physical buffer.";
+    };
+
+    constants wcount_status width(2) "" {
+        WCOUNT_0 = 0 "2 windows";
+        WCOUNT_1 = 1 "4 windows";
+        WCOUNT_3 = 3 "16 windows";
+        WCOUNT_2 = 2 "8 windows";
+    };
+
+    constants mode_status width(2) "" {
+        MODE_0 = 0 "Write mode. ISS writes and CPU reads the physical space. CPU accesses are out of the scope of the CBUFF module; therefore, only writes are permitted between CBUFF_CTX_START__x and CBUFF_CTX_END__x.";
+        MODE_1 = 1 "Read mode. Hardware reads and CPU writes the physical space. CPU accesses are out of the scope of the CBUFF module; therefore, only reads are permitted between CBUFF_CTX_START__x and CBUFF_CTX_END__x.";
+        MODE_2 = 2 "Read/Write mode. Read and writes are monitored by the CBUFF. WB is used to track current read positions WA is used to track current write position.";
+    };
+
+    constants enable_status width(1) "" {
+        ENABLE_0 = 0 "Disables the context. This resets the internal state of the context. All accesses received on OCPI are transmitted to OCPO without modification. Disabling the context takes effect immediately. Software must ensure that no more accesses to the context are outstanding before disabling it. Otherwise memory corruption may occur.";
+        ENABLE_1 = 1 "Enable the context. All accesses between CBUFF_CTX_START__x and CBUFF_CTX_END__x are processed by the CBUFF.";
+    };
+    
+    register cbuff_ctx_ctrl_i_0 addr(base, 0x100) "Context control register" {
+        _ 20 mbz;
+        tilermode 1 rw "Sets the expected value for ADDR[32]. If ADDR[32]=TILERMODE, ADDR[31:4] is processed and eventually translated. Otherwise, the access is handled as transparent, regardless of the other address bits.";
+        done 1 wo type(done_status) "Write this bit to 1 to indicate the CPU has finished processing its physical buffer. This bit is automatically cleared by hardware, reads always return 0. This bit has no effect when MODE=2 (read/write)";
+        wcount 2 rw type(wcount_status) "Window count";
+        bcf 4 rw "This register controls the bandwidth control feedback loop output. 0: Control loop disabled. 1-15: The control feedback loop enabled. Behavior depends on functional mode, see , .";
+        _ 1 mbz;
+        mode 2 rw type(mode_status) "Selects the functional mode of this context";
+        enable 1 rw type(enable_status) "Enable/disable";
+    };
+    
+    register cbuff_ctx_ctrl_i_1 addr(base, 0x120) "Context control register" {
+        _ 20 mbz;
+        tilermode 1 rw "Sets the expected value for ADDR[32]. If ADDR[32]=TILERMODE, ADDR[31:4] is processed and eventually translated. Otherwise, the access is handled as transparent, regardless of the other address bits.";
+        done 1 wo type(done_status) "Write this bit to 1 to indicate the CPU has finished processing its physical buffer. This bit is automatically cleared by hardware, reads always return 0. This bit has no effect when MODE=2 (read/write)";
+        wcount 2 rw type(wcount_status) "Window count";
+        bcf 4 rw "This register controls the bandwidth control feedback loop output. 0: Control loop disabled. 1-15: The control feedback loop enabled. Behavior depends on functional mode, see , .";
+        _ 1 mbz;
+        mode 2 rw type(mode_status) "Selects the functional mode of this context";
+        enable 1 rw type(enable_status) "Enable/disable";
+    };
+    
+    register cbuff_ctx_ctrl_i_2 addr(base, 0x140) "Context control register" {
+        _ 20 mbz;
+        tilermode 1 rw "Sets the expected value for ADDR[32]. If ADDR[32]=TILERMODE, ADDR[31:4] is processed and eventually translated. Otherwise, the access is handled as transparent, regardless of the other address bits.";
+        done 1 wo type(done_status) "Write this bit to 1 to indicate the CPU has finished processing its physical buffer. This bit is automatically cleared by hardware, reads always return 0. This bit has no effect when MODE=2 (read/write)";
+        wcount 2 rw type(wcount_status) "Window count";
+        bcf 4 rw "This register controls the bandwidth control feedback loop output. 0: Control loop disabled. 1-15: The control feedback loop enabled. Behavior depends on functional mode, see , .";
+        _ 1 mbz;
+        mode 2 rw type(mode_status) "Selects the functional mode of this context";
+        enable 1 rw type(enable_status) "Enable/disable";
+    };
+    
+    register cbuff_ctx_ctrl_i_3 addr(base, 0x160) "Context control register" {
+        _ 20 mbz;
+        tilermode 1 rw "Sets the expected value for ADDR[32]. If ADDR[32]=TILERMODE, ADDR[31:4] is processed and eventually translated. Otherwise, the access is handled as transparent, regardless of the other address bits.";
+        done 1 wo type(done_status) "Write this bit to 1 to indicate the CPU has finished processing its physical buffer. This bit is automatically cleared by hardware, reads always return 0. This bit has no effect when MODE=2 (read/write)";
+        wcount 2 rw type(wcount_status) "Window count";
+        bcf 4 rw "This register controls the bandwidth control feedback loop output. 0: Control loop disabled. 1-15: The control feedback loop enabled. Behavior depends on functional mode, see , .";
+        _ 1 mbz;
+        mode 2 rw type(mode_status) "Selects the functional mode of this context";
+        enable 1 rw type(enable_status) "Enable/disable";
+    };
+    
+    register cbuff_ctx_ctrl_i_4 addr(base, 0x180) "Context control register" {
+        _ 20 mbz;
+        tilermode 1 rw "Sets the expected value for ADDR[32]. If ADDR[32]=TILERMODE, ADDR[31:4] is processed and eventually translated. Otherwise, the access is handled as transparent, regardless of the other address bits.";
+        done 1 wo type(done_status) "Write this bit to 1 to indicate the CPU has finished processing its physical buffer. This bit is automatically cleared by hardware, reads always return 0. This bit has no effect when MODE=2 (read/write)";
+        wcount 2 rw type(wcount_status) "Window count";
+        bcf 4 rw "This register controls the bandwidth control feedback loop output. 0: Control loop disabled. 1-15: The control feedback loop enabled. Behavior depends on functional mode, see , .";
+        _ 1 mbz;
+        mode 2 rw type(mode_status) "Selects the functional mode of this context";
+        enable 1 rw type(enable_status) "Enable/disable";
+    };
+    
+    register cbuff_ctx_ctrl_i_5 addr(base, 0x1A0) "Context control register" {
+        _ 20 mbz;
+        tilermode 1 rw "Sets the expected value for ADDR[32]. If ADDR[32]=TILERMODE, ADDR[31:4] is processed and eventually translated. Otherwise, the access is handled as transparent, regardless of the other address bits.";
+        done 1 wo type(done_status) "Write this bit to 1 to indicate the CPU has finished processing its physical buffer. This bit is automatically cleared by hardware, reads always return 0. This bit has no effect when MODE=2 (read/write)";
+        wcount 2 rw type(wcount_status) "Window count";
+        bcf 4 rw "This register controls the bandwidth control feedback loop output. 0: Control loop disabled. 1-15: The control feedback loop enabled. Behavior depends on functional mode, see , .";
+        _ 1 mbz;
+        mode 2 rw type(mode_status) "Selects the functional mode of this context";
+        enable 1 rw type(enable_status) "Enable/disable";
+    };
+    
+    register cbuff_ctx_ctrl_i_6 addr(base, 0x1C0) "Context control register" {
+        _ 20 mbz;
+        tilermode 1 rw "Sets the expected value for ADDR[32]. If ADDR[32]=TILERMODE, ADDR[31:4] is processed and eventually translated. Otherwise, the access is handled as transparent, regardless of the other address bits.";
+        done 1 wo type(done_status) "Write this bit to 1 to indicate the CPU has finished processing its physical buffer. This bit is automatically cleared by hardware, reads always return 0. This bit has no effect when MODE=2 (read/write)";
+        wcount 2 rw type(wcount_status) "Window count";
+        bcf 4 rw "This register controls the bandwidth control feedback loop output. 0: Control loop disabled. 1-15: The control feedback loop enabled. Behavior depends on functional mode, see , .";
+        _ 1 mbz;
+        mode 2 rw type(mode_status) "Selects the functional mode of this context";
+        enable 1 rw type(enable_status) "Enable/disable";
+    };
+    
+    register cbuff_ctx_ctrl_i_7 addr(base, 0x1E0) "Context control register" {
+        _ 20 mbz;
+        tilermode 1 rw "Sets the expected value for ADDR[32]. If ADDR[32]=TILERMODE, ADDR[31:4] is processed and eventually translated. Otherwise, the access is handled as transparent, regardless of the other address bits.";
+        done 1 wo type(done_status) "Write this bit to 1 to indicate the CPU has finished processing its physical buffer. This bit is automatically cleared by hardware, reads always return 0. This bit has no effect when MODE=2 (read/write)";
+        wcount 2 rw type(wcount_status) "Window count";
+        bcf 4 rw "This register controls the bandwidth control feedback loop output. 0: Control loop disabled. 1-15: The control feedback loop enabled. Behavior depends on functional mode, see , .";
+        _ 1 mbz;
+        mode 2 rw type(mode_status) "Selects the functional mode of this context";
+        enable 1 rw type(enable_status) "Enable/disable";
+    };
+    
+    register cbuff_ctx_start_i_0 addr(base, 0x104) "Start address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_start_i_1 addr(base, 0x124) "Start address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_start_i_2 addr(base, 0x144) "Start address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_start_i_3 addr(base, 0x164) "Start address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_start_i_4 addr(base, 0x184) "Start address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_start_i_5 addr(base, 0x1A4) "Start address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_start_i_6 addr(base, 0x1C4) "Start address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_start_i_7 addr(base, 0x1E4) "Start address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_end_i_0 addr(base, 0x108) "End address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_end_i_1 addr(base, 0x128) "End address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_end_i_2 addr(base, 0x148) "End address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_end_i_3 addr(base, 0x168) "End address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_end_i_4 addr(base, 0x188) "End address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_end_i_5 addr(base, 0x1A8) "End address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_end_i_6 addr(base, 0x1C8) "End address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_end_i_7 addr(base, 0x1E8) "End address of the virtual space managed by the context" {
+        addr 28 rw "Address, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_windowsize_i_0 addr(base, 0x10C) "Defines the size of a window" {
+        _ 8 mbz;
+        size 20 rw "Size, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_windowsize_i_1 addr(base, 0x12C) "Defines the size of a window" {
+        _ 8 mbz;
+        size 20 rw "Size, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_windowsize_i_2 addr(base, 0x14C) "Defines the size of a window" {
+        _ 8 mbz;
+        size 20 rw "Size, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_windowsize_i_3 addr(base, 0x16C) "Defines the size of a window" {
+        _ 8 mbz;
+        size 20 rw "Size, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_windowsize_i_4 addr(base, 0x18C) "Defines the size of a window" {
+        _ 8 mbz;
+        size 20 rw "Size, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_windowsize_i_5 addr(base, 0x1AC) "Defines the size of a window" {
+        _ 8 mbz;
+        size 20 rw "Size, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_windowsize_i_6 addr(base, 0x1CC) "Defines the size of a window" {
+        _ 8 mbz;
+        size 20 rw "Size, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_windowsize_i_7 addr(base, 0x1EC) "Defines the size of a window" {
+        _ 8 mbz;
+        size 20 rw "Size, in 128-bit words";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_threshold_f_i_0 addr(base, 0x110) "Threshold value used to check if a write window is full" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_f_i_1 addr(base, 0x130) "Threshold value used to check if a write window is full" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_f_i_2 addr(base, 0x150) "Threshold value used to check if a write window is full" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_f_i_3 addr(base, 0x170) "Threshold value used to check if a write window is full" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_f_i_4 addr(base, 0x190) "Threshold value used to check if a write window is full" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_f_i_5 addr(base, 0x1B0) "Threshold value used to check if a write window is full" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_f_i_6 addr(base, 0x1D0) "Threshold value used to check if a write window is full" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_f_i_7 addr(base, 0x1F0) "Threshold value used to check if a write window is full" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_s_i_0 addr(base, 0x114) "Threshold value used to control the BCF synchronization mechanism" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_s_i_1 addr(base, 0x134) "Threshold value used to control the BCF synchronization mechanism" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_s_i_2 addr(base, 0x154) "Threshold value used to control the BCF synchronization mechanism" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_s_i_3 addr(base, 0x174) "Threshold value used to control the BCF synchronization mechanism" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_s_i_4 addr(base, 0x194) "Threshold value used to control the BCF synchronization mechanism" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_s_i_5 addr(base, 0x1B4) "Threshold value used to control the BCF synchronization mechanism" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_s_i_6 addr(base, 0x1D4) "Threshold value used to control the BCF synchronization mechanism" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_threshold_s_i_7 addr(base, 0x1F4) "Threshold value used to control the BCF synchronization mechanism" {
+        _ 8 mbz;
+        threshold 24 rw "Threshold value, in bytes";
+    };
+    
+    register cbuff_ctx_status_i_0 addr(base, 0x118) "Status register" {
+        _ 20 mbz;
+        wa 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+        _ 4 mbz;
+        wb 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+    };
+    
+    register cbuff_ctx_status_i_1 addr(base, 0x138) "Status register" {
+        _ 20 mbz;
+        wa 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+        _ 4 mbz;
+        wb 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+    };
+    
+    register cbuff_ctx_status_i_2 addr(base, 0x158) "Status register" {
+        _ 20 mbz;
+        wa 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+        _ 4 mbz;
+        wb 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+    };
+    
+    register cbuff_ctx_status_i_3 addr(base, 0x178) "Status register" {
+        _ 20 mbz;
+        wa 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+        _ 4 mbz;
+        wb 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+    };
+    
+    register cbuff_ctx_status_i_4 addr(base, 0x198) "Status register" {
+        _ 20 mbz;
+        wa 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+        _ 4 mbz;
+        wb 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+    };
+    
+    register cbuff_ctx_status_i_5 addr(base, 0x1B8) "Status register" {
+        _ 20 mbz;
+        wa 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+        _ 4 mbz;
+        wb 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+    };
+    
+    register cbuff_ctx_status_i_6 addr(base, 0x1D8) "Status register" {
+        _ 20 mbz;
+        wa 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+        _ 4 mbz;
+        wb 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+    };
+    
+    register cbuff_ctx_status_i_7 addr(base, 0x1F8) "Status register" {
+        _ 20 mbz;
+        wa 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+        _ 4 mbz;
+        wb 4 ro "Valid values depend on the CBUFF_CTX_CTRL__x.WCOUNT register.";
+    };
+    
+    register cbuff_ctx_phy_i_0 addr(base, 0x11C) "Start address of the first physical buffer managed by the context when fragmentation support is disabled." {
+        addr 28 rw "Address, in 128 bit words.";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_phy_i_1 addr(base, 0x13C) "Start address of the first physical buffer managed by the context when fragmentation support is disabled." {
+        addr 28 rw "Address, in 128 bit words.";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_phy_i_2 addr(base, 0x15C) "Start address of the first physical buffer managed by the context when fragmentation support is disabled." {
+        addr 28 rw "Address, in 128 bit words.";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_phy_i_3 addr(base, 0x17C) "Start address of the first physical buffer managed by the context when fragmentation support is disabled." {
+        addr 28 rw "Address, in 128 bit words.";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_phy_i_4 addr(base, 0x19C) "Start address of the first physical buffer managed by the context when fragmentation support is disabled." {
+        addr 28 rw "Address, in 128 bit words.";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_phy_i_5 addr(base, 0x1BC) "Start address of the first physical buffer managed by the context when fragmentation support is disabled." {
+        addr 28 rw "Address, in 128 bit words.";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_phy_i_6 addr(base, 0x1DC) "Start address of the first physical buffer managed by the context when fragmentation support is disabled." {
+        addr 28 rw "Address, in 128 bit words.";
+        _ 4 mbz;
+    };
+    
+    register cbuff_ctx_phy_i_7 addr(base, 0x1FC) "Start address of the first physical buffer managed by the context when fragmentation support is disabled." {
+        addr 28 rw "Address, in 128 bit words.";
+        _ 4 mbz;
+    };
+};

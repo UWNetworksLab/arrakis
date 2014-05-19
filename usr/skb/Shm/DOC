@@ -1,0 +1,198 @@
+ECLiPSe memory allocation library
+---------------------------------
+
+To use the library, include the following header files:
+
+#include "memman.h"
+
+and link your program with libshm.a
+
+The type generic_ptr is normally (void *). On compilers that don't
+support it (char *) is used instead.
+
+
+Initialisation
+--------------
+
+char *shared_mem_init(
+	int create_flag,	specifies if we create (!=0) or if we
+				    attach to (==0) existing shared memory.
+	char* mapfile,		the filename of the mapfile or NULL for
+				    anonymous mapping into the swap space.
+	char* start,		the address where the shared memory is
+				    mapped at. If NULL, the system chooses an
+				    address (during create) or uses the same
+				    address as the creator (during attach).
+	int size,		maximum size of shared memory (0=default size),
+				    only used when create_flag is set.
+	int increment,		minimum amount of bytes the shared memory is
+				    extended by on overflows (0=default).
+	void (*panic_fct)()	function to call when out of memory. If NULL,
+				    the allocation functions return NULL
+				    instead.
+	struct heap_descriptor *
+				this descriptor must exist and is filled
+				    by the function. It is used in further
+				    memory operations.
+    );
+
+    The return value is equal to the specified start address if everything
+    goes well, -1 otherwise.
+
+    The first word of the shared memory is reserved for the application:
+    The idea is to store here a pointer to some kind of toplevel data
+    structure of the application.
+
+    The panic function takes two descriptive arguments and may look
+    as follows:
+
+    void
+    panic(what, where)
+    char *what, *where;
+    {
+	    printf("Panic: %s in %s\n", what, where);
+	    exit(-1);
+    }
+
+
+void shared_mem_release(struct heap_descriptor *);
+
+    Should be called before a process using the shared memory exits.
+    When the releasing process is the last attached one, the mapfile
+    is removed.
+
+
+Header-less allocation
+----------------------
+
+These functions should be used when the caller can remember the size of the
+allocated area, or when the size is implicit in the allocated data.
+This allocation has no memory overhead, so e.g. allocating 8192 bytes
+will use up exactly 8k of memory and no more.
+
+generic_ptr     alloc_size(struct heap_descriptor *, int size);
+
+    Allocate size bytes of shared memory and return its address.
+    If the allocation fails, the panic-function is called, if any,
+    otherwise NULL is returned.
+
+void            free_size(struct heap_descriptor *, generic_ptr addr, int size);
+
+    Free the memory at addr which was allocated previously with
+    hg_alloc_size(size). Size should be the same as on allocation,
+    otherwise the result is undefined.
+
+generic_ptr     realloc_size(struct heap_descriptor *,
+			generic_ptr addr, int oldsize, int newsize);
+
+    Resize an allocated area. The new address may differ from the old one,
+    the old contents are copied.
+
+
+Header-full allocation
+----------------------
+
+generic_ptr     h_alloc(struct heap_descriptor *, int size);
+
+    Allocate size bytes of shared memory and return its address.
+    If the allocation fails, the panic-function is called, if any,
+    otherwise NULL is returned.
+
+void            h_free(struct heap_descriptor *, generic_ptr addr);
+
+    Free the memory at addr which was allocated previously with hg_alloc().
+
+generic_ptr     h_realloc(struct heap_descriptor *,
+			generic_ptr addr, int newsize);
+
+    Resize an allocated area. The new address may differ from the old one,
+    the old contents are copied.
+
+
+Other
+-----
+
+int             alloc_statistics(struct heap_descriptor *, int what);
+
+    Return statistics about bytes of allocated memory.
+    Values for what: HEAP_STAT_ALLOCATED and HEAP_STAT_USED.
+
+
+Spin locks
+----------
+
+Locks are of type a_mutex_t (declared in memman.h).
+Functions are:
+
+int             a_mutex_init(a_mutex_t *);
+int             a_mutex_lock(a_mutex_t *);
+int             a_mutex_unlock(a_mutex_t *);
+int             a_mutex_destroy(a_mutex_t *);
+
+
+Interrupts
+----------
+
+Motivation: Interrupts must be disabled before grabbing a lock,
+otherwise the following can happen:
+
+    1. grab a lock
+    2. interrupt
+    3. handler tries to get the lock again
+    -> deadlock
+
+User interrupt handlers that might need locks should therefore
+not be executed while a lock is being held.
+The InterruptsDisabled condition flags this situation,
+so these handlers should have the following structure:
+
+signal_handler(n)
+{
+    if (InterruptsDisabled)
+    {
+	<remember n>
+	Set_Interrupts_Pending();
+	return;
+    }
+    <process the signal>
+}
+
+delayed_signal_handler()
+{
+    <get n back>
+    Clr_Interrupts_Pending();
+    <process the signal>
+}
+
+
+The delayed signal handler is specified using the function
+
+void irq_lock_init(void (*delayed_irq_fct)());
+
+
+A couple of macros is provided:
+
+#define InterruptsDisabled      it_disabled_
+#define Disable_Int()           it_disabled_++;
+#define Enable_Int()	\
+	{ if (--it_disabled_ == 0 && delayed_it_) (*delayed_irq_func)(); }
+
+#define InterruptsPending       delayed_it_
+#define Set_Interrupts_Pending() delayed_it_ = 1;
+#define Clr_Interrupts_Pending() delayed_it_ = 0;
+
+a_mutex_lock() internally calls Disable_Int().
+a_mutex_unlock() internally calls Enable_Int().
+Disable_Int() and Enable_Int() can also be called directly
+delay interrupts.
+
+
+Private memory allocation
+-------------------------
+
+Initialisation:
+
+private_mem_init(void (*)() panic_fct);
+
+To allocate and free private memory, use the generic allocation functions
+with the descriptor argument &private_heap.

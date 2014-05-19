@@ -1,0 +1,98 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_emu_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_emu_prm msbfirst ( addr base ) "" {
+    
+
+    constants emu_bank_onstate_status width(2) "" {
+        EMU_BANK_ONSTATE_3_r = 3 "Memory bank is on when the domain is ON.";
+    };
+
+    constants powerstate_status width(2) "" {
+        POWERSTATE_0_r = 0 "OFF state";
+    };
+    
+    register pm_emu_pwrstctrl addr(base, 0x0) "This register controls the EMU power state to reach upon a domain sleep transition" {
+        _ 14 mbz;
+        emu_bank_onstate 2 ro type(emu_bank_onstate_status) "EMU memory state when domain is ON.";
+        _ 14 mbz;
+        powerstate 2 ro type(powerstate_status) "Power state control";
+    };
+
+    constants lastpowerstateentered_status width(2) "" {
+        LASTPOWERSTATEENTERED_0_r = 0 "Power domain was previously OFF";
+        LASTPOWERSTATEENTERED_1_r = 1 "Power domain was previously in RETENTION";
+        LASTPOWERSTATEENTERED_2_r = 2 "Power domain was previously ON-INACTIVE";
+        LASTPOWERSTATEENTERED_3_r = 3 "Power domain was previously ON-ACTIVE";
+    };
+
+    constants intransition_status width(1) "" {
+        INTRANSITION_0_r = 0 "No ongoing transition on power domain";
+        INTRANSITION_1_r = 1 "Power domain transition is in progress.";
+    };
+
+    constants emu_bank_statest_status width(2) "" {
+        EMU_BANK_STATEST_0_r = 0 "Memory is OFF";
+        EMU_BANK_STATEST_1_r = 1 "Reserved";
+        EMU_BANK_STATEST_2_r = 2 "Reserved";
+        EMU_BANK_STATEST_3_r = 3 "Memory is ON It is supplied by WKUP LDO";
+    };
+
+    constants logicstatest_status width(1) "" {
+        LOGICSTATEST_0_r = 0 "Logic in domain is OFF";
+        LOGICSTATEST_1_r = 1 "Logic in domain is ON";
+    };
+
+    constants powerstatest_status width(2) "" {
+        POWERSTATEST_0_r = 0 "Power domain is OFF";
+        POWERSTATEST_3_r = 3 "Power domain is ON-ACTIVE";
+    };
+    
+    register pm_emu_pwrstst addr(base, 0x4) "This register provides a status on the EMU domain current power state. [warm reset insensitive]" {
+        _ 6 mbz;
+        lastpowerstateentered 2 rw type(lastpowerstateentered_status) "Last low power state entered. Set to 0x3 upon write of the same only. This register is intended for debug purpose only.";
+        _ 3 mbz;
+        intransition 1 ro type(intransition_status) "Domain transition status";
+        _ 14 mbz;
+        emu_bank_statest 2 ro type(emu_bank_statest_status) "EMU memory bank state status";
+        _ 1 mbz;
+        logicstatest 1 ro type(logicstatest_status) "Logic state status";
+        powerstatest 2 ro type(powerstatest_status) "Current power state status";
+    };
+
+    constants lostmem_emu_bank_status width(1) "" {
+        LOSTMEM_EMU_BANK_0 = 0 "Context has been maintained";
+        LOSTMEM_EMU_BANK_1 = 1 "Context has been lost";
+    };
+    
+    register rm_emu_debugss_context addr(base, 0x24) "This register contains dedicated DEBUGSS context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_emu_bank 1 rw1c type(lostmem_emu_bank_status) "Specify if memory-based context in EMU_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_emu_bank_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of EMU_RST signal)";
+    };
+};

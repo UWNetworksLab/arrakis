@@ -1,0 +1,33 @@
+#!/bin/bash
+
+##########################################################################
+# Copyright (c) 2007, 2008, 2009, ETH Zurich.
+# All rights reserved.
+#
+# This file is distributed under the terms in the attached LICENSE file.
+# If you do not find this file, copies can be found by writing to:
+# ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+##########################################################################
+
+FILES="../icparc_solver/ic.c ../icparc_solver/bitmap.c ../icparc_solver/edge_finder.c"
+echo "
+#include <dlfcn.h>
+"
+
+for f in $FILES; do
+#    sed -r -n -e 's/(^[a-zA-Z0-9_]+)\(.*\).*/extern void \1();/p' $f
+    sed -r -n -e 's/(^[a-zA-Z0-9_]+)\(.*/extern void \1();/p' $f
+done
+
+
+echo "
+struct function_entry funcs[] = {
+"
+
+for f in $FILES; do
+#    sed -r -n -e 's/(^[a-zA-Z0-9_]+)\(.*\).*/{.name="\1",.f=\1},/p' $f
+    sed -r -n -e 's/(^[a-zA-Z0-9_]+)\(.*/{.name="\1",.f=\1},/p' $f
+done
+
+echo "};"
+

@@ -1,0 +1,420 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_ckgen_cm2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_ckgen_cm2 msbfirst ( addr base ) "" {
+    
+
+    constants clksel_status width(1) "" {
+        CLKSEL_0 = 0 "Root clock is sourced from CORE_CLK";
+        CLKSEL_1 = 1 "Functional clock is sourced from DPLL_PER";
+    };
+    
+    register cm_clksel_mpu_m3_iss_root addr(base, 0x0) "MPU_A3/ISS root clock selection (MPU_A3_ISS_CLK)." {
+        _ 31 mbz;
+        clksel 1 rw type(clksel_status) "Select the source for the root clock of MPU_A3/ISS";
+    };
+
+    constants clksel_status1 width(1) "" {
+        CLKSEL_0_1 = 0 "Set the divider in bypass mode to support bypass clock from DPLL_USB to pass through without division.";
+        CLKSEL_1_1 = 1 "Set the divider to divide the DPLL o/p (480 MHz typical) by 8 to generate 60-MHz clock, to be used for OPP100 and OPP50.";
+    };
+    
+    register cm_clksel_usb_60mhz addr(base, 0x4) "Selects the configuration of the divider generating 60MHz clock for USB from the DPLL_USB o/p." {
+        _ 31 mbz;
+        clksel 1 rw type(clksel_status1) "Select the configuration of the divider";
+    };
+
+    constants scale_fclk_status width(1) "" {
+        SCALE_FCLK_0 = 0 "The functional clocks run at their default frequencies";
+        SCALE_FCLK_1 = 1 "The functional clocks run at half their typical frequencies";
+    };
+    
+    register cm_scale_fclk addr(base, 0x8) "This register can be used to scale PER_ABE_NC_FCLK, 96M_FCLK, 48M_FCLK, and 64M_FCLK to half their respective typical frequencies." {
+        _ 31 mbz;
+        scale_fclk 1 rw type(scale_fclk_status) "Enable or disable the functional clock scaling.";
+    };
+    
+    register cm_core_dvfs_perf1 addr(base, 0x10) "This register allows to system master #1 to specify which level of performance is required from CORE domain (mainly external memory throughput?)" {
+        _ 24 mbz;
+        perf_req 8 rw "Current performance request. Unit to be defined by user.";
+    };
+    
+    register cm_core_dvfs_perf2 addr(base, 0x14) "This register allows to system master #2 to specify which level of performance is require from CORE domain (mainly external memory throughput?)" {
+        _ 24 mbz;
+        perf_req 8 rw "Current performance request. Unit to be defined by user.";
+    };
+    
+    register cm_core_dvfs_perf3 addr(base, 0x18) "This register allows to system master #3 to specify which level of performance is require from CORE domain (mainly external memory throughput?)" {
+        _ 24 mbz;
+        perf_req 8 rw "Current performance request. Unit to be defined by user.";
+    };
+    
+    register cm_core_dvfs_perf4 addr(base, 0x1C) "This register allows to system master #4 to specify which level of performance is require from CORE domain (mainly external memory throughput?)" {
+        _ 24 mbz;
+        perf_req 8 rw "Current performance request. Unit to be defined by user.";
+    };
+    
+    register cm_core_dvfs_current addr(base, 0x24) "This register hold the current level of performance achievable by the CORE domain, according to the current OPP setting" {
+        _ 24 mbz;
+        perf_current 8 rw "Current achievable performance level. Unit to be defined by user.";
+    };
+    
+    register cm_iva_dvfs_perf_dsp addr(base, 0x28) "This register allows to specify which level of performance is required from IVA domain for DSP to operate." {
+        _ 24 mbz;
+        perf_req 8 rw "Current performance request. Unit to be defined by user.";
+    };
+    
+    register cm_iva_dvfs_perf_ivahd addr(base, 0x2C) "This register allows to specify which level of performance is required from IVA domain for IVAHD to operate." {
+        _ 24 mbz;
+        perf_req 8 rw "Current performance request. Unit to be defined by user.";
+    };
+    
+    register cm_iva_dvfs_perf_abe addr(base, 0x30) "This register allows to specify which level of performance is required from IVA domain for ABE to operate." {
+        _ 24 mbz;
+        perf_req 8 rw "Current performance request. Unit to be defined by user.";
+    };
+    
+    register cm_iva_dvfs_current addr(base, 0x38) "This register hold the current level of performance achievable by the IVA domain, according to the current OPP setting" {
+        _ 24 mbz;
+        perf_current 8 rw "Current achievable performance level. Unit to be defined by user.";
+    };
+
+    constants dpll_ssc_downspread_status width(1) "" {
+        DPLL_SSC_DOWNSPREAD_0 = 0 "When SSC is enabled, clock frequency is spread on both sides of the programmed frequency";
+        DPLL_SSC_DOWNSPREAD_1 = 1 "When SSC is enabled, clock frequency is spread only on the lower side of the programmed frequency";
+    };
+
+    constants dpll_ssc_ack_status width(1) "" {
+        DPLL_SSC_ACK_0_r = 0 "SSC has been turned off on PLL o/ps";
+        DPLL_SSC_ACK_1_r = 1 "SSC has been turned on on PLL o/ps";
+    };
+
+    constants dpll_ssc_en_status width(1) "" {
+        DPLL_SSC_EN_0 = 0 "SSC disabled";
+        DPLL_SSC_EN_1 = 1 "SSC enabled";
+    };
+
+    constants dpll_regm4xen_status width(1) "" {
+        DPLL_REGM4XEN_0_r = 0 "REGM4XEN mode of the DPLL is disabled";
+    };
+
+    constants dpll_lpmode_en_status width(1) "" {
+        DPLL_LPMODE_EN_0 = 0 "Low-power mode of the DPLL is disabled";
+        DPLL_LPMODE_EN_1 = 1 "Low-power mode of the DPLL is enabled";
+    };
+
+    constants dpll_driftguard_en_status width(1) "" {
+        DPLL_DRIFTGUARD_EN_0 = 0 "DRIFTGUARD feature is disabled";
+        DPLL_DRIFTGUARD_EN_1 = 1 "DRIFTGUARD feature is enabled";
+    };
+
+    constants dpll_en_status width(3) "" {
+        DPLL_EN_0 = 0 "Reserved";
+        DPLL_EN_1 = 1 "Reserved";
+        DPLL_EN_2 = 2 "Reserved";
+        DPLL_EN_3 = 3 "Reserved";
+        DPLL_EN_4 = 4 "Put the DPLL in MN bypass mode. The DPLL_MULT register bits are reset to 0 automatically by putting the DPLL in this mode.";
+        DPLL_EN_5 = 5 "Put the DPLL in idle bypass low-power mode.";
+        DPLL_EN_6 = 6 "Put the DPLL in idle bypass fast-relock mode.";
+        DPLL_EN_7 = 7 "Enables the DPLL in lock mode";
+    };
+    
+    register cm_clkmode_dpll_per addr(base, 0x40) "This register allows controlling the DPLL modes." {
+        _ 17 mbz;
+        dpll_ssc_downspread 1 rw type(dpll_ssc_downspread_status) "Control if only low frequency spread is required";
+        dpll_ssc_ack 1 ro type(dpll_ssc_ack_status) "Acknowledgement from the DPLL regarding start and stop of Spread Spectrum Clocking feature";
+        dpll_ssc_en 1 rw type(dpll_ssc_en_status) "Enable or disable Spread Spectrum Clocking";
+        dpll_regm4xen 1 ro type(dpll_regm4xen_status) "Enable the REGM4XEN mode of the DPLL. Please check the DPLL documentation to check when this mode can be enabled.";
+        dpll_lpmode_en 1 rw type(dpll_lpmode_en_status) "Set the DPLL in low-power mode. Check the DPLL documentation to see when this can be enabled.";
+        _ 1 mbz;
+        dpll_driftguard_en 1 rw type(dpll_driftguard_en_status) "This bit allows to enable or disable the automatic recalibration feature of the DPLL. The DPLL will automatically start a recalibration process upon assertion of the DPLL's RECAL flag if this bit is set.";
+        _ 5 mbz;
+        dpll_en 3 rw type(dpll_en_status) "DPLL control. Upon Warm Reset, the PRCM DPLL control state machine updates this register to reflect MN bypass mode.";
+    };
+
+    constants st_mn_bypass_status width(1) "" {
+        ST_MN_BYPASS_1_r = 1 "DPLL is in MN_Bypass";
+        ST_MN_BYPASS_0_r = 0 "DPLL is not in MN_Bypass";
+    };
+
+    constants st_dpll_clk_status width(1) "" {
+        ST_DPLL_CLK_1_r = 1 "DPLL is LOCKED";
+        ST_DPLL_CLK_0_r = 0 "DPLL is either in bypass mode or in stop mode.";
+    };
+    
+    register cm_idlest_dpll_per addr(base, 0x44) "This register allows monitoring DPLL activity. This register is read only and automatically updated. [warm reset insensitive]" {
+        _ 23 mbz;
+        st_mn_bypass 1 ro type(st_mn_bypass_status) "DPLL MN_BYPASS status";
+        _ 7 mbz;
+        st_dpll_clk 1 ro type(st_dpll_clk_status) "DPLL lock status";
+    };
+
+    constants auto_dpll_mode_status width(3) "" {
+        AUTO_DPLL_MODE_0 = 0 "DPLL auto control disabled";
+        AUTO_DPLL_MODE_1 = 1 "The DPLL is automatically put in low-power stop mode when its DPLL generated clocks are not required anymore. It is also restarted automatically.";
+        AUTO_DPLL_MODE_2 = 2 "The DPLL is automatically put in fast-relock stop mode when its DPLL generated clocks are not required anymore. It is also restarted automatically.";
+        AUTO_DPLL_MODE_3 = 3 "Reserved";
+        AUTO_DPLL_MODE_4 = 4 "Reserved";
+        AUTO_DPLL_MODE_5 = 5 "The DPLL is automatically put in idle bypass low-power mode when its DPLL generated clocks are not required anymore. It is also restarted automatically.";
+        AUTO_DPLL_MODE_6 = 6 "The DPLL is automatically put in idle bypass fast-relock mode when its DPLL generated clocks are not required anymore. It is also restarted automatically.";
+        AUTO_DPLL_MODE_7 = 7 "Reserved";
+    };
+    
+    register cm_autoidle_dpll_per addr(base, 0x48) "This register provides automatic control over the DPLL activity." {
+        _ 29 mbz;
+        auto_dpll_mode 3 rw type(auto_dpll_mode_status) "DPLL automatic control;";
+    };
+    
+    register cm_clksel_dpll_per addr(base, 0x4C) "This register provides controls over the DPLL." {
+        _ 8 mbz;
+        dpll_byp_clksel 1 rw "Allows control of the BYPASS clock of the PLL and the associated HSDIVIDER. Same as ULOWCLKEN on DPLL. In DPLL Locked mode, 0 - No impact 1 - No impact In DPLL Bypass mode, 0 - CLKINP is selected as the BYPASS clock for CLKOUT/CLKOUTX2 1 - CLKINPULOW is selected as the BYPASS clock for CLKOUT/CLKOUTX2";
+        _ 4 mbz;
+        dpll_mult 11 rw type(dpll_en_status) "DPLL multiplier factor (2 to 2047). This register is automatically cleared to 0 when the DPLL_EN field in the *CLKMODE_DPLL* register is set to select MN bypass mode. (equal to input M of DPLL; M=2 to 2047 = DPLL multiplies by M).";
+        _ 1 mbz;
+        dpll_div 7 rw "DPLL divider factor (0 to 127) (equal to input N of DPLL; actual division factor is N+1).";
+    };
+
+    constants st_dpll_clkoutx2_status width(1) "" {
+        ST_DPLL_CLKOUTX2_0_r = 0 "The clock output is gated";
+        ST_DPLL_CLKOUTX2_1_r = 1 "The clock output is enabled";
+    };
+
+    constants dpll_clkout_div_status width(5) "" {
+        DPLL_CLKOUT_DIV_0 = 0 "Reserved";
+        DPLL_CLKOUT_DIV_4 = 4 "4, to be used for OPP100 and OPP50 (when DPLL_PER is locked at 768 MHz)";
+        DPLL_CLKOUT_DIV_8 = 8 "8, to be used for OPP100 and OPP50 (when DPLL_PER is locked at 1536 MHz)";
+    };
+    
+    register cm_div_m2_dpll_per addr(base, 0x50) "This register provides controls over the M2 divider of the DPLL." {
+        _ 20 mbz;
+        st_dpll_clkoutx2 1 ro type(st_dpll_clkoutx2_status) "DPLL CLKOUTX2 status";
+        dpll_clkoutx2_gate_ctrl 1 rw type(scale_fclk_status) "Control gating of DPLL CLKOUTX2";
+        st_dpll_clkout 1 ro type(st_dpll_clkoutx2_status) "DPLL CLKOUT status";
+        dpll_clkout_gate_ctrl 1 rw type(scale_fclk_status) "Control gating of DPLL CLKOUT";
+        _ 2 mbz;
+        dpll_clkout_divchack 1 ro "Toggle on this status bit after changing DPLL_CLKOUT_DIV indicates that the change in divider value has taken effect.";
+        dpll_clkout_div 5 rw type(dpll_clkout_div_status) "DPLL post-divider factor, M2, for internal clock generation (1 to 31)";
+    };
+
+    constants st_dpll_clkouthif_status width(1) "" {
+        ST_DPLL_CLKOUTHIF_0_r = 0 "The clock output is gated.";
+        ST_DPLL_CLKOUTHIF_1_r = 1 "The clock output is enabled.";
+    };
+
+    constants dpll_clkouthif_div_status width(5) "" {
+        DPLL_CLKOUTHIF_DIV_0 = 0 "Reserved";
+        DPLL_CLKOUTHIF_DIV_3 = 3 "3, to be used for OPP100 (when DPLL_PER is locked at 768 MHz)";
+        DPLL_CLKOUTHIF_DIV_4 = 4 "4, to be used for OPP50 (when DPLL_PER is locked at 768 MHz)";
+        DPLL_CLKOUTHIF_DIV_6 = 6 "6, to be used for OPP100 (when DPLL_PER is locked at 1536 MHz)";
+        DPLL_CLKOUTHIF_DIV_8 = 8 "8, to be used for OPP50 (when DPLL_PER is locked at 1536 MHz)";
+    };
+    
+    register cm_div_m3_dpll_per addr(base, 0x54) "This register provides controls over the M3 divider of the DPLL." {
+        _ 22 mbz;
+        st_dpll_clkouthif 1 ro type(st_dpll_clkouthif_status) "DPLL CLKOUTHIF status";
+        dpll_clkouthif_gate_ctrl 1 rw type(scale_fclk_status) "Control gating of DPLL CLKOUTHIF";
+        _ 2 mbz;
+        dpll_clkouthif_divchack 1 ro "Toggle on this status bit after changing DPLL_CLKOUTHIF_DIV indicates that the change in divider value has taken effect.";
+        dpll_clkouthif_div 5 rw type(dpll_clkouthif_div_status) "DPLL post-divider factor, M3, for internal clock generation (1 to 31). The values listed below (3, 4, 6 and 8) are used for maximum supported frequency at each OPP. Higher dividers (max 31), thus lower frequencies, are also supported.";
+    };
+
+    constants hsdivider_clkout1_pwdn_status width(1) "" {
+        HSDIVIDER_CLKOUT1_PWDN_0 = 0 "Divider is powered up";
+        HSDIVIDER_CLKOUT1_PWDN_1 = 1 "Divider is powered down";
+    };
+
+    constants hsdivider_clkout1_div_status width(5) "" {
+        HSDIVIDER_CLKOUT1_DIV_0 = 0 "Reserved";
+        HSDIVIDER_CLKOUT1_DIV_6 = 6 "6, to be used for OPP100 and OPP50 (when DPLL_PER is locked at 768 MHz)";
+        HSDIVIDER_CLKOUT1_DIV_12 = 12 "12, to be used for OPP100 and OPP50 (when DPLL_PER is locked at 1536 MHz)";
+    };
+    
+    register cm_div_m4_dpll_per addr(base, 0x58) "This register provides controls over the CLKOUT1 o/p of the HSDIVIDER." {
+        _ 19 mbz;
+        hsdivider_clkout1_pwdn 1 rw type(hsdivider_clkout1_pwdn_status) "Direct power down control for HSDIVIDER M4 divider and CLKOUT1 output. Power down should be enabled only when clock is first gated.";
+        _ 2 mbz;
+        st_hsdivider_clkout1 1 ro type(st_dpll_clkouthif_status) "HSDIVIDER CLKOUT1 status";
+        hsdivider_clkout1_gate_ctrl 1 rw type(scale_fclk_status) "Control gating of HSDIVIDER CLKOUT1";
+        _ 2 mbz;
+        hsdivider_clkout1_divchack 1 ro "Toggle on this status bit after changing HSDIVIDER_CLKOUT1_DIV indicates that the change in divider value has taken effect.";
+        hsdivider_clkout1_div 5 rw type(hsdivider_clkout1_div_status) "DPLL M4 post-divider factor (1 to 31)";
+    };
+
+    constants hsdivider_clkout2_pwdn_status width(1) "" {
+        HSDIVIDER_CLKOUT2_PWDN_0 = 0 "Divider is powered up.";
+        HSDIVIDER_CLKOUT2_PWDN_1 = 1 "Divider is powered down.";
+    };
+
+    constants hsdivider_clkout2_div_status width(5) "" {
+        HSDIVIDER_CLKOUT2_DIV_0 = 0 "Reserved";
+        HSDIVIDER_CLKOUT2_DIV_5 = 5 "5, to be used for OPP100 and OPP50 (when DPLL_PER is locked at 768 MHz)";
+        HSDIVIDER_CLKOUT2_DIV_9 = 9 "9, to be used for OPP100 and OPP50 (when DPLL_PER is locked at 1536 MHz)";
+    };
+    
+    register cm_div_m5_dpll_per addr(base, 0x5C) "This register provides controls over the CLKOUT2 o/p of the HSDIVIDER." {
+        _ 19 mbz;
+        hsdivider_clkout2_pwdn 1 rw type(hsdivider_clkout2_pwdn_status) "Direct power down control for HSDIVIDER M5 divider and CLKOUT2 output. Power down should be enabled only when clock is first gated.";
+        _ 2 mbz;
+        st_hsdivider_clkout2 1 ro type(st_dpll_clkouthif_status) "HSDIVIDER CLKOUT2 status";
+        hsdivider_clkout2_gate_ctrl 1 rw type(scale_fclk_status) "Control gating of HSDIVIDER CLKOUT2";
+        _ 2 mbz;
+        hsdivider_clkout2_divchack 1 ro "Toggle on this status bit after changing HSDIVIDER_CLKOUT2_DIV indicates that the change in divider value has taken effect.";
+        hsdivider_clkout2_div 5 rw type(hsdivider_clkout2_div_status) "DPLL M5 post-divider factor (1 to 31)";
+    };
+
+    constants hsdivider_clkout3_div_status width(5) "" {
+        HSDIVIDER_CLKOUT3_DIV_0 = 0 "Reserved";
+        HSDIVIDER_CLKOUT3_DIV_2 = 2 "2, to be used for OPP100 (when DPLL_PER is locked at 768 MHz)";
+        HSDIVIDER_CLKOUT3_DIV_4 = 4 "4, to be used for OPP100 (when DPLL_PER is locked at 1536 MHz) and for OPP50 (when DPLL_PER is locked at 768 MHz)";
+        HSDIVIDER_CLKOUT3_DIV_8 = 8 "8, to be used for OPP50 (when DPLL_PER is locked at 1536 MHz)";
+    };
+    
+    register cm_div_m6_dpll_per addr(base, 0x60) "This register provides controls over the CLKOUT3 o/p of the HSDIVIDER." {
+        _ 19 mbz;
+        hsdivider_clkout3_pwdn 1 rw type(hsdivider_clkout2_pwdn_status) "Direct power down control for HSDIVIDER M6 divider and CLKOUT3 output. Power down should be enabled only when clock is first gated.";
+        _ 2 mbz;
+        st_hsdivider_clkout3 1 ro type(st_dpll_clkouthif_status) "HSDIVIDER CLKOUT3 status";
+        hsdivider_clkout3_gate_ctrl 1 rw type(scale_fclk_status) "Control gating of HSDIVIDER CLKOUT3";
+        _ 2 mbz;
+        hsdivider_clkout3_divchack 1 ro "Toggle on this status bit after changing HSDIVIDER_CLKOUT3_DIV indicates that the change in divider value has taken effect.";
+        hsdivider_clkout3_div 5 rw type(hsdivider_clkout3_div_status) "DPLL M6 post-divider factor (1 to 31)";
+    };
+
+    constants hsdivider_clkout4_div_status width(5) "" {
+        HSDIVIDER_CLKOUT4_DIV_0 = 0 "Reserved";
+        HSDIVIDER_CLKOUT4_DIV_3 = 3 "3, to be used for OPP100 (when DPLL_PER is locked at 768 MHz)";
+        HSDIVIDER_CLKOUT4_DIV_5 = 5 "5, to be used for OPP100 (when DPLL_PER is locked at 1536 MHz)";
+        HSDIVIDER_CLKOUT4_DIV_6 = 6 "6, to be used for OPP50 (when DPLL_PER is locked at 768 MHz)";
+        HSDIVIDER_CLKOUT4_DIV_10 = 10 "10, to be used for OPP50 (when DPLL_PER is locked at 1536 MHz)";
+    };
+    
+    register cm_div_m7_dpll_per addr(base, 0x64) "This register provides controls over the CLKOUT4 o/p of the HSDIVIDER." {
+        _ 19 mbz;
+        hsdivider_clkout4_pwdn 1 rw type(hsdivider_clkout2_pwdn_status) "Direct power down control for HSDIVIDER M7 divider and CLKOUT4 output. Power down should be enabled only when clock is first gated.";
+        _ 2 mbz;
+        st_hsdivider_clkout4 1 ro type(st_dpll_clkouthif_status) "HSDIVIDER CLKOUT4 status";
+        hsdivider_clkout4_gate_ctrl 1 rw type(scale_fclk_status) "Control gating of HSDIVIDER CLKOUT4";
+        _ 2 mbz;
+        hsdivider_clkout4_divchack 1 ro "Toggle on this status bit after changing HSDIVIDER_CLKOUT4_DIV indicates that the change in divider value has taken effect.";
+        hsdivider_clkout4_div 5 rw type(hsdivider_clkout4_div_status) "DPLL M7 post-divider factor (1 to 31)";
+    };
+    
+    register cm_ssc_deltamstep_dpll_per addr(base, 0x68) "Control the DeltaMStep parameter for Spread Spectrum Clocking. [warm reset insensitive]" {
+        _ 12 mbz;
+        deltamstep 20 rw "DeltaMStep is split into fractional and integer part. For Triangular Spread Spectrum: [19:18] for integer part, [17:0] for fractional part For Square Wave Spread Spectrum [19:14] for integer part, [13:0] for fractional part";
+    };
+    
+    register cm_ssc_modfreqdiv_dpll_per addr(base, 0x6C) "Control the Modulation Frequency (Fm) for Spread Spectrum. [warm reset insensitive]" {
+        _ 21 mbz;
+        modfreqdiv_exponent 3 rw "Set the Exponent component of MODFREQDIV factor";
+        _ 1 mbz;
+        modfreqdiv_mantissa 7 rw "Set the Mantissa component of MODFREQDIV factor";
+    };
+
+    constants dpll_en_status1 width(3) "" {
+        DPLL_EN_0_1 = 0 "Reserved";
+        DPLL_EN_1_1 = 1 "Put the DPLL in low-power stop mode";
+        DPLL_EN_2_1 = 2 "Reserved2";
+        DPLL_EN_3_1 = 3 "Reserved";
+        DPLL_EN_4_1 = 4 "Put the DPLL in MN bypass mode. The DPLL_MULT register bits are reset to 0 automatically by putting the DPLL in this mode.";
+        DPLL_EN_5_1 = 5 "Put the DPLL in idle bypass low-power mode.";
+        DPLL_EN_6_1 = 6 "Reserved";
+        DPLL_EN_7_1 = 7 "Enables the DPLL in lock mode";
+    };
+    
+    register cm_clkmode_dpll_usb addr(base, 0x80) "This register allows controlling the DPLL modes." {
+        _ 17 mbz;
+        dpll_ssc_downspread 1 rw type(dpll_ssc_downspread_status) "Control if only low frequency spread is required";
+        dpll_ssc_ack 1 ro type(dpll_ssc_ack_status) "Acknowledgement from the DPLL regarding start and stop of Spread Spectrum Clocking feature";
+        dpll_ssc_en 1 rw type(dpll_ssc_en_status) "Enable or disable Spread Spectrum Clocking";
+        _ 9 mbz;
+        dpll_en 3 rw type(dpll_en_status1) "DPLL control. Upon Warm Reset, the PRCM DPLL control state machine updates this register to reflect DPLL low-power stop mode.";
+    };
+    
+    register cm_idlest_dpll_usb addr(base, 0x84) "This register allows monitoring DPLL activity. This register is read only and automatically updated. [warm reset insensitive]" {
+        _ 23 mbz;
+        st_mn_bypass 1 ro type(st_mn_bypass_status) "DPLL MN_BYPASS status";
+        _ 7 mbz;
+        st_dpll_clk 1 ro type(st_dpll_clk_status) "DPLL lock status";
+    };
+
+    constants auto_dpll_mode_status1 width(3) "" {
+        AUTO_DPLL_MODE_0_1 = 0 "DPLL auto control disabled";
+        AUTO_DPLL_MODE_1_1 = 1 "The DPLL is automatically put in low-power stop mode when its DPLL generated clocks are not required anymore. It is also restarted automatically.";
+        AUTO_DPLL_MODE_2_1 = 2 "Reserved";
+        AUTO_DPLL_MODE_3_1 = 3 "Reserved";
+        AUTO_DPLL_MODE_4_1 = 4 "Reserved";
+        AUTO_DPLL_MODE_5_1 = 5 "The DPLL is automatically put in idle bypass low-power mode when its DPLL generated clocks are not required anymore. It is also restarted automatically.";
+        AUTO_DPLL_MODE_6_1 = 6 "Reserved";
+        AUTO_DPLL_MODE_7_1 = 7 "Reserved";
+    };
+    
+    register cm_autoidle_dpll_usb addr(base, 0x88) "This register provides automatic control over the DPLL activity." {
+        _ 29 mbz;
+        auto_dpll_mode 3 rw type(auto_dpll_mode_status1) "DPLL automatic control;";
+    };
+    
+    register cm_clksel_dpll_usb addr(base, 0x8C) "This register provides controls over the DPLL." {
+        dpll_sd_div 8 rw type(dpll_en_status) "Sigma-Delta divider select (2-255). This factor must be set by s/w to ensure optimum jitter performance. DPLL_SD_DIV = CEILING ([DPLL_MULT/(DPLL_DIV+1)] * CLKINP / 250), where CLKINP is the input clock of the DPLL in MHz). Must be set with M and N factors, and must not be changed once DPLL is locked.";
+        dpll_byp_clksel 1 rw "Allows control of the BYPASS clock of the PLL and the associated HSDIVIDER. Same as ULOWCLKEN on DPLL. In DPLL locked mode, 0 - No impact 1 - No impact In DPLL bypass mode, 0 - CLKINP is selected as the BYPASS clock for CLKOUT 1 - CLKINPULOW is selected as the BYPASS clock for CLKOUT";
+        _ 3 mbz;
+        dpll_mult 12 rw type(dpll_en_status) "DPLL multiplier factor (2 to 4095). This register is automatically cleared to 0 when the DPLL_EN field in the *CLKMODE_DPLL* register is set to select MN bypass mode. (equal to input M of DPLL; M=2 to 4095 = DPLL multiplies by M).";
+        dpll_div 8 rw "DPLL divider factor (0 to 255) (equal to input N of DPLL; actual division factor is N+1).";
+    };
+
+    constants dpll_clkout_div_status1 width(7) "" {
+        DPLL_CLKOUT_DIV_0_1 = 0 "Reserved";
+        DPLL_CLKOUT_DIV_2 = 2 "2, to be used for OPP100 and OPP50";
+    };
+    
+    register cm_div_m2_dpll_usb addr(base, 0x90) "This register provides controls over the M2 divider of the DPLL." {
+        _ 22 mbz;
+        st_dpll_clkout 1 ro type(st_dpll_clkouthif_status) "DPLL CLKOUT status";
+        dpll_clkout_gate_ctrl 1 rw type(scale_fclk_status) "Control gating of DPLL CLKOUT";
+        dpll_clkout_divchack 1 ro "Toggle on this status bit after changing DPLL_CLKOUT_DIV indicates that the change in divider value has taken effect.";
+        dpll_clkout_div 7 rw type(dpll_clkout_div_status1) "DPLL post-divider factor, M2, for internal clock generation (1 to 127)";
+    };
+    
+    register cm_ssc_deltamstep_dpll_usb addr(base, 0xA8) "Control the DeltaMStep parameter for Spread Spectrum Clocking. [warm reset insensitive]" {
+        _ 11 mbz;
+        deltamstep 21 rw "DeltaMStep is split into fractional and integer part. For Triangular Spread Spectrum: [20:18] for integer part, [17:0] for fractional part For Square Wave Spread Spectrum [19:14] for integer part, [13:0] for fractional part";
+    };
+    
+    register cm_ssc_modfreqdiv_dpll_usb addr(base, 0xAC) "Control the Modulation Frequency (Fm) for Spread Spectrum. [warm reset insensitive]" {
+        _ 21 mbz;
+        modfreqdiv_exponent 3 rw "Set the Exponent component of MODFREQDIV factor";
+        _ 1 mbz;
+        modfreqdiv_mantissa 7 rw "Set the Mantissa component of MODFREQDIV factor";
+    };
+    
+    register cm_clkdcoldo_dpll_usb addr(base, 0xB4) "This register provides controls over the CLKDCOLDO output of the DPLL." {
+        _ 22 mbz;
+        st_dpll_clkdcoldo 1 ro type(st_dpll_clkoutx2_status) "DPLL CLKDCOLDO status";
+        dpll_clkdcoldo_gate_ctrl 1 rw type(scale_fclk_status) "Control gating of DPLL CLKDCOLDO";
+        _ 8 mbz;
+    };
+};

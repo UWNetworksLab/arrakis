@@ -1,0 +1,1390 @@
+/*
+ * Copyright (c) 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * e1000.dev
+ *
+ * DESCRIPTION: Intel e1000 family Gigabit Ethernet NICs
+ * 
+ * Numbers in comments refer to the Intel PCIe GbE Controllers Open
+ * Source Software Development Manual, 631xESB / 632xESB, 82563EB /
+ * 82564EB, 82571EB / 82572EI & 82573E / 82573V / 82573L. 
+ * 316080-003, Revison 1.2, September 2007
+ */
+
+device e1000 lsbfirst ( addr base ) "Intel e1000 Gigabit Ethernet" {
+
+  /************************************
+   * General registers
+   ***********************************/
+
+  // 13.3.1
+  constants linkspeed "Link speed" {
+    mb10	= 0b00 "10Mb/s";
+    mb100	= 0b01 "100Mb/s";
+    mb1000	= 0b10 "1Gb/s";
+    mb_notused	= 0b11 "1Gb/s";
+  };
+
+  register ctrl rw addr(base, 0x0000) "Device control" {
+    fd		1 "full-duplex";
+    _		1 mbz;
+    gio_md	1 "GIO master disable";
+    lrst	1 "Link reset";
+    _		1 mbz;
+    asde	1 "Auto-Speed Detection Enable";
+    slu		1 "Set link up";
+    ilos	1 "Invert Loss-of-Signal (LOS)";
+    speed	2 type(linkspeed) "Speed selection";
+    _		1 mbz;
+    frcspd	1 "Force speed";
+    frcdplx	1 "Force duplex";
+    _		5 mbz;
+    sdp0_data	1 "SDP0 data value, or dock/undock status";
+    sdp1_data	1 "SDP1 data value";
+    advd3wuc	1 "D3cold wakeup capability";
+    en_phy_pwr_mgmt 1 "PHY Power-Management Enable";
+    sdp0_iodir	1 "SDP0 pin I/O directionality";
+    sdp1_iodir	1 "SDP1 pin I/O directionality";
+    _		2 mbz;
+    rst		1 "Device reset";
+    rfce	1 "Receive flow control enable";
+    tfce	1 "Transmit flow control enable";
+    _		1 mbz;
+    vme		1 "VLAN mode enable";
+    phy_rst	1 "PHY reset";
+  };
+
+  // 82546 rev 3
+  register ctrldup rw addr(base, 0x0004) "Device Control Duplicate (Shadow)" {
+    fd          1 "full-duplex";
+    _           1 mbz;
+    gio_md      1 "GIO master disable";
+    lrst        1 "Link reset";
+    _           1 mbz;
+    asde        1 "Auto-Speed Detection Enable";
+    slu         1 "Set link up";
+    ilos        1 "Invert Loss-of-Signal (LOS)";
+    speed       2 type(linkspeed) "Speed selection";
+    _           1 mbz;
+    frcspd      1 "Force speed";
+    frcdplx     1 "Force duplex";
+    _           5 mbz;
+    sdp0_data   1 "SDP0 data value, or dock/undock status";
+    sdp1_data   1 "SDP1 data value";
+    advd3wuc    1 "D3cold wakeup capability";
+    en_phy_pwr_mgmt 1 "PHY Power-Management Enable";
+    sdp0_iodir  1 "SDP0 pin I/O directionality";
+    sdp1_iodir  1 "SDP1 pin I/O directionality";
+    _           2 mbz;
+    rst         1 "Device reset";
+    rfce        1 "Receive flow control enable";
+    tfce        1 "Transmit flow control enable";
+    _           1 mbz;
+    vme         1 "VLAN mode enable";
+    phy_rst     1 "PHY reset";
+  };
+
+  constants lanid "LAN ID" {
+    lan_a       = 0b00 "LAN A";
+    lan_b       = 0b01 "LAN B";
+    lan_not_u1  = 0b10 "LAN ID not used";
+    lan_not_u2  = 0b11 "LAN ID not used";
+  };
+  constants mac_mask "LAN MAC MASK" {
+    lan_b_mask  = 0x0100 "LAN B mask";
+  };
+
+  // 13.3.2 
+  register status ro addr(base, 0x0008) "Device status" {
+    fd		1 "Link full duplex configuration";
+    lu		1 "Link up";
+    func_id	2 "Function ID";
+    txoff	1 "Transmission paused";
+    tbimode	1 "TBI mode";
+    speed	2 type(linkspeed) "Link speed setting";
+    asdv	2 type(linkspeed) "Auto speed detection value";
+    phyra	1 "PHY reset asserted"; 
+    pci66	1 "PCI Bus speed indication";
+    bus64	1 "PCI Bus Width indication";
+    pcix_mode   1 "PCI-X Mode indication";
+    pcixspd     2 "PCI-X Bus Speed Indication";
+    _		3 mbz;
+    gio_mes     1 "GIO master enable status";
+    _		12 mbz;
+  };
+
+  // 13.3.3
+  constants flashenable "Flash write enable control" {
+    flash_erase		= 0b00 "Flash erase";
+    flash_wr_disable	= 0b01 "Flash writes discarded";
+    flash_wr_enable	= 0b10 "Flash writed enabled";
+  };
+
+  constants eeaddrsize "EEPROM address size" {
+    bits8or9	= 0 "8- and 9-bit";
+    bits16	= 1 "16-bit";
+  };
+
+  constants nvmtype "Non-volatile memory type" {
+    eeprom	= 0b00 "EEPROM";
+    saflash	= 0b01 "Stand-alone Flash";
+    spiflash	= 0b10 "Shared SPI Flash";
+    sio		= 0b11 "SIO";
+  };
+
+  register eecd rw addr(base, 0x0010) "EEPROM/Flash control" {
+    ee_sk	1 "Clock input to EEPROM";
+    ee_cs	1 "Chip select to EEPROM";
+    ee_di	1 "Data input to EEPROM";
+    ee_do	1 "Data output bit from EEPROM";
+    fwe		2 type(flashenable) "Flash write enable control";
+    ee_req	1 "Request EEPROM access";
+    ee_gnt	1 "Grant EEPROM access";
+    ee_pres	1 "EEPROM present";
+    ee_size_n	1 "EEPROM size for NM93C46 compatible EEPROM" ;
+    ee_size_m   1 "EEPROM size for Microwire EEPROMs";
+    _           2 mbz;
+    ee_type     1 "EEPROM Type. (82541xx and 82547GI/EI)";
+    _		18 mbz;
+  };
+
+  // 13.3.4
+  // NM93C46 compatible EEPROMs
+  register eerd_nm rw addr(base, 0x0014) "EEPROM read" {
+    start       1 "Start read";  
+    _           3 mbz;
+    done        1 ro "Read done";
+    _           3 mbz;
+    addr        8 "Read address";
+    data        16 "Read data";
+  };
+
+  register eerd_ms rw also addr(base, 0x0014) "EEPROM read 82541xx and 82547GI/EI" {
+    start       1 "Start read";
+    done        1 ro "Read done";
+    addr        14 "Read address";
+    data        16 "Read data";   
+  };
+
+
+  // 13.3.5
+  constants linkmode "Link mode" {
+    glci	= 0b00 "Direct coper or GLCI";
+    l82573	= 0b10 "Must be set for 82573E/V/L";
+    serdes	= 0b11 "Internal SerDes (TBI) or SerDes mode";
+  };
+  register ctrlext rw addr(base, 0x0018) "Extended device control" {
+    _		2 mbz;
+    sdp2_gpien	1 "General-purpose interrupt detection for SDP2";
+    sdp3_gpien	1 "General-purpose interrupt detection for SDP3";
+    _		2;
+    sdp2_data	1 "SDP2 data value";
+    sdp3_data	1 "SDP3 data value";
+    _		2 mbz;
+    sdp2_iodir  1 "SDP2 pin directionality";
+    sdp3_iodir  1 "SDP3 pin directionality";
+    asdchk	1 "Auto-speed-detection check";
+    ee_rst	1 "EEPROM reset";
+    _		1 mbz;
+    spd_byps	1 "Speed select bypass";
+    _		1;
+    rodis	1 "Relaxed ordering disabled";
+    serdeslpe	1 "SERDES low power enable";
+    dmadge	1 "DMA dynamic gating enable";
+    phypde	1 "PHY power down enable";
+    _		1;
+    link_mode	2 type(linkmode) "Link mode";
+    pb_paren	1 "Packet buffer parity error detection enable";
+    df_paren	1 "Descriptor FIFO parity error detection enable";
+    _		1 mbz;
+    iame	1 "Interrupt acknowledge auto-mask enable";
+    drv_load	1 "Driver loaded";
+    int_tca	1 "Timers clear enable";
+    host_paren  1 "Host data FIFO parity enable";
+    _		1;
+  };
+
+  // 13.3.6
+  register fla rw addr(base, 0x001c) "Flash access" {
+    fl_sk	1 "Clock input to Flash";
+    fl_ce	1 "Chip select to Flash";
+    fl_si	1 "Data input to Flash";
+    fl_so	1 "Data output bit from Flash";
+    fl_req	1 "Request Flash access";
+    fl_gnt	1 "Grant Flash access";
+    fl_addr_sz  1 "Flash address size";
+    _		2;
+    sw_wr_done  1 "Last write done";
+    rd_status	1 "Flash status";
+    _		5;
+    ide_bo	14 "Base address of IDE Boot expansion ROM";
+    fl_busy	1 "Flash busy";
+    fl_er	1 "Flash erase command";
+  };
+
+  // 13.3.7
+  constants phyop "PHY register opcode" {
+    mdi_write	= 0b01 "MDI Write";
+    mdi_read	= 0b10 "MDI Read";
+  };
+  register mdic rw addr(base, 0x0020) "MDI control" {
+    data	16 "Data";
+    regadd	5  "PHY register address";
+    phyadd	5  "PHY address";
+    op		2 type(phyop) "Opcode";
+    r		1 "Ready bit";
+    i		1 "Interript enable";
+    e		1 "Error";
+    _		1 mbz;
+  };
+  
+  // 13.3.8
+  // There are a lot of PHY registers, all accessed through the MDIC.
+  // We don't yet list them here. 
+
+  // 13.3.10
+  register serdesctl rw addr(base, 0x0024) "SERDES ANA" {
+    data	8 "Data to SerDes";
+    addr	8 "Address to SerDes";
+    _		15;
+    done	1 "Done";
+  };
+
+  // 13.3.11-12
+  constants fca "Flow control address" {
+    fca_lo	= 0x0c28001;
+    fca_hi	= 0x0000100;
+  };
+  register fcal rw addr(base, 0x0028) "Flow control address low" type(uint32);
+  register fcah rw addr(base, 0x002C) "Flow control address low" type(uint32);
+  
+  // 13.3.13
+  constants fctval "Flow control type" {
+    fct_val = 0x0008808;
+  };
+  register fct rw addr(base, 0x0030) "Flow control type" type(uint32);
+  
+  // 13.3.14
+  register kumctrlsta rw addr(base, 0x0034) "GLCI control and status" {
+    data	16 "Data";
+    offset	5  "Offset of internal register";
+    ren		1  "Read enable (1=read)";
+    _		10;
+  };
+
+  // 13.3.15
+  constants vet_val "VLAN ether type value" {
+    vlan_type	= 0x0008100;
+  };
+  register vet rw addr(base, 0x0038) "VLAN Ether type" type(uint32);
+  
+  // 13.3.16
+  register mdphya rw addr(base, 0x003c) "MDC/MDIO PHY address" {
+    phya	5 "PHY address";
+    _		27;
+  };
+
+  // 13.3.17
+  register ufuse3 ro addr(base, 0x00f0) "ULT Fuse register 3" {
+    drred	15 "Data RAM redundancy fuses";
+    crred	13 "Code RAM redundancy fuses";
+    enad	1  "Enable Data RAM redundancy fuses";
+    enac	1  "Enable Code RAM redundancy fuses";
+    _		2; 
+  };
+  
+  // 13.3.18
+  register fcttv rw addr(base, 0x0170) "Flow control transmit timer value" {
+    ttv		16 "Transmit timer value";
+    _		16 mbz;
+  };
+  
+  // 13.3.19
+  register txcw rw addr(base, 0x0178) "Transmit config word" {
+    _		5 mbz;
+    txcw_fd	1 "TXCW full-duplex";
+    txcw_hd	1 "TXCW half-duplex";
+    txcw_pause	2 "TXCW pause";
+    _		3 mbz;
+    txcw_rfi	2 "TXCW remote fault indication";
+    _		1 mbz;
+    txcw_npr	1 "TXCW next page request";
+    _		14 mbz;
+    txconfig	1 "Transmit config control bit";
+    ane		1 "Auto-negotiation enable";
+  };
+
+  // 13.3.20
+  register rxcw ro addr(base, 0x0180) "Receive config word" {
+    _		5 mbz;
+    rxcw_fd	1 "RXCW full-duplex";
+    rxcw_hd	1 "RXCW half-duplex";
+    rxcw_pause	2 "RXCW pause";
+    _		3 mbz;
+    rxcw_rfi	2 "RXCW remote fault indication";
+    _		1 mbz;
+    rxcw_npr	1 "RXCW next page request";
+    _		10 mbz;
+    nc		1 "Carrier sense indicator";
+    inv		1 "Invalid symbol during config process";
+    chg		1 "Change to RXCW indication";
+    rxconfig	1 "Reception indication";
+    sync	1 "Lost bit sync indication";
+    anc		1 "Auto-negotiation complete";
+  };
+  
+  // 13.3.21
+  constants ledmode "LED output mode" {
+    link_10_100		= 0b0000 "Either 10 or 100 Mbs link established";
+    link_100_1000	= 0b0001 "Either 100 or 1000 Mbs link established";
+    link_up		= 0b0010 "Any speed link established";
+    filter_activity	= 0b0011 "Packets passing MAC filtering";
+    link_activity	= 0b0100 "No transmit or receive activity";
+    link_10		= 0b0101 "10 Mbs link established";
+    link_100		= 0b0110 "100 Mbs link established";
+    link_1000		= 0b0111 "1000 Mbs link established";
+    full_duplex		= 0b1001 "Link configured for full-duplex";
+    collision		= 0b1010 "Collision is observed";
+    activity		= 0b1011 "Link established and packets sent or revd";
+    bus_size		= 0b1100 "Controller detects 1 PCIe lane conn.";
+    paused		= 0b1101 "Transmitter is flow controlled";
+    led_on		= 0b1110 "Always on";
+    led_off		= 0b1111 "Always off";
+  };
+  constants blmode "LED blink mode" {
+    ms200		= 0 "200ms on, 200ms off";
+    ms83		= 1 "83ms on, 83 ms off";
+  };
+  register ledctl rw addr(base, 0x0e00) "LED control" {
+    led0_mode	4 type(ledmode) "LED0/LINK# mode";
+    _		1 mbz;
+    global_blink_mode 1 type(blmode) "Global blink mode";
+    led0_ivrt	1 "LED0 invert";
+    led0_blink	1 "LED0 blink";
+
+    led1_mode	4 type(ledmode) "LED1/LINK# mode";
+    _		1 mbz;
+    led1_blink_mode 1 type(blmode) "Global blink mode";
+    led1_ivrt	1 "LED1 invert";
+    led1_blink	1 "LED1 blink";
+
+    led2_mode	4 type(ledmode) "LED2/LINK# mode";
+    _		1 mbz;
+    led2_blink_mode 1 type(blmode) "Global blink mode";
+    led2_ivrt	1 "LED2 invert";
+    led2_blink	1 "LED2 blink";
+
+    led3_mode	4 type(ledmode) "LED3/LINK# mode";
+    _		1 mbz;
+    led3_blink_mode 1 type(blmode) "Global blink mode";
+    led3_ivrt	1 "LED3 invert";
+    led3_blink	1 "LED3 blink";
+  };    
+
+  // 13.3.22 
+  register extcnf_ctrl rw addr(base, 0x0f00) "Extended config control" {
+    _		1 mbz;
+    phy_we	1 "PHY write enable";
+    dud_en	1 "Extended dock/undock configuration enable";
+    _		1;
+    dock_own	1 "Dock config owner";
+    mdio_swown	1 "MDIO software ownership";
+    mdio_hwown	1 "MDIO hoftware ownership";
+    _		9;
+    ecp		12 "Extended configuration pointer";
+    _		4;
+  };
+
+  // 13.3.23
+  register extcnf_size rw addr(base, 0x0f08) "Extended config size" {
+    phy_len	8 "Extended PHY configuration area length";
+    dock_len	8 "Extended dock configuration area length";
+    _		8 mbz;
+    _		8;
+  };
+  
+  // 13.3.24
+  register pba rw addr(base, 0x1000) "Packet buffer allocation" {
+    rxa		16 "Rx packet buffer allocation in KB";
+    txa		16 "Tx packet buffer allocation in KB";
+  };
+  
+  // 13.3.25
+  register eemngctl rw addr(base, 0x1010) "MNG EEPROM control" {
+    _		18;
+    crg_done	1 "MNG configuration cycle done";
+    _		13;
+  };
+
+  // 13.3.26
+  register sw_fw_sync rw addr(base, 0x5b5c) "Software/firmware sync" {
+    sw_eep_sm	1 "EEPROM access owned by software";
+    sw_phy_sm0	1 "PHY 0 access owned by software";
+    sw_phy_sm1  1 "PHY 1 access owned by software";
+    sw_mac_csr_sm 1 "Shared CSR access owned by software";
+    _		12;
+    fw_eep_sm	1 "EEPROM access owned by firmware";
+    fw_phy_sm0	1 "PHY 0 access owned by firmware";
+    fw_phy_sm1  1 "PHY 1 access owned by firmware";
+    fw_mac_csr_sm 1 "Shared CSR access owned by firmware";
+    _		12;
+  };
+
+  /************************************
+   * Interrupt registers
+   ***********************************/
+
+  // 13.3.27
+  regtype intreg "Interrupt register format" {
+    txdw	1 "Transmit descriptor written back";
+    txqe	1 "Transmit queue empty";
+    lsc		1 "Link status change";
+    rxseq	1 "Receive sequence error";
+    rxdmt0	1 "Receive descriptor minimum threshold reached";
+    _		1;
+    rxo		1 "Receiver overrun";
+    rxt0	1 "Receiver timer interrupt";
+    _		1;
+    mdac	1 "MDI/O access complete";
+    rxcfg	1 "Received configuration symbols";
+    _		2;
+    gpi_sdp2	1 "General-purpose interrupt on SPD2";
+    gpi_sdp3	1 "General-purpose interrupt on SPD3";
+    txd_low	1 "Transmit descriptor low threshold";
+    srpd	1 "Small receive packet detected";
+    ack		1 "Receive ack frame detected";
+    _		2;
+    rx_desc_fifo_par0 1 "Rx descriptor FIFO parity error 0"; 
+    tx_desc_fifo_par0 1 "Tx descriptor FIFO parity error 0"; 
+    pcie_master_par 1 "PCIe master data FIFO parity error";
+    pbpar	1 "Packet buffer parity error";
+    rx_desc_fifo_par1 1 "Rx descriptor FIFO parity error 1"; 
+    tx_desc_fifo_par1 1 "Tx descriptor FIFO parity error 1"; 
+    _		5;
+    int_asserted 1 "Interrupt asserted";
+  };
+
+  // 13.3.27
+  register icr ro addr(base, 0x00c0) "Interrupt cause read" type(intreg);
+
+  // 13.3.28
+  register itr rw addr(base, 0x00c4) "Interrupt throttling rate" {
+    interval	16 "Minimum inter-interrupt interval (x256ns)";
+    _		16 mbz;
+  };
+  
+  // 13.3.29
+  register ics wo addr(base, 0x00c8) "Interrupt cause write" type(intreg);
+  
+  // 13.3.30 
+  register ims rw addr(base, 0x00d0) "Interrupt mask set/read" type(intreg);
+  
+  // 13.3.31
+  register imc wo addr(base, 0x00d8) "Interrupt mask clear" type(intreg);
+
+  // 13.3.32
+  register iam rw addr(base, 0x00e0) "Interrupt ack auto mask" type(intreg);
+
+  regarray eitr addr(base, 0x1680)[9;0x4] "Extended Interrupt Throttle" {
+    _         2 mbz;
+    interval 13 "Interval";
+    _         1 mbz;
+    counter  16 "Down counter";
+  };
+
+  /************************************
+   * Receive registers
+   ***********************************/
+
+  // 13.3.33
+  constants lbmode "Loopback mode" {
+    lb_normal	= 0b00 "Normal operation";
+    lb_mac	= 0b01 "MAC loopback";
+  };
+  constants rxthresh "Received desc. threshold size" {
+    rdlen_2	= 0b00 "1/2 RDLEN";
+    rdlen_4	= 0b01 "1/4 RDLEN";
+    rdlen_8	= 0b10 "1/8 RDLEN";
+  };
+  constants dtype "Descriptor type" {
+    dt_legacy	= 0b00 "Legacy descriptor type";
+    dt_split	= 0b01 "Packet split descriptor type";
+  };
+  constants rxbsize "Receive buffer size" {
+    rxb2048	= 0b00 "2048 bytes";
+    rxb1024	= 0b01 "1024 or 16384 bytes";
+    rxb512	= 0b10 "512 or 8192 bytes";
+    rxb256	= 0b11 "256 or 4096 bytes";
+  };
+  register rctl rw addr(base, 0x0100) "Receive control" {
+    _		1 mbz;
+    en		1 "Receiver enable";
+    sbp		1 "Store bad packets";
+    upe		1 "Unicast promiscuous enabled";
+    mpe		1 "Multicast promiscuous enabled";
+    lpe		1 "Long packet reception enable";
+    lbm		2 type(lbmode) "Loopback mode";
+    rdmts	2 type(rxthresh) "Receive descriptor minimum threshold size";
+    dtyp	2 type(dtype) "Descriptor type";
+    mo		2 "Multicast offset (12 bits starting at 36-val)";
+    _		1 mbz;
+    bam		1 "Broadcast accept mode";
+    bsize	2 type(rxbsize) "Receive buffer size (see BSEX)";
+    vfe		1 "VLAN filter enable";
+    cfien	1 "Canonical form indicator enable";
+    cfi		1 "Canonical form indicator value";
+    _		1 mbz;
+    dpf		1 "Discard pause frames";
+    pmcf	1 "Pass MAC control frames";
+    _		1 mbz;
+    bsex	1 "Buffer size extension";
+    secrc	1 "Strip Ethernet CRC from packet";
+    flxbuf	4 "Flexible buffer size (in KB)";
+    _		1 mbz;
+  };    
+  
+  // 13.3.34
+  register ert rw addr(base, 0x2008) "Early receive threshold" {
+    rxthresh	13 "Receive threshold value (x 8 bytes)";
+    _		1;
+    _		18 mbz;
+  };
+
+  // 13.3.35
+  register fcrtl rw addr(base, 0x2160) "Flow control rx threshold low" {
+    _		3 mbz;
+    rtl		13 "Recieve threshold low";
+    _		15 mbz;
+    xone	1 "XON enable";
+  };
+
+  // 13.3.36
+  register fcrth rw addr(base, 0x2168) "Flow control rx threshold high" {
+    _		3 mbz;
+    rth		13 "Recieve threshold high";
+    _		15 mbz;
+    flowcntdis	1 "Flow control disable";
+  };
+
+  // 13.3.37
+  register psrctl rw addr(base, 0x2170) "Packet split rx control" {
+    bsize0	7 "Receive buffer 0 size (x 128 bytes)";
+    _		1 mbz;
+    bsize1	7 "Receive buffer 1 size (x 1 kbytes)";
+    _		1 mbz;
+    bsize2	7 "Receive buffer 2 size (x 1 kbytes)";
+    _		1 mbz;
+    bsize3	7 "Receive buffer 3 size (x 1 kbytes)";
+    _		1 mbz;
+  };
+  
+  // 13.3.38/46/39/47
+  regarray rdbal rw addr(base, 0x2800)[2;0x100] 
+    "Rx descr. base addr low" type(uint32);
+  regarray rdbah rw addr(base, 0x2804)[2;0x100] 
+    "Rx descr. base addr high" type(uint32);
+
+  // 13.3.40/48 and 13.3.62/71
+  // Note that the description of the transmit length (13.3.62/71) refers to
+  // the size of the descriptor buffer in bytes. This is misleading; the whole
+  // register (raw value) refers to that, but the bottom 7 bits must be zero.
+  regtype dqlen "Descriptor length value" {
+    _		7 mbz;
+    len		13 "Num. descriptors (x8)";
+    _		12 mbz;
+  };
+  regarray rdlen rw addr(base, 0x2808)[2;0x100] 
+    "Rx descriptor length" type(dqlen);
+
+  // 13.3.41/49/42/50
+  regtype dqval "Descriptor head/tail value" {
+    val		16 "value";
+    _		16 mbz;
+  };
+  regarray rdh rw addr(base, 0x2810)[2;0x100] "Rx descr. head" type(dqval);
+  regarray rdt rw addr(base, 0x2818)[2;0x100] "Rx descr. tail" type(dqval);
+
+  // 13.3.43
+  register rdtr rw addr(base, 0x2820) "Rx. interrupt delay timer" {
+    delay	16 "delay timer (x 1.024us)";
+    _		15 mbz;
+    fpd		1 "Flush partial descriptor block";
+  };
+
+  // 13.3.44/51
+  constants threshgran "Threshold granularity" {
+    gran_cache	= 0 "Cache line granularity";
+    gran_desc	= 1 "Descriptor granularity";
+  };
+
+  regarray rxdctl rw addr(base, 0x2828)[2;0x100] "Rx descriptor control" {
+    pthresh 6 "Prefetch threshold";
+    _       2 mbz;
+    hthresh 6 "Host threshold";
+    _       2 mbz;
+    wthresh 6 "Write back threshold";
+    _       2 mbz;
+    gran    1 type(threshgran) "Granularity";
+    _       7 mbz;
+  };
+
+  regarray rxdctl_82575 rw also addr(base, 0x2828)[2;0x100] "Rx descriptor control" {
+    pthresh 6 "Prefetch threshold";
+    _       2 mbz;
+    hthresh 6 "Host threshold";
+    _       2 mbz;
+    wthresh 6 "Write back threshold";
+    _       3 mbz;
+    enable  1 "Granularity";
+    swflush 1 "Receive Software Flush";
+    _       5 mbz;
+  };
+
+  // 13.3.45
+  register radv rw addr(base, 0x282c) "Rx absolute intr. delay" {
+    idv		16 "Interrupt delay value";
+    _		16 mbz;
+  };
+  
+  // 13.3.52
+  register rsrpd rw addr(base, 0x2c00) "Rx small packet detect interrupt" {
+    size	12 "Max size of small packet";
+    _		20 mbz;
+  };
+  
+  // 13.3.53 
+  register raid rw addr(base, 0x2c08) "Rx ACK interrupt delay" {
+    idv		16 "Interrupt delay value (x 1.024us)";
+    _		16 mbz;
+  };
+
+  // 13.3.54
+  register cpuvec rw addr(base, 0x2c10) "CPU vector" type(uint32);
+
+  // 13.3.55
+  register rxcsum rw addr(base, 0x5000) "Receive checksum control" {
+    pcss	8 "Packet checksum start";
+    ipofld	1 "IP checksum offload enable";
+    tuofld	1 "TCP/UDP checksum offload enable";
+    _		22 mbz;
+  };
+
+  // 13.3.56
+  register rfctl rw addr(base, 0x5008) "Receive filter control" {
+    iscsi_dis	1 "iSCSI filtering disable";
+    iscsi_dwc	5 "iSCSI dword count";
+    nfsw_dis	1 "NFS write filtering disable";
+    nfsr_dis	1 "NFS read filtering disable";
+    nfs_ver	2 "NFS version (+2)";
+    ipv6_dis	1 "IPv6 filtering disable";
+    ipv6xsum_dis 1 "IPv6 xsum disable";
+    ackdis	1 "ACK accelerator disable";
+    ackd_dis	1 "ACK data disable";
+    ipfrsp_dis	1 "IP fragment split disable";
+    exsten	1 "Extended status enable";
+    _		16 mbz;
+  };
+
+  /************************************
+   * Transmit registers
+   ***********************************/
+
+  // 13.3.57
+  constants coldist "Recommended collision distances" {
+    cd_half	= 0x200 "512 byte-times";
+    cd_full	= 0x3f  "64 byte-times";
+    cd_esb	= 0x40  "64 byte-times (for 631xESB/632xESB)";
+  };
+  register tctl rw addr(base, 0x400) "Transmit control" {
+    _		1 mbz;
+    en		1 "Transmit enable";
+    _		1 mbz;
+    psp		1 "Pad short packets";
+    ct		8 "Collision threshold";
+    bst	    10 "Back-Off Slot time";
+    swxoff	1 "Software XOFF transmission";
+    _		1 mbz;
+    rtlc	1 "Retransmit on late collision";
+    unortx	1 "Underrun no re-transmit";
+    txcscmt	2 "Tx descriptor minimum threshold";
+    mulr	1 "Multiple request support";
+    _		3;
+  };
+
+  // 13.3.58
+  register tctl_ext rw addr(base, 0x0404) "Transmit control extended" {
+    _		10 mbz;
+    cold	10 type(coldist) "Collision distance";
+    _		12;
+  };
+
+  // 13.3.59
+  register tipg rw addr(base, 0x0410) "Transmit IPQ" {
+    ipgt	10 "IPG back to back (x MAC clock, +4)";
+    ipgr1	10 "IPG Part 1";
+    ipgr2	10 "IPG after deferral";
+    _		2 mbz;
+  };
+
+  //
+  // The e1000 has two transmit queues, hence two sets of the
+  // remaining registers
+  //
+
+  // 13.3.60/61/69/70
+  regarray tdbal rw addr(base, 0x3800)[2;0x100] "Tx descr. base addr. low" 
+    type(uint32);
+  regarray tdbah rw addr(base, 0x3804)[2;0x100] "Tx descr. base addr. hi" 
+    type(uint32);
+  
+  // 13.3.62/71
+  regarray tdlen rw addr(base, 0x3808)[2;0x100] "Tx descr. length" type(dqlen);
+
+  // 13.3.63/64/73
+  regarray tdh rw addr(base, 0x3810)[2;0x100] "Tx descr. head" type(dqval);
+  regarray tdt rw addr(base, 0x3818)[2;0x100] "Tx descr. tail" type(dqval);
+
+  // 13.3.65
+  register tidv rw addr(base, 0x3820) "Transmit interrupt delay value" {
+    idv		16 "Interupt delay value";
+    _		15 mbz;
+    fdp		1 wo "Flush partial description block";
+  };
+
+  // 13.3.66/74
+  regarray txdctl rw addr(base, 0x3828)[2;0x100] "Transmit descr. control queue"  {
+    pthresh	6 "Prefetch threshold";
+    _		2 mbz;
+    hthresh	8 "Host threshold";
+    wthresh	6 "Write back threshold";
+    _		1 mb1;
+    _		1;
+    gran	1 type(threshgran) "Granularity";
+    lwthresh	7 "Transmit descriptor low threshold";
+  };
+
+  regarray txdctl_82575 rw also addr(base, 0x3828)[4;0x100] "Transmit descr. control queue for 82575 cards"  {
+    pthresh  6 "Prefetch threshold";
+    _        2 mbz;
+    hthresh  6 "Host threshold";
+    _        2;
+    wthresh  6 "Write back threshold";
+    _        3 mb1;
+    enable   1 "Enable the queue";
+    swflsh   1 "Transmit Software Flush";
+    priority 1 "Priority";
+    _        4;
+  };
+
+  // 13.3.67
+  register tadv rw addr(base, 0x382c) "Tx absolute intr. delay" {
+    idv		16 "Interrupt delay value";
+    _		16 mbz;
+  };
+
+  // 13.3.68/75
+  regarray tarc rw addr(base, 0x3840)[2;0x100] "Tx arbitration counter"  {
+    count	7 "Transmit arbitration count";
+    _		1;
+    ratio	2 "Compensation ratio (1 / 2^val)";
+    enable	1 mb1;
+    _		10 mbz;
+    _		1 mb1;
+    _		1 mbz;
+    _		4 mb1;
+    _		5 mbz;
+  };
+
+  /************************************
+   * Filter registers
+   ***********************************/
+
+  // 13.4.1
+  regarray mta rw addr(base, 0x5200)[128] "Multicast table array" type(uint32);
+  
+  // 13.4.2
+  regarray ral rw addr(base, 0x5400)[16;8] "Receive address low" type(uint32);
+  
+  // 13.4.3
+  constants addrsel "Address select" {
+    as_dest	= 0b00 "Destination";
+    as_src      = 0b01 "Source";
+  };
+  regarray rah rw addr(base, 0x5404)[16;8] "Receive address high" {
+    rah		16 "Receive address high";
+    asel	2 type(addrsel) "Address select";
+    _		13 mbz;
+    av		1 "Address valid";
+  };
+
+  // 13.4.4
+  regarray vfta rw addr(base, 0x5600)[128] 
+    "VLAN filter table array" type(uint32);
+
+  // 13.4.5
+  constants mrqen "Multiple rx queue enable" {
+    mrq_dis	= 0b00 "Multiple queues disabled";
+    mrq_rss	= 0b01 "Multiple queues enabled by MSFT RSS";
+  };
+  register mrq rw addr(base, 0x5818) "Multiple queues receive command" {
+    mrqe	2 type(mrqen) "Multiple rx queues enable";
+    rssie	1 "RSS interrupt enable";
+    _		13 mbz;
+    tcp4	1 "Enable TCP IPv4 hash";
+    ipv4	1 "Enable IPv4 hash";
+    tcp6ex	1 "Enable TCP IPv6 Ex hash";
+    ipv6ex	1 "Enable IPv6 Ex hash";
+    ipv6	1 "Enable IPv6 hash";
+    _		11;
+  };
+
+  // 13.4.6
+  register rssim rw addr(base, 0x5864) "RSS interrupt mask" type(uint32);
+  
+  // 13.4.7 
+  register rssir rw addr(base, 0x5868) "RSS interrupt request" type(uint32);
+  
+  // 13.4.8
+  regarray reta rw addr(base, 0x5c00)[128] "Redirection table" type(uint8);
+
+  // 13.4.9
+  regarray rssrk rw addr(base, 0x5c80)[40] "RSS Random key" type(uint8);
+
+  /************************************
+   * Wakeup registers
+   ***********************************/
+
+  // 13.5.1
+  register wuc rw addr(base, 0x5800) "Wakeup control" {
+    apme	1 "Advanced power mgmt enable";
+    pme_en	1 "PME enable";
+    pme_stat	1 "PME status";
+    apmpme	1 "Assert PME on APM wakeup";
+    _		28;
+  };
+
+  // 13.5.2 
+  regtype wakeup "Wakeup register" {
+    lnkc	1 "Link status change";
+    mag		1 "Magic packet";
+    ex		1 "Directed exact";
+    mc		1 "Directed multicast";
+    bc		1 "Broadcast";
+    arp		1 "ARP request packet";
+    ipv4	1 "Directed IPv4";
+    ipv6	1 "Directed IPv6";
+    _		7 mbz;
+    notco	1 "Ignore TCO/management packets";
+    flx0	1 "Flexible filter 0 enable";
+    flx1	1 "Flexible filter 1 enable";
+    flx2	1 "Flexible filter 2 enable";
+    flx3	1 "Flexible filter 3 enable";
+    _		12 mbz;
+  };
+  register wufc rw addr(base, 0x5808) "Wakeup filter control" type(wakeup);
+
+  // 13.5.3
+  register wus ro addr(base, 0x5810) "Wakeup status" type(wakeup);
+
+  // 13.5.4
+  register ipav rw addr(base, 0x5838) "IP address valid" {
+    v40		1 "IPv4 address 0 valid";
+    v41		1 "IPv4 address 1 valid";
+    v42		1 "IPv4 address 2 valid";
+    v43		1 "IPv4 address 3 valid";
+    _		12 mbz;
+    v60		1 "IPv6 address 0 valid";
+    _		15 mbz;
+  };
+
+  // 13.5.5
+  regarray ip4at rw addr(base, 0x5840)[4;8] 
+    "IPv4 address table" type(uint32);
+
+  // 13.5.6
+  regarray ip6at rw addr(base, 0x5880)[4] "IPv6 address table" type(uint32);
+
+  // 13.5.7
+  register wupl rw addr(base, 0x5900) "Wakeup packet length" {
+    len		12 "Length";
+    _		20 mbz;
+  };
+
+  // 13.5.8
+  regarray wupm rw addr(base, 0x5a00)[32] "Wakeup packet memory" type(uint32);
+  
+  // 13.5.9 
+  regarray fflt rw addr(base, 0x5f00)[4;8] "Flexible filter length table" {
+    len		11 "Length";
+    _		21 mbz;
+  };
+  regarray ffltco rw addr(base, 0x5f20)[2;8] "Flexible filter length table" {
+    tcolen	11 "Length";
+    _		21 mbz;
+  };
+  
+  // 13.5.10
+  regarray ffmt rw addr(base, 0x9000)[128;8] "Flexible filter mask table" {
+    mask	4 "mask";
+    _		28 mbz;
+  };
+
+  // 13.5.11
+  regarray ffvt rw addr(base, 0x9800)[128;8] "Flexible filter value table" {
+    val0	8 "Value 0";
+    val1	8 "Value 1";
+    val2	8 "Value 2";
+    val3	8 "Value 3";
+  };
+
+  /************************************
+   * Management control registers
+   ***********************************/
+
+  // 13.6.1
+  register manc rw addr(base, 0x5820) "Management control" {
+    _		3 mbz;
+    en_flexport0 1 "Enable flex UDP/TCP port 0 filtering";
+    en_flexport1 1 "Enable flex UDP/TCP port 1 filtering";
+    en_flexport2 1 "Enable flex UDP/TCP port 2 filtering";
+    flex_tco1_filter 1 "Enable TCO filter 1";
+    flex_tco0_filter 1 "Enable TCO filter 0";
+    rmcp_en	1 "Enable RMCP 0x026f filtering";
+    o298_en	1 "Enable RMCP 0x0298 filtering";
+    _		3 mbz;
+    arp_req_en	1 "Enable ARP request filtering";
+    neighbor_en	1 "Enable neighbor discovery filtering";
+    arp_res_en	1 "Enable ARP response filtering";
+    tco_reset	1 "TCO reset occurred";
+    rcv_tco_en	1 "Receive TCO packets enable";
+    blk_phyrst_on_ide 1 "Block PHY reset and power on state changes";
+    rcv_all	1 "Receive all enable";
+    en_mac16_filter 1 "Enable MAC address 16 filtering";
+    en_mng2host 1 "Enable firmware packets to host memory";
+    en_ip_addrfilter 1 "Enable IP address filtering";
+    en_xsum_filter 1 "Enable Xsum filtering to firmware";
+    br_en	1 "Enable broadcast filtering";
+    _		7 mbz;
+  };
+
+  /************************************
+   * PCIe registers
+   ***********************************/
+  
+  // NOTE: Intel in their infinite wisdom have chosen to list these
+  // registers MSBfirst in the documentation, as opposed to all the
+  // others which are LSBfirst...
+
+  // 13.7.1
+  register gcr rw addr(base, 0x5b00) "PCIe control" {
+    rxd_nosnoop		1 "Receive data write";
+    rxdscw_nosnoop	1 "Receive descriptor write";
+    rxdscr_nosnoop	1 "Receive descriptor read";
+    txd_nosnoop		1 "Transmit data write";
+    txdscw_nosnoop	1 "Transmit descriptor write";
+    txdscr_nosnoop	1 "Transmit descriptor read";
+    elec_idle_in0	1 ro "SerDes0 internal electrical idle indicator";
+    elec_idle_in1	1 ro "SerDes1 internal electrical idle indicator";
+    self_test_enable	1 "Perform self test";
+    _			12 mbz;
+    logheader		1 "Log header into PCI config space";
+    _			1 mbz;
+    l1el_msb		1 ro "L1 Entry latency msb";
+    l0s_el		1 "L0s entry latency";
+    l1el_lsb		2 ro "L1 Entry latency lsbs";
+    l1_aw_l0s		1 "L1 act without L0s_rx correlation";
+    gio_dis_rderr	1 "Disable running disparity err";
+    gio_good_10s	1 "Force good PCIe l0s training";
+    self_test_result	1 "Result of self test";
+    dis_tmout		1 "Disable PCIe timeout mechanism";
+  };
+
+  // 13.7.2 
+  register gscl1 rw addr(base, 0x5b10) "PCIe statistics control 1" {
+    count_en0	1 "Enable PCIe stats counter 0";
+    count_en1	1 "Enable PCIe stats counter 1";
+    count_en2	1 "Enable PCIe stats counter 2";
+    count_en3	1 "Enable PCIe stats counter 3";
+    _		23;
+    count_test	1 "Test bit";
+    en_64bit	1 "Enable two 64-bit counters instead of 4 32-bit";
+    count_reset 1 "Reset indication of PCIe stats";
+    count_stop	1 "Stop indication";
+    count_start	1 "Start indication";
+  };
+  
+  // 13.7.3
+  register gscl2 rw addr(base, 0x5b14) "PCIe statistics control 2" {
+    event0	8 "Event number that counter 0 counts";
+    event1	8 "Event number that counter 1 counts";
+    event2	8 "Event number that counter 2 counts";
+    event3	8 "Event number that counter 3 counts";
+  };
+
+  // 13.7.4
+  register gscl3 rw addr(base, 0x5b18) "PCIe statistics control 3" {
+    fc_th0	12 "Threshold of flow control credits 0";
+    _		4;
+    fc_th1	12 "Threshold of flow control credits 1";
+    _		4;
+  };
+
+  // 13.7.5
+  register gscl4 rw addr(base, 0x5b1c) "PCIe statistics control 4" {
+    coml_th	10 "Completions latency threshold";
+    rb_th	6 "Retry buffer threshold";
+    _		16;
+  };
+
+  // 13.7.6-9
+  regarray gscn rw addr(base, 0x5b20)[4] "PCIe counter" type(uint32);
+
+  // 13.7.10
+  constants fps "Function power state" {
+    fps_dr	= 0b00 "DR";
+    fps_d0u	= 0b01 "D0u";
+    fps_d0a	= 0b10 "Doa";
+    fps_d3	= 0b11 "D3";
+  };
+  register factps ro addr(base, 0x5b30) "Fn. active & power state to MNG" {
+    f0ps	2 type(fps) "Power state of fn. 0";
+    lan0v	1 "LAN 0 valid enable";
+    f0aux	1 "Fn. 0 aux power enable shadow";
+    lan0en	1 "LAN 0 enabled";
+    _		1;
+    f1ps	2 type(fps) "Power state of fn. 1";
+    lan1v	1 "LAN 1 valid enable";
+    f1aux	1 "Fn. 1 aux power enable shadow";
+    lan1en	1 "LAN 1 enabled";
+    _		1;
+    f2ps	2 type(fps) "Power state of fn. 2";
+    ide_en	1 "IDE (function 2) enable";
+    f2aux	1 "Fn. 2 aux power enable shadow";
+    _		2;
+    f3ps	2 type(fps) "Power state of fn. 3";
+    sp_en	1 "SP (function 3) enable";
+    f3aux	1 "Fn. 3 aux power enable shadow";
+    _		2;
+    f4ps	2 type(fps) "Power state of fn. 4";
+    ipmi_en	1 "IPMI (function 4) enable";
+    f4aux	1 "Fn. 4 aux power enable shadow";
+    _		1;
+    mngcg	1 "MNG clock gated";
+    lanfs	1 "LAN function select";
+    pmchg	1 "PM state changed";
+  };
+  
+  // 13.7.11-12
+  regtype anal_ctl "Analog circuit configuration" {
+    data	8 "Data to SerDes";
+    address	8 "Address to SerDes";
+    _		15;
+    done	1 "Done indicator";
+  };
+  regarray gioanactl rw addr(base,0x5b34)[4] "Analog control" type(anal_ctl);
+  
+  // 13.7.13
+  register gioanactlall rw addr(base,0x5b44) "Analog control" type(anal_ctl);
+
+  // 13.7.14
+  register ccmctl rw addr(base,0x5b48) "CCM analog control" type(anal_ctl);
+  
+  // 13.7.15
+  register anactl rw also addr(base,0x5b48) "Analog control" {
+    data	8 "Data to/from analog register";
+    address	8 "Address of analog register";
+    _		14;
+    write	1 "Read/write command";
+    done	1 "Done indication";
+  };
+  
+  // 13.7.16
+  register scctl rw addr(base, 0x5b4c) "SCC analog control" type(anal_ctl);
+  
+  // 13.7.17
+  register swsm rw addr(base, 0x5b50) "Software semaphore" {
+    smbi	1 "Semaphore bit";
+    swesmbi	1 "Software EEPROM semaphore bit";
+    wmng	1 "Wake MNG clock";
+    _		29;
+  };
+
+  // 13.7.18
+  constants fwmode "Firmware mode" {
+    nomng	= 0b000 "No MNG";
+    ptmode	= 0b010 "PT mode";
+    hieo	= 0b100 "Host interface firmware";
+  };
+  constants pcierr "PCIe external error indication" {
+    pe_none	= 0x00 "No error";
+    pe_mschk	= 0x01 "Bad checksum in manageability sections";
+    pe_prot	= 0x02 "EEPROM protection disabled";
+    pe_clkoff	= 0x03 "Clock off command executed";
+    pe_flchk	= 0x04 "Bad checksum in flash header";
+    pe_pschk	= 0x05 "Bad checksum in patch section";
+    pe_lschk	= 0x06 "Bad checksum in loader section";
+    pe_dschk	= 0x07 "Bad checksum in diagnostic section";
+    pe_inval	= 0x08 "Invalid firmware mode";
+    pe_tlbe	= 0x09 "TLB table exceeded";
+    pe_eerd	= 0x0a "EEPROM read failed";
+    pe_hwver	= 0x0b "Bad hardware version in patch load";
+    pe_sfrd	= 0x0c "SFlash read failed";
+    pe_unspec	= 0x0d "Unspecified error";
+    pe_auth	= 0x0e "Flash authentication failed";
+    pe_pfrd	= 0x0f "PFlash read failed";
+    pe_ifep	= 0x10 "Invalid Flash entry point";
+  };
+  register fwsm rw addr(base, 0x5b54) "Firmware semaphore" {
+    eep_fw	1 "EEPROM firmware semaphore";
+    fw_mode	3 type(fwmode) "Firmware mode";
+    ide_on	1 "IDE redirection on";
+    sol_on	1 "SOL on";
+    eep_rl	1 "EEPROM reloaded indication";
+    _		8;
+    fwval	1 "Firmware valid bit";
+    rstcnt	3 "Reset counter";
+    error	6 type(pcierr) "External error indication";
+    _		7;
+  };
+
+  /************************************
+   * Statistics registers
+   ***********************************/
+
+  // 13.8 ff
+  register crcerrs rc addr(base, 0x4000)
+    "CRC error count" type(uint32);
+  register algnerrc rc addr(base, 0x4004)
+    "Alignment error count" type(uint32);
+  register symerrs rc addr(base, 0x4008)
+    "Symbol error count" type(uint32);
+  register rxerrc rc addr(base, 0x400c)
+    "Receive error count" type(uint32);
+  register mpc rc addr(base, 0x4010)
+    "Missed packets count" type(uint32);
+  register scc rc addr(base, 0x4014)
+    "Single collision count" type(uint32);
+  register ecol rc addr(base, 0x4018)
+    "Excessive collisions count" type(uint32);
+  register mcc rc addr(base, 0x401c)
+    "Multiple collision count" type(uint32);
+  register latecol rc addr(base, 0x4020)
+    "Late collisions count" type(uint32);
+  register colc rc addr(base, 0x4028)
+    "Collision count" type(uint32);
+  register dc rc addr(base, 0x4030)
+    "Defer count" type(uint32);
+  register tncrs rc addr(base, 0x4034)
+    "Transmit with no CRS" type(uint32);
+  register sec rc addr(base, 0x4038)
+    "Sequence error count" type(uint32);
+  register cexterr rc addr(base, 0x403c)
+    "Carrier extension error count" type(uint32);
+  register rlec rc addr(base, 0x4040)
+    "Receive length error count" type(uint32);
+  register xonrxc rc addr(base, 0x4048)
+    "XON received count" type(uint32);
+  register xontxc rc addr(base, 0x404c)
+    "XON transmitted count" type(uint32);
+  register xoffrxc rc addr(base, 0x4050)
+    "XOFF received count" type(uint32);
+  register xofftxc rc addr(base, 0x4054)
+    "XOFF transmitted count" type(uint32);
+  register fcurc rc addr(base, 0x4058)
+    "FC received unsupported count" type(uint32);
+  register prc64 rc addr(base, 0x405c)
+    "Packets received (64 bytes) count" type(uint32);
+  register prc127 rc addr(base, 0x4060)
+    "Packets received (65-127 bytes) count" type(uint32);
+  register prc255 rc addr(base, 0x4064)
+    "Packets received (128-255 bytes) count" type(uint32);
+  register prc511 rc addr(base, 0x4068)
+    "Packets received (256-511 bytes) count" type(uint32);
+  register prc1023 rc addr(base, 0x406c)
+    "Packets received (512-1023 bytes) count" type(uint32);
+  register prc1522 rc addr(base, 0x4070)
+    "Packets received (1024-max bytes) count" type(uint32);
+  register gprc rc addr(base, 0x4074)
+    "Good packets received count" type(uint32);
+  register bprc rc addr(base, 0x4078)
+    "Broadcast packets received count" type(uint32);
+  register mcprc rc addr(base, 0x407c)
+    "Multicast packets received count" type(uint32);
+  register gptc rc addr(base, 0x4080)
+    "Good packets transmitted count" type(uint32);
+  register gorcl rc addr(base, 0x4088)
+    "Good octets received count low" type(uint32);
+  register gorch rc addr(base, 0x408c)
+    "Good octets received count high" type(uint32);
+  register gotcl rc addr(base, 0x4090)
+    "Good octets transmitted count low" type(uint32);
+  register gotch rc addr(base, 0x4094)
+    "Good octets transmitted count high" type(uint32);
+  register rnbc rc addr(base, 0x40a0)
+    "Receive no buffers count" type(uint32);
+  register ruc rc addr(base, 0x40a4)
+    "Receive undersize count" type(uint32);
+  register rfc rc addr(base, 0x40a8)
+    "Receive fragment count" type(uint32);
+  register roc rc addr(base, 0x40ac)
+    "Receive oversize count" type(uint32);
+  register rjc rc addr(base, 0x40b0)
+    "Receive jabber count" type(uint32);
+  register mprc rc addr(base, 0x40b4)
+    "Management packets receive count" type(uint32);
+  register mpdc rc addr(base, 0x40b8)
+    "Management packets dropped count" type(uint32);
+  register mptc rc addr(base, 0x40bc)
+    "Management packets transmitted count" type(uint32);
+  register torl rc addr(base, 0x40c0)
+    "Total octets received low" type(uint32);
+  register torh rc addr(base, 0x40c4)
+    "Total octets received high" type(uint32);
+  register totl rc addr(base, 0x40c8)
+    "Total octets transmitted low" type(uint32);
+  register toth rc addr(base, 0x40cc)
+    "Total octets transmitted high" type(uint32);
+  register tpr rc addr(base, 0x40d0)
+    "Total packets received" type(uint32);
+  register tpt rc addr(base, 0x40d4)
+    "Total packets transmitted" type(uint32);
+  register ptc64 rc addr(base, 0x40d8)
+    "Packets transmitted (64 bytes) count" type(uint32);
+  register ptc127 rc addr(base, 0x40dc)
+    "Packets transmitted (65-127 bytes) count" type(uint32);
+  register ptc255 rc addr(base, 0x40e0)
+    "Packets transmitted (128-255 bytes) count" type(uint32);
+  register ptc511 rc addr(base, 0x40e4)
+    "Packets transmitted (256-511 bytes) count" type(uint32);
+  register ptc1023 rc addr(base, 0x40e8)
+    "Packets transmitted (512-1023 bytes) count" type(uint32);
+  register ptc1522 rc addr(base, 0x40ec)
+    "Packets transmitted (1024-max bytes) count" type(uint32);
+  register mcptc rc addr(base, 0x40f0)
+    "Multicast packets transmitted count" type(uint32);
+  register bptc rc addr(base, 0x40f4)
+    "Broadcast packets transmitted count" type(uint32);
+  register tsctc rc addr(base, 0x40f8)
+    "TCP segmentation context transmitted count" type(uint32);
+  register tsctfc rc addr(base, 0x40fc)
+    "TCP segmentation context tx fail count" type(uint32);
+  register iac rc addr(base, 0x4100)
+    "Interrupt assertion count" type(uint32);
+  register icrxptc rc addr(base, 0x4104)
+    "Interrupt cause rx packet timer expire count" type(uint32);
+  register icrxatc rc addr(base, 0x4108)
+    "Interrupt cause rx absolute timer expire count" type(uint32);
+  register ictxptc rc addr(base, 0x410c)
+    "Interrupt cause tx packet timer expire count" type(uint32);
+  register ictxatc rc addr(base, 0x4110)
+    "Interrupt cause tx absolute timer expire count" type(uint32);
+  register ictxqec rc addr(base, 0x4118)
+    "Interrupt cause transmit queue empty count" type(uint32);
+  register ictxdltc rc addr(base, 0x411c)
+    "Interrupt cause transmit descriptor low threshold count" type(uint32);
+  register icrxdmtc rc addr(base, 0x4120)
+    "Interrupt cause receive descriptor minimum threshold count" type(uint32);
+  register icrxoc rc addr(base, 0x4124)
+    "Interrupt cause receive overrun count" type(uint32);
+
+  regarray statsregs rc also addr(base, 0x4000)[74] 
+    "All stats registers" type(uint32);
+
+
+  /************************************
+   * Descriptors
+   ***********************************/
+
+  // 3.2.4
+  datatype legacy_rdesc lsbfirst(64) "Legacy rx descriptor" {
+      addr	64 "Buffer address";
+      length	16 "Packet length";
+      checksum  16 "Packet checksum";
+      // Status
+      dd	1  "Descriptor done";
+      eop	1  "End of packet";
+      ixsm	1  "Ignore checksum indication";
+      vp	1  "Packet is 802.1q (matched VET)";
+      udpcs	1  "UDP checksum calculated on packet";
+      tcpcs	1  "TCP checksum calculated on packet";
+      ipcs	1  "IPv4 checksum calculated on packet";
+      pif	1  "Passed in-exact filter";
+      // Errors
+      ce	1  "CRC or alignment error";
+      se	1  "Symbol error";
+      seq	1  "Sequence error";
+      _		2;
+      tcpe	1  "TCP/UDP checksum error";
+      ipe	1  "IPv4 checksum error";
+      rxe	1  "RX data error";
+      // VLAN tag field
+      vlan	12 "VLAN id";
+      cr	1  "Canonical form indicator";
+      pri	3  "802.1p priority";
+  };
+
+  // 3.2.5
+  datatype rdesc_read lsbfirst(64) "Extended rx descriptor (read format)" {
+      addr	64 "Buffer address";
+      dd	1  "Descriptor done";
+      _		63;
+  };
+  datatype rdesc_write lsbfirst(64) "Extended rx descriptor (write format)" {
+      // MRQ 
+      rss	4 type(rsstype) "RSS type";
+      _		4;
+      queue	5 "Receive queue";
+      _		19;
+      // IP id; note that the RSS hash can overlay the next two fields
+      ipid	16 "IP header identification field";
+      // Checksum
+      checksum	16 "Packet checksum";
+      // Extended status
+      dd	1  "Descriptor done";
+      eop	1  "End of packet";
+      ixsm	1  "Ignore checksum indication";
+      vp	1  "Packet is 802.1q (matched VET)";
+      udpcs	1  "UDP checksum calculated on packet";
+      tcpcs	1  "TCP checksum calculated on packet";
+      ipcs	1  "IPv4 checksum calculated on packet";
+      pif	1  "Passed in-exact filter";
+      _		1;
+      ipidv	1  "IP identification valid";
+      udpv	1  "Valid UDP checksum";
+      _		4;
+      ack	1  "ACK packet identification";
+      _		4;
+      // Extended errors 
+      _		4;
+      ce	1  "CRC or alignment error";
+      se	1  "Symbol error";
+      seq	1  "Sequence error";
+      _		2;
+      tcpe	1  "TCP/UDP checksum error";
+      ipe	1  "IPv4 checksum error";
+      rxe	1  "RX data error";
+      // Length
+      length	16 "Packet length";
+      // VLAN tag field
+      vlan	12 "VLAN id";
+      cr	1  "Canonical form indicator";
+      pri	3  "802.1p priority";
+  };
+
+  // 3.2.5.4
+  constants rsstype "RSS computation type" {
+      no_rss	= 0x0 "No RS computation";
+      tcp_v4	= 0x1 "IPv4 with TCP hash";
+      ipv4	= 0x2 "IPv4 hash";
+      tcp_v6	= 0x3 "IPv6 with TCP hash";
+      ipv6	= 0x5 "IPv6 hash";
+  };
+
+
+};

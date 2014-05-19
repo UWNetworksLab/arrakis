@@ -1,0 +1,221 @@
+/*
+ * Copyright (c) 2007, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * lpc.dev
+ *
+ * DESCRIPTION: Definition of the PCI config space for the LPC (low
+ *              pin count, or legacy PC) bridge function of a typical
+ *              Intel IHC (Southbridge). 
+ * 
+ * This is derived from the "Intel 631xESB/632xESB IO/Controller Hub
+ * Datasheet", chapter 21, "LPC Interface Bridge Registers (D31:F0)". 
+ * Other parts of this chapter have been broken out into other
+ * sections, because frankly, they're huge. 
+ * 
+ */
+
+device LPC_pci ( addr conf ) "LPC IHC function" {
+  
+  //
+  // This is big.   First: 
+  // Section 21.1: PCI configuration space. 
+  //
+
+  register vid ro addr(conf, 0x00) "Vendor ID" type(uint16);
+  register did ro addr(conf, 0x02) "Device ID" {
+    fdcomp      4 "FDCOMP fuse";
+    id          12 always(0x267) "device id";
+  };
+  
+  register pcicmd addr(conf, 0x04) "PCI command" {
+    iose        1 ro "I/O space enable";
+    mse         1 ro "Memory space enable";
+    bme         1 ro "Bus master enable";
+    sce         1 ro always(0) "Special cycle enable";
+    mwie        1 ro always(0) "Memory write and invalidate enable";
+    vps         1 ro always(0) "VGA palette snoop";
+    pere        1 rw "Parity error response enable";
+    wcc         1 ro always(0) "Wait cycle control";
+    serr_en     1 rw "SERR# enable";
+    fbe         1 ro always(0) "Fast back-to-back enable";
+    _           6 rsvd;
+  };
+
+  register pcists addr(conf, 0x06) "PCI status" {
+    _           3 rsvd;
+    is          1 ro "Interrupt status";
+    clist       1 ro "Capabilities list";
+    c66mhz      1 rsvd "66 Mhz capable";
+    _           1 rsvd;
+    fbc         1 rsvd "Fast back-to-back capable";
+    dped        1 rwc "Data parity error detected";
+    dev_sts     2 ro "DEVSEL# timing status";
+    sta         1 rwc "Signalled target abort";
+    rta         1 rwc "Received target abort";
+    rma         1 rwc "Master abort status";
+    sse         1 rwc "Signalled system error";
+    dpe         1 rwc "Detected parity error";
+  };
+
+  register rid rwo addr(conf, 0x08) "Revision id" type(uint8);
+  register pi  ro addr(conf, 0x09) "Programming interface" type(uint8);
+  register scc ro addr(conf, 0x0a) "Sub class code" type(uint8);
+  register bcc ro addr(conf, 0x0b) "Base class code" type(uint8);
+  register plt ro addr(conf, 0x0d) "Primary latency timer" type(uint8);
+  register headtyp ro addr(conf, 0x0e) "Header type" type(uint8);
+  
+  register ss rwo addr(conf, 0x2c) "Subsystem identifiers" {
+    ssvid       16 rwo "Subsystem vendor id";
+    ssid        16 rwo "Subsystem id";
+  };
+  
+  register pmbase addr(conf, 0x40) "ACPI base address" {
+    rte         1 ro always(1) "Resource type indicator";
+    _           6 rsvd;
+    base        9 rw "Base address";
+    _           16 rsvd;
+  };
+
+  constants sci_irq "SCI IRQ select map" {
+    irq9  = 0b000;
+    irq10 = 0b001;
+    irq11 = 0b010;
+    irq20 = 0b100;
+    irq21 = 0b101;
+    irq22 = 0b110;
+    irq23 = 0b111;
+  };
+
+  register acpi_cntl addr(conf, 0x44) "ACPI control" {
+    sci_irq_sel 3 rw type(sci_irq) "SCI IRQ select";
+    _           4 rsvd;
+    acpi_en     1 rw "ACPI enable";
+  };
+  
+  register gpiobase addr(conf, 0x48) "GPIO base address" {
+    _           1 ro always(1);
+    _           5 mbz;
+    ba          10 rw "Base address";
+    _           16 mbz;
+  };
+  
+  register gc addr(conf, 0x4c) "GPIO control" {
+    _           4 rsvd;
+    en          1 rw "GPIO enable";
+    _           3 rsvd;
+  };
+  
+  regtype pirq_rout "PIRQ routing" {
+    routing     4 rw "IRQ routing";
+    _           3 rsvd;
+    irqen       1 rw "Interrupt routing enable";
+  };
+  register pirqa_rout addr(conf, 0x60) type(pirq_rout) "PIRQA routing control";
+  register pirqb_rout addr(conf, 0x61) type(pirq_rout) "PIRQB routing control";
+  register pirqc_rout addr(conf, 0x62) type(pirq_rout) "PIRQC routing control";
+  register pirqd_rout addr(conf, 0x63) type(pirq_rout) "PIRQD routing control"; 
+  register pirqe_rout addr(conf, 0x68) type(pirq_rout) "PIRQE routing control";
+  register pirqf_rout addr(conf, 0x69) type(pirq_rout) "PIRQF routing control";
+  register pirqg_rout addr(conf, 0x6A) type(pirq_rout) "PIRQG routing control";
+  register pirqh_rout addr(conf, 0x6B) type(pirq_rout) "PIRQH routing control"; 
+  
+  register sirq_cntl addr(conf, 0x64) "Serial IRQ control" {
+    sfpw        2 rw "Start frame pulse width";
+    sirqsz      4 ro "Serial IRQ frame size";
+    sirqmd      1 rw "Serial IRQ mode select";
+    sirqen      1 rw "Serial IRQ enable";
+  };
+  
+  register lpc_iodec addr(conf, 0x80) "I/O decode ranges" {
+    coma        3 rw "COMA decode";
+    _           1 rsvd;
+    comb        3 rw "COMB decode";
+    _           1 rsvd;
+    lpt         2 rw "LPT decode";
+    _           2 rsvd;
+    fdd         1 rw "FDD decode";
+    _           3 rsvd;
+  };
+  
+  register lpc_en addr(conf, 0x82) "LPC i/f enables" {
+    coma        1 rw "Com port A";
+    comb        1 rw "Com port B";
+    lpt         1 rw "Parallel port";
+    fdd         1 rw "Floppy";
+    _           4 rsvd;
+    gamel       1 rw "Low gameport";
+    gameh       1 rw "High gameport";
+    kbd         1 rw "Keyboard";
+    mc          1 rw "Microcontroller";
+    cnf1        1 rw "Super I/O";
+    cnf2        1 rw "Microcontroller #2";
+    _           2 rsvd;
+  };
+  
+  register gen1_dec addr(conf, 0x84) "Generic decode range 1" {
+    en          1 rw "Enable";
+    _           6 rsvd;
+    base        9 rw "Base address";
+  };
+  
+  register gen2_dec addr(conf, 0x88) "Generic decode range 2" {
+    en          1 rw "Enable";
+    _           3 rsvd;
+    base        12 rw "Base address";
+  };
+  
+  register fwh_sel1 addr(conf, 0xd0) "Firmware hub select 1" {
+    idsel_c0    4 rw "IDSEL for ffc00000 & ff800000";
+    idsel_c8    4 rw "IDSEL for ffc80000 & ff880000";
+    idsel_d0    4 rw "IDSEL for ffd00000 & ff900000";
+    idsel_d8    4 rw "IDSEL for ffd80000 & ff980000";
+    idsel_e0    4 rw "IDSEL for ffe00000 & ffa00000";
+    idsel_e8    4 rw "IDSEL for ffe80000 & ffa80000";
+    idsel_f0    4 rw "IDSEL for fff00000 & ffb00000";
+    idsel_f8    4 ro "IDSEL for fff80000 & ffb80000";
+  };
+  
+  register fwh_sel2 addr(conf, 0xd4) "Firmware hub select 2" {
+    idsel_40    4 rw "IDSEL for ff400000 & ff000000";
+    idsel_50    4 rw "IDSEL for ff500000 & ff100000";
+    idsel_60    4 rw "IDSEL for ff600000 & ff200000";
+    idsel_70    4 rw "IDSEL for ff700000 & ff300000";
+  }
+
+  register fwh_dec_en1 addr(conf, 0xd8) "Firmware hub decode enable" {
+    en_40       1 rw "enable for ff400000 & ff000000";
+    en_50       1 rw "enable for ff500000 & ff100000";
+    en_60       1 rw "enable for ff600000 & ff200000";
+    en_70       1 rw "enable for ff700000 & ff300000";
+    _           2 rsvd;
+    en_leg_e    1 rw "enable legacy e0000";
+    en_leg_f    1 rw "enable legacy f0000";
+    en_c0       1 rw "enable for ffc00000 & ff800000";
+    en_c8       1 rw "enable for ffc80000 & ff880000";
+    en_d0       1 rw "enable for ffd00000 & ff900000";
+    en_d8       1 rw "enable for ffd80000 & ff980000";
+    en_e0       1 rw "enable for ffe00000 & ffa00000";
+    en_e8       1 rw "enable for ffe80000 & ffa80000";
+    en_f0       1 rw "enable for fff00000 & ffb00000";
+    en_f8       1 ro "enable for fff80000 & ffb80000";
+  };
+
+  register bios_cntl addr(conf, 0xdc) "BIOS control" {
+    bioswe      1 rw "BIOS write enable";
+    ble         1 rw "BIOS lock enable";
+    _           6 rsvd;
+  };
+
+  register rcba addr(conf, 0xf0) "Root complex base address" {
+    en          1 rw "Enable";
+    _           13 rsvd;
+    ba          18 rw "Base address";
+  };
+};
+

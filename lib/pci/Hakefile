@@ -1,0 +1,31 @@
+
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for lib/pci
+-- 
+--------------------------------------------------------------------------
+
+[ build library { target = "pci",
+                  cFiles = [ "mem.c", "pci_client.c" ],
+                  flounderBindings = [ "pci" ],
+                  flounderExtraBindings = [ ("pci", ["rpcclient"]) ],
+                  flounderExtraDefs = [ ("monitor_blocking",["rpcclient"]) ],
+                  architectures = [ "x86_64", "x86_32" ]
+                },
+  
+  -- XXX: This library is a bit weird right now.
+  -- I added this to avoid code duplication in acpi/pci because they both have to
+  -- read/write the PCI configuration space (see acpi_osglue.c).
+  -- It would be best if we can completely avoid doing any PCI stuff in ACPI
+  build library { target = "pciconfspace",
+                  flounderExtraDefs = [ ("acpi", ["rpcclient"]) ],
+                  cFiles = [ "confspace/pci_confspace.c", "confspace/pcie_confspace.c" ],
+                  architectures = [ "x86_64", "x86_32" ]
+                }
+]

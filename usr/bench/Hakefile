@@ -1,0 +1,33 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, 2011, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/bench
+--
+--------------------------------------------------------------------------
+
+[ build application { target = "bench", cFiles = [ "bench.c"] },
+
+  build application { target = "ipi_bench", cFiles = ["ipi_bench.c"] },
+
+  build application { target = "stsc_bench",
+                      cFiles = ["stsc_bench.c"],
+                      addLibraries = [ "rcce" ]
+                    },
+
+  build application { target = "lrpc_bench",
+                      cFiles = [ "lrpc_bench.c" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] },
+
+  build application { target = "tsc_bench",
+                      cFiles = [ "tsc_bench.c" ],
+                      addCFlags = [ "-DCACHE_BENCH" ],
+                      flounderBindings = [ "hpet" ],
+                      addLibraries = ["bench"]
+                    }
+]

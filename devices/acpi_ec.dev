@@ -1,0 +1,54 @@
+/*
+ * Copyright (c) 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * acpi_ec.dev
+ *
+ * DESCRIPTION: ACPI Embedded Controller (EC)
+ *
+ * This file describes the interface to the ACPI standard embedded controller.
+ * See ACPI specification v4.0 section 12.2 (p445).
+ *
+ * The EC device consists of two 8-bit registers: status/command and data.
+ *
+ * FIXME: according to the ACPI spec (12.11) the controller may reside in
+ *   either IO or memory space. This driver assumes IO (because supporting
+ *   both in Mackerel would be quite clunky).
+ */
+
+device acpi_ec msbfirst (io data, io sc) "ACPI embedded controller" {
+    // 12.2.1
+    regtype status "Status" {
+        _       1;
+        smi_evt 1 "SMI event pending";
+        sci_evt 1 "SCI event pending";
+        burst   1 "Controller is in burst mode";
+        cmd     1 "Byte in data register is a command byte";
+        _       1;
+        ibf     1 "Input buffer is full";
+        obf     1 "Output buffer is full";
+    };
+
+    // 12.3
+    constants commands width(8) "Command encodings" {
+        read      = 0x80 "Read";
+        write     = 0x81 "Write";
+        burst_en  = 0x82 "Burst enable";
+        burst_dis = 0x83 "Burst disable";
+        query     = 0x84 "Query";
+    };
+
+    // 12.2.1
+    register status ro io(sc, 0) "Status" type(status);
+
+    // 12.2.2
+    register cmd wo also io(sc, 0) "Command" type(commands);
+
+    // 12.2.3
+    register data rw io(data, 0) "Data" type(uint8);
+};

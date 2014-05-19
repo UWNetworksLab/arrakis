@@ -1,0 +1,27 @@
+clear
+reset
+set terminal postscript eps enhanced dashed "Helvetica" 20
+set output "space_consumption.eps"
+set boxwidth 0.1
+set key top left
+set xlabel "Fill rate (device sum / max available size) [%]"
+set ylabel "Physical address size required [bytes]"
+set style line 7 lt 7 pt 4 lw 2.5 ps 1.5
+plot [0:100] "space_consumption.dat" index 0 using 14:8 title "Root size (max)" with lines,   "space_consumption.dat" index 0 using 14:4 title "Device sum" with linespoints linestyle 7, "space_consumption.dat" index 0 using 14:($17==1?$8:0) notitle with boxes, "space_consumption.dat" index 0 using 14:3 title 'CLP' with linespoints, "space_consumption.dat" index 1 using 14:3 title 'Postorder sorted ascending' with linespoints
+
+set output "padding_overhead.eps"
+set key top left
+set xlabel "Fillrate (device sum / max available size) [%]"
+set ylabel "Padding overhead [bytes]"
+plot [0:100] "space_consumption.dat" index 0 using 14:5 title 'CLP' with linespoints,"space_consumption.dat" index 1 using 14:5 title 'postorder\_sorted\_ascending' with linespoints
+
+
+set key top right
+set xlabel "Address [bytes]"
+set ylabel "Bus Nr"
+# bridge_page.pl
+set output "tree_bridge_page.pl.eps"
+plot "./space_consumption.dat" index 2 using 4:($6==1?$3:1/0):yticlabels(7) title "Bridge" with linespoints, "./space_consumption.dat" index 2 using 4:($6==0?$3:1/0):yticlabels(7) title "Device" with linespoints
+# bridge_postorder_sorted_ascending.pl
+set output "tree_bridge_postorder_sorted_ascending.pl.eps"
+plot "./space_consumption.dat" index 3 using 4:($6==1?$3:1/0):yticlabels(7) title "Bridge" with linespoints, "./space_consumption.dat" index 3 using 4:($6==0?$3:1/0):yticlabels(7) title "Device" with linespoints

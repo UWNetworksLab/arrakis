@@ -1,0 +1,44 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/rcce/bt
+--
+--------------------------------------------------------------------------
+
+let commonCFlags = [ "-DCOPPERRIDGE", "-Wno-unused",
+                     "-Wno-old-style-definition",
+                     "-Wno-implicit-function-declaration",
+                     "-Wno-missing-prototypes", "-Wno-shadow",
+                     "-Wno-missing-declarations", "-Wno-parentheses",
+                     "-Wno-strict-prototypes", "-Wno-uninitialized",
+                     "-Wno-error" ]
+    template = application {
+      cFiles = [ "bt.c", "add.c", "adi.c", "copy_faces.c", "define.c",
+                 "error.c", "exact_rhs.c", "exact_solution.c",
+                 "initialize.c", "make_set.c", "print_results.c",
+                 "rhs.c", "set_constants.c", "setup_mpi.c",
+                 "solve_subs.c", "timers.c", "verify.c", "x_solve.c",
+                 "y_solve.c", "z_solve.c" ],
+      addLibraries = [ "rcce"] ,
+      addIncludes = [ "/include/rcce" ]
+      }
+
+  in
+ [ build template { target = "rcce_bt_A1",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=1 -Wno-array-bounds" : commonCFlags },
+   build template { target = "rcce_bt_A4",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=4" : commonCFlags },
+   build template { target = "rcce_bt_A9",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=9" : commonCFlags },
+   build template { target = "rcce_bt_A16",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=16" : commonCFlags },
+   build template { target = "rcce_bt_A25",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=25" : commonCFlags },
+   build template { target = "rcce_bt_A36",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=36" : commonCFlags }
+ ]

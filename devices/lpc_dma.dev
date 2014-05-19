@@ -1,0 +1,135 @@
+/*
+ * Copyright (c) 2007, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * lpc_dma.dev
+ *
+ * DESCRIPTION: Legacy DMA controllers on the LPC (low pin count, or
+ *              legacy PC) bridge function of a typical Intel IHC
+ *              (Southbridge).    
+ * 
+ * This is derived from the "Intel 631xESB/632xESB IO/Controller Hub
+ * Datasheet", chapter 21, "LPC Interface Bridge Registers (D31:F0)". 
+ * 
+ */
+
+device LPC_dma ( io base ) "LPC DMA registers" {
+
+  //
+  // Section 21.2: DMA I/O registers
+  // 
+
+  // Yuck. There's a baroque protocol for accessing these
+  // registers, which I'm not even going to attempt to express yet. 
+
+  register base_a0 wo io(base, 0x00 ) "ch0 base addr" type(uint8);
+  register base_a1 wo io(base, 0x02 ) "ch1 base addr" type(uint8);
+  register base_a2 wo io(base, 0x04 ) "ch2 base addr" type(uint8);
+  register base_a3 wo io(base, 0x06 ) "ch3 base addr" type(uint8);
+  register base_a5 wo io(base, 0xc4 ) "ch5 base addr" type(uint8);
+  register base_a6 wo io(base, 0xc8 ) "ch6 base addr" type(uint8);
+  register base_a7 wo io(base, 0xcc ) "ch7 base addr" type(uint8);
+
+  register cur_a0 ro also io(base, 0x00 ) "ch0 cur addr" type(uint8);
+  register cur_a1 ro also io(base, 0x02 ) "ch1 cur addr" type(uint8);
+  register cur_a2 ro also io(base, 0x04 ) "ch2 cur addr" type(uint8);
+  register cur_a3 ro also io(base, 0x06 ) "ch3 cur addr" type(uint8);
+  register cur_a5 ro also io(base, 0xc4 ) "ch5 cur addr" type(uint8);
+  register cur_a6 ro also io(base, 0xc8 ) "ch6 cur addr" type(uint8);
+  register cur_a7 ro also io(base, 0xcc ) "ch7 cur addr" type(uint8);
+
+  register base_c0 wo also io(base, 0x00 ) "ch0 base count" type(uint8);
+  register base_c1 wo also io(base, 0x02 ) "ch1 base count" type(uint8);
+  register base_c2 wo also io(base, 0x04 ) "ch2 base count" type(uint8);
+  register base_c3 wo also io(base, 0x06 ) "ch3 base count" type(uint8);
+  register base_c5 wo also io(base, 0xc4 ) "ch5 base count" type(uint8);
+  register base_c6 wo also io(base, 0xc8 ) "ch6 base count" type(uint8);
+  register base_c7 wo also io(base, 0xcc ) "ch7 base count" type(uint8);
+
+  register cur_c0 ro also io(base, 0x00 ) "ch0 cur count" type(uint8);
+  register cur_c1 ro also io(base, 0x02 ) "ch1 cur count" type(uint8);
+  register cur_c2 ro also io(base, 0x04 ) "ch2 cur count" type(uint8);
+  register cur_c3 ro also io(base, 0x06 ) "ch3 cur count" type(uint8);
+  register cur_c5 ro also io(base, 0xc4 ) "ch5 cur count" type(uint8);
+  register cur_c6 ro also io(base, 0xc8 ) "ch6 cur count" type(uint8);
+  register cur_c7 ro also io(base, 0xcc ) "ch7 cur count" type(uint8);
+
+  register mem_lp0 rw io(base, 0x87 ) "ch0 mem low page" type(uint8);
+  register mem_lp1 rw io(base, 0x83 ) "ch1 mem low page" type(uint8);
+  register mem_lp2 rw io(base, 0x81 ) "ch2 mem low page" type(uint8);
+  register mem_lp3 rw io(base, 0x82 ) "ch3 mem low page" type(uint8);
+  register mem_lp5 rw io(base, 0x8b ) "ch5 mem low page" type(uint8);
+  register mem_lp6 rw io(base, 0x89 ) "ch6 mem low page" type(uint8);
+  register mem_lp7 rw io(base, 0x8a ) "ch7 mem low page" type(uint8);
+
+  regtype dmacmd "DMA command" {
+    _           2 mbz;
+    chgrp_en    1 "channel group enable";
+    _           1 mbz;
+    grp_arb     1 "group arbitration priority";
+    _           3 mbz;
+  };
+  register dmacmd_03 wo io(base, 0x08 ) "DMA cmd ch0-3" type(dmacmd);
+  register dmacmd_47 wo io(base, 0xd0 ) "DMA cmd ch4-7" type(dmacmd);
+
+  regtype dmasta "DMA status" {
+    ch_tcs      4 "Channel terminal count status";
+    ch_reqs     4 "Channel request status";
+  };
+  register dmasta_03 ro also io(base, 0x08 ) "DMA status ch0-3" type(dmasta);
+  register dmasta_47 ro also io(base, 0xd0 ) "DMA status ch4-7" type(dmasta);
+
+  regtype dma_wrsmsk "DMA write single mask" {
+    ch_sel      2 "channel select";
+    mask        1 "Channel mask select";
+    _           5 mbz;
+  };
+  register dma_wrsmsk_03 wo io(base, 0x0a ) "DMA wrt single msk ch0-3" type(dma_wrsmsk);
+  register dma_wrsmsk_47 wo io(base, 0xd4 ) "DMA wrt single msk ch4-7" type(dma_wrsmsk);
+
+  constants dma_trans_type "DMA transaction type" {
+    verify  = 0b00;
+    write   = 0b01;
+    read    = 0b10;
+    illegal = 0b11;
+  };
+  constants dma_trans_mode "DMA transaction mode" {
+    demand  = 0b00;
+    single  = 0b01;
+    cascade = 0b11;
+  };
+
+  regtype dmach_mode "channel mode" {
+    ch_sel      2 "channel select";
+    trans_tp    2 type(dma_trans_type) "transfer type";
+    auto_init   1 "Autoinitialize enable";
+    inc_dec     1 "Address inc/dec select";
+    trans_mode  2 type(dma_trans_mode) "transfer mode";
+  };
+
+  register dmach_mode_03 wo io(base, 0x0b ) "chan mode ch0-3" type(dmach_mode);
+  register dmach_mode_47 wo io(base, 0xd6 ) "chan mode ch4-7" type(dmach_mode);
+  
+  register dma_clbp_03 wo io(base, 0x0c ) "clr byte ptr ch0-3" type(uint8);
+  register dma_clbp_47 wo io(base, 0xd8 ) "clr byte ptr ch4-7" type(uint8);
+  
+  register dma_mclr_03 wo io(base, 0x0d ) "master clr ch0-3" type(uint8);
+  register dma_mclr_47 wo io(base, 0xda ) "master clr ch4-7" type(uint8);
+
+  register dma_clrmsk_03 wo io(base, 0x0e ) "clr mask ch0-3" type(uint8);
+  register dma_clrmsk_47 wo io(base, 0xdc ) "clr mask ch4-7" type(uint8);
+
+  regtype dma_wrmsk "write all mask" {
+    chan        4 "Channel mask bits";
+    _           4 mbz;
+  };
+  register dma_wrmsk_03 rw io(base, 0x0f ) "write all mask ch0-3" type(dma_wrmsk);
+  register dma_wrmsk_47 rw io(base, 0xde ) "write all mask ch4-7" type(dma_wrmsk);
+
+};
+

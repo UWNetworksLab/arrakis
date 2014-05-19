@@ -1,0 +1,34 @@
+\chapter*{The Filet-O-Fish Language}
+\label{chap:fof_lang}
+\epigraph{Give me back that Filet-O-Fish, Give me back that Filet-O-Fish, \ldots}%
+         {Frankie the Fish}
+
+
+
+Filet-o-Fish is organized in a modular way. This is reflected by the
+definition of the syntax of the language in
+Chapter~\ref{chap:fof_syntax}. Indeed, the language is organized
+around the purely functional core of C, as described in
+Section~\ref{sec:fof_syntax_core}. This core is extended by several
+\emph{constructs} that are the operationally rich building blocks of
+the language, as described in Section~\ref{sec:fof_syntax_constructs}.
+
+
+The functional semantics of this language is then implemented in
+Chapter~\ref{chap:fof_semantics}. Following the modular definition of
+the language, we first implement an interpreter for the core language
+(Section~\ref{sec:semantics_core}). In
+Section~\ref{sec:semantics_constructs}, we gather the per-construct
+interpreter under one general function. In
+Section~\ref{sec:semantics_machinery}, we build the machinery to
+automatically compute an interpreter and a compiler for the whole
+language.
+
+Further, in Chapter~\ref{chap:fof_operators}, we implement the
+interpreter and Filet-o-Fish interpretation of the
+constructs. Similarly, Chapter~\ref{chap:fof_libc} and
+Chapter~\ref{chap:fof_libbarrelfish}, we define foreign functions
+mirroring the C library and the barrelfish library. These chapters are
+bound to be extended as long as foreign functions are needed. This is
+a natural process made easy by the modular design of the syntax and
+semantics of Filet-o-Fish.

@@ -1,0 +1,121 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_cortexm3_wkup.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_cortexm3_wkup msbfirst ( addr base ) "" {
+    
+    
+    register cortexm3_ctrl_reg addr(base, 0x0) "The register is used by one CPU to interrupt the other, thus used as a handshake between the two CPUs 0x0: Interrupt is cleared; 0x1: Interrupt is set." {
+        _ 15 mbz;
+        int_cortex_2 1 rw "Interrupt to ARM Cortex-M3 CPU2";
+        _ 15 mbz;
+        int_cortex_1 1 rw "Interrupt to ARM Cortex-M3 CPU1";
+    };
+
+    constants standbymode_status width(2) "" {
+        STANDBYMODE_1 = 1 "No-standby mode";
+        STANDBYMODE_2 = 2 "Smart-standby mode";
+        STANDBYMODE_3 = 3 "Smart-standby wakeup mode - normal mode to be used";
+    };
+    
+    register standby_core_sysconfig addr(base, 0x4) "Standby protocol" {
+        _ 30 mbz;
+        standbymode 2 rw type(standbymode_status) "0x0: Force-standby mode";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_1 = 1 "No-idle mode";
+        IDLEMODE_2 = 2 "Smart-idle mode";
+        IDLEMODE_3 = 3 "Smart-idle wakeup mode - normal mode to be used";
+    };
+    
+    register idle_core_sysconfig addr(base, 0x8) "Idle protocol" {
+        _ 30 mbz;
+        idlemode 2 rw type(idlemode_status) "0x0: Force-idle mode";
+    };
+    
+    register wugen_mevt0 addr(base, 0xC) "This register contains the interrupt mask (LSB) wake-up enable bit per interrupt request 0x0: Interrupt is disabled; 0x1: Interrupt is enabled." {
+        mirq31 1 rw "Interrupt Mask bit 31";
+        _ 1 mbz;
+        mirq29 1 rw "Interrupt Mask bit 29";
+        mirq28 1 rw "Interrupt Mask bit 28";
+        mirq27 1 rw "Interrupt Mask bit 27";
+        mirq26 1 rw "Interrupt Mask bit 26";
+        mirq25 1 rw "Interrupt Mask bit 25";
+        mirq24 1 rw "Interrupt Mask bit 24";
+        mirq23 1 rw "Interrupt Mask bit 23";
+        mirq22 1 rw "Interrupt Mask bit 22";
+        mirq21 1 rw "Interrupt Mask bit 21";
+        mirq20 1 rw "Interrupt Mask bit 20";
+        mirq19 1 rw "Interrupt Mask bit 19";
+        mirq18 1 rw "Interrupt Mask bit 18";
+        mirq17 1 rw "Interrupt Mask bit 17";
+        mirq16 1 rw "Interrupt Mask bit 16";
+        mirq15 1 rw "Interrupt Mask bit 15";
+        mirq14 1 rw "Interrupt Mask bit 14";
+        mirq13 1 rw "Interrupt Mask bit 13";
+        mirq12 1 rw "Interrupt Mask bit 12";
+        mirq11 1 rw "Interrupt Mask bit 11";
+        mirq10 1 rw "Interrupt Mask bit 10";
+        mirq9 1 rw "Interrupt Mask bit 9";
+        mirq8 1 rw "Interrupt Mask bit 8";
+        mirq7 1 rw "Interrupt Mask bit 7";
+        _ 7 mbz;
+    };
+    
+    register wugen_mevt1 addr(base, 0x10) "This register contains the interrupt mask (MSB) wake-up enable bit per interrupt request 0x0: Interrupt is disabled; 0x1: Interrupt is enabled." {
+        mirq63 1 rw "Interrupt Mask bit 63";
+        mirq62 1 rw "Interrupt Mask bit 62";
+        mirq61 1 rw "Interrupt Mask bit 61";
+        mirq60 1 rw "Interrupt Mask bit 60";
+        mirq59 1 rw "Interrupt Mask bit 59";
+        mirq58 1 rw "Interrupt Mask bit 58";
+        mirq57 1 rw "Interrupt Mask bit 57";
+        mirq56 1 rw "Interrupt Mask bit 56";
+        _ 1 mbz;
+        mirq54 1 rw "Interrupt Mask bit 54";
+        mirq53 1 rw "Interrupt Mask bit 53";
+        mirq52 1 rw "Interrupt Mask bit 52";
+        mirq51 1 rw "Interrupt Mask bit 51";
+        mirq50 1 rw "Interrupt Mask bit 50";
+        _ 1 mbz;
+        mirq48 1 rw "Interrupt Mask bit 48";
+        mirq47 1 rw "Interrupt Mask bit 47";
+        mirq46 1 rw "Interrupt Mask bit 46";
+        _ 3 mbz;
+        mirq42 1 rw "Interrupt Mask bit 42";
+        mirq41 1 rw "Interrupt Mask bit 41";
+        mirq40 1 rw "Interrupt Mask bit 40";
+        mirq39 1 rw "Interrupt Mask bit 39";
+        mirq38 1 rw "Interrupt Mask bit 38";
+        mirq37 1 rw "Interrupt Mask bit 37";
+        mirq36 1 rw "Interrupt Mask bit 36";
+        mirq35 1 rw "Interrupt Mask bit 35";
+        mirq34 1 rw "Interrupt Mask bit 34";
+        mirq33 1 rw "Interrupt Mask bit 33";
+        _ 1 mbz;
+    };
+};

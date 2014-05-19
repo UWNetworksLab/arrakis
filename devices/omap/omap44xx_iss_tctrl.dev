@@ -1,0 +1,137 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_tctrl.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_tctrl msbfirst ( addr base ) "" {
+    
+    
+    register tctrl_revision ro addr(base, 0x0) "IP Revision Identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants soft_reset_status width(1) "" {
+        SOFT_RESET_0 = 0 "Normal mode.";
+        SOFT_RESET_1 = 1 "The module is reset.";
+    };
+
+    constants auto_idle_status width(1) "" {
+        AUTO_IDLE_0 = 0 "OCP and functional clocks are free-running";
+        AUTO_IDLE_1 = 1 "Automatic clock gating strategy is applied, based on the OCP interface activity for interface clock and on the functional activity for functional clocks.";
+    };
+    
+    register tctrl_sysconfig addr(base, 0x4) "OCP-SOCKET SYSTEM CONFIGURATION REGISTER" {
+        _ 30 mbz;
+        soft_reset 1 rw type(soft_reset_status) "Software reset. Set the bit to 1 to trigger the module reset. The bit is automatically reset be the hardware. During reads return 0.";
+        auto_idle 1 rw type(auto_idle_status) "Internal OCP and functional clock gating strategy";
+    };
+
+    constants reset_done_status width(1) "" {
+        RESET_DONE_1_r = 1 "Reset completed.";
+        RESET_DONE_0_r = 0 "Internal module reset is ongoing.";
+    };
+    
+    register tctrl_sysstatus addr(base, 0x8) "OCP-SOCKET SYSTEM STATUS REGISTER" {
+        _ 31 mbz;
+        reset_done 1 ro type(reset_done_status) "Internal reset monitoring";
+    };
+    
+    register tctrl_strb_length addr(base, 0x10) "TIMING CONTROL - STROBE LENGTH REGISTER This register is used by the TIMING CTRL module to generate the STROBE signal." {
+        _ 8 mbz;
+        length 24 rw "Sets the length of the CAM_STROBE signal assertion in cycles of the CNTCLK clock. The CNTCLK frequency is generated with theTCTRL_CTRL.DIVC bit field. After signal assertion, the TCTRL_CTRL.STRBEN bit is automatically cleared. The possible values are 0 to 2-1 cycles.";
+    };
+    
+    register tctrl_pstrb_length addr(base, 0x14) "TIMING CONTROL - PRESTROBE LENGTH REGISTER This register is used by the TIMING CTRL module to generate the PRESTROBE signal." {
+        _ 8 mbz;
+        length 24 rw "Sets the length of the CAM_PRESTROBE signal assertion in cycles of the CNTCLK clock. The CNTCLK frequency is generated with theTCTRL_CTRL.DIVC bit field. After signal assertion, the TCTRL_CTRL.PSTRBEN bit is automatically cleared. The possible values are 0 to 2-1 cycles.";
+    };
+    
+    register tctrl_shut_length addr(base, 0x18) "TIMING CONTROL - SHUTTER LENGTH REGISTER This register is used by the TIMING CTRL module to generate the SHUTTER signal." {
+        _ 8 mbz;
+        length 24 rw "Sets the length of the CAM_SHUTTER signal assertion in cycles of the CNTCLK clock. The CNTCLK frequency is generated with theTCTRL_CTRL.DIVC bit field. After signal assertion, the TCTRL_CTRL.SHUTEN bit is automatically cleared. The possible values are 0 to 2-1 cycles.";
+    };
+    
+    register tctrl_greset_length addr(base, 0x1C) "TIMING CONTROL - GLOBAL SHUTTER LENGTH REGISTER This register is used by the TIMING CTRL module to generate the CAM.GRESET signal." {
+        _ 8 mbz;
+        length 24 rw "Sets the length of the CAM_GLOBAL_RESET signal assertion in cycles of the CNTCLK clock. The CNTCLK frequency is generated with the TCTRL_CTRL.DIVC bit field. After signal assertion, the TCTRL_CTRL.GRESETEN bit is automatically cleared. The possible values are 0 to 2-1 cycles. The polarity of the CAM_GLOBAL_RESET signal is set by the TCTRL_CTRL.GRESETPOL bit.";
+    };
+    
+    register tctrl_strb_delay addr(base, 0x20) "TIMING CONTROL - STROBE DELAY REGISTER This register is used by the TIMING CTRL module to generate the STROBE signal." {
+        _ 7 mbz;
+        delay 25 rw "Sets the delay for the CAM_STROBE signal assertion in cycles of the CNTCLK clock. The CNTCLK frequency is generated with theTCTRL_CTRL.DIVC bit field. The possible values are 0 to 2-1 cycles.";
+    };
+    
+    register tctrl_pstrb_delay addr(base, 0x24) "TIMING CONTROL - PRE STROBE DELAY REGISTER This register is used by the TIMING CTRL module to generate the PRESTROBE signal." {
+        _ 7 mbz;
+        delay 25 rw "Sets the delay for the CAM_PSTROBE signal assertion in cycles of the CNTCLK clock. The CNTCLK frequency is generated with theTCTRL_CTRL.DIVC bit field. The possible values are 0 to 2-1 cycles.";
+    };
+    
+    register tctrl_shut_delay addr(base, 0x28) "TIMING CONTROL - SHUTTER DELAY REGISTER This register is used by the TIMING CTRL module to generate the SHUTTER signal." {
+        _ 7 mbz;
+        delay 25 rw "Sets the delay for the CAM_SHUTTER signal assertion in cycles of the CNTCLK clock. The CNTCLK frequency is generated with theTCTRL_CTRL.DIVC bit field. The possible values are 0 to 2-1 cycles.";
+    };
+
+    constants insel_status width(2) "" {
+        INSEL_0 = 0 "Synchronization event from camera 0";
+        INSEL_1 = 1 "Synchronization event from camera 1";
+        INSEL_3 = 3 "GRESET - The CAM_GLOBAL_RESET input signal will trigger the SHUTTER, PRESTROBE and STROBE signals. In this mode, there are no frame counters. The delay counters start decrementing as soon as the GLOBAL_RESET signal is asserted. The polarity of the GLOBAL_RESET signal is set with .GRESETPOL.";
+        INSEL_2 = 2 "Synchronization event from camera 2 (serial interfaces muxed with the camera Parallel interface (CPI))";
+    };
+
+    constants strbpstrbpol_status width(1) "" {
+        STRBPSTRBPOL_0 = 0 "Active high";
+        STRBPSTRBPOL_1 = 1 "Active low";
+    };
+
+    constants divc_status width(9) "" {
+        DIVC_0 = 0 "No clock. CNTCLK is gated.";
+    };
+    
+    register tctrl_ctrl addr(base, 0x30) "TIMING CONTROL - CONTROL REGISTER" {
+        gresetdir 1 rw "Sets the direction of the GLOBAL_RESET signal. 0x0: INPUT - GLOBAL_RESET is an input to the TIMING CONTROL module. GLOBAL_RESET is externally generated. 0x1: OUTPUT - GLOBAL_RESET is an output of the TIMING CONTROL module. GLOBAL_RESET is internally generated. If GRESETEN is set to 1, the internally generated GLOBAL_RESET will trigger the generation of the PRESTROBE, STROBE and SHUTTER signals. The frame counters are ignored.";
+        gresetpol 1 rw "Sets the polarity of the global reset signal: CAM_GLOBAL_RESET. It applies whatever the direction of the GLOBAL_RESET signal: input or output. 0x0: active high 0x1: active low";
+        greseten 1 rw "Triggers the generation of the CAM_GLOBAL_RESET signal. The signal is asserted immediately. If enabled, the CAM_GLOBAL_RESET signal will be asserted forTCTRL_GRESET_LENGTH cycles. After the signal assertion, the enable bit is automatically cleared to 0. The polarity of the GLOBAL_RESET signal is set with TCTRL_CTRL.GRESETPOL. Enabling this bit triggers the generation of the CAM_SHUTTER and CAM_STROBE signals (if previously enabled). The frame counters shall be set to 0 when this bit is set to 1 and GRESETDIR is set a OUTPUT.";
+        insel 2 rw type(insel_status) "Sets the mode that will trigger the SHUTTER, PRESTROBE and STROBE signals.";
+        strbpstrbpol 1 rw type(strbpstrbpol_status) "Sets the polarity of the strobe and prestrobe signals.";
+        _ 1 mbz;
+        shutpol 1 rw type(strbpstrbpol_status) "Sets the polarity of the mechanical shutter signal: CAM_SHUTTER";
+        strben 1 rw "Flash strobe signal enable. If enabled, the STROBE signal will be asserted afterTCTRL_FRAME.STRB frames have been received and a delay of TCTRL_STRB_DELAY cycles have passed. The STROBE signal is asserted for TCTRL_STRB_LENGTH cycles. After the signal assertion, the enable bit is automatically cleared to 0. This signal shall not be disabled by software.";
+        pstrben 1 rw "Flash prestrobe signal enable. If enabled, the PRESTROBE signal will be asserted afterTCTRL_FRAME.PSTRB frames have been received and a delay of TCTRL_PSTRB_DELAY cycles have passed. The PRESTROBE signal is asserted for TCTRL_PSTRB_LENGTH cycles. After the signal assertion, the enable bit is automatically cleared to 0. This signal shall not be disabled by software.";
+        shuten 1 rw "Mechanical shutter signal enable. If enabled, the SHUTTER signal will be asserted afterTCTRL_FRAME.SHUT frames have been received and a delay of TCTRL_SHUT_DELAY cycles have passed. The SHUTTER signal is asserted for TCTRL_SHUT_LENGTH cycles. After the signal assertion, the enable bit is automatically cleared to 0. This signal shall not be disabled by software.";
+        _ 2 mbz;
+        divc 9 rw type(divc_status) "Sets the clock divisor value for the CNTCLK clock generation based on the CLK input clock. CNTCLK is an internal clock used by the TIMING CTRL module counters. Usually, CNTCLK = CLK / DIVC, except for some particular values shown hereafter.";
+        _ 10 mbz;
+    };
+    
+    register tctrl_pstrb_replay addr(base, 0x34) "TIMING CONTROL - PRESTROBE REPLAY REGISTER This register is used by the TIMING CTRL module to generate the prestrobe signal." {
+        counter 7 rw "Sets the number of PRESTROBE pulses after the original pulse. If this bit is set to 0, the PRESTROBE signal behavior is only controlled by TCTRL_FRAME.STRB, TCTRL_PSTRB_DELAY, and TCTRL_PSTRB_LENGTH. If TCTRL_PSTRB_LENGTH=0, there is no replay. This bit is useful when one wants to enable red-eye removal.";
+        delay 25 rw "Sets the delay for the PRESTROBE signal reassertion in cycles of the CNTCLK clock. The CNTCLK frequency is generated with theTCTRL_CTRL.DIVC bit field. The possible values are 0 to 2-1 cycles. If TCTRL_PSTRB_LENGTH=0, there is no replay. This bit field shall not be set to 0 if the COUNTER is set to a value different of 0. This bit is useful when one wants to enable red-eye removal.";
+    };
+    
+    register tctrl_frame addr(base, 0x38) "TIMING CONTROL - FRAME REGISTER This register is used by the TIMING CTRL module to generate the SHUTTER, PRESTROBE, and STROBE signals." {
+        _ 14 mbz;
+        strb 6 rw "Frame counter for the STROBE signal generation. From 0 to 63 frames. This bit field is ignored if TCTRL.INSEL=GRESET.";
+        pstrb 6 rw "Frame counter for the PRESTROBE signal generation. From 0 to 63 frames. This bit field is ignored if TCTRL.INSEL=GRESET.";
+        shut 6 rw "Frame counter for the SHUTTER signal generation. From 0 to 63 frames. This bit field is ignored if TCTRL.INSEL=GRESET.";
+    };
+};

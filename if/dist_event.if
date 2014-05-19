@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface dist_event "dist2 Publish/Subscribe Events" {
+    message identify(uint64 id);
+    
+    message subscribed_message(uint64 id, string record);
+    message watch_event(uint64 id, string record);
+    
+    message trigger(uint64 id, string record);
+};

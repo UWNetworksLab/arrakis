@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface fb "Framebuffer interface" {
+        rpc get_framebuffer(out errval err, out cap fbcap, out uint32 offset);
+
+        rpc set_videomode(
+               in uint16   xres,
+               in uint16   yres,
+               in uint8    bpp,
+               out errval error);
+
+        rpc get_vesamode(out uint16 mode, out bool linear, out errval error);
+        rpc set_vesamode(in uint16 mode, in bool linear, in bool clear,
+                         out errval error);
+
+        rpc save_vesastate(out errval error);
+	rpc restore_vesastate(out errval error);
+
+        rpc vsync();
+};

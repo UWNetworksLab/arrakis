@@ -1,0 +1,97 @@
+\documentclass[11pt,a4paper,twoside,openright,cleardoublepage=plain]{scrreprt}
+
+\usepackage{bftn}
+
+\usepackage[OT1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{graphicx}
+\usepackage{color}
+
+\usepackage[english]{babel}
+\usepackage[clearempty]{titlesec}
+\usepackage{xspace} % because I'm lazy -- Simu
+
+\usepackage[dvips, bookmarks, colorlinks=false, pdfborder=(0 0 0),
+	    pdftitle={A Messaging Interface to Disks},
+	    pdfauthor={Manuel Stocker, Mark Nevill, Simon Gerber},
+	    pdfsubject={A Message Interface to Disks},
+	    pdfkeywords={Barrelfish, AHCI, MPI}]{hyperref}
+
+\usepackage{listings}
+
+\usepackage{algorithmic}
+\usepackage[chapter]{algorithm}
+
+\usepackage[acronym,shortcuts,nonumberlist,toc]{glossaries}
+\glossarystyle{long3col}
+\makeglossaries
+
+\usepackage{hyphenat}
+
+\lstset{basicstyle=\ttfamily,columns=fixed,basewidth=0.5em,showstringspaces=false,language=c,captionpos=b,tabsize=4}
+
+\usepackage{nameref}
+\newcommand{\longref}[1]{\autoref{#1},~\nameref{#1}}
+
+\input{title-settings}
+
+\begin{document}
+
+\input{glossary}
+
+\maketitle
+
+\input{abstract}
+
+\tableofcontents
+
+\chapter{Introduction}
+\input{intro}
+
+\chapter{Related Work}
+\input{related}
+
+\chapter{Design}
+\input{design}
+
+\chapter{ahcid}
+\input{xahcid}
+
+\chapter{libahci}
+\input{libahci}
+
+\chapter{Flounder AHCI Backend}
+\input{flounder-ahci}
+
+\chapter{Driver Usage Example}
+\input{usage}
+
+\chapter{Blockdevice Filesystem}
+\input{blockdevfs}
+
+\chapter{FAT Filesystem}
+\input{fat}
+
+\chapter{Running the AHCI Driver}
+\input{running}
+
+\chapter{Future Work}
+\input{future}
+
+\chapter{Conclusion}
+\input{conclusion}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{plain}
+\bibliography{references}
+
+\appendix
+
+%\chapter{Glossary}
+\phantomsection
+\printglossaries
+
+\end{document}

@@ -1,0 +1,717 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_i2c3.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_i2c3 msbfirst ( addr base ) "" {
+    
+    
+    register i2c_revnb_lo ro addr(base, 0x0) "IP Revision Identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+    
+    register i2c_revnb_hi ro addr(base, 0x4) "IP Revision Identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants clkactivity_status width(2) "" {
+        CLKACTIVITY_0 = 0 "Both clocks can be cut off";
+        CLKACTIVITY_1 = 1 "Only OCP clock must be kept active; system clock can be cut off";
+        CLKACTIVITY_3 = 3 "Both clocks must be kept active";
+        CLKACTIVITY_2 = 2 "Only system clock must be kept active; OCP clock can be cut off";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force Idle mode";
+        IDLEMODE_1 = 1 "No Idle mode";
+        IDLEMODE_3 = 3 "smartidle_wakeup";
+        IDLEMODE_2 = 2 "Smart Idle mode";
+    };
+
+    constants enawakeup_status width(1) "" {
+        ENAWAKEUP_0 = 0 "Wakeup mechanism is disabled";
+        ENAWAKEUP_1 = 1 "Wakeup mechanism is enabled";
+    };
+
+    constants srst_status width(1) "" {
+        SRST_0 = 0 "Normal mode";
+        SRST_1 = 1 "The module is reset";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "Auto Idle mechanism is disabled";
+        AUTOIDLE_1 = 1 "Auto Idle mechanism is enabled";
+    };
+    
+    register i2c_sysc addr(base, 0x10) "System Configuration register" {
+        _ 6 mbz;
+        clkactivity 2 rw type(clkactivity_status) "Clock Activity selection bits";
+        _ 3 mbz;
+        idlemode 2 rw type(idlemode_status) "Idle Mode selection bits";
+        enawakeup 1 rw type(enawakeup_status) "Enable Wakeup control bit";
+        srst 1 rw type(srst_status) "SoftReset bit";
+        autoidle 1 rw type(autoidle_status) "Autoidle bit";
+    };
+
+    constants xdr_status width(1) "" {
+        XDR_0 = 0 "Transmit draining inactive.";
+        XDR_1 = 1 "Transmit draining enabled.";
+    };
+
+    constants rdr_status width(1) "" {
+        RDR_0 = 0 "Receive draining inactive.";
+        RDR_1 = 1 "Receive draining enabled.";
+    };
+
+    constants bb_status width(1) "" {
+        BB_1_r = 1 "Bus is occupied.";
+        BB_0_r = 0 "Bus is free.";
+    };
+
+    constants rovr_status width(1) "" {
+        ROVR_1_r = 1 "Receiver overrun.";
+        ROVR_0_r = 0 "Normal operation.";
+    };
+
+    constants xudf_status width(1) "" {
+        XUDF_1_r = 1 "Transmit underflow.";
+        XUDF_0_r = 0 "Normal operation.";
+    };
+
+    constants aas_status width(1) "" {
+        AAS_0 = 0 "No action.";
+        AAS_1 = 1 "Address recognized.";
+    };
+
+    constants bf_status width(1) "" {
+        BF_0 = 0 "No action.";
+        BF_1 = 1 "Bus Free.";
+    };
+
+    constants aerr_status width(1) "" {
+        AERR_0 = 0 "No action.";
+        AERR_1 = 1 "Access Error.";
+    };
+
+    constants stc_status width(1) "" {
+        STC_0 = 0 "No action.";
+        STC_1 = 1 "Start Condition detected.";
+    };
+
+    constants gc_status width(1) "" {
+        GC_0 = 0 "No general call detected.";
+        GC_1 = 1 "General call address detected.";
+    };
+
+    constants xrdy_status width(1) "" {
+        XRDY_0 = 0 "Transmision ongoing.";
+        XRDY_1 = 1 "Transmit data ready.";
+    };
+
+    constants rrdy_status width(1) "" {
+        RRDY_0 = 0 "No data available.";
+        RRDY_1 = 1 "Receive data available.";
+    };
+
+    constants ardy_status width(1) "" {
+        ARDY_0 = 0 "Module busy.";
+        ARDY_1 = 1 "Access ready.";
+    };
+
+    constants nack_status width(1) "" {
+        NACK_0 = 0 "Normal operation.";
+        NACK_1 = 1 "Not Acknowledge detected.";
+    };
+
+    constants al_status width(1) "" {
+        AL_0 = 0 "Normal operation.";
+        AL_1 = 1 "Arbitration lost detected.";
+    };
+    
+    register i2c_irqstatus_raw addr(base, 0x24) "Per-event raw interrupt status vector" {
+        _ 1 mbz;
+        xdr 1 rw type(xdr_status) "Transmit draining IRQ status.";
+        rdr 1 rw type(rdr_status) "Receive draining IRQ status.";
+        bb 1 ro type(bb_status) "Bus busy status.Writing into this bit has no effect.";
+        rovr 1 rw type(rovr_status) "Receive overrun status.Writing into this bit has no effect.";
+        xudf 1 rw type(xudf_status) "Transmit underflow status.Writing into this bit has no effect.";
+        aas 1 rw type(aas_status) "Address recognized as slave IRQ status.";
+        bf 1 rw type(bf_status) "Bus Free IRQ status.";
+        aerr 1 rw type(aerr_status) "Access Error IRQ status.";
+        stc 1 rw type(stc_status) "Start Condition IRQ status.";
+        gc 1 rw type(gc_status) "General call IRQ status. Set to 1 by core when General call address detected and interrupt signaled to MPUSS.";
+        xrdy 1 rw type(xrdy_status) "Transmit data ready IRQ status. Set to 1 by core when transmitter and when new data is requested. When set to 1 by core, an interrupt is signaled to MPUSS.";
+        rrdy 1 rw type(rrdy_status) "Receive data ready IRQ status. Set to 1 by core when receiver mode, a new data is able to be read. When set to 1 by core, an interrupt is signaled to MPUSS.";
+        ardy 1 rw type(ardy_status) "Register access ready IRQ status. When set to 1 it indicates that previous access has been performed and registers are ready to be accessed again. An interrupt is signaled to MPUSS.";
+        nack 1 rw type(nack_status) "No acknowledgement IRQ status. Bit is set when No Acknowledge has been received, an interrupt is signaled to MPUSS.";
+        al 1 rw type(al_status) "Arbitration lost IRQ status. This bit is automatically set by the hardware when it loses the Arbitration in master transmit mode, an interrupt is signaled to MPUSS. During reads, it always returns 0.";
+    };
+    
+    register i2c_irqstatus addr(base, 0x28) "Per-event enabled interrupt status vector" {
+        _ 1 mbz;
+        xdr 1 rw1c type(xdr_status) "Transmit draining IRQ enabled status.";
+        rdr 1 rw1c type(rdr_status) "Receive draining IRQ enabled status.";
+        bb 1 ro type(bb_status) "Bus busy enabled status.Writing into this bit has no effect.";
+        rovr 1 rw1c type(rovr_status) "Receive overrun enabled status.Writing into this bit has no effect.";
+        xudf 1 rw1c type(xudf_status) "Transmit underflow enabled status.Writing into this bit has no effect.";
+        aas 1 rw1c type(aas_status) "Address recognized as slave IRQ enabled status.";
+        bf 1 rw1c type(bf_status) "Bus Free IRQ enabled status.";
+        aerr 1 rw1c type(aerr_status) "Access Error IRQ enabled status.";
+        stc 1 rw1c type(stc_status) "Start Condition IRQ enabled status.";
+        gc 1 rw1c type(gc_status) "General call IRQ enabled status. Set to 1 by core when General call address detected and interrupt signaled to MPUSS. Write 1 to clear.";
+        xrdy 1 rw1c type(xrdy_status) "Transmit data ready IRQ enabled status. Set to 1 by core when transmitter and when new data is requested. When set to 1 by core, an interrupt is signaled to MPUSS. Write 1 to clear.";
+        rrdy 1 rw1c type(rrdy_status) "Receive data ready IRQ enabled status. Set to 1 by core when receiver mode, a new data is able to be read. When set to 1 by core, an interrupt is signaled to MPUSS. Write 1 to clear.";
+        ardy 1 rw1c type(ardy_status) "Register access ready IRQ enabled status. When set to 1 it indicates that previous access has been performed and registers are ready to be accessed again. An interrupt is signaled to MPUSS. Write 1 to clear.";
+        nack 1 rw1c type(nack_status) "No acknowledgement IRQ enabled status. Bit is set when No Acknowledge has been received, an interrupt is signaled to MPUSS. Write 1 to clear this bit.";
+        al 1 rw1c type(al_status) "Arbitration lost IRQ enabled status. This bit is automatically set by the hardware when it loses the Arbitration in master transmit mode, an interrupt is signaled to MPUSS. During reads, it always returns 0.";
+    };
+
+    constants xdr_ie_status width(1) "" {
+        XDR_IE_0 = 0 "Transmit Draining interrupt disabled";
+        XDR_IE_1 = 1 "Transmit Draining interrupt enabled";
+    };
+
+    constants rdr_ie_status width(1) "" {
+        RDR_IE_0 = 0 "Receive Draining interrupt disabled";
+        RDR_IE_1 = 1 "Receive Draining interrupt enabled";
+    };
+
+    constants rovr_status1 width(1) "" {
+        ROVR_0 = 0 "Receive overrun interrupt disabled";
+        ROVR_1 = 1 "Receive Draining interrupt enabled";
+    };
+
+    constants xudf_status1 width(1) "" {
+        XUDF_0 = 0 "Transmit underflow interrupt disabled";
+        XUDF_1 = 1 "Transmit underflow interrupt enabled";
+    };
+
+    constants ass_ie_status width(1) "" {
+        ASS_IE_0 = 0 "Addressed as Slave interrupt disabled";
+        ASS_IE_1 = 1 "Addressed as Slave interrupt enabled";
+    };
+
+    constants bf_ie_status width(1) "" {
+        BF_IE_0 = 0 "Bus Free interrupt disabled";
+        BF_IE_1 = 1 "Bus Free interrupt enabled";
+    };
+
+    constants aerr_ie_status width(1) "" {
+        AERR_IE_0 = 0 "Access Error interrupt disabled";
+        AERR_IE_1 = 1 "Access Error interrupt enabled";
+    };
+
+    constants stc_ie_status width(1) "" {
+        STC_IE_0 = 0 "Start Condition interrupt disabled";
+        STC_IE_1 = 1 "Start Condition interrupt enabled";
+    };
+
+    constants gc_ie_status width(1) "" {
+        GC_IE_0 = 0 "General call interrupt disabled";
+        GC_IE_1 = 1 "General call interrupt enabled";
+    };
+
+    constants xrdy_ie_status width(1) "" {
+        XRDY_IE_0 = 0 "Transmit data ready interrupt disabled";
+        XRDY_IE_1 = 1 "Transmit data ready interrupt enabled";
+    };
+
+    constants rrdy_ie_status width(1) "" {
+        RRDY_IE_0 = 0 "Receive data ready interrupt disabled";
+        RRDY_IE_1 = 1 "Receive data ready interrupt enabled";
+    };
+
+    constants ardy_ie_status width(1) "" {
+        ARDY_IE_0 = 0 "Register access ready interrupt disabled";
+        ARDY_IE_1 = 1 "Register access ready interrupt enabled";
+    };
+
+    constants nack_ie_status width(1) "" {
+        NACK_IE_0 = 0 "Not Acknowledge interrupt disabled";
+        NACK_IE_1 = 1 "Not Acknowledge interrupt enabled";
+    };
+
+    constants al_ie_status width(1) "" {
+        AL_IE_0 = 0 "Arbitration lost interrupt disabled";
+        AL_IE_1 = 1 "Arbitration lost interrupt enabled";
+    };
+    
+    register i2c_irqenable_set addr(base, 0x2C) "Per-event interrupt enable bit vector." {
+        _ 1 mbz;
+        xdr_ie 1 rw type(xdr_ie_status) "Transmit Draining interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[XDR].";
+        rdr_ie 1 rw type(rdr_ie_status) "Receive Draining interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[RDR].";
+        _ 1 mbz;
+        rovr 1 rw type(rovr_status1) "Receive overrun enable set.";
+        xudf 1 rw type(xudf_status1) "Transmit underflow enable set.";
+        ass_ie 1 rw type(ass_ie_status) "Addressed as Slave interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[AAS].";
+        bf_ie 1 rw type(bf_ie_status) "Bus Free interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[BF].";
+        aerr_ie 1 rw type(aerr_ie_status) "Access Error interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[AERR].";
+        stc_ie 1 rw type(stc_ie_status) "Start Condition interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[STC].";
+        gc_ie 1 rw type(gc_ie_status) "General call Interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[GC]";
+        xrdy_ie 1 rw type(xrdy_ie_status) "Transmit data ready interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[XRDY]";
+        rrdy_ie 1 rw type(rrdy_ie_status) "Receive data ready interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[RRDY]";
+        ardy_ie 1 rw type(ardy_ie_status) "Register access ready interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[ARDY]";
+        nack_ie 1 rw type(nack_ie_status) "No acknowledgement interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[NACK]";
+        al_ie 1 rw type(al_ie_status) "Arbitration lost interrupt enable set. Mask or unmask the interrupt signaled by bit inI2C_STAT[AL]";
+    };
+    
+    register i2c_irqenable_clr addr(base, 0x30) "Per-event interrupt clear bit vector." {
+        _ 1 mbz;
+        xdr_ie 1 rw type(xdr_ie_status) "Transmit Draining interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[XDR].";
+        rdr_ie 1 rw type(rdr_ie_status) "Receive Draining interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[RDR].";
+        _ 1 mbz;
+        rovr 1 rw type(rovr_status1) "Receive overrun enable clear.";
+        xudf 1 rw type(xudf_status1) "Transmit underflow enable clear.";
+        ass_ie 1 rw type(ass_ie_status) "Addressed as Slave interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[AAS].";
+        bf_ie 1 rw type(bf_ie_status) "Bus Free interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[BF].";
+        aerr_ie 1 rw type(aerr_ie_status) "Access Error interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[AERR].";
+        stc_ie 1 rw type(stc_ie_status) "Start Condition interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[STC].";
+        gc_ie 1 rw type(gc_ie_status) "General call Interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[GC]";
+        xrdy_ie 1 rw type(xrdy_ie_status) "Transmit data ready interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[XRDY]";
+        rrdy_ie 1 rw type(rrdy_ie_status) "Receive data ready interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[RRDY]";
+        ardy_ie 1 rw type(ardy_ie_status) "Register access ready interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[ARDY]";
+        nack_ie 1 rw type(nack_ie_status) "No acknowledgement interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[NACK]";
+        al_ie 1 rw type(al_ie_status) "Arbitration lost interrupt enable clear. Mask or unmask the interrupt signaled by bit inI2C_STAT[AL]";
+    };
+
+    constants xdr_status1 width(1) "" {
+        XDR_0_2 = 0 "Transmit draining wakeup disabled";
+        XDR_1_2 = 1 "Transmit draining wakeup enabled";
+    };
+
+    constants rdr_status1 width(1) "" {
+        RDR_0_2 = 0 "Receive draining wakeup disabled";
+        RDR_1_2 = 1 "Receive draining wakeup enabled";
+    };
+
+    constants rovr_status2 width(1) "" {
+        ROVR_0_2 = 0 "Receive overrun wakeup disabled";
+        ROVR_1_2 = 1 "Receive overrun wakeup enabled";
+    };
+
+    constants xudf_status2 width(1) "" {
+        XUDF_0_2 = 0 "Transmit underflow wakeup disabled";
+        XUDF_1_2 = 1 "Transmit underflow wakeup enabled";
+    };
+
+    constants aas_status1 width(1) "" {
+        AAS_0_2 = 0 "Addressed as slave wakeup disabled";
+        AAS_1_2 = 1 "Addressed as slave wakeup enabled";
+    };
+
+    constants bf_status1 width(1) "" {
+        BF_0_2 = 0 "Bus Free wakeup disabled";
+        BF_1_2 = 1 "Bus Free wakeup enabled";
+    };
+
+    constants stc_status1 width(1) "" {
+        STC_0_2 = 0 "Start condition wakeup disabled";
+        STC_1_2 = 1 "Start condition wakeup enabled";
+    };
+
+    constants gc_status1 width(1) "" {
+        GC_0_2 = 0 "General call wakeup disabled";
+        GC_1_2 = 1 "General call wakeup enabled";
+    };
+
+    constants drdy_status width(1) "" {
+        DRDY_0 = 0 "Transmit/receive data ready wakeup disabled";
+        DRDY_1 = 1 "Transmit/receive data ready wakeup enabled";
+    };
+
+    constants ardy_status1 width(1) "" {
+        ARDY_0_2 = 0 "Register access ready wakeup disabled";
+        ARDY_1_2 = 1 "Register access ready wakeup enabled";
+    };
+
+    constants nack_status1 width(1) "" {
+        NACK_0_2 = 0 "Not Acknowledge wakeup disabled";
+        NACK_1_2 = 1 "Not Acknowledge wakeup enabled";
+    };
+
+    constants al_status1 width(1) "" {
+        AL_0_2 = 0 "Arbitration lost wakeup disabled";
+        AL_1_2 = 1 "Arbitration lost wakeup enabled";
+    };
+    
+    register i2c_we addr(base, 0x34) "I2C wakeup enable vector." {
+        _ 1 mbz;
+        xdr 1 rw type(xdr_status1) "Transmit Draining wakeup set.";
+        rdr 1 rw type(rdr_status1) "Receive Draining wakeup set.";
+        _ 1 mbz;
+        rovr 1 rw type(rovr_status2) "Receive overrun wakeup set.";
+        xudf 1 rw type(xudf_status2) "Transmit underflow wakeup set.";
+        aas 1 rw type(aas_status1) "Address as slave IRQ wakeup set.";
+        bf 1 rw type(bf_status1) "Bus Free IRQ wakeup set.";
+        _ 1 mbz;
+        stc 1 rw type(stc_status1) "Start Condition IRQ wakeup set.";
+        gc 1 rw type(gc_status1) "General call IRQ wakeup set.";
+        _ 1 mbz;
+        drdy 1 rw type(drdy_status) "Receive/Transmit data ready IRQ wakeup set.";
+        ardy 1 rw type(ardy_status1) "Register access ready IRQ wakeup set.";
+        nack 1 rw type(nack_status1) "No acknowledgment IRQ wakeup set.";
+        al 1 rw type(al_status1) "Arbitration lost IRQ wakeup set.";
+    };
+    
+    register i2c_dmarxenable_set addr(base, 0x38) "Per-event DMA RX enable set." {
+        _ 15 mbz;
+        dmarx_enable_set 1 rw "Receive DMA channel enable set.";
+    };
+    
+    register i2c_dmatxenable_set addr(base, 0x3C) "Per-event DMA TX enable set." {
+        _ 15 mbz;
+        dmatx_enable_set 1 rw "Transmit DMA channel enable set.";
+    };
+    
+    register i2c_dmarxenable_clr addr(base, 0x40) "Per-event DMA RX enable clear." {
+        _ 15 mbz;
+        dmarx_enable_clear 1 rw "Receive DMA channel enable clear.";
+    };
+    
+    register i2c_dmatxenable_clr addr(base, 0x44) "Per-event DMA TX enable clear." {
+        _ 15 mbz;
+        dmatx_enable_clear 1 rw "Transmit DMA channel enable clear.";
+    };
+    
+    register i2c_dmarxwake_en addr(base, 0x48) "Per-event DMA RX wakeup enable." {
+        _ 1 mbz;
+        xdr 1 rw type(xdr_status1) "Transmit Draining wakeup set.";
+        rdr 1 rw type(rdr_status1) "Receive Draining wakeup set.";
+        _ 1 mbz;
+        rovr 1 rw type(rovr_status2) "Receive overrun wakeup set.";
+        xudf 1 rw type(xudf_status2) "Transmit underflow wakeup set.";
+        aas 1 rw type(aas_status1) "Address as slave IRQ wakeup set.";
+        bf 1 rw type(bf_status1) "Bus Free IRQ wakeup set.";
+        _ 1 mbz;
+        stc 1 rw type(stc_status1) "Start Condition IRQ wakeup set.";
+        gc 1 rw type(gc_status1) "General call IRQ wakeup set.";
+        _ 1 mbz;
+        drdy 1 rw type(drdy_status) "Receive/Transmit data ready IRQ wakeup set.";
+        ardy 1 rw type(ardy_status1) "Register access ready IRQ wakeup set.";
+        nack 1 rw type(nack_status1) "No acknowledgment IRQ wakeup set.";
+        al 1 rw type(al_status1) "Arbitration lost IRQ wakeup set.";
+    };
+    
+    register i2c_dmatxwake_en addr(base, 0x4C) "Per-event DMA TX wakeup enable." {
+        _ 1 mbz;
+        xdr 1 rw type(xdr_status1) "Transmit Draining wakeup set.";
+        rdr 1 rw type(rdr_status1) "Receive Draining wakeup set.";
+        _ 1 mbz;
+        rovr 1 rw type(rovr_status2) "Receive overrun wakeup set.";
+        xudf 1 rw type(xudf_status2) "Transmit underflow wakeup set.";
+        aas 1 rw type(aas_status1) "Address as slave IRQ wakeup set.";
+        bf 1 rw type(bf_status1) "Bus Free IRQ wakeup set.";
+        _ 1 mbz;
+        stc 1 rw type(stc_status1) "Start Condition IRQ wakeup set.";
+        gc 1 rw type(gc_status1) "General call IRQ wakeup set.";
+        _ 1 mbz;
+        drdy 1 rw type(drdy_status) "Receive/Transmit data ready IRQ wakeup set.";
+        ardy 1 rw type(ardy_status1) "Register access ready IRQ wakeup set.";
+        nack 1 rw type(nack_status1) "No acknowledgment IRQ wakeup set.";
+        al 1 rw type(al_status1) "Arbitration lost IRQ wakeup set.";
+    };
+    
+    register i2c_ie addr(base, 0x84) "I2C interrupt enable vector (legacy)." {
+        _ 1 mbz;
+        xdr_ie 1 rw type(xdr_ie_status) "Transmit Draining interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[XDR].";
+        rdr_ie 1 rw type(rdr_ie_status) "Receive Draining interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[RDR].";
+        _ 1 mbz;
+        rovr 1 rw type(rovr_status1) "Receive overrun enable set.";
+        xudf 1 rw type(xudf_status1) "Transmit underflow enable set.";
+        ass_ie 1 rw type(ass_ie_status) "Addressed as Slave interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[AAS].";
+        bf_ie 1 rw type(bf_ie_status) "Bus Free interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[BF].";
+        aerr_ie 1 rw type(aerr_ie_status) "Access Error interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[AERR].";
+        stc_ie 1 rw type(stc_ie_status) "Start Condition interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[STC].";
+        gc_ie 1 rw type(gc_ie_status) "General call Interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[GC]";
+        xrdy_ie 1 rw type(xrdy_ie_status) "Transmit data ready interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[XRDY]";
+        rrdy_ie 1 rw type(rrdy_ie_status) "Receive data ready interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[RRDY]";
+        ardy_ie 1 rw type(ardy_ie_status) "Register access ready interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[ARDY]";
+        nack_ie 1 rw type(nack_ie_status) "No acknowledgement interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[NACK]";
+        al_ie 1 rw type(al_ie_status) "Arbitration lost interrupt enable. Mask or unmask the interrupt signaled by bit inI2C_STAT[AL]";
+    };
+    
+    register i2c_stat addr(base, 0x88) "I2C interrupt status vector (legacy)." {
+        _ 1 mbz;
+        xdr 1 rw1c type(xdr_status) "Transmit draining IRQ status.";
+        rdr 1 rw1c type(rdr_status) "Receive draining IRQ status.";
+        bb 1 ro type(bb_status) "Bus busy status.Writing into this bit has no effect.";
+        rovr 1 rw1c type(rovr_status) "Receive overrun status.Writing into this bit has no effect.";
+        xudf 1 rw1c type(xudf_status) "Transmit underflow status.Writing into this bit has no effect.";
+        aas 1 rw1c type(aas_status) "Address recognized as slave IRQ status.";
+        bf 1 rw1c type(bf_status) "Bus Free IRQ status.";
+        aerr 1 rw1c type(aerr_status) "Access Error IRQ status.";
+        stc 1 rw1c type(stc_status) "Start Condition IRQ status.";
+        gc 1 rw1c type(gc_status) "General call IRQ status. Set to 1 by core when General call address detected and interrupt signaled to MPUSS. Write 1 to clear.";
+        xrdy 1 rw1c type(xrdy_status) "Transmit data ready IRQ status. Set to 1 by core when transmitter and when new data is requested. When set to 1 by core, an interrupt is signaled to MPUSS. Write 1 to clear.";
+        rrdy 1 rw1c type(rrdy_status) "Receive data ready IRQ status. Set to 1 by core when receiver mode, a new data is able to be read. When set to 1 by core, an interrupt is signaled to MPUSS. Write 1 to clear.";
+        ardy 1 rw1c type(ardy_status) "Register access ready IRQ status. When set to 1 it indicates that previous access has been performed and registers are ready to be accessed again. An interrupt is signaled to MPUSS. Write 1 to clear.";
+        nack 1 rw1c type(nack_status) "No acknowledgement IRQ status. Bit is set when No Acknowledge has been received, an interrupt is signaled to MPUSS. Write 1 to clear this bit.";
+        al 1 rw1c type(al_status) "Arbitration lost IRQ status. This bit is automatically set by the hardware when it loses the Arbitration in master transmit mode, an interrupt is signaled to MPUSS. During reads, it always returns 0.";
+    };
+
+    constants rdone_status width(1) "" {
+        RDONE_1_r = 1 "Reset completed";
+        RDONE_0_r = 0 "Internal module reset in ongoing";
+    };
+    
+    register i2c_syss addr(base, 0x90) "System Status register" {
+        _ 15 mbz;
+        rdone 1 rw type(rdone_status) "Reset done bit";
+    };
+
+    constants rdma_en_status width(1) "" {
+        RDMA_EN_0 = 0 "Receive DMA channel disabled";
+        RDMA_EN_1 = 1 "Receive DMA channel enabled";
+    };
+
+    constants rxfifo_clr_status width(1) "" {
+        RXFIFO_CLR_0 = 0 "Normal mode";
+        RXFIFO_CLR_1 = 1 "Rx FIFO is reset";
+    };
+
+    constants xdma_en_status width(1) "" {
+        XDMA_EN_0 = 0 "Transmit DMA channel disabled";
+        XDMA_EN_1 = 1 "Transmit DMA channel enabled";
+    };
+
+    constants txfifo_clr_status width(1) "" {
+        TXFIFO_CLR_0 = 0 "Normal mode";
+        TXFIFO_CLR_1 = 1 "Tx FIFO is reset";
+    };
+    
+    register i2c_buf addr(base, 0x94) "Buffer Configuration register" {
+        rdma_en 1 rw type(rdma_en_status) "Receive DMA channel enable";
+        rxfifo_clr 1 rw type(rxfifo_clr_status) "Receive FIFO clear";
+        rxtrsh 6 rw "Threshold value for FIFO buffer in RX mode";
+        xdma_en 1 rw type(xdma_en_status) "Transmit DMA channel enable";
+        txfifo_clr 1 rw type(txfifo_clr_status) "Transmit FIFO clear";
+        txtrsh 6 rw "Threshold value for FIFO buffer in TX mode";
+    };
+    
+    register i2c_cnt rw addr(base, 0x98) "Data counter register" type(uint16);
+    
+    register i2c_data addr(base, 0x9C) "Data access register" {
+        _ 8 mbz;
+        data 8 rw "Transmit/Receive data FIFO endpoint";
+    };
+
+    constants i2c_en_status width(1) "" {
+        I2C_EN_0 = 0 "Controller in reset. FIFO are cleared and status bits are set to their default value";
+        I2C_EN_1 = 1 "Module enabled";
+    };
+
+    constants opmode_status width(2) "" {
+        OPMODE_0 = 0 "I2C Fast/Standard mode.";
+        OPMODE_1 = 1 "I2C High Speed mode.";
+        OPMODE_3 = 3 "Reserved.";
+        OPMODE_2 = 2 "SCCB mode.";
+    };
+
+    constants stb_status width(1) "" {
+        STB_0 = 0 "Normal mode";
+        STB_1 = 1 "Start byte mode";
+    };
+
+    constants mst_status width(1) "" {
+        MST_0 = 0 "Slave mode";
+        MST_1 = 1 "Master mode";
+    };
+
+    constants trx_status width(1) "" {
+        TRX_0 = 0 "Receiver mode";
+        TRX_1 = 1 "Transmitter mode";
+    };
+
+    constants xsa_status width(1) "" {
+        XSA_0 = 0 "7-bit address mode";
+        XSA_1 = 1 "10-bit address mode";
+    };
+
+    constants stp_status width(1) "" {
+        STP_0 = 0 "No action or stop condition detected";
+        STP_1 = 1 "Stop condition queried";
+    };
+
+    constants stt_status width(1) "" {
+        STT_0 = 0 "No action or start condition detected";
+        STT_1 = 1 "Start condition queried";
+    };
+    
+    register i2c_con addr(base, 0xA4) "I2C configuration register." {
+        i2c_en 1 rw type(i2c_en_status) "I2C module enable.";
+        _ 1 mbz;
+        opmode 2 rw type(opmode_status) "Operation mode selection.";
+        stb 1 rw type(stb_status) "Start byte mode (master mode only).";
+        mst 1 rw type(mst_status) "Master/slave mode.";
+        trx 1 rw type(trx_status) "Transmitter/Receiver mode (master mode only).";
+        xsa 1 rw type(xsa_status) "Expand Slave address.";
+        xoa0 1 rw type(xsa_status) "Expand Own address 0.";
+        xoa1 1 rw type(xsa_status) "Expand Own address 1.";
+        xoa2 1 rw type(xsa_status) "Expand Own address 2.";
+        xoa3 1 rw type(xsa_status) "Expand Own address 3.";
+        _ 2 mbz;
+        stp 1 rw type(stp_status) "Stop condition (master mode only).";
+        stt 1 rw type(stt_status) "Start condition (master mode only).";
+    };
+    
+    register i2c_oa addr(base, 0xA8) "Own address register" {
+        mcode 3 rw "Master Code";
+        _ 3 mbz;
+        oa 10 rw "Own address";
+    };
+    
+    register i2c_sa addr(base, 0xAC) "Slave address register" {
+        _ 6 mbz;
+        sa 10 rw "Slave address";
+    };
+    
+    register i2c_psc addr(base, 0xB0) "I2C Clock Prescaler Register" {
+        _ 8 mbz;
+        psc 8 rw "Fast/Standard mode prescale sampling clock divider value 0x0: Divide by 1 0x1: Divide by 2 .............................. 0xFF: Divide by 256";
+    };
+    
+    register i2c_scll addr(base, 0xB4) "I2C SCL Low Time Register." {
+        hsscll 8 rw "High Speed mode SCL low time";
+        scll 8 rw "Fast/Standard mode SCL low time.";
+    };
+    
+    register i2c_sclh addr(base, 0xB8) "I2C SCL High Time Register." {
+        hssclh 8 rw "High Speed mode SCL high time";
+        sclh 8 rw "Fast/Standard mode SCL high time.";
+    };
+
+    constants free_status width(1) "" {
+        FREE_0 = 0 "Stop mode (on breakpoint condition). If Master mode, it stops after completion of the ongoing bit transfer. In slave mode, it stops during the phase transfer when 1 byte is completely transmitted/received.";
+        FREE_1 = 1 "Free running mode";
+    };
+
+    constants tmode_status width(2) "" {
+        TMODE_0 = 0 "Functional mode (default)";
+        TMODE_1 = 1 "Reserved";
+        TMODE_3 = 3 "Loop back mode select + SDA/SCL IO mode select";
+        TMODE_2 = 2 "Test of SCL counters (SCLL, SCLH, PSC). SCL provides a permanent clock with master mode.";
+    };
+
+    constants ssb_status width(1) "" {
+        SSB_0 = 0 "No action";
+        SSB_1 = 1 "Set interrupt status bits to 1";
+    };
+
+    constants scl_i_func_status width(1) "" {
+        SCL_I_FUNC_1_r = 1 "Read 1 from SCL line";
+        SCL_I_FUNC_0_r = 0 "Read 0 from SCL line";
+    };
+
+    constants scl_o_func_status width(1) "" {
+        SCL_O_FUNC_1_r = 1 "Driven 1 on SCL line";
+        SCL_O_FUNC_0_r = 0 "Driven 0 on SCL line";
+    };
+
+    constants sda_i_func_status width(1) "" {
+        SDA_I_FUNC_1_r = 1 "Read 1 from SDA line";
+        SDA_I_FUNC_0_r = 0 "Read 0 from SDA line";
+    };
+
+    constants sda_o_func_status width(1) "" {
+        SDA_O_FUNC_1_r = 1 "Driven 1 to SDA line";
+        SDA_O_FUNC_0_r = 0 "Driven 0 to SDA line";
+    };
+
+    constants sccb_e_o_status width(1) "" {
+        SCCB_E_O_0 = 0 "Write 0 to SCCBE line";
+        SCCB_E_O_1 = 1 "Write 1 to SCCBE line";
+    };
+
+    constants scl_o_status width(1) "" {
+        SCL_O_0 = 0 "Write 0 to SCL line";
+        SCL_O_1 = 1 "Write 1 to SCL line";
+    };
+
+    constants sda_o_status width(1) "" {
+        SDA_O_0 = 0 "Write 0 to SDA line";
+        SDA_O_1 = 1 "Write 1 to SDA line";
+    };
+    
+    register i2c_systest addr(base, 0xBC) "I2C System Test Register." {
+        st_en 1 rw type(drdy_status) "System test enable.";
+        free 1 rw type(free_status) "Free running mode (on breakpoint)";
+        tmode 2 rw type(tmode_status) "Test mode select.";
+        ssb 1 rw type(ssb_status) "Set status bits from 0 to 14.";
+        _ 2 mbz;
+        scl_i_func 1 ro type(scl_i_func_status) "SCL line input value (functional mode).";
+        scl_o_func 1 ro type(scl_o_func_status) "SCL line output value (functional mode).";
+        sda_i_func 1 ro type(sda_i_func_status) "SDA line input value (functional mode).";
+        sda_o_func 1 ro type(sda_o_func_status) "SDA line output value (functional mode).";
+        sccb_e_o 1 rw type(sccb_e_o_status) "SCCB_E line sense output value.";
+        scl_i 1 ro type(scl_i_func_status) "SCL line sense input value";
+        scl_o 1 rw type(scl_o_status) "SCL line drive output value.";
+        sda_i 1 ro type(sda_i_func_status) "SDA line sense input value.";
+        sda_o 1 rw type(sda_o_status) "SDA line drive output value.";
+    };
+    
+    register i2c_bufstat addr(base, 0xC0) "I2C Buffer Status Register." {
+        fifodepth 2 ro "Internal FIFO buffers depth.";
+        rxstat 6 ro "RX Buffer Status";
+        _ 2 mbz;
+        txstat 6 ro "TX Buffer Status.";
+    };
+    
+    register i2c_oa1 addr(base, 0xC4) "I2C Own Address 1 Register" {
+        _ 6 mbz;
+        oa1 10 rw "Own address 1";
+    };
+    
+    register i2c_oa2 addr(base, 0xC8) "I2C Own Address 2 Register" {
+        _ 6 mbz;
+        oa2 10 rw "Own address 2";
+    };
+    
+    register i2c_oa3 addr(base, 0xCC) "I2C Own Address 3 Register" {
+        _ 6 mbz;
+        oa3 10 rw "Own address 3";
+    };
+
+    constants oa3_act_status width(1) "" {
+        OA3_ACT_1_r = 1 "Own Address active.";
+        OA3_ACT_0_r = 0 "Own Address inactive.";
+    };
+    
+    register i2c_actoa addr(base, 0xD0) "I2C Active Own Address Register." {
+        _ 12 mbz;
+        oa3_act 1 ro type(oa3_act_status) "Own Address 3 active.";
+        oa2_act 1 ro type(oa3_act_status) "Own Address 2 active.";
+        oa1_act 1 ro type(oa3_act_status) "Own Address 1 active.";
+        oa0_act 1 ro type(oa3_act_status) "Own Address 0 active.";
+    };
+
+    constants oa3_en_status width(1) "" {
+        OA3_EN_0 = 0 "I2C Clock Released.";
+        OA3_EN_1 = 1 "I2C Clock Blocked.";
+    };
+    
+    register i2c_sblock addr(base, 0xD4) "I2C Clock Blocking Enable Register." {
+        _ 12 mbz;
+        oa3_en 1 rw type(oa3_en_status) "Enable I2C Clock Blocking for Own Address 3.";
+        oa2_en 1 rw type(oa3_en_status) "Enable I2C Clock Blocking for Own Address 2.";
+        oa1_en 1 rw type(oa3_en_status) "Enable I2C Clock Blocking for Own Address 1.";
+        oa0_en 1 rw type(oa3_en_status) "Enable I2C Clock Blocking for Own Address 0.";
+    };
+};

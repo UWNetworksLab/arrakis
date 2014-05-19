@@ -1,0 +1,8 @@
+#!/bin/sh
+
+for i in  `ls *.c` ; do
+    cat $i|sed -e 's/\"cryptlib.h\"/<local\/cryptlib.h>/' > $i.aus;
+    mv $i $i.alt;
+    mv $i.aus $i;
+done
+

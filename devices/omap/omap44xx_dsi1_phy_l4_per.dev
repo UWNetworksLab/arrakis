@@ -1,0 +1,120 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_dsi1_phy_l4_per.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_dsi1_phy_l4_per msbfirst ( addr base ) "" {
+    
+    
+    register dsi_phy_register0 addr(base, 0x0) "Configuration register for HS mode timings" {
+        reg_thsprepare 8 rw "REG_THSPREPARE timing parameter in multiples of DDR clock period. DDR clock = CLKIN4DDR/4.D-PHY specification: 40 ns + 4 * UI / 85 ns + 6 * UI. UI = Unit Interval, equal to the duration of any HS state on the clock lane. . Default value is programmed for 400 MHz. .";
+        reg_thsprpr_thszero 8 rw "REG_THSPREPARE_THSZERO timing parameter in multiples of DDR clock period. DDR clock = CLKIN4DDR/4.D-PHY specification: &gt; 145 ns + 10 * UI. . Default value is programmed for 400 MHz. .";
+        reg_thstrail 8 rw "REG_THSTRAIL timing parameter in multiples of DDR clock period. DDR clock = CLKIN4DDR/4.D-PHY specification: &gt; 60 ns + 4 * UI. . Default value is programmed for 400 MHz. .";
+        reg_thsexit 8 rw "REG_THSEXIT timing parameter in multiples of DDR clock frequency. DDR clock = CLKIN4DDR/4.D-PHY specification: &gt; 100 ns. . Default value is programmed for 400 MHz. .";
+    };
+
+    constants reg_ttago_status width(3) "" {
+        REG_TTAGO_1 = 1 "3 cycles";
+        REG_TTAGO_2 = 2 "4 cycles";
+        REG_TTAGO_3 = 3 "5 cycles";
+        REG_TTAGO_4 = 4 "6 cycles";
+        REG_TTAGO_5 = 5 "7 cycles";
+        REG_TTAGO_6 = 6 "8 cycles";
+        REG_TTAGO_7 = 7 "9 cycles";
+    };
+
+    constants reg_ttasure_status width(2) "" {
+        REG_TTASURE_0 = 0 "2 cycles";
+        REG_TTASURE_1 = 1 "1 cycles";
+        REG_TTASURE_2 = 2 "3 cycles";
+        REG_TTASURE_3 = 3 "4 cycles";
+    };
+
+    constants reg_ttaget_status width(3) "" {
+        REG_TTAGET_0 = 0 "3 cycles";
+        REG_TTAGET_1 = 1 "4 cycles";
+        REG_TTAGET_2 = 2 "5 cycles";
+        REG_TTAGET_3 = 3 "6 cycles";
+        REG_TTAGET_4 = 4 "7 cycles";
+        REG_TTAGET_5 = 5 "8 cycles";
+        REG_TTAGET_6 = 6 "9 cycles";
+        REG_TTAGET_7 = 7 "10 cycles";
+    };
+    
+    register dsi_phy_register1 addr(base, 0x4) "Configuration register for LP mode and HS mode timings" {
+        reg_ttago 3 rw type(reg_ttago_status) "TTA-GO timing in terms of number of TXCLKESC clocks. 0x0: 2 cyclesDefault value: 4 cycles .";
+        reg_ttasure 2 rw type(reg_ttasure_status) "TTA-SURE timing in terms of number of TXCLKESC clocks.Default value: 2 cycles .";
+        reg_ttaget 3 rw type(reg_ttaget_status) "TTA-GET timing in terms of number of TXCLKESC clocks.Default value: 5 cycles .";
+        _ 3 mbz;
+        reg_tlpxby2 5 rw "(TLPX)/2 timing parameter in multiples of DDR clock frequency. DDR clock = CLKIN4DDR/4.Default value is programmed for 400 MHz. This is the internal timer value. The value seen on line will have variance due to rise/fall mismatch effects. . Note: TLPX is used to define the length of LP-01 state in HS start of Transmission sequences on clock and data lanes. For all other purposes TLPX is defined by the period of TXLPESC .";
+        reg_tclktrail 8 rw "REG_TCLKTRAIL timing parameter in multiples of DDR clock frequency. DDR clock = CLKIN4DDR/4.D-PHY specification: &gt; 60 ns. . Default value is programmed for 400 MHz .";
+        reg_tclkzero 8 rw "REG_TCLKZERO timing parameter in multiples of DDR clock period. DDR clock = CLKIN4DDR/4.D-PHY specification: (REG_TCLKPREPARE + REG_TCLKZERO) &gt; 300 ns. . Derived specification for REG_TCLKZERO (Min REG_TCLKPREPARE = 38 ns): REG_TCLKZERO &gt; 262 ns. . Default value is programmed for 400 MHz .";
+    };
+
+    constants ovrrdulpmtx_status width(1) "" {
+        OVRRDULPMTX_1 = 1 "Enable weak pulldown on DSI lanes.";
+        OVRRDULPMTX_0 = 0 "Disable weak pulldown on DSI lanes (default).";
+    };
+
+    constants regulpmtx_status width(5) "" {
+        REGULPMTX_1 = 1 "Enable weak pulldown on the lane.";
+        REGULPMTX_0 = 0 "Disable weak pulldown on the lane (default).";
+    };
+    
+    register dsi_phy_register2 addr(base, 0x8) "Sync pattern" {
+        hssyncpattern 8 rw "Default : 184 (10111000). MSB (last received bit of sync pattern), LSB (first received bit of sync pattern).";
+        _ 7 mbz;
+        ovrrdulpmtx 1 rw type(ovrrdulpmtx_status) "Global enable of the weak pulldown on the DSI lanes, configured through the [15:11] REGULPMTX bit field:";
+        regulpmtx 5 rw type(regulpmtx_status) "Configuration of the weak pulldowns on the DSI lanes.For each bit, the following settings apply: . Bit [15]: DSI lane 4 (applies only to DSI1; reserved for DSI2) . Bit [14]: DSI lane 3 (applies only to DSI1; reserved for DSI2) . Bit [13]: DSI lane 2 (applies to DSI1 and DSI2) . Bit [12]: DSI lane 1 (applies to DSI1 and DSI2) . Bit [11]: DSI lane 0 (applies to DSI1 and DSI2) .";
+        _ 3 mbz;
+        reg_tclkprepare 8 rw "TCLK-PREPARE timing parameter in multiples of DDR clock period.D-PHY specification: 38 ns / 95 ns. . Default value is programmed for 400 MHz. .";
+    };
+    
+    register dsi_phy_register3 addr(base, 0xC) "Transmitted pattern" {
+        reg_txtriggeresc3 8 rw "Transmitted pattern when REG_TXTRIGGERESC3 is asserted (first bit transmitted to last bit transmitted). Default: 01100010";
+        reg_txtriggeresc2 8 rw "Default: 01011101";
+        reg_txtriggeresc1 8 rw "Default: 00100001";
+        reg_txtriggeresc0 8 rw "Default: 10100000";
+    };
+    
+    register dsi_phy_register4 addr(base, 0x10) "Received pattern" {
+        reg_rxtriggeresc3 8 rw "Received pattern for which REG_RXTRIGGERESC3 is asserted (first bit transmitted to last bit transmitted). Default: 01100010";
+        reg_rxtriggeresc2 8 rw "Default: 01011101";
+        reg_rxtriggeresc1 8 rw "Default: 00100001";
+        reg_rxtriggeresc0 8 rw "Default: 10100000";
+    };
+    
+    register dsi_phy_register5 addr(base, 0x14) "Reset done bits" {
+        resetdonetxbyteclk 1 ro "RESETDONETXBYTECLK 0x0: No reset 0x1: Reset done for the TXBYTECLK domain";
+        resetdonescpclk 1 ro "RESETDONESCPCLK 0x0: No reset 0x1: Reset done for the SCP clock domain";
+        resetdonepwrclk 1 ro "RESETDONEPWRCLK 0x0: No reset 0x1: Reset done for the PWR clock domain";
+        resetdonetxclkesc4 1 ro "RESETDONETXCLKESC4 0x0: No reset 0x1: Reset done for the TXCLKESC domain for lane 4";
+        resetdonetxclkesc3 1 ro "RESETDONETXCLKESC3 0x0: No reset 0x1: Reset done for the TXCLKESC domain for lane 3";
+        resetdonetxclkesc2 1 ro "RESETDONETXCLKESC2 0x0: No reset 0x1: Reset done for the TXCLKESC domain for lane 2";
+        resetdonetxclkesc1 1 ro "RESETDONETXCLKESC1 0x0: No reset 0x1: Reset done for the TXCLKESC domain for lane 1";
+        resetdonetxclkesc0 1 ro "RESETDONETXCLKESC0 0x0: No reset 0x1: Reset done for the TXCLKESC domain for lane 0";
+        _ 24 mbz;
+    };
+};

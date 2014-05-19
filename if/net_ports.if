@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, 2011 ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface net_ports "Interface for port management" {
+    alias bufid uint64;
+    alias ipv4addr uint32;
+    alias qid uint64;
+    alias appid uint64;
+    typedef enum {PORT_TCP, PORT_UDP} port_type;
+
+    /* following one should not be used */
+    rpc get_ip_info(out ipv4addr ip,
+		    out ipv4addr gw,
+		    out ipv4addr mask);
+
+
+    rpc get_mac_address(out uint64 hwaddr);
+
+
+    rpc get_port(in port_type type,
+		 in bufid buffer_id_rx,
+		 in bufid buffer_id_tx,
+                 in appid appid,
+                 in qid queueid,
+                 out errval err,
+                 out uint16 port_no);
+
+    rpc bind_port(in port_type type,
+		  in uint16 port_no,
+		  in bufid buffer_id_rx,
+		  in bufid buffer_id_tx,
+                  in appid appid,
+                  in qid queueid,
+                  out errval err);
+
+    rpc close_port(in port_type type,
+		   in uint16 port_no,
+                   in appid appid,
+                   in qid queueid,
+                   out errval err);
+
+/*
+    rpc redirect(in port_type port,
+       		    in ipv4addr local_ip,
+		    in uint16 local_port,
+		    in ipv4addr remote_ip,
+		    in uint16 remote_port,
+		    in bufid buffer_id_rx,
+		    in bufid buffer_id_tx,
+                    in uint64 queueid,
+                    out errval err);
+
+    rpc redirect_pause(in port_type port,
+       		    in ipv4addr local_ip,
+		    in uint16 local_port,
+		    in ipv4addr remote_ip,
+		    in uint16 remote_port,
+		    in bufid buffer_id_rx,
+		    in bufid buffer_id_tx,
+                    in uint64 queueid,
+                    out errval err);
+*/
+};
+

@@ -1,0 +1,340 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Universitaestr. 6, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ohci.dev
+ *
+ * DESCRIPTION: Open Host Controller Interface (OHCI) description
+ * 
+ * Archaic USB interface, but still found on e.g. ATI and NVidia
+ * chipsets. 
+ * 
+ * Numbers in comments refer to the OpenHCI Open Host Controller
+ * Interface Specification for USB, by Compaq, Microsoft, and National
+ * Semiconductor, 09/14/99 2:33 PM, Release: 1.0a 
+ */
+
+
+device ohci lsbfirst ( io base ) "OHCI USB controller" {
+
+/*
+    //
+    // Data structures
+    //
+
+    // 4.2.1
+    constants direction width(2) "Data flow direction" {
+	dir_td	= 0b00	"Get direction from TD";
+	dir_out = 0b01	"Out";
+	dir_in  = 0b10  "In";
+	dir_td1 = 0b11  "Get direction from TD (alt)";
+    };
+
+    datatype epdesc lsbfirst(32) "Endpoint descriptor" {
+	fa	7	"Function address";
+	en	4	"Endpoint number";
+	d	2 type(direction) "Direction";
+	s	1	"Speed (1=low, 0=full)";
+	k	1	"Skip";
+	f	1	"Format (1=isochronous, 0=general)";
+	mps	11	"Maximum packet size";
+	_	5;
+	_	4;
+	tailp	28	"TD queue tail pointer";
+	h	1	"Halted";
+	c	1	"Toggle carry";
+	_	2 mbz;
+	headp	28	"TD queue head pointer";
+	_	4;
+	nexted	28	"Next endpoint descriptor";
+    };
+
+    // 4.3.1 
+    constants pid width(2) "Direction / PID for token" {
+	pid_setup	= 0b00	"Setup (to endpoint)";
+	pid_out		= 0b01	"To endpoint";
+	pid_in		= 0b10  "From endpoint";
+    };	
+    datatype gentd lsbfirst(32) "General transfer descriptor" { 
+	_	18;
+	r	1 	"Buffer rounding";
+	dp	2 type(pid) "Direction or PID";
+	di	3	"Delay interrupt frames";
+	t	2	"Data toggle";
+	ec	2	"Error count";
+	cc	4 type(ccode) "Condition code for last attempted transaction";
+	cbp	32	"Current buffer pointer";
+	_	4 mbz;
+	nexttd	28	"Next transfer descriptor";
+	be	32	"Buffer end";
+    };
+
+
+    // 4.3.2
+    datatype isotd lsbfirst(32) "Isochronous transfer descriptor" {
+	sf	16	"Starting frame";
+	_	5;
+	di	3	"Delay interrupt frames";
+	fc	3	"Frame count";
+	_	1;
+	cc	4 type(ccode) "Condition code for last attempted transaction";
+	_	12;
+	bp0	20	"Buffer page 0";
+	_	5 mbz;
+	nexttd	27	"Next transfer descriptor";
+	be	32	"Buffer end";
+	ofpsw0	16	"Offset / packet status word 0";
+	ofpsw1	16	"Offset / packet status word 1";
+	ofpsw2	16	"Offset / packet status word 2";
+	ofpsw3	16	"Offset / packet status word 4";
+	ofpsw4	16	"Offset / packet status word 3";
+	ofpsw5	16	"Offset / packet status word 5";
+	ofpsw6	16	"Offset / packet status word 6";
+	ofpsw7	16	"Offset / packet status word 7";
+    };
+    datatype psw lsbfirst(16) "Packet status word" {
+	size	11	"Size of packet";
+	_	1 mbz;
+	cc	4 type(ccode) "Condition code";
+    };
+
+    /// 4.3.3
+    constants ccode width(4) "Completion codes" {
+	cc_ne	= 0b0000	"No error";
+	cc_crc	= 0b0001	"CRC error";
+	cc_bs	= 0b0010	"Bitstuffing violation";
+	cc_dtm	= 0b0011	"Data toggle PID mismatch";
+	cc_stl	= 0b0100	"EP returned stall PID";
+	cc_dnr	= 0b0101	"Device not responding";
+	cc_pcf	= 0b0110	"PID check failure";
+	cc_uxp	= 0b0111	"Unexpected PID";
+	cc_dor	= 0b1000	"Data overrun";
+	cc_dur	= 0b1001	"Data underrun";
+	cc_bor	= 0b1100	"Buffer overrun";
+	cc_bur	= 0b1101	"Buffer underrun";
+	cc_nac	= 0b1110	"Not accessed";
+	cc_nac_	= 0b1111	"Not accessed (alternate)";
+    };
+*/
+    //
+    // Registers
+    //
+    // 7.1 Control and status partition
+    //
+
+    // 7.1.1 Interface revision 
+    /// Initially 0x10.
+    register revision ro io(base, 0x00) "Revision" {
+	rev	8	"BCD rep. of interface version";
+	_	24;
+    };
+
+    // 7.1.2 Control register
+    constants state "Functional state" {
+	st_reset       = 0b00	"Reset (after h/w reset)";
+	st_resume      = 0b01	"Resume from downstream port";
+	st_operational = 0b10  "Operational (running)";
+	st_suspend     = 0b11  "Suspend (after s/w reset)";
+    };
+    // Initially 0x00
+    register control rw io(base, 0x04) "Control" {
+	cbsr	2	"Control/bulk service ratio";
+	pe	1	"Periodic list enable";
+	ie	1	"Isochronous enable";
+	cle	1	"Control list enable";
+	ble	1	"Bulk list enable";
+	hcfs	2 type(state) "Host controller functional state";
+	ir	1	"Interrupt routing";
+	rwc	1	"Remote wakeup connected";
+	rwe	1	"Remote wakeup enabled";
+	_	21;
+    };
+
+
+    // 7.1.3 Command and Status 
+    // Initially 0x00
+    register cmdstatus rw io(base, 0x08) "08 CommandStatus" {
+	hcr	1	"Host controller reset";
+	clf	1	"Control list filled";
+	blf	1	"Bulk list filled";
+	ocr	1	"Ownership change request";
+	_	12;
+	soc	2 ro	"Scheduling overrun count";
+	_	14;
+    };
+
+    // 7.1.4-6: Interrupt registers
+    regtype interrupt "Interrupts" {
+	so	1	"Scheduling overrun";
+	wdh	1	"Writeback done head";
+	sf	1	"Start of frame";
+	rd	1	"Resume detected";
+	ue	1	"Unrecoverable error";
+	fno	1	"Frame number overflow";
+	rhsc	1	"Root hub status change";
+	_	23;
+	oc	1	"Ownership change";
+	mie	1	"Master interrupt enable";
+    };
+    register intstatus rw io(base, 0x0C) "Interrupt status"
+	type(interrupt);
+    register intenable rw io(base, 0x10) "Interrupt enable" 
+	type(interrupt);
+    register intdisable rw io(base, 0x14) "Interrupt disable" 
+	type(interrupt);
+
+    //
+    // 7.2 Memory pointer partition
+    //
+
+    // 7.2.1
+    register hcca rw io(base, 0x18) "Host controller communication area" {
+	_	8 mbz;
+	hcca	24	"Physical address";
+    };
+
+    regtype physptr "Physical address pointer" {
+	_	4 mbz;
+	addr	28	"Address";
+    };
+
+    // 7.2.2.
+    register period_cur ro io(base, 0x1C) "Cur. isochronous or int. ED"
+	type(physptr);
+
+    // 7.2.3
+    register ctrl_head rw io(base, 0x20) "First ED of control list"
+	type(physptr);
+
+
+    // 7.2.4
+    register ctrl_cur rw io(base, 0x24) "Current ED of control list" 
+	type(physptr);
+
+    // 7.2.5
+    register bulk_head rw io(base, 0x28) "First ED of bulk list" 
+	type(physptr);
+
+    // 7.2.6
+    register bulk_cur rw io(base, 0x2C) "Current ED of bulk list" 
+	type(physptr);
+
+
+    // 7.2.7
+    register done_head ro io(base, 0x30) "Done head pointer"
+	type(physptr);
+
+    //
+    // 7.3 Frame counter partition
+    //
+
+    // 7.3.1
+    register fm_interval rw io(base, 0x34) "Frame interval" {
+	fi	14	"Frame interval (dflt 0x2edf)";
+	_	2;
+	fsmps	15	"FS largest data packet";
+	fit	1	"Frame interval toggle";
+    };
+
+    // 7.3.2
+    register fm_remain ro io(base, 0x38) "Frame remaining" {
+	fr	14	"Bit time remaining in current frame";
+	_	17;
+	frt	1	"Frame remaining toggle";
+    };
+
+    // 7.3.3
+    register fm_num ro io(base, 0x3C) "Frame number" {
+	fn	16 	"Frame number (16-bit counter)";
+	_	16;
+    };
+
+    // 7.3.4
+    register period_start rw io(base, 0x40) "Period start" {
+	ps	14	"Start time for processing periodic list";
+	_	18;
+    };
+
+    // 7.3.5
+    register hclsthreshold rw io(base, 0x44) "LS threshold" {
+	lst	11	"Low-speed threshold (should be 0x0628)";
+	_	21;
+    };
+
+    //
+    // 7.4 Root Hub partition
+    //
+
+    // 7.4.1
+    register rh_descra rw io(base, 0x48) "Root hub descriptor a" {
+	ndp	8 ro	"Number of downstream ports";
+	psm	1	"Power switching mode";
+	nps	1	"No power switching";
+	dt	1 ro	"Device type";
+	ocpm	1	"Overcurrent protection mode";
+	nocp	1	"No overcurrent protection";
+	_	11;
+	potpgt	8	"Power-on to power-good time (* 2ms)";
+    };
+
+    // 7.4.2
+    register rh_descrb rw io(base, 0x4C) "Root hub descriptor b" {
+	dr	16	"Device removal";
+	ppcm	16	"Port power control mask";
+    };
+
+    // 7.4.3
+    register rh_status rw io(base, 0x50) "Root hub status" {
+	lps	1 wo	"Clear global power";
+	oci	1 ro	"Overcurrent indicator";
+	_	13;
+	drwe	1 rw1c	"Device remote wakeup enable";
+	lpsc	1 wo	"Set globl power";
+	ocic	1 rw1c	"Overcurrent indicator change";
+	_	13;
+	crwe	1 wo	"Clear remote wakeup enable";
+    };
+
+    // 7.4.4
+    // Assume 256 ports at this stage; it's actually given by
+    // rh_descra->ndp. 
+    regarray rh_portstat ro io(base, 0x54)[256] "Root hub port status" {
+	ccs	1 	"Current connection status";
+	pes	1 	"Port enable status";
+	pss	1	"Port suspend status";
+	poci	1 	"Port overcurrent indicator";
+	prs	1	"Port reset status";
+	_	3;
+	pps	1	"Port power status";
+	lsda	1	"Low-speed device attached";
+	_	6;
+	csc	1	"Connect status change";
+	pesc	1	"Port enable status change";
+	pssc	1	"Port suspend status change";
+	ocic	1	"Port overcurrent indicator change";
+	prsc	1	"Port reset status change";
+	_	11;
+    };
+    regarray rh_portctrl wo also io(base, 0x54)[256] "Root hub port control" {
+	cpe	1 	"Clear port enable";
+	spe	1 	"Set port enable";
+	sps	1	"Set port suspend";
+	css	1 	"Clear suspend status";
+	spr	1	"Set port reset";
+	_	3;
+	spp	1	"Set port power";
+	cpp	1	"Clear port power";
+	_	6;
+	csc	1	"Clear connect status change";
+	pesc	1	"Clear port enable status change";
+	pssc	1	"Clear port suspend status change";
+	ocic	1	"Clear port overcurrent indicator change";
+	prsc	1	"Clear port reset status change";
+	_	11;
+    };
+};

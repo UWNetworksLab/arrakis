@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2007-12 ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface net_queue_manager "Ethernet hardware RX/TX queue manager" {
+    /* antoinek: I think most of the queue id arguments are not needed here */
+
+    call register_buffer(cap buf,
+                         cap sp,
+                         uint64 queueid,
+                         uint64 slots,
+                         uint8 role);
+    response new_buffer_id(errval err,
+                         uint64 queueid,
+                         uint64 idx);
+
+    call get_mac_address(uint64 queueid);
+    response get_mac_address_response(uint64 queueid, uint64 hwaddr);
+
+    call sp_notification_from_app(uint64 queueid, uint64 type,
+                         uint64 ts);
+    response sp_notification_from_driver(uint64 queueid, uint64 type,
+                         uint64 ts);
+
+    call raw_add_buffer(uint64 offset, uint64 length, uint64 more,
+                        uint64 flags);
+    response raw_xmit_done(uint64 offset, uint64 length, uint64 more,
+                           uint64 flags);
+
+
+    call print_statistics(uint64 queueid);
+    call print_cardinfo();
+    call benchmark_control_request(uint64 queueid, uint8 state,
+                            uint64 trigger, uint64 cl);
+    response benchmark_control_response(uint64 queueid, uint8 state,
+                            uint64 delta, uint64 cl);
+
+    call terminate_queue();
+};
+

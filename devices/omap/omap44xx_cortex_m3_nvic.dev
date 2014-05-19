@@ -1,0 +1,250 @@
+/*
+ * Copyright (c) 2013, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr 6, CH-8092 Zurich.
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_cortex_m3_nvic.dev
+ *
+ * DESCRIPTION: Nested vectored interrupt controller for the cortex-m3 on pandaboard
+ *  This also contains control registers for SysTick
+ *
+ * This is derived from:
+ *
+ * [1] ARM Cortex M3 TRM (chapter 8)
+ * [2] OMAP4460 TRM rev Y (chapter 17)
+ * [3] ARMv7-M Architecture reference manual
+ *
+ * TODO: some registers are write-to-clear, and one needs a byteflip-on-write (really weird)
+ *          is there a mackerel keyword for those?
+ */
+
+device omap44xx_cortex_m3_nvic msbfirst (addr base)
+    "Cortex-m3 Nested Vectored Interrupt Controller"
+{
+
+    //nothing at offset 0
+    
+    
+    register ICTR ro addr(base, 0x4) "Interrupt Controller Type" {
+        _               27;
+        intlinesnum     5       "max. num. (N) interrupts supported 32(N+1)";
+    };
+
+
+    //SysTick registers
+    register SYSTICK_CTRL rw addr(base, 0x10) "SysTick control and status register"{
+        _               15;
+        countflag       1  rc   "Reads 1 if timer counted to 0 since last read. Clears on read.";
+        _               13;
+        clksource       1       "clock source: 1 = core clock, 0 = external reference clock";
+        tickint         1       "interrupt on counting to 0";
+        enable          1       "counter running (multishot)";
+    };
+    
+    
+    register SYSTICK_RV rw addr(base, 0x14) "SysTick reload value register"{
+        _               8;
+        reload          24       "value to load into current value register when counter reaches 0 (N+1 clock pulses between countdowns)";
+    };
+
+
+    register SYSTICK_CRTV rw addr(base, 0x18) "SysTick current value register"{
+        _               8;
+        current         24  rwc "current counter value, clears on write";
+    };
+
+
+    register SYSTICK_CALV ro addr(base, 0x1C) "SysTick calibration value register"{
+        noref           1       "no reference clock provided";
+        skew            1       "calibration value not exactly 10ms because of clock frequency";
+        _               6;
+        tenms           24      "reload value for 10ms timing. 0 = value not known";
+    };
+    
+    
+
+    
+    // Do not read 16 Bit values, only 32 bit ones, otherwise the
+    // Mackerel code will crash on the PandaBoard
+    regarray ISER addr(base, 0x100) [32] "Interrupt Set-Enable"
+        type(uint32);
+    regarray ICER addr(base, 0x180) [32] "Interrupt Clear-Enable"
+        type(uint32);
+    regarray ISPR addr(base, 0x200) [32] "Interrupt Set-Pending"
+        type(uint32);
+    regarray ICPR addr(base, 0x280) [32] "Interrupt Clear-Pending"
+        type(uint32);
+    regarray ABR ro addr(base, 0x300) [32] "Interrupt Active Bit"
+        type(uint32);
+
+    regtype priority_reg "Interrupt priority register" {
+        prio_off3       8 rw    "Priority, byte offset 3";
+        prio_off2       8 rw    "Priority, byte offset 2";
+        prio_off1       8 rw    "Priority, byte offset 1";
+        prio_off0       8 rw    "Priority, byte offset 0";
+    };
+
+    regarray IPR addr(base, 0x400) [31] "Priority Level"
+        type(priority_reg);
+
+
+   register CPUID_BASE ro addr(base, 0xD00) "CPU ID base register"{
+        implementer     8       "implementer code. ARM is 0x41";
+        variant         4       "implementation defined variant number";
+        constant        4       "reads as 0xF";
+        partno          12      "number of processor within family. cortex-m3 reads as 0xC23";
+        revision        4       "implementation defined revision number";
+    }; 
+    
+
+    register ICSR rw addr(base, 0xD04) "Interrupt Control State register"{
+        nmipendset      1       "set pending NMI. since NMI has highest priority, it is activated immediatedly";
+        _               2;
+        pendsvset       1       "set pending pendSV bit";
+        pendsvclr       1       "clear pending pendSV bit";
+        pendstset       1       "set pending SysTick bit";
+        pendstclr       1       "clear pending SysTick bit";
+        _               1;
+        isrpreemt       1       "Debug bit. pending interrupt will become active in next cycle";
+        isrpending      1       "Interrupt pending bit. Excludes NMI and faults";
+        vectpending     10      "ISR number of highest priority pending interrupt";
+        rettobase       1       "no other active exceptions apart from current one";
+        _               2;
+        vectactive      9       "active ISR number, as indexed in vectortable (external interrupts start at 16)";
+    };
+    
+    
+   register VTOR rw addr(base, 0xD08) "Vector Table offset register"{
+        _               2;
+        tblbase         1       "0 = vector table base is 0x0, 1 = vector table is 0x20000000";
+        tbloff          22      "Offset of vector table from base (bits 28..7 of offset only)";
+        _               7;
+    }; 
+
+
+   register AIRCR rw addr(base, 0xD0C) "Application interrupt and reset control register"{
+        vectkey         16      "Reads as 0xFA05, must always(!) be written as 0x05FA"; //XXX: does mackerel have a way to enforce this weird condition?
+        endianess       1       "1 = big endian, 0 = little endian. cannot be changed after reset";
+        _               4;
+        prigroup        3       "interrupt priority grouping. (N+1) bits of interrupt priority can be used as a subpriority (will not preempt each other while active)";
+        _               5;
+        sysresetreq     1       "signals outer system that reset is requested";
+        vectclractive   1       "clear active vector. write 1 to clear all state information for active interrupts (including NMI and faults). Does not clear ISPR.";
+        vectreset       1       "write 1 to reset system.";
+    }; 
+
+   register SCR rw addr(base, 0xD10) "System Control register"{
+        _               27;
+        sevonpend       1       "make processor wake from WFE when interrupt changes from inactive to pending";
+        _               1;
+        sleepdeep       1       "1 = indicate to  system that processor clock can be stopped";
+        sleeponexit     1       "sleep when returning from handler to thread mode";
+        _               1;
+    }; 
+
+   register CCR rw addr(base, 0xD14) "Configuration Control register"{
+        _               22;
+        stkalign        1       "1 = align stack to 8 bytes before exception entry, 0 = align stack to 4 bytes";
+        bfhfnmign       1       "all interrupt handlers with negative priority (NMI, hardfaults, escalated handlers) ignore all data bus faults";
+        _               3;
+        div_0_trp       1       "trap on divide by 0. ";
+        unalign_trp     1       "trap on unaligned access";
+        _               1;
+        usersetmpend    1       "enable user code to write the Software Trigger Interrupt Register to pend a Main exception (associated with Main stack pointer)";
+        nonbasethrdena  1       "0 = thread mode can only be entered when returning from last exception ,1 = thread mode can be entered from any level in Handler mode by controlled return value";
+    }; 
+
+
+    regarray SHPR addr(base, 0xD18) [3] "System Handler Priority Registers"
+        type(priority_reg);
+
+
+   register SHCSR rw addr(base, 0xD24) "System Handler Control and State register"{
+        _               13;
+        usgfaultena     1       "enable usage faults";
+        busfaultena     1       "enable bus faults";
+        memfaultena     1       "enable memory manage interrupts";
+        svcallpended    1       "reads 1 if SVcall pended";
+        busfaultpended  1       "reads 1 if bus fault pended";
+        memfaultpended  1       "reads 1 if memory manage pended";
+        usgfaultpended  1       "reads 1 if usage fault pended";
+        systickact      1       "reads 1 if SysTick is active";
+        pendsvact       1       "reads 1 if pendSV is active";
+        _               1;
+        monitoract      1       "reads 1 if monitor is active";
+        svcallact       1       "reads 1 if SVcall is active";
+        _               3;
+        usgfaultact     1       "reads 1 if usage fault is active";
+        _               1;
+        busfaultact     1       "reads 1 if bus fault is active";
+        memfaultact     1       "reads 1 if memory manage is active";
+    }; 
+
+
+   register CFSR rwc addr(base, 0xD28) "Configurable Fault Status register"{
+        _               6;
+        divbyzero       1       "attempted division by 0 while div_by_zero enabled.";
+        unaligned       1       "attempted unaligned access while unaligned_trp enabled";
+        _               4;
+        nocp            1       "attempt to use a coprocessor instruction. processor does not support coprocessors";
+        invpc           1       "attempt to load EXC_RETURN into PC illegaly. The return PC points to causing instruction";
+        invstate        1       "invalid combination of EPSR and instruction, for reasons other than undefined instruction. The return PC points to causing instruction";
+        undefinstr      1       "processor tried to execute undefined instruction. The return PC points to causing instruction";
+        bfarvalid       1       "BFAR contains a valid address. ";
+        _               2;
+        stkerr          1       "stacking from exception entry has caused bus fault. SP is still adjusted and pushed values might be incorrect. BFAR is not written";
+        unstkerr        1       "unstack from exception return has caused bus fault. SP is not adjusted from failing return. BFAR is not written";
+        impreciserr     1       "imprecise data bus error. BFAR is not written";
+        preciserr       1       "precise data bus error";
+        ibuserr         1       "instruction bus error. BFAR is not written.";
+        mmarvalid       1       "MMAR contains a valid address. ";
+        _               2;
+        mstkerr         1       "stacking from exception entry has caused access violations. SP is still adjusted and pushed values might be incorrect";
+        munstkerr       1       "unstack from exception return has caused access violations. SP is not adjusted from failing return";
+        _               1;
+        daccviol        1       "data access violation. loads MMAR with address of attemted access";
+        iaccviol        1       "instruction access violation (such as trying to execute from a XN region). does not set MMAR";
+    }; 
+
+   register HFSR rwc addr(base, 0xD2C) "Hard Fault Status register"{
+        debugevt        1       "debug related fault";
+        forced          1       "configurable fault triggered but disabled or too low priority";
+        _               28;
+        vecttbl         1       "bus fault while reading vector table";
+        _               1;
+    }; 
+    
+   register DFSR rwc addr(base, 0xD30) "Debug Fault Status register"{
+        _               27;
+        external        1       "external debug request flag";
+        vcatch          1       "vector catch flag";
+        dwttrap         1       "data watchpoint and trace flag";
+        bkpt            1       "BKPT instruction executed";
+        halted          1       "halt requested by NVIC";
+    }; 
+    
+   register MMAR rw addr(base, 0xD34) "Memory Manage Fault Address register"{
+        address         32      "address of a faulted load or store attempt";
+    }; 
+    
+   register BFAR rw addr(base, 0xD38) "Bus Fault Address register"{
+        address         32      "address of a faulted load or store attempt";
+    }; 
+    
+    
+   register AFSR rwc addr(base, 0xD3C) "Auxiliary Fault Status register"{
+        impdef          32      "implementation defined. maps directly to AUXFAULT input signals";
+    }; 
+    
+    
+   register STIR wo addr(base, 0xF00) "Software Trigger Interrupt register"{
+        _               23;
+        intid           9       "writing a value here is the same as manually pending an interrupt by setting the corresponding bit in the ISPR";
+    };
+
+ };

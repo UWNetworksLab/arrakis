@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_per_la.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_per_la msbfirst ( addr base ) "" {
+    
+    
+    register l4_la_component_l addr(base, 0x0) "Contain a component code and revision, which are used to identify the hardware of the component." {
+        code 16 ro "Interconnect code.";
+        rev 16 ro "Component revision code.";
+    };
+    
+    register l4_la_component_h ro addr(base, 0x4) "Contain a component code and revision, which are used to identify the hardware of the component." type(uint32);
+    
+    register l4_la_network_l ro addr(base, 0x10) "Identify the interconnect" type(uint32);
+    
+    register l4_la_network_h ro addr(base, 0x14) "Identify the interconnect" type(uint32);
+    
+    register l4_la_initiator_info_l addr(base, 0x18) "Contain initiator subsystem information." {
+        _ 4 mbz;
+        prot_groups 4 ro "Number of protection group of in the current L40x0: No protection group0x1: 1 protection group0x2: 2 protection groups....0x8: 8 protection groups0x9 to 0xF: Reserved";
+        number_regions 8 ro "Number of regions in the current L40x0: Reserved0x1: 1 region0x2: 2 regions....Max regions +1 to 0xFF: Reserved, maximum regions is listed in";
+        _ 12 mbz;
+        segments 4 ro "Number of segments in the current L40x0: Reserved0x1: 1 segment0x2: 2 segments....0x8: 8 segments";
+    };
+    
+    register l4_la_initiator_info_h addr(base, 0x1C) "Contain initiator subsystem information." {
+        _ 13 mbz;
+        threads 3 ro "The THREADS field specifies the number of initiator threads connected to the interconnect. The field contains read-only configuration information for the initiator subsystem.";
+        _ 1 mbz;
+        connid_width 3 ro "The initiator subsystem ConnID width. The CONNID_WIDTH field contains read-only configuration information for the initiator subsystem.";
+        _ 1 mbz;
+        byte_data_width_exp 3 ro "This field specifies the initiator subsystem data width.The BYTE_DATA_WIDTH_EXP field contains read-only configuration information for the initiator subsystem.0x1: 16-bit data width is specified 0x2: 32-bit data width is specified";
+        _ 3 mbz;
+        addr_width 5 ro "This field specifies the initiator subsystem address width. The ADDR_WIDTH field contains read-only configuration information for the initiator subsystem.";
+    };
+    
+    register l4_la_network_control_l addr(base, 0x20) "Control interconnect minimum timeout values." {
+        _ 21 mbz;
+        timeout_base 3 rw "The TIMEOUT_BASE field indicates the time-out period (that is, base cycles) for the highest frequency time-base signal sent from the L4 initiator subsystem to all target agents that have time-out enabled. Values for the field are:0 - Time-out disabled1 - L4 interconnect clock cycles divided by 642 - L4 interconnect clock cycles divided by 2563 - L4 interconnect clock cycles divided by 10244 - L4 interconnect clock cycles divided by 4096";
+        _ 8 mbz;
+    };
+    
+    register l4_la_network_control_h addr(base, 0x24) "Control interconnect global power control" {
+        _ 7 mbz;
+        clock_gate_disable 1 rw "When set to 1 this field disables all clock gating.";
+        _ 3 mbz;
+        thread0_pri 1 ro "Sets thread priority. If the field is set to 0, the default, all initiator threads are treated the same. Setting the THREAD0_PRI field to 1 assigns a higher arbitration priority to thread 0 of the first initiator OCP interface. To avoid starvation, arbitration is imposed by the initiator subsystem. When multiple requests from different initiator threads are dispatched to targets simultaneously, the oldest request is dispatched first. If thread 0 is assigned a higher priority, a request on thread 0 always wins arbitration. Assigning thread 0 of the first initiator OCP the highest priority on a request or response can result in the starvation of other threads.";
+        _ 11 mbz;
+        ext_clock 1 ro "When set to 1, the ext_clk_off_i signal on the initiator subsystem instructs the entire L4 to shut off.";
+        _ 8 mbz;
+    };
+};

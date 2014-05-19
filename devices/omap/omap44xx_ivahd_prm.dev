@@ -1,0 +1,189 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_ivahd_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_ivahd_prm msbfirst ( addr base ) "" {
+    
+
+    constants tcm2_mem_onstate_status width(2) "" {
+        TCM2_MEM_ONSTATE_3_r = 3 "Memory bank is on when the domain is ON.";
+    };
+
+    constants tcm2_mem_retstate_status width(1) "" {
+        TCM2_MEM_RETSTATE_0 = 0 "Memory bank is off when the domain is in the RETENTION state.";
+        TCM2_MEM_RETSTATE_1 = 1 "Memory bank is retained when domain is in RETENTION state.";
+    };
+
+    constants lowpowerstatechange_status width(1) "" {
+        LOWPOWERSTATECHANGE_0 = 0 "Do not request a low power state change.";
+        LOWPOWERSTATECHANGE_1 = 1 "Request a low power state change. This bit is automatically cleared when the power state is effectively changed or when power state is ON.";
+    };
+
+    constants powerstate_status width(2) "" {
+        POWERSTATE_0 = 0 "OFF state";
+        POWERSTATE_1 = 1 "RETENTION state";
+        POWERSTATE_2 = 2 "INACTIVE state";
+        POWERSTATE_3 = 3 "ON State";
+    };
+    
+    register pm_ivahd_pwrstctrl addr(base, 0x0) "This register controls the IVAHD power state to reach upon a domain sleep transition" {
+        _ 8 mbz;
+        tcm2_mem_onstate 2 ro type(tcm2_mem_onstate_status) "TCM2 memory state when domain is ON.";
+        tcm1_mem_onstate 2 ro type(tcm2_mem_onstate_status) "TCM1 memory state when domain is ON.";
+        sl2_mem_onstate 2 ro type(tcm2_mem_onstate_status) "SL2 memory state when domain is ON.";
+        hwa_mem_onstate 2 ro type(tcm2_mem_onstate_status) "HWA memory state when domain is ON.";
+        _ 4 mbz;
+        tcm2_mem_retstate 1 rw type(tcm2_mem_retstate_status) "TCM2 memory state when domain is RETENTION.";
+        tcm1_mem_retstate 1 rw type(tcm2_mem_retstate_status) "TCM1 memory state when domain is RETENTION.";
+        sl2_mem_retstate 1 rw type(tcm2_mem_retstate_status) "SL2 memory state when domain is RETENTION.";
+        hwa_mem_retstate 1 ro type(tcm2_mem_retstate_status) "HWA memory state when domain is RETENTION.";
+        _ 3 mbz;
+        lowpowerstatechange 1 rw type(lowpowerstatechange_status) "Power state change request when domain has already performed a sleep transition. Allows going into deeper low power state without waking up the power domain.";
+        _ 1 mbz;
+        logicretstate 1 ro type(tcm2_mem_retstate_status) "Logic state when power domain is RETENTION";
+        powerstate 2 rw type(powerstate_status) "Power state control";
+    };
+
+    constants lastpowerstateentered_status width(2) "" {
+        LASTPOWERSTATEENTERED_3_r = 3 "Power domain was previously ON-ACTIVE";
+        LASTPOWERSTATEENTERED_2_r = 2 "Power domain was previously ON-INACTIVE";
+        LASTPOWERSTATEENTERED_1_r = 1 "Power domain was previously in RETENTION";
+        LASTPOWERSTATEENTERED_0_r = 0 "Power domain was previously OFF";
+    };
+
+    constants intransition_status width(1) "" {
+        INTRANSITION_0_r = 0 "No ongoing transition on power domain";
+        INTRANSITION_1_r = 1 "Power domain transition is in progress.";
+    };
+
+    constants tcm2_mem_statest_status width(2) "" {
+        TCM2_MEM_STATEST_0_r = 0 "Memory is OFF";
+        TCM2_MEM_STATEST_1_r = 1 "Memory is RETENTION";
+        TCM2_MEM_STATEST_2_r = 2 "Reserved";
+        TCM2_MEM_STATEST_3_r = 3 "Memory is ON";
+    };
+
+    constants logicstatest_status width(1) "" {
+        LOGICSTATEST_0_r = 0 "Logic in domain is OFF";
+        LOGICSTATEST_1_r = 1 "Logic in domain is ON";
+    };
+
+    constants powerstatest_status width(2) "" {
+        POWERSTATEST_0_r = 0 "Power domain is OFF";
+        POWERSTATEST_1_r = 1 "Power domain is in RETENTION";
+        POWERSTATEST_2_r = 2 "Power domain is ON-INACTIVE";
+        POWERSTATEST_3_r = 3 "Power domain is ON-ACTIVE";
+    };
+    
+    register pm_ivahd_pwrstst addr(base, 0x4) "This register provides a status on the current IVAHD power domain state. [warm reset insensitive]" {
+        _ 6 mbz;
+        lastpowerstateentered 2 rw type(lastpowerstateentered_status) "Last low power state entered. Set to 0x3 upon write of the same only. This register is intended for debug purpose only.";
+        _ 3 mbz;
+        intransition 1 ro type(intransition_status) "Domain transition status";
+        _ 8 mbz;
+        tcm2_mem_statest 2 ro type(tcm2_mem_statest_status) "TCM2 memory state status";
+        tcm1_mem_statest 2 ro type(tcm2_mem_statest_status) "TCM1 memory state status";
+        sl2_mem_statest 2 ro type(tcm2_mem_statest_status) "SL2 memory state status";
+        hwa_mem_statest 2 ro type(tcm2_mem_statest_status) "HWA memory state status";
+        _ 1 mbz;
+        logicstatest 1 ro type(logicstatest_status) "Logic state status";
+        powerstatest 2 ro type(powerstatest_status) "Current power state status";
+    };
+
+    constants rst3_status width(1) "" {
+        RST3_0 = 0 "Reset is cleared for the IVAHD logic and SL2";
+        RST3_1 = 1 "Reset is asserted for IVAHD logic and SL2";
+    };
+
+    constants rst2_status width(1) "" {
+        RST2_0 = 0 "Reset is cleared for IVAHD Sequencer CPU2";
+        RST2_1 = 1 "Reset is asserted for IVAHD Sequencer CPU2";
+    };
+
+    constants rst1_status width(1) "" {
+        RST1_0 = 0 "Reset is cleared for the IVAHD Sequencer CPU1";
+        RST1_1 = 1 "Reset is asserted for the IVAHD sequencer CPU1";
+    };
+    
+    register rm_ivahd_rstctrl addr(base, 0x10) "This register controls the release of the IVAHD sub-system resets." {
+        _ 29 mbz;
+        rst3 1 rw type(rst3_status) "IVAHD logic and SL2 reset control";
+        rst2 1 rw type(rst2_status) "IVAHD Sequencer2 reset control";
+        rst1 1 rw type(rst1_status) "IVAHD sequencer1 reset control";
+    };
+
+    constants icecrusher_seq2_rst2st_status width(1) "" {
+        ICECRUSHER_SEQ2_RST2ST_0 = 0 "No icecrusher reset";
+        ICECRUSHER_SEQ2_RST2ST_1 = 1 "Sequencer2 has been reset upon icecrusher reset";
+    };
+
+    constants emulation_seq2_rst2st_status width(1) "" {
+        EMULATION_SEQ2_RST2ST_0 = 0 "No emulation reset";
+        EMULATION_SEQ2_RST2ST_1 = 1 "Sequencer2 has been reset upon emulation reset";
+    };
+
+    constants rst3st_status width(1) "" {
+        RST3ST_0 = 0 "No software reset occured";
+        RST3ST_1 = 1 "IVAHD logic and SL2 has been reset upon software reset";
+    };
+
+    constants rst2st_status width(1) "" {
+        RST2ST_0 = 0 "No software reset occured";
+        RST2ST_1 = 1 "Sequencer2 has been reset upon software reset";
+    };
+    
+    register rm_ivahd_rstst addr(base, 0x14) "This register logs the different reset sources of the IVAHD domain. Each bit is set upon release of the domain reset signal. Must be cleared by software. [warm reset insensitive]" {
+        _ 25 mbz;
+        icecrusher_seq2_rst2st 1 rw1c type(icecrusher_seq2_rst2st_status) "Sequencer2 CPU has been reset due to IVAHD ICECRUSHER2 reset event";
+        icecrusher_seq1_rst1st 1 rw1c type(icecrusher_seq2_rst2st_status) "Sequencer1 CPU has been reset due to IVAHD ICECRUSHER1 reset event";
+        emulation_seq2_rst2st 1 rw1c type(emulation_seq2_rst2st_status) "";
+        emulation_seq1_rst1st 1 rw1c type(emulation_seq2_rst2st_status) "Sequencer1 CPU has been reset due to emulation reset source e.g. assert reset command initiated by the icepick module";
+        rst3st 1 rw1c type(rst3st_status) "IVAHD logic and SL2 software reset";
+        rst2st 1 rw1c type(rst2st_status) "IVAHD Sequencer2 CPU software reset";
+        rst1st 1 rw1c type(rst2st_status) "IVAHD Sequencer1 CPU software reset";
+    };
+
+    constants lostmem_hwa_mem_status width(1) "" {
+        LOSTMEM_HWA_MEM_0 = 0 "Context has been maintained";
+        LOSTMEM_HWA_MEM_1 = 1 "Context has been lost";
+    };
+    
+    register rm_ivahd_ivahd_context addr(base, 0x24) "This register contains dedicated IVAHD context statuses. [warm reset insensitive]" {
+        _ 21 mbz;
+        lostmem_hwa_mem 1 rw1c type(lostmem_hwa_mem_status) "Specify if memory-based context in HWA_MEM memory bank has been lost due to a previous power transition or other reset source.";
+        lostmem_tcm2_mem 1 rw1c type(lostmem_hwa_mem_status) "Specify if memory-based context in TCM2_MEM memory bank has been lost due to a previous power transition or other reset source.";
+        lostmem_tcm1_mem 1 rw1c type(lostmem_hwa_mem_status) "Specify if memory-based context in TCM1_MEM memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_hwa_mem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of IVAHD_RST signal)";
+    };
+    
+    register rm_ivahd_sl2_context addr(base, 0x2C) "This register contains dedicated SL2 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_sl2_mem 1 rw1c type(lostmem_hwa_mem_status) "Specify if memory-based context in SL2_MEM memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_hwa_mem_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of IVAHD_RST signal)";
+    };
+};

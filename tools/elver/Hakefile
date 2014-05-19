@@ -1,0 +1,73 @@
+----------------------------------------------------------------------
+-- Copyright (c) 2009, 2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /tools/elver
+--
+----------------------------------------------------------------------
+
+--
+-- This has to be rather low-level, since elver is indeed a module for
+-- x86_64, but is built for 32-bits, so it's easiest to do this rather
+-- explicitly.
+-- 
+let arch = "x86_64"
+    opts = (options arch) { 
+             optFlags = [ Str s | s <- [ "-fno-builtin",
+                                           "-nostdinc",
+                                           "-std=gnu99",
+                                           "-m32",
+                                           "-mno-red-zone",
+
+					   -- avoid SSE instructions, SIMD is disabled
+                                           "-mno-mmx",
+                                           "-mno-sse",
+                                           "-mno-sse2",
+                                           "-mno-sse3",
+                                           "-mno-sse4.1",
+                                           "-mno-sse4.2",
+                                           "-mno-sse4",
+                                           "-mno-sse4a",
+                                           "-mno-3dnow",
+
+                                           "-fPIE",
+                                           "-fno-stack-protector",
+                                           "-U__linux__",
+                                           "-Wall",
+                                           "-Wshadow",
+                                           "-Wstrict-prototypes",
+                                           "-Wold-style-definition",
+                                           "-Wmissing-prototypes",
+                                           "-Wmissing-declarations",
+                                           "-Wmissing-field-initializers",
+                                           "-Wredundant-decls",
+                                           "-Werror" ] ]
+                          ++ [ Str "-imacros",
+                               NoDep SrcTree "src" "/include/deputy/nodeputy.h" ],
+             optIncludes = [ NoDep SrcTree "src" "/include",
+                             NoDep SrcTree "src" "/include/oldc", 
+                             NoDep SrcTree "src" "/include/c", 
+                             NoDep SrcTree "src" "/include/arch/x86_32",
+                             NoDep BuildTree arch "/include" ],
+             optDefines = [],
+             optLibs = [],
+             optLdFlags = [ Str s | s <- [ "-m32", 
+                                        "-fno-builtin", 
+                                        "-nostdlib",
+                                        "-Wl,--fatal-warnings",
+                                        "-e start", 
+                                        "-Wl,-Ttext,0x100000",
+                                        "-Wl,--build-id=none" ]],
+             optSuffix = "_for_elver" 
+           }
+    objs = [ objectFilePath opts f | f <- [ "boot.S", "elver.c", "lib.c",
+                                            "../../lib/elf/elf64.c" ] ]
+in 
+  [ compileCFiles opts [ "elver.c", "lib.c", "../../lib/elf/elf64.c" ],
+    assembleSFiles opts [ "boot.S" ],
+    link opts objs [] "elver"
+  ]

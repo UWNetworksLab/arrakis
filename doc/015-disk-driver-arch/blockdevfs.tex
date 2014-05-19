@@ -1,0 +1,137 @@
+Barrelfish offers a simple \acs{vfs} layer for accessing different filesystems.
+blockdevfs adds a further layer to facilitate exporting of file-like objects to
+the filesystem layer.  There is no restriction on the nature of these files,
+apart from having to be of a fixed size.
+
+The backends of blockdevfs can expose an arbitrary number of filenames. The
+filenames from different backends are combined to form the root directory of
+the blockdevfs filesystem. \acs{vfs} calls are mapped to the corresponding backend.
+The filesystem only consists of a single directory with no nested directories.
+Files cannot be created nor deleted or truncated.
+
+\section{Datastructures}
+
+blockdevfs keeps a very simple doubly-linked list of directory entries.  These
+entries contain a file name, file position, file size, backend type and backend
+handle. blockdevfs does not enforce any kind of order in this list. Therefore,
+enumerating the contents of the blockdevfs root directory will yield the files
+registered by blockdevfs backends in the order they were added to blockdevfs.
+When routing \acs{vfs} calls to the right backend, the number stored in backend type
+is used as an index into the \lstinline+backends+ array holding function
+pointers to the backend's operations.
+
+Figure \ref{fig:blockdevfs_list} shows how the directory structure looks like
+with two entries. \lstinline+prev+ and \lstinline+next+ are used to implement
+the linked list. \lstinline+path+ holds a pointer to the filename.
+\lstinline+size+ contains the size of the file in bytes. \lstinline+type+ is
+either $0$ for the \emph{libahci} backend or $1$ for the Flounder-based
+backend. \lstinline+backend_handle+ points to an internal handle private to the
+backend. \lstinline+open+ is a boolean value indicating if the file has been
+opened already.
+
+blockdevfs backends must use the \lstinline+blockdev_append_entry+ function to
+register files they export.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.7\textwidth]{blockdevfs_list.pdf}
+\caption{Directory entries of blockdevfs}
+\label{fig:blockdevfs_list}
+\end{figure}
+
+\section{Backend API}
+
+blockdevfs only exports \lstinline+blockdev_append_entry+ which can be used by
+backends to register their exported files. A backend can choose the
+\lstinline+backend_handle+ freely. This handle will be passed as an argument to
+all \acs{vfs} related functions.
+
+For standard \acs{vfs} operations, backends need to provide these four functions:
+
+\begin{itemize}
+ \item \lstinline+open(void *handle)+ to open an exported file. The backend does not have to check or manipulate any blockdevfs-specific structures. blockdevfs ensures that only one client has a file open concurrently.
+ \item \lstinline+close(void *handle)+ to close a previously opened file. As with open, blockdevfs takes care of manipulating its structures.
+ \item \lstinline+read(void *handle, size_t pos, void *buffer, size_t bytes,+\\
+       \lstinline+	size_t *bytes_read)+ to read from the file corresponding to the handle.
+ \item \lstinline+write(void *handle, size_t pos, void *buffer, size_t bytes,+\\
+       \lstinline+	size_t *bytes_written)+ to write to the file corresponding to the handle.
+ \item \lstinline+flush(void *handle)+ to flush all data of the file
+ 		correpsonding to the handle to persistent storage.
+\end{itemize}
+
+All functions are supplied with the backend-handle associated with the
+corresponding file.
+
+\section{Usage}
+
+blockdevfs can by mounted by issuing \verb+mount mountpoint blockdevfs://+ and
+does not accept any further parameters.
+
+Upon mounting, blockdevfs initializes its backends which in turn populate the
+list of directory entries. Listing the directory contents will yield any
+attached disk drives and report their sizes.
+
+\section{Backends}
+
+Currently the block device file system has two backends. One backend uses
+libahci stand-alone and the other backend uses the Flounder-generated \ac{ata}
+interface. The backends are named the \emph{ahci} and \emph{ata} backend
+respectively.
+
+As both these backends expose the same devices (namely any \ac{sata} disks
+attached to the \ac{ahci} controller), the file names for the devices are
+composed of the backend name and the device's unique id, e.g. \emph{ahci0} and
+\emph{ata0} for the device with unique id $0$. Keep in mind that \emph{ahcid}
+prevents concurrent access, therefore you can't open the respective \emph{ata}
+and \emph{ahci} devices at the same time.
+
+\subsection{AHCI Backend}
+
+The \ac{ahci} blockdevfs backend implements the open and close commands by
+calling the corresponding functions in libahci (\ahciinit and
+\lstinline+ahci_close+) and implements read and write by allocating a \acs{dma}
+buffer using \lstinline+ahci_dma_region_alloc+, constructing an appropriate
+\ac{fis} and calling \issuecmd. The read implementation updates the
+\lstinline+rx_vtbl.command_completed+ pointer to point to
+\lstinline+rx_read_command_completed_cb+. That function then uses
+\lstinline+ahci_dma_region_copy_out+ to copy the read bytes from the \acs{dma}
+buffer to the user buffer, frees the \acs{dma} buffer, and calls the user
+continuation. The write implementation copies the bytes that need to be written
+to the \acs{dma} buffer (using \lstinline+ahci_dma_region_copy_in+) and updates
+the \lstinline+rx_vtbl.command_completed+ pointer to point to
+\lstinline+rx_write_command_completed_cb+ which frees the \acs{dma} buffer and
+calls the user continuation.  Flush is implemented by issuing the {\tt FLUSH
+CACHE} \ac{ata} command which flushes the on-disk cache to the harddisk proper.
+
+\subsection{ATA Backend}
+
+The \ac{ata} blockdevfs backend implements the open command by initializing an
+\acs{rpc} client to the \lstinline+ata_rw28+ Flounder \acs{ahci} interface. The
+close command just calls \verb+ahci_+ \verb+close+ so that a subsequent open-call
+on the same blockdevfs file is successful.  The read, write and flush commands
+are easy to implement using the \acs{rpc} client to the Flounder \acs{ahci}
+interface by just calling the \lstinline+read_dma+, \lstinline+write_dma+ and
+\lstinline+flush_cache+ functions in the \acs{rpc} function table.
+
+\section{Restrictions}
+
+As blockdevfs is only intended to provide a simple way for \acs{vfs} aware
+applications (e.g. fish) it has several restrictions:
+
+\begin{itemize}
+ \item The size of the files should not change. Although a backend might change
+	 the size stored in the handle dynamically, blockdevfs is not geared
+	 towards this.
+ \item Subdirectories are not supported.
+ \item Only one client can have a file open.
+ \item Files cannot be removed, neither by the user nor by the backend.
+\end{itemize}
+
+\section{VFS adaptation}
+
+In order to ensure that data written to a block device really gets written to
+the hard disk, we added a new \acs{vfs} call, namely \lstinline+vfs_flush+,
+which is used to flush the hard disk's volatile cache. \lstinline+vfs_flush+
+returns \lstinline+VFS_ERR_NOT_IMPLEMENTED+ for \acs{vfs} backends that have no
+handler for flush in their \lstinline+struct vfs_ops+ table.
+

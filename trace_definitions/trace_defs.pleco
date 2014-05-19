@@ -1,0 +1,289 @@
+/*
+ * Copyright (c) 2012-2013, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+*/
+/*
+ * \brief Subsystem and Event definitions of the tracing framework.
+ *
+ * Events do always belong to their subsystem. Make sure that you only
+ * call trace_event() with matching subsystems, in order to be able to
+ * make reasonable use of Aquarium 2.
+ *
+ * Note: If you don't specify a verbose description of the event, the
+ * description will default to the name of the event.
+ *
+ * Example:
+ *
+ * The subystem:
+ *
+ * subsystem mysubsystem {
+ * 		event myevent "",
+ * }
+ *
+ * will be compiled into the following two C macros:
+ *
+ * #define TRACE_SUBSYSTEM_MYSUBSYSTEM 1
+ * #define TRACE_EVENT_MYSUBSYSTEM_MYEVENT 1
+ *
+ * The pattern is that every subsystem is mapped to the concatentation of
+ * TRACE_SUBSYSTEM_ and its name in uppercase, and each event is mapped to
+ * the concatenation of TRACE_EVENT_ and the subsystem name in upper case,
+ * followed by a _ and the name of the event.
+ *
+*/
+
+subsystem kernel {
+
+	event CSWITCH 				"Context Switch",
+	event BZERO 				"Buffer zeroing",
+	event TIMER 				"",
+	event TIMER_SYNC 			"",
+
+	event SCHED_MAKE_RUNNABLE 	"",
+	event SCHED_REMOVE			"",
+	event SCHED_YIELD 			"",
+	event SCHED_SCHEDULE 		"",
+	event SCHED_CURRENT 		"",
+
+};
+
+subsystem threads {
+
+    event BARRIER_ENTER 			"",
+    event BARRIER_LEAVE 			"",
+
+    event MUTEX_LOCK_ENTER 			"",
+    event MUTEX_LOCK_LEAVE 			"",
+    event MUTEX_LOCK_NESTED_ENTER 	"",
+    event MUTEX_LOCK_NESTED_LEAVE 	"",
+    event MUTEX_TRYLOCK 			"",
+    event MUTEX_UNLOCK 				"",
+
+    event COND_WAIT_ENTER			"",
+    event COND_WAIT_LEAVE 			"",
+    event COND_SIGNAL 				"",
+    event COND_BROADCAST 			"",
+
+    event SEM_WAIT_ENTER 			"",
+    event SEM_WAIT_LEAVE 			"",
+    event SEM_TRYWAIT 				"",
+    event SEM_POST                              "",
+    event SYS_YIELD                             "Calling sys_yield for co-op scheduling",
+    event C_DISP_SAVE                           "calling disp_save",
+};
+
+subsystem memserv {
+
+    event ALLOC "",
+
+	event PERCORE_INIT				"",
+	event PERCORE_ALLOC 			"",
+	event PERCORE_ALLOC_COMPLETE 	"",
+};
+
+subsystem memtest {
+
+	event START					"",
+	event STOP 					"",
+	event STARTED 				"",
+	event WAIT 					"",
+	event RUN 					"",
+	event DONE 					"",
+	event ALLOC 				"",
+	event MASTER 				"",
+	event WORKER 				"",
+
+};
+
+
+subsystem monitor {
+ event SPAN0					"",
+ event SPAN1					"",
+ event SPAN						"",
+ event PCREQ					"",
+ event PCREP					"",
+ event PCREQ_INTER				"",
+ event PCREPLY_INTER			"",
+ event URPC_BLOCK				"",
+ event URPC_UNBLOCK				"",
+ event REMOTE_CAP_RETYPE		"",
+ event REMOTE_CAP_RETYPE_RETRY	"",
+ event REMOTE_CAP_RETYPE_MSG	"",
+ event REMOTE_CAP_RETYPE_END	"",
+ event POLLING					"",
+
+};
+
+subsystem chips {
+
+ event LISTENCB					"",
+
+};
+
+subsystem bflib {
+
+	// XXX: Empty subsystems are not allowed
+	event dummy				"",
+
+};
+
+
+subsystem tweed {
+
+ event START				"",
+ event END					"",
+ event STEAL				"",
+ event STEAL_END			"",
+ event WAIT					"",
+ event WAIT_END				"",
+ event LOCKING				"",
+ event LOCKING_END			"",
+
+};
+
+subsystem route {
+
+ event BCAST_WITH_CCAST_SEND		"",
+ event BCAST_WITH_CCAST				"",
+ event RECV_BCAST_WITH_CCAST		"",
+ event RECV_CCAST					"",
+ event BENCH_START					"",
+ event BENCH_STOP					"",
+ event SEND_PING					"",
+ event SEND_PONG					"",
+ event RECV_PING					"",
+ event RECV_PONG					"",
+ event POLL							"",
+
+};
+
+subsystem bench {
+
+ event PCBENCH				"",
+ event RXPING				"",
+ event RXPONG				"",
+
+};
+
+subsystem bomp {
+
+ event START				"",
+ event STOP					"",
+ event ITER					"",
+
+};
+
+subsystem barriers {
+
+ event START				"",
+ event STOP					"",
+ event BARRIER_WAIT			"",
+ event CENTRAL_REQ			"",
+ event CENTRAL_REP			"",
+ event TREE_REQ				"",
+ event TREE_REP				"",
+ event DIST					"",
+ event SEND					"",
+ event POLL1				"",
+ event POLL2				"",
+ event HEAP_REQ				"",
+ event HEAP_REP				"",
+ event SEQ_BCAST_REQ		"",
+ event SEQ_BCAST_RECV		"",
+ event TREE_BCAST_REQ		"",
+ event TREE_BCAST_RECV		"",
+
+};
+
+/* Following constans are used for profiling modified stack */
+subsystem nnet {
+
+ event START               "",
+ event STOP                "",
+ event RXESVAPPFDONE       "Ethersrv app filtered",
+
+ event RXDRVSEE            "Driver saw pkg (RX)",
+ event RXESVSEE            "Ethersrv saw pkg",
+ event RXESVFRGDONE        "Ethersrv checked frag",
+ event LWIPTX              "LWIP idc_send_packet_to_network_driver",
+ event SCHED_REMOVE        "Process marked non-runnable",
+ event IRQ                 "interrupt in kernelspace",
+ event UIRQ                "interrupt in kernelspace for userspace",
+ event NO_S                "e1000 packet send",
+ event NI_I                "e1000 interrupt arrived",
+
+ event YIELD               "process yielded",
+
+ event LWIPPBF2            "LWIP pbuf freed",
+ event LWIPPBA2            "LWIP pbuf Allocated",
+
+ event NI_PKT_CPY          "Queue manager packet copy",
+event DRV_POLL             "e1000 polling",
+ event DRV_SEE             "handled packet",
+ event DRVTXDONE           "TX buffer reclamation",
+ event DRVRX               "checking for new packets",
+ event WEBEVENTLOOP        "Webserver event loop",
+
+
+ event RXESVAPPCSTART      "Ethersrv app c2u started",
+ event RXESVCOPIED         "Ethersrv copied pkg",
+ event RXESVSPPDONE        "Ethersrv spp produce done",
+ event RXESVAPPNOTIF       "Ethersrv app notify",
+ event RXLWIINCOM          "LWIP handle_incoming_",
+ event RXLWIRECH           "LWIP call rec_handler",
+ event RXAPPRCV            "APP received",
+ event LWIPRX              "LWIP handle incoming",
+
+ event TXAPPSNT            "APP sent",
+ event TXLWISEE            "LWIP idc_send_packet",
+ event TXLWIBFFENCE        "LWIP before mfence",
+ event TXLWIAFFENCE        "LWIP after mfence",
+ event TXLWIFLUSHED        "LWIP payload flushed",
+ event TXLWIBDESC          "LWIP bufferdesc fetched",
+ event TXLWISPPSND         "LWIP spp produced",
+ event TXLWISPPIDX         "LWIP update spp index",
+ event TXLWITXWORK         "LWIP pending TX work",
+ event TXLWINOTIF          "LWIP notify driver",
+ event TXESVNOTIF          "Ethersrv notify recieved",
+ event TXESVSPOW           "Ethersrv send_pkt_on_w..",
+ event TXESVSSPOW          "Ethersrv send_sng_pkt..",
+ event TXDRVADD            "Driver add pkg (TX)",
+ event TXDRVSEE            "Driver saw pkg done (TX)",
+ event TX_TCP_WRITE        "tcp_write done",
+ event TX_TCP_OUTPUT       "tcp_output done",
+ event TX_TCP_RECV         "tcp_recved done",
+ event TX_TCP_FREE         "tx pbuf freed",
+ event TX_MEMP             "tx pbuf memp start",
+ event TX_MEMP_D           "tx pbuf memp done",
+
+
+
+};
+
+
+
+subsystem multihop {
+
+ event BENCH_START    		 "",
+ event BENCH_STOP    		 "",
+ event MESSAGE_SEND  		 "",
+ event MESSAGE_RECEIVE		 "",
+
+};
+
+
+/* The example subsystem is used to demonstrate how the tracing framework
+ * works. It is used by the program in "examples/xmpl-trace". */
+subsystem xmpl {
+
+	event START				"",
+	event STOP				"",
+	event EV1				"",
+	event EV2				"",
+
+};
+

@@ -1,0 +1,338 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_dsp_mmu.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_dsp_mmu msbfirst ( addr base ) "" {
+    
+    
+    register mmu_revision ro addr(base, 0x0) "This register contains the IP revision code" type(uint32);
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle. An idle request is acknowledged unconditionally";
+        IDLEMODE_1 = 1 "No-idle. An idle request is never acknowledged";
+        IDLEMODE_2 = 2 "Smart-idle. Acknowledgement to an idle request is given based on the internal activity of the module";
+        IDLEMODE_3 = 3 "reserved do not use";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_r = 0 "always return 0";
+        SOFTRESET_0_w = 0 "no functional effect";
+        SOFTRESET_1_w = 1 "The module is reset";
+        SOFTRESET_1_r = 1 "never happens";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "interconnect clock is free-running";
+        AUTOIDLE_1 = 1 "Automatic interconnect clock gating strategy is applied, based on the interconnect interface activity";
+    };
+    
+    register mmu_sysconfig addr(base, 0x10) "This register controls the various parameters of the L3 interconnect interface" {
+        _ 22 mbz;
+        clockactivity 2 ro "Clock activity during wake-up mode 00 Functional and Interconnect clocks can be switched off";
+        _ 3 mbz;
+        idlemode 2 rw type(idlemode_status) "IdleMode";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Software reset. This bit is automatically reset by the hardware. During reads, it always return 0";
+        autoidle 1 rw type(autoidle_status) "Internal interconnect clock gating strategy";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Internal module reset in on-going";
+        RESETDONE_1_r = 1 "Reset completed";
+    };
+    
+    register mmu_sysstatus addr(base, 0x14) "This register provides status information about the module, excluding the interrupt status information" {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal reset monitoring";
+    };
+
+    constants multihitfault_status width(1) "" {
+        MULTIHITFAULT_0_r = 0 "MultiHitFault false";
+        MULTIHITFAULT_0_w = 0 "MultiHitFault status bit unchanged";
+        MULTIHITFAULT_1_w = 1 "MultiHitFault status bit is reset";
+        MULTIHITFAULT_1_r = 1 "MultiHitFault is true ('pending')";
+    };
+
+    constants tablewalkfault_status width(1) "" {
+        TABLEWALKFAULT_0_r = 0 "TableWalkFault false";
+        TABLEWALKFAULT_0_w = 0 "TableWalkFault status bit unchanged";
+        TABLEWALKFAULT_1_w = 1 "TableWalkFault status bit is reset";
+        TABLEWALKFAULT_1_r = 1 "TableWalkFault is true ('pending')";
+    };
+
+    constants emumiss_status width(1) "" {
+        EMUMISS_0_r = 0 "EMUMiss false";
+        EMUMISS_0_w = 0 "EMUMiss status bit unchanged";
+        EMUMISS_1_w = 1 "EMUMiss status bit is reset";
+        EMUMISS_1_r = 1 "EMUMiss is true ('pending')";
+    };
+
+    constants translationfault_status width(1) "" {
+        TRANSLATIONFAULT_0_r = 0 "TranslationFault false";
+        TRANSLATIONFAULT_0_w = 0 "TranslationFault status bit unchanged";
+        TRANSLATIONFAULT_1_w = 1 "TranslationFault status bit is reset";
+        TRANSLATIONFAULT_1_r = 1 "TranslationFault is true ('pending')";
+    };
+
+    constants tlbmiss_status width(1) "" {
+        TLBMISS_0_r = 0 "TLBMiss false";
+        TLBMISS_0_w = 0 "TLBMiss status bit unchanged";
+        TLBMISS_1_w = 1 "TLBMiss status bit is reset";
+        TLBMISS_1_r = 1 "TLBMiss is true ('pending')";
+    };
+    
+    register mmu_irqstatus addr(base, 0x18) "This interrupt status register regroups all the status of the module internal events that can generate an interrupt." {
+        _ 27 mbz;
+        multihitfault 1 rw1c type(multihitfault_status) "Error due to multiple matches in the TLB";
+        tablewalkfault 1 rw1c type(tablewalkfault_status) "Error response received during a Table Walk";
+        emumiss 1 rw1c type(emumiss_status) "Unrecoverable TLB miss during debug (hardware TWL disabled)";
+        translationfault 1 rw1c type(translationfault_status) "Invalid descriptor in translation tables (translation fault)";
+        tlbmiss 1 rw1c type(tlbmiss_status) "Unrecoverable TLB miss (hardware TWL disabled)";
+    };
+
+    constants multihitfault_status1 width(1) "" {
+        MULTIHITFAULT_0 = 0 "MultiHitFault is masked";
+        MULTIHITFAULT_1 = 1 "MultiHitFault event generates an interrupt if occurs";
+    };
+
+    constants tablewalkfault_status1 width(1) "" {
+        TABLEWALKFAULT_0 = 0 "TableWalkFault is masked";
+        TABLEWALKFAULT_1 = 1 "TableWalkFault event generates an interrupt if occurs";
+    };
+
+    constants emumiss_status1 width(1) "" {
+        EMUMISS_0 = 0 "EMUMiss interrupt is masked";
+        EMUMISS_1 = 1 "EMUMiss event generates an interrupt when it occurs";
+    };
+
+    constants translationfault_status1 width(1) "" {
+        TRANSLATIONFAULT_0 = 0 "TranslationFault is masked";
+        TRANSLATIONFAULT_1 = 1 "TranslationFault event generates an interrupt if occurs";
+    };
+
+    constants tlbmiss_status1 width(1) "" {
+        TLBMISS_0 = 0 "TLBMiss interrupt is masked";
+        TLBMISS_1 = 1 "TLBMiss event generates an interrupt when if occurs";
+    };
+    
+    register mmu_irqenable addr(base, 0x1C) "The interrupt enable register allows to mask/unmask the module internal sources of interrupt, on a event-by-event basis." {
+        _ 27 mbz;
+        multihitfault 1 rw type(multihitfault_status1) "Error due to multiple matches in the TLB";
+        tablewalkfault 1 rw type(tablewalkfault_status1) "Error response received during a Table Walk";
+        emumiss 1 rw type(emumiss_status1) "Unrecoverable TLB miss during debug (hardware TWL disabled)";
+        translationfault 1 rw type(translationfault_status1) "Invalid descriptor in translation tables (translation fault)";
+        tlbmiss 1 rw type(tlbmiss_status1) "Unrecoverable TLB miss (hardware TWL disabled)";
+    };
+
+    constants twlrunning_status width(1) "" {
+        TWLRUNNING_0_r = 0 "TWL Completed";
+        TWLRUNNING_1_r = 1 "TWL Running";
+    };
+    
+    register mmu_walking_st addr(base, 0x40) "This register provides status information about the table walking logic" {
+        _ 31 mbz;
+        twlrunning 1 ro type(twlrunning_status) "Table Walking Logic is running";
+    };
+
+    constants emutlbupdate_status width(1) "" {
+        EMUTLBUPDATE_0 = 0 "Emulator TLB update disabled";
+        EMUTLBUPDATE_1 = 1 "Emulator TLB update enabled";
+    };
+
+    constants twlenable_status width(1) "" {
+        TWLENABLE_0 = 0 "TWL disabled";
+        TWLENABLE_1 = 1 "TWL enabled";
+    };
+
+    constants mmuenable_status width(1) "" {
+        MMUENABLE_0 = 0 "MMU disabled";
+        MMUENABLE_1 = 1 "MMU enabled";
+    };
+    
+    register mmu_cntl addr(base, 0x44) "This register programs the MMU features" {
+        _ 28 mbz;
+        emutlbupdate 1 rw type(emutlbupdate_status) "Enable TLB update on emulator table walk";
+        twlenable 1 rw type(twlenable_status) "Table Walking Logic enable";
+        mmuenable 1 rw type(mmuenable_status) "MMU enable";
+        _ 1 mbz;
+    };
+    
+    register mmu_fault_ad ro addr(base, 0x48) "This register contains the virtual address that generated the interrupt" type(uint32);
+    
+    register mmu_ttb addr(base, 0x4C) "This register contains the Translation Table Base address" {
+        ttbaddress 25 rw "Translation Table Base Address";
+        _ 7 mbz;
+    };
+    
+    register mmu_lock addr(base, 0x50) "This register locks some of the TLB entries" {
+        _ 17 mbz;
+        basevalue 5 rw "Locked entries base value";
+        _ 1 mbz;
+        currentvictim 5 rw "Current entry to be updated either by the TWL or by the software Write value : TLB entry to be updated by software, Read value : TLB entry that will be updated by table walk logic";
+        _ 4 mbz;
+    };
+
+    constants ldtlbitem_status width(1) "" {
+        LDTLBITEM_0_r = 0 "always return 0";
+        LDTLBITEM_0_w = 0 "no functional effect";
+        LDTLBITEM_1_w = 1 "load TLB data";
+        LDTLBITEM_1_r = 1 "never happens";
+    };
+    
+    register mmu_ld_tlb addr(base, 0x54) "This register loads a TLB entry (CAM+RAM)" {
+        _ 31 mbz;
+        ldtlbitem 1 rw type(ldtlbitem_status) "Write (load) data in the TLB";
+    };
+
+    constants p_status width(1) "" {
+        P_0 = 0 "TLB entry may be flushed";
+        P_1 = 1 "TLB entry is protected against flush";
+    };
+
+    constants v_status width(1) "" {
+        V_0 = 0 "TLB entry is invalid";
+        V_1 = 1 "TLB entry is valid";
+    };
+
+    constants pagesize_status width(2) "" {
+        PAGESIZE_0 = 0 "Section (1MB)";
+        PAGESIZE_1 = 1 "Large page (64KB)";
+        PAGESIZE_2 = 2 "Small page (4KB)";
+        PAGESIZE_3 = 3 "Supersection (16MB)";
+    };
+    
+    register mmu_cam addr(base, 0x58) "This register holds a CAM entry" {
+        vatag 20 rw "Virtual address tag";
+        _ 8 mbz;
+        p 1 rw type(p_status) "Preserved bit";
+        v 1 rw type(v_status) "Valid bit";
+        pagesize 2 rw type(pagesize_status) "Page size";
+    };
+
+    constants endianness_status width(1) "" {
+        ENDIANNESS_0 = 0 "Little Endian";
+        ENDIANNESS_1 = 1 "Big endian";
+    };
+
+    constants elementsize_status width(2) "" {
+        ELEMENTSIZE_0 = 0 "8-bits";
+        ELEMENTSIZE_1 = 1 "16-bits";
+        ELEMENTSIZE_2 = 2 "32-bits";
+        ELEMENTSIZE_3 = 3 "No translation";
+    };
+
+    constants mixed_status width(1) "" {
+        MIXED_0 = 0 "Use TLB element size";
+        MIXED_1 = 1 "Use CPU element size";
+    };
+    
+    register mmu_ram addr(base, 0x5C) "This register holds a RAM entry" {
+        physicaladdress 20 rw "Physical address of the page";
+        _ 2 mbz;
+        endianness 1 rw type(endianness_status) "Endianness of the page";
+        elementsize 2 rw type(elementsize_status) "Element size of the page (8, 16, 32, no translation)";
+        mixed 1 rw type(mixed_status) "Mixed page attribute (use CPU element size)";
+        _ 6 mbz;
+    };
+
+    constants globalflush_status width(1) "" {
+        GLOBALFLUSH_0_r = 0 "always return 0";
+        GLOBALFLUSH_0_w = 0 "no functional effect";
+        GLOBALFLUSH_1_w = 1 "flush all the non-protected TLB entries";
+        GLOBALFLUSH_1_r = 1 "never happens";
+    };
+    
+    register mmu_gflush addr(base, 0x60) "This register flushes all the non-protected TLB entries" {
+        _ 31 mbz;
+        globalflush 1 rw type(globalflush_status) "Flush all the non-protected TLB entries when set";
+    };
+
+    constants flushentry_status width(1) "" {
+        FLUSHENTRY_0_r = 0 "always return 0";
+        FLUSHENTRY_0_w = 0 "no functional effect";
+        FLUSHENTRY_1_w = 1 "flush all the TLB entries specified by the CAM register";
+        FLUSHENTRY_1_r = 1 "never happens";
+    };
+    
+    register mmu_flush_entry addr(base, 0x64) "This register flushes the entry pointed to by the CAM virtual address" {
+        _ 31 mbz;
+        flushentry 1 rw type(flushentry_status) "Flush the TLB entry pointed by the virtual address (VATag) inMMU_CAM register, even if this entry is set protected";
+    };
+    
+    register mmu_read_cam addr(base, 0x68) "This register reads CAM data from a CAM entry" {
+        vatag 20 ro "Virtual address tag";
+        _ 8 mbz;
+        p 1 ro type(p_status) "Preserved bit";
+        v 1 ro type(v_status) "Valid bit";
+        pagesize 2 ro type(pagesize_status) "Page size";
+    };
+    
+    register mmu_read_ram addr(base, 0x6C) "This register reads RAM data from a RAM entry" {
+        physicaladdress 20 ro "Physical address of the page";
+        _ 2 mbz;
+        endianness 1 ro type(endianness_status) "Endianness of the page";
+        elementsize 2 ro type(elementsize_status) "Element size of the page (8, 16, 32, no translation)";
+        mixed 1 ro type(mixed_status) "Mixed page attribute (use CPU element size)";
+        _ 6 mbz;
+    };
+    
+    register mmu_emu_fault_ad ro addr(base, 0x70) "This register contains the last virtual address of a fault caused by the debugger" type(uint32);
+    
+    register mmu_fault_pc ro addr(base, 0x80) "Capture first fault PC value, controlled by[0] FAULTINDICATION. Notes: The address value is captured at [31:0] EMUFAULTADDRESS. Data-Read-access : corresponding PC. Data-write-access : not perfect accuracy due to Posted-write. All this description is valid only for the DSP MMU. The Cortex-M3 L2 MMU always reads zero from this register." type(uint32);
+
+    constants mmu_fault_trans_id_status width(4) "" {
+        MMU_FAULT_TRANS_ID_0_r = 0 "posted writes out of shared cache for Cortex-M3 MMU / eDMA read port 1 for DSP MMU";
+        MMU_FAULT_TRANS_ID_1_r = 1 "Cortex-M3 video and display control processor I/D bus access for Cortex-M3 MMU / eDMA read port 2 for DSP MMU";
+        MMU_FAULT_TRANS_ID_2_r = 2 "Cortex-M3 video and display control processor S bus access for Cortex-M3 MMU / eDMA write port 1 for DSP MMU";
+        MMU_FAULT_TRANS_ID_3_r = 3 "Cortex-M3 SIMCOP control processor I/D bus access for Cortex-M3 MMU / eDMA write port 2 for DSP MMU";
+        MMU_FAULT_TRANS_ID_4_r = 4 "Cortex-M3 SIMCOP control processor S bus access for Cortex-M3 MMU / shared cache Evictions/stores/Non-cacheable for DSP MMU";
+        MMU_FAULT_TRANS_ID_5_r = 5 "reserved for Cortex-M3 MMU / shared cache request for Program/Data for DSP MMU";
+        MMU_FAULT_TRANS_ID_6_r = 6 "reserved for Cortex-M3 MMU / shared cache request for DMA for DSP MMU";
+        MMU_FAULT_TRANS_ID_7_r = 7 "reserved (for both Cortex-M3 MMU and DSP MMU)";
+        MMU_FAULT_TRANS_ID_8_r = 8 "MMU hardware table walk (for both Cortex-M3 MMU and DSP MMU)";
+    };
+
+    constants mmu_fault_type_status width(2) "" {
+        MMU_FAULT_TYPE_2_r = 2 "reserved for Cortex-M3 MMU / DMA address for DSP MMU";
+        MMU_FAULT_TYPE_1_r = 1 "Fetch address";
+        MMU_FAULT_TYPE_0_r = 0 "Data Load/Store";
+    };
+    
+    register mmu_fault_status addr(base, 0x84) "" {
+        _ 24 mbz;
+        mmu_fault_trans_id 4 ro type(mmu_fault_trans_id_status) "Master ID who cause a faultRead 0x9 to 0xF: reserved (for both Cortex-M3 MMU and DSP MMU) .";
+        rd_wr 1 ro "indicates read or write";
+        mmu_fault_type 2 ro type(mmu_fault_type_status) "MReq Type[1:0]";
+        faultindication 1 rw1c "indicates a MMU fault";
+    };
+    
+    register dspss_mmu_gpr addr(base, 0x88) "This register controls the DSP MMU hardware debug output multiplexer. It also controls force-idle request generation. For more information about the use of this register, see, Control Module." {
+        _ 16 mbz;
+        force_idle_req 1 rw "Force-idle request to see existence of pending bus request. This bit must be used only for debug purposes, not in functional mode.";
+        _ 11 mbz;
+        hwdebug_mux 4 rw "Control HWDEBUG output MUX";
+    };
+};

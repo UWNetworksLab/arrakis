@@ -1,0 +1,27 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for tools/asmoffsets
+--
+--------------------------------------------------------------------------
+
+concat [ let
+    kopts = kernelOptions arch
+    opts = kopts { -- Need this to exclude asmoffsets.h!
+                   optDependencies = [d | d <- optDependencies kopts,
+                                      d /= Dep InstallTree arch "/include/asmoffsets.h"]
+                 }
+   in
+     [ Rule (makecToAssembler opts "src" "asmoffsets.c" "asmoffsets.s"), -- asmoffsets.s here is not the output it is the stem of the presumed output for the depenedency
+       makeDependAssembler opts "src" "asmoffsets.c",
+       Rule [ Str "grep -E '^#(if|ifndef|ifdef|define|undef|endif)'",
+           In BuildTree arch (assemblerFilePath opts "asmoffsets.c"),
+           Str "| sed 's/\\$$//'",
+           Str "| sed -e 's_#\\([0-9]\\)_\\1_' >",
+           Out arch "/include/asmoffsets.h" ]
+     ] | arch <- allArchitectures]

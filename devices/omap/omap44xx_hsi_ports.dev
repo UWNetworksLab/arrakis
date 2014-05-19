@@ -1,0 +1,827 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_hsi_ports.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_hsi_ports msbfirst ( addr base ) "" {
+    
+    
+    register hst_id_p1 ro addr(base, 0x0) "legacy identification on port 1" type(uint32);
+
+    constants wake_ctrl_status width(1) "" {
+        WAKE_CTRL_0 = 0 "software control";
+        WAKE_CTRL_1 = 1 "automatic control";
+    };
+
+    constants flow_val_status width(2) "" {
+        FLOW_VAL_0 = 0 "synchronized";
+        FLOW_VAL_1 = 1 "pipelined";
+        FLOW_VAL_2 = 2 "real-time";
+    };
+
+    constants mode_val_status width(2) "" {
+        MODE_VAL_0 = 0 "sleep";
+        MODE_VAL_1 = 1 "stream";
+        MODE_VAL_3 = 3 "reserved";
+        MODE_VAL_2 = 2 "frame";
+    };
+    
+    register hst_mode_p1 addr(base, 0x4) "Defines operation mode and data flow on port 1" {
+        _ 27 mbz;
+        wake_ctrl 1 rw type(wake_ctrl_status) "Wake control";
+        flow_val 2 rw type(flow_val_status) "Flow";
+        mode_val 2 rw type(mode_val_status) "Mode";
+    };
+
+    constants size_val_status width(5) "" {
+        SIZE_VAL_31_r = 31 "only possible value";
+    };
+    
+    register hst_framesize_p1 addr(base, 0x8) "This register is provided for legacy and possible future extension of protocol. Returns 0x1f" {
+        _ 27 mbz;
+        size_val 5 ro type(size_val_status) "In the current implementation it must be always written 31, meaning the frame payload size is 32 bit.";
+    };
+
+    constants txstateval_status width(3) "" {
+        TXSTATEVAL_0_r = 0 "idle";
+        TXSTATEVAL_1_r = 1 "wait";
+        TXSTATEVAL_2_r = 2 "transmit";
+        TXSTATEVAL_3_r = 3 "start";
+        TXSTATEVAL_4_r = 4 "break";
+        TXSTATEVAL_5_r = 5 "reserved";
+        TXSTATEVAL_6_r = 6 "reserved";
+        TXSTATEVAL_7_r = 7 "reserved";
+    };
+    
+    register hst_txstate_p1 addr(base, 0xC) "Define the state of the transmitter on port 1" {
+        _ 29 mbz;
+        txstateval 3 ro type(txstateval_status) "State of the transmitter";
+    };
+    
+    register hst_bufstate_p1 addr(base, 0x10) "Transmitter state for FIFO 0..7Each bit gives the state of transmit FIFOs:0x1 FIFO full0x0 FIFO not full" {
+        _ 24 mbz;
+        bufstate_val 8 ro "Each bit gives the state of transmit buffer register:0x0: buffer is not full0x1: buffer is full";
+    };
+    
+    register hst_divisor_p1 addr(base, 0x18) "Transmission bit rate divisor for port 1" {
+        _ 24 mbz;
+        tx_rate_div_val 8 rw "This bitfield B has a range [0..255] and it programs a division factor [1..256], B+1 example: writing 0 divides by 1, writing 1 divides by 2, writing 2 divides by 3, etc";
+    };
+
+    constants break_val_status width(1) "" {
+        BREAK_VAL_0_w = 0 "no break";
+        BREAK_VAL_1_w = 1 "transmit break";
+    };
+    
+    register hst_break_p1 addr(base, 0x20) "Transmit break strobe register on port 1" {
+        _ 31 mbz;
+        break_val 1 wo type(break_val_status) "Send a break signal on the port";
+    };
+
+    constants chan_num_val_status width(5) "" {
+        CHAN_NUM_VAL_1 = 1 "one logical channel used, num. of the channel descriptor bits is 0";
+        CHAN_NUM_VAL_4 = 4 "four logical channel used, num. of the channel descriptor bits is 2";
+        CHAN_NUM_VAL_4_1 = 4 "four logical channel used, num. of the channel descriptor bits is 2";
+        CHAN_NUM_VAL_8 = 8 "eight logical channel used, num. of the channel descriptor bits is 3";
+        CHAN_NUM_VAL_16 = 16 "sixteen logical channel used, num. of the channel descriptor bits is 4";
+    };
+    
+    register hst_channels_p1 addr(base, 0x24) "Number of active channels on port 1 (this will determine the number of the used channel descriptor bits on the MIPI port as well)It can be 1,2,4,8 or 16." {
+        _ 27 mbz;
+        chan_num_val 5 rw type(chan_num_val_status) "Number of active channels up to 16";
+    };
+
+    constants arb_val_status width(1) "" {
+        ARB_VAL_0 = 0 "round robin";
+        ARB_VAL_1 = 1 "priority";
+    };
+    
+    register hst_arbmode_p1 addr(base, 0x28) "Arbitration type for the transmit FIFOs on port 1." {
+        _ 31 mbz;
+        arb_val 1 rw type(arb_val_status) "Mode";
+    };
+    
+    register hst_buffer_p1_chn_i_0 wo addr(base, 0x80) "Transmit register for FIFO 0..7Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p1_chn_i_1 wo addr(base, 0x84) "Transmit register for FIFO 0..7Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p1_chn_i_2 wo addr(base, 0x88) "Transmit register for FIFO 0..7Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p1_chn_i_3 wo addr(base, 0x8C) "Transmit register for FIFO 0..7Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p1_chn_i_4 wo addr(base, 0x90) "Transmit register for FIFO 0..7Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p1_chn_i_5 wo addr(base, 0x94) "Transmit register for FIFO 0..7Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p1_chn_i_6 wo addr(base, 0x98) "Transmit register for FIFO 0..7Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p1_chn_i_7 wo addr(base, 0x9C) "Transmit register for FIFO 0..7Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p1_chn_i_0 wo addr(base, 0xC0) "Transmit register with byte swapping for FIFO 0..7Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p1_chn_i_1 wo addr(base, 0xC4) "Transmit register with byte swapping for FIFO 0..7Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p1_chn_i_2 wo addr(base, 0xC8) "Transmit register with byte swapping for FIFO 0..7Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p1_chn_i_3 wo addr(base, 0xCC) "Transmit register with byte swapping for FIFO 0..7Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p1_chn_i_4 wo addr(base, 0xD0) "Transmit register with byte swapping for FIFO 0..7Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p1_chn_i_5 wo addr(base, 0xD4) "Transmit register with byte swapping for FIFO 0..7Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p1_chn_i_6 wo addr(base, 0xD8) "Transmit register with byte swapping for FIFO 0..7Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p1_chn_i_7 wo addr(base, 0xDC) "Transmit register with byte swapping for FIFO 0..7Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+
+    constants port_number_status width(1) "" {
+        PORT_NUMBER_0 = 0 "port 1";
+        PORT_NUMBER_1 = 1 "port 2";
+    };
+
+    constants enable_status width(1) "" {
+        ENABLE_0 = 0 "disabled";
+        ENABLE_1 = 1 "enabled";
+    };
+    
+    register hst_mapping0 addr(base, 0x100) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping1 addr(base, 0x104) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping2 addr(base, 0x108) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping3 addr(base, 0x10C) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping4 addr(base, 0x110) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping5 addr(base, 0x114) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping6 addr(base, 0x118) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping7 addr(base, 0x11C) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping8 addr(base, 0x120) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping9 addr(base, 0x124) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping10 addr(base, 0x128) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping11 addr(base, 0x12C) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping12 addr(base, 0x130) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping13 addr(base, 0x134) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping14 addr(base, 0x138) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hst_mapping15 addr(base, 0x13C) "TX FIFO configuration register. One register per FIFO" {
+        _ 18 mbz;
+        threshold 4 rw "Number of empty TX FIFO locations that will activate interrupt or DMA requests. DMA requests (if enabled) or interrupt assertion (if enabled) is triggered if the number of free locations in FIFO is less than the THRESHOLD value. 0x0: less than 8 words in the FIFO 0x1: less than 1 words in the FIFO 0x2: less than 2 words in the FIFO ............................................................... 0x8: less than 8 words in the FIFO 0x9 through 0xF: no request generated";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates the TX FIFO to a HSI logical channel number (0-15):0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables the FIFO";
+    };
+    
+    register hsr_id_p1 ro addr(base, 0x800) "Legacy Identification" type(uint32);
+    
+    register hsr_mode_p1 addr(base, 0x804) "Defines operation mode and data flow on port 1" {
+        _ 27 mbz;
+        wake_status 1 ro "Level of WAKE line";
+        flow_val 2 rw type(flow_val_status) "Flow";
+        mode_val 2 rw type(mode_val_status) "Mode";
+    };
+    
+    register hsr_framesize_p1 addr(base, 0x808) "legacy returns 0x1f" {
+        _ 27 mbz;
+        size_val 5 ro "0x1f";
+    };
+
+    constants rxstateval_status width(3) "" {
+        RXSTATEVAL_0_r = 0 "idle";
+        RXSTATEVAL_1_r = 1 "receiving";
+        RXSTATEVAL_2_r = 2 "finished";
+        RXSTATEVAL_3_r = 3 "error";
+        RXSTATEVAL_4_r = 4 "halt";
+        RXSTATEVAL_5_r = 5 "timeout";
+    };
+    
+    register hsr_rxstate_p1 addr(base, 0x80C) "Receiver state on port 1" {
+        _ 29 mbz;
+        rxstateval 3 ro type(rxstateval_status) "State";
+    };
+    
+    register hsr_bufstate_p1 addr(base, 0x810) "State of receiver buffer register for port 1" {
+        _ 24 mbz;
+        bufstate_val 8 ro "Each bit gives the state of receiver buffer register:0x0: buffer is not full0x1: buffer is full";
+    };
+
+    constants break_val_status1 width(1) "" {
+        BREAK_VAL_0_r = 0 "No break detected";
+        BREAK_VAL_1_r = 1 "Break detected";
+    };
+    
+    register hsr_break_p1 addr(base, 0x81C) "Break detected on port 1" {
+        _ 31 mbz;
+        break_val 1 ro type(break_val_status1) "Break detected";
+    };
+    
+    register hsr_error_p1 addr(base, 0x820) "Error detection state register for port 1" {
+        _ 16 mbz;
+        _ 1 mbz;
+        _ 3 mbz;
+        tme 1 ro "Tx Mapping Error";
+        _ 3 mbz;
+        rme 1 ro "Rx Mapping Error";
+        _ 2 mbz;
+        tbe 1 ro "Tailing Bit Error";
+        _ 2 mbz;
+        fte 1 ro "Frame Timeout Error";
+        sig 1 ro "signal error (legacy)";
+    };
+    
+    register hsr_errorack_p1 addr(base, 0x824) "Error detection acknowledge register on port 1: write 1 to clear" {
+        _ 16 mbz;
+        _ 1 mbz;
+        _ 3 mbz;
+        tme 1 wo "Tx Mapping Error";
+        _ 3 mbz;
+        rme 1 wo "Rx Mapping Error";
+        _ 2 mbz;
+        tbe 1 wo "Tailing Bit Error";
+        _ 2 mbz;
+        fte 1 wo "Frame Timeout Error";
+        sig 1 wo "signal error (legacy)";
+    };
+
+    constants chan_num_val_status1 width(5) "" {
+        CHAN_NUM_VAL_1_1 = 1 "one logical channel used, num. of the channel descriptor bits is 0";
+        CHAN_NUM_VAL_2 = 2 "two logical channel used, num. of the channel descriptor bits is 1";
+        CHAN_NUM_VAL_4_2 = 4 "four logical channel used, num. of the channel descriptor bits is 2";
+        CHAN_NUM_VAL_8_1 = 8 "eight logical channel used, num. of the channel descriptor bits is 3";
+        CHAN_NUM_VAL_16_1 = 16 "sexteen logical channel used, num. of the channel descriptor bits is 4";
+    };
+    
+    register hsr_channels_p1 addr(base, 0x828) "Number of active channels on port 1 (this will determine the number of the used channel descriptor bits on the MIPI port as well)It can be 1,2,4,8 or 16." {
+        _ 27 mbz;
+        chan_num_val 5 rw type(chan_num_val_status1) "Number of active channels";
+    };
+
+    constants overrun_val_status width(16) "" {
+        OVERRUN_VAL_1_r = 1 "overrun detected";
+        OVERRUN_VAL_0_r = 0 "no overrun";
+    };
+    
+    register hsr_overrun_p1 addr(base, 0x82C) "Overrun detection state register for those receive FIFOs which are mapped to port 1." {
+        _ 16 mbz;
+        overrun_val 16 ro type(overrun_val_status) "Bit n is set when overrun is detected on channel n";
+    };
+
+    constants overrunack_val_status width(16) "" {
+        OVERRUNACK_VAL_0_w = 0 "no action";
+        OVERRUNACK_VAL_1_w = 1 "overrun acknowledge";
+    };
+    
+    register hsr_overrunack_p1 addr(base, 0x830) "Overrun acknowledge register for those receive FIFOs which are mapped to port 1." {
+        _ 16 mbz;
+        overrunack_val 16 wo type(overrunack_val_status) "Bit n is set when overrun is acknowledged on channel n";
+    };
+    
+    register hsr_counters_p1 addr(base, 0x834) "Counters setting register for port 1" {
+        fb 8 rw "Setting for Frame Burst Counter. Set n as a value will result the n+1 counter value.";
+        tb 4 rw "Setting for Tailing Bit Counter. Set n as a value will result the n+1 counter value.";
+        ft 20 rw "Setting for Frame Timeout counter. Set n as a value will result the n+1 counter value.";
+    };
+    
+    register hsr_buffer_p1_chn_i_0 ro addr(base, 0x880) "Receive register for receive FIFO 0..7Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p1_chn_i_1 ro addr(base, 0x884) "Receive register for receive FIFO 0..7Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p1_chn_i_2 ro addr(base, 0x888) "Receive register for receive FIFO 0..7Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p1_chn_i_3 ro addr(base, 0x88C) "Receive register for receive FIFO 0..7Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p1_chn_i_4 ro addr(base, 0x890) "Receive register for receive FIFO 0..7Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p1_chn_i_5 ro addr(base, 0x894) "Receive register for receive FIFO 0..7Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p1_chn_i_6 ro addr(base, 0x898) "Receive register for receive FIFO 0..7Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p1_chn_i_7 ro addr(base, 0x89C) "Receive register for receive FIFO 0..7Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p1_chn_i_0 ro addr(base, 0x8C0) "Byte swapped receive register for receive FIFO 0..7Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p1_chn_i_1 ro addr(base, 0x8C4) "Byte swapped receive register for receive FIFO 0..7Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p1_chn_i_2 ro addr(base, 0x8C8) "Byte swapped receive register for receive FIFO 0..7Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p1_chn_i_3 ro addr(base, 0x8CC) "Byte swapped receive register for receive FIFO 0..7Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p1_chn_i_4 ro addr(base, 0x8D0) "Byte swapped receive register for receive FIFO 0..7Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p1_chn_i_5 ro addr(base, 0x8D4) "Byte swapped receive register for receive FIFO 0..7Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p1_chn_i_6 ro addr(base, 0x8D8) "Byte swapped receive register for receive FIFO 0..7Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p1_chn_i_7 ro addr(base, 0x8DC) "Byte swapped receive register for receive FIFO 0..7Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_mapping0 addr(base, 0x900) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping1 addr(base, 0x904) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping2 addr(base, 0x908) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping3 addr(base, 0x90C) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping4 addr(base, 0x910) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping5 addr(base, 0x914) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping6 addr(base, 0x918) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping7 addr(base, 0x91C) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping8 addr(base, 0x920) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping9 addr(base, 0x924) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping10 addr(base, 0x928) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping11 addr(base, 0x92C) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping12 addr(base, 0x930) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping13 addr(base, 0x934) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping14 addr(base, 0x938) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_mapping15 addr(base, 0x93C) "RX FIFO Configuration register. One register per FIFO" {
+        _ 18 mbz;
+        words 4 ro "Number of words available in the RX FIFO for reading R";
+        _ 2 mbz;
+        port_number 1 rw type(port_number_status) "Associates the RX FIFO to a HSI port";
+        _ 2 mbz;
+        ch_number 4 rw "Associates RX FIFO to a HSI logical channel0x0: logical channel number 00x1: logical channel number 10xF: logical channel number 15";
+        enable 1 rw type(enable_status) "Enables or disables RX FIFO";
+    };
+    
+    register hsr_dll ro addr(base, 0x944) "Reserved" type(uint32);
+    
+    register hsr_divisor_p1 addr(base, 0x94C) "Receive bit rate divisor for port 1.This needs to be set for correct protocol timing detection (tailing timeout, frame timeout)." {
+        _ 24 mbz;
+        rx_rate_div_val 8 rw "The functional clock source divided by this value will be used as a clock base for the receive counters.Set n as a value will result the n+1 divisor value.";
+    };
+    
+    register hst_id_p2 ro addr(base, 0x1000) "legacy identification on port 2" type(uint32);
+    
+    register hst_mode_p2 addr(base, 0x1004) "Defines operation mode and data flow on port 2" {
+        _ 27 mbz;
+        wake_ctrl 1 rw type(wake_ctrl_status) "Wake control";
+        flow_val 2 rw type(flow_val_status) "Flow";
+        mode_val 2 rw type(mode_val_status) "Mode";
+    };
+    
+    register hst_framesize_p2 addr(base, 0x1008) "This register is provided for legacy and possible future extension of protocol. Returns 0x1f" {
+        _ 27 mbz;
+        size_val 5 ro type(size_val_status) "In the current implementation it must be always written 31, meaning the frame payload size is 32 bit.";
+    };
+    
+    register hst_txstate_p2 addr(base, 0x100C) "Define the state of the transmitter on port 2" {
+        _ 29 mbz;
+        txstateval 3 ro type(txstateval_status) "State of the transmitter";
+    };
+    
+    register hst_bufstate_p2 addr(base, 0x1010) "Transmitter state for buffer 8..15Each bit gives the state of transmit FIFOs:0x1 FIFO full0x0 FIFO not full" {
+        _ 24 mbz;
+        bufstate_val 8 ro "Each bit gives the state of transmit buffer register:0x0: buffer is not full0x1: buffer is full";
+    };
+    
+    register hst_divisor_p2 addr(base, 0x1018) "Transmission bit rate divisor for port 2" {
+        _ 24 mbz;
+        tx_rate_div_val 8 rw "This bitfield B has a range [0..255] and it programs a division factor [1..256], B+1 example: writing 0 divides by 1, writing 1 divides by 2, writing 2 divides by 3, etc";
+    };
+    
+    register hst_break_p2 addr(base, 0x1020) "Transmit break strobe register on port 2" {
+        _ 31 mbz;
+        break_val 1 wo type(break_val_status) "Send a break signal on the port";
+    };
+    
+    register hst_channels_p2 addr(base, 0x1024) "Number of active channels on port 2 (this will determine the number of the used channel descriptor bits on the MIPI port as well)It can be 1,2,4,8 or 16." {
+        _ 27 mbz;
+        chan_num_val 5 rw type(chan_num_val_status) "Number of active channels up to 16";
+    };
+    
+    register hst_arbmode_p2 addr(base, 0x1028) "Arbitration type for the transmit FIFOs on port 2." {
+        _ 31 mbz;
+        arb_val 1 rw type(arb_val_status) "Mode";
+    };
+    
+    register hst_buffer_p2_chn_i_0 wo addr(base, 0x1080) "Transmit register for FIFO 8..15Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p2_chn_i_1 wo addr(base, 0x1084) "Transmit register for FIFO 8..15Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p2_chn_i_2 wo addr(base, 0x1088) "Transmit register for FIFO 8..15Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p2_chn_i_3 wo addr(base, 0x108C) "Transmit register for FIFO 8..15Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p2_chn_i_4 wo addr(base, 0x1090) "Transmit register for FIFO 8..15Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p2_chn_i_5 wo addr(base, 0x1094) "Transmit register for FIFO 8..15Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p2_chn_i_6 wo addr(base, 0x1098) "Transmit register for FIFO 8..15Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_buffer_p2_chn_i_7 wo addr(base, 0x109C) "Transmit register for FIFO 8..15Important:Write access to the register with 0xC and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the lower 2 bytes must be written first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p2_chn_i_0 wo addr(base, 0x10C0) "Transmit register with byte swapping for FIFO 8..15Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p2_chn_i_1 wo addr(base, 0x10C4) "Transmit register with byte swapping for FIFO 8..15Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p2_chn_i_2 wo addr(base, 0x10C8) "Transmit register with byte swapping for FIFO 8..15Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p2_chn_i_3 wo addr(base, 0x10CC) "Transmit register with byte swapping for FIFO 8..15Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p2_chn_i_4 wo addr(base, 0x10D0) "Transmit register with byte swapping for FIFO 8..15Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p2_chn_i_5 wo addr(base, 0x10D4) "Transmit register with byte swapping for FIFO 8..15Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p2_chn_i_6 wo addr(base, 0x10D8) "Transmit register with byte swapping for FIFO 8..15Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hst_swapbuffer_p2_chn_i_7 wo addr(base, 0x10DC) "Transmit register with byte swapping for FIFO 8..15Important:Write access to the register with 0x3 and 0xF byteen will load its value into the transmit FIFO.In case of using only 16 bit accesses the upper 2 bytes must be written first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_id_p2 ro addr(base, 0x1800) "Legacy Identification" type(uint32);
+    
+    register hsr_mode_p2 addr(base, 0x1804) "Defines operation mode and data flow on port 2" {
+        _ 27 mbz;
+        wake_status 1 ro "Level of WAKE line";
+        flow_val 2 rw type(flow_val_status) "Flow";
+        mode_val 2 rw type(mode_val_status) "Mode";
+    };
+    
+    register hsr_framesize_p2 addr(base, 0x1808) "legacy returns 0x1f" {
+        _ 27 mbz;
+        size_val 5 ro "0x1f";
+    };
+    
+    register hsr_rxstate_p2 addr(base, 0x180C) "Receiver state on port 2" {
+        _ 29 mbz;
+        rxstateval 3 ro type(rxstateval_status) "State";
+    };
+    
+    register hsr_bufstate_p2 addr(base, 0x1810) "State of receiver buffer register for port 2" {
+        _ 24 mbz;
+        bufstate_val 8 ro "Each bit gives the state of receiver buffer register:0x0: buffer is not full0x1: buffer is full";
+    };
+    
+    register hsr_break_p2 addr(base, 0x181C) "Break detected on port 2" {
+        _ 31 mbz;
+        break_val 1 ro type(break_val_status1) "Break detected";
+    };
+    
+    register hsr_error_p2 addr(base, 0x1820) "Error detection state register for port 2" {
+        _ 16 mbz;
+        _ 1 mbz;
+        _ 3 mbz;
+        tme 1 ro "Tx Mapping Error";
+        _ 3 mbz;
+        rme 1 ro "Rx Mapping Error";
+        _ 2 mbz;
+        tbe 1 ro "Tailing Bit Error";
+        _ 2 mbz;
+        fte 1 ro "Frame Timeout Error";
+        sig 1 ro "signal error (legacy)";
+    };
+    
+    register hsr_errorack_p2 addr(base, 0x1824) "Error detection acknowledge register on port 2: write 1 to clear" {
+        _ 16 mbz;
+        _ 1 mbz;
+        _ 3 mbz;
+        tme 1 wo "Tx Mapping Error";
+        _ 3 mbz;
+        rme 1 wo "Rx Mapping Error";
+        _ 2 mbz;
+        tbe 1 wo "Tailing Bit Error";
+        _ 2 mbz;
+        fte 1 wo "Frame Timeout Error";
+        sig 1 wo "signal error (legacy)";
+    };
+    
+    register hsr_channels_p2 addr(base, 0x1828) "Number of active channels on port 2 (this will determine the number of the used channel descriptor bits on the MIPI port as well)It can be 1,2,4,8 or 16." {
+        _ 27 mbz;
+        chan_num_val 5 rw type(chan_num_val_status1) "Number of active channels";
+    };
+    
+    register hsr_overrun_p2 addr(base, 0x182C) "Overrun detection state register for those receive FIFOs which are mapped to port 2." {
+        _ 16 mbz;
+        overrun_val 16 ro type(overrun_val_status) "Bit n is set when overrun is detected on channel n";
+    };
+    
+    register hsr_overrunack_p2 addr(base, 0x1830) "Overrun acknowledge register for those receive FIFOs which are mapped to port 2." {
+        _ 16 mbz;
+        overrunack_val 16 wo type(overrunack_val_status) "Bit n is set when overrun is acknowledged on channel n";
+    };
+    
+    register hsr_counters_p2 addr(base, 0x1834) "Counters setting register for port 2" {
+        fb 8 rw "Setting for Frame Burst Counter. Set n as a value will result the n+1 counter value.";
+        tb 4 rw "Setting for Tailing Bit Counter. Set n as a value will result the n+1 counter value.";
+        ft 20 rw "Setting for Frame Timeout counter. Set n as a value will result the n+1 counter value.";
+    };
+    
+    register hsr_buffer_p2_chn_i_0 ro addr(base, 0x1880) "Receive register for receive FIFO 8..15Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p2_chn_i_1 ro addr(base, 0x1884) "Receive register for receive FIFO 8..15Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p2_chn_i_2 ro addr(base, 0x1888) "Receive register for receive FIFO 8..15Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p2_chn_i_3 ro addr(base, 0x188C) "Receive register for receive FIFO 8..15Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p2_chn_i_4 ro addr(base, 0x1890) "Receive register for receive FIFO 8..15Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p2_chn_i_5 ro addr(base, 0x1894) "Receive register for receive FIFO 8..15Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p2_chn_i_6 ro addr(base, 0x1898) "Receive register for receive FIFO 8..15Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_buffer_p2_chn_i_7 ro addr(base, 0x189C) "Receive register for receive FIFO 8..15Important:Read access to the register with 0xC and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the lower 2 bytes must be read first (byteen 0x3). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p2_chn_i_0 ro addr(base, 0x18C0) "Byte swapped receive register for receive FIFO 8..15Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p2_chn_i_1 ro addr(base, 0x18C4) "Byte swapped receive register for receive FIFO 8..15Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p2_chn_i_2 ro addr(base, 0x18C8) "Byte swapped receive register for receive FIFO 8..15Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p2_chn_i_3 ro addr(base, 0x18CC) "Byte swapped receive register for receive FIFO 8..15Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p2_chn_i_4 ro addr(base, 0x18D0) "Byte swapped receive register for receive FIFO 8..15Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p2_chn_i_5 ro addr(base, 0x18D4) "Byte swapped receive register for receive FIFO 8..15Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p2_chn_i_6 ro addr(base, 0x18D8) "Byte swapped receive register for receive FIFO 8..15Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_swapbuffer_p2_chn_i_7 ro addr(base, 0x18DC) "Byte swapped receive register for receive FIFO 8..15Important:Read access to the register with 0x3 and 0xF byteen will remove the receive FIFO related item.In case of using only 16 bit accesses the upper 2 bytes must be read first (byteen 0xC). Between two consecutive 16 bit FIFO related access there can not be any other FIFO related OCP access!" type(uint32);
+    
+    register hsr_divisor_p2 addr(base, 0x194C) "Receive bit rate divisor for port 2.This needs to be set for correct protocol timing detection (tailing timeout, frame timeout)." {
+        _ 24 mbz;
+        rx_rate_div_val 8 rw "The functional clock source divided by this value will be used as a clock base for the receive counters.Set n as a value will result the n+1 divisor value.";
+    };
+};

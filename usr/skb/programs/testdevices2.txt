@@ -1,0 +1,119 @@
+ioapic(0, 4273995776, 0).
+
+rootbridge(addr(0, 0, 0), childbus(0, 7), mem(3556769792, 3690987519)).
+
+bar(addr(0, 1, 1), 0, 0, 128, io, nonprefetchable, 32).
+bar(addr(0, 1, 1), 4, 40960, 128, io, nonprefetchable, 32).
+bar(addr(0, 1, 1), 5, 40960, 128, io, nonprefetchable, 32).
+bar(addr(0, 2, 0), 0, 3556769792, 4096, mem, nonprefetchable, 32).
+bar(addr(0, 2, 1), 0, 3556773888, 256, mem, nonprefetchable, 32).
+bar(addr(0, 6, 0), 4, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 7, 0), 0, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 7, 0), 1, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 7, 0), 2, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 7, 0), 3, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 7, 0), 4, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 7, 0), 5, 3556777984, 4096, mem, nonprefetchable, 32).
+bar(addr(0, 8, 0), 0, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 8, 0), 1, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 8, 0), 2, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 8, 0), 3, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 8, 0), 4, 5120, 128, io, nonprefetchable, 32).
+bar(addr(0, 8, 0), 5, 3556782080, 4096, mem, nonprefetchable, 32).
+bar(addr(1, 6, 0), 0, 3557949440, 131072, mem, nonprefetchable, 32).
+bar(addr(1, 6, 0), 1, 3557818368, 131072, mem, nonprefetchable, 32).
+bar(addr(1, 6, 0), 2, 8320, 128, io, nonprefetchable, 32).
+bar(addr(1, 9, 0), 0, 3623878656, 67108864, mem, prefetchable, 32).
+bar(addr(1, 9, 0), 1, 3558080512, 262144, mem, nonprefetchable, 32).
+bar(addr(1, 9, 0), 2, 8192, 128, io, nonprefetchable, 32).
+bar(addr(0, 10, 0), 0, 3556786176, 4096, mem, nonprefetchable, 32).
+bar(addr(0, 10, 0), 1, 5120, 128, io, nonprefetchable, 32).
+bar(addr(4, 0, 0), 0, 3558998016, 131072, mem, nonprefetchable, 32).
+bar(addr(4, 0, 0), 1, 3558866944, 131072, mem, nonprefetchable, 32).
+bar(addr(4, 0, 0), 2, 12288, 128, io, nonprefetchable, 32).
+bar(addr(5, 0, 0), 0, 3560046592, 131072, mem, nonprefetchable, 32).
+bar(addr(5, 0, 0), 1, 3559915520, 131072, mem, nonprefetchable, 32).
+bar(addr(5, 0, 0), 2, 16384, 128, io, nonprefetchable, 32).
+bar(addr(128, 10, 0), 0, 3690987520, 4096, mem, nonprefetchable, 32).
+bar(addr(128, 10, 0), 1, 45056, 128, io, nonprefetchable, 32).
+bar(addr(131, 0, 0), 0, 3692167168, 131072, mem, nonprefetchable, 32).
+bar(addr(131, 0, 0), 1, 3692036096, 131072, mem, nonprefetchable, 32).
+bar(addr(131, 0, 0), 2, 49152, 128, io, nonprefetchable, 32).
+bar(addr(132, 0, 0), 0, 3693215744, 131072, mem, nonprefetchable, 32).
+bar(addr(132, 0, 0), 1, 3693084672, 131072, mem, nonprefetchable, 32).
+bar(addr(132, 0, 0), 2, 53248, 128, io, nonprefetchable, 32).
+
+
+bridge(pcie, addr(0, 9, 0), 4318, 92, 6, 4, 1, secondary(1)).
+device(pcie, addr(0, 0, 0), 4318, 94, 5, 128, 0, -1).
+device(pcie, addr(0, 1, 0), 4318, 81, 6, 1, 0, -1).
+device(pcie, addr(0, 1, 1), 4318, 82, 12, 5, 0, 0).
+device(pcie, addr(0, 2, 0), 4318, 90, 12, 3, 16, 0).
+bridge(pcie, addr(0, 11, 0), 4318, 93, 6, 4, 0, secondary(2)).
+device(pcie, addr(0, 2, 1), 4318, 91, 12, 3, 32, 1).
+device(pcie, addr(0, 6, 0), 4318, 83, 1, 1, 138, -1).
+device(pcie, addr(0, 7, 0), 4318, 84, 1, 1, 133, 0).
+device(pcie, addr(0, 8, 0), 4318, 85, 1, 1, 133, 0).
+device(pcie, addr(1, 6, 0), 32902, 4214, 2, 0, 0, 0).
+device(pcie, addr(1, 9, 0), 6346, 32, 3, 0, 0, -1).
+device(pcie, addr(0, 10, 0), 4318, 86, 2, 0, 0, 0).
+bridge(pcie, addr(0, 12, 0), 4318, 93, 6, 4, 0, secondary(3)).
+bridge(pcie, addr(0, 13, 0), 4318, 93, 6, 4, 0, secondary(4)).
+device(pcie, addr(4, 0, 0), 32902, 4221, 2, 0, 0, 0).
+bridge(pcie, addr(0, 14, 0), 4318, 93, 6, 4, 0, secondary(5)).
+device(pcie, addr(5, 0, 0), 32902, 4221, 2, 0, 0, 0).
+device(pci, addr(0, 24, 0), 4130, 4608, 6, 0, 0, -1).
+device(pci, addr(0, 24, 1), 4130, 4609, 6, 0, 0, -1).
+device(pci, addr(0, 24, 2), 4130, 4610, 6, 0, 0, -1).
+device(pci, addr(0, 24, 3), 4130, 4611, 6, 0, 0, -1).
+device(pci, addr(0, 24, 4), 4130, 4612, 6, 0, 0, -1).
+device(pci, addr(0, 25, 0), 4130, 4608, 6, 0, 0, -1).
+device(pci, addr(0, 25, 1), 4130, 4609, 6, 0, 0, -1).
+device(pci, addr(0, 25, 2), 4130, 4610, 6, 0, 0, -1).
+device(pci, addr(0, 25, 3), 4130, 4611, 6, 0, 0, -1).
+device(pci, addr(0, 25, 4), 4130, 4612, 6, 0, 0, -1).
+device(pci, addr(0, 26, 0), 4130, 4608, 6, 0, 0, -1).
+device(pci, addr(0, 26, 1), 4130, 4609, 6, 0, 0, -1).
+device(pci, addr(0, 26, 2), 4130, 4610, 6, 0, 0, -1).
+device(pci, addr(0, 26, 3), 4130, 4611, 6, 0, 0, -1).
+device(pci, addr(0, 26, 4), 4130, 4612, 6, 0, 0, -1).
+device(pci, addr(0, 27, 0), 4130, 4608, 6, 0, 0, -1).
+device(pci, addr(0, 27, 1), 4130, 4609, 6, 0, 0, -1).
+device(pci, addr(0, 27, 2), 4130, 4610, 6, 0, 0, -1).
+device(pci, addr(0, 27, 3), 4130, 4611, 6, 0, 0, -1).
+device(pci, addr(0, 27, 4), 4130, 4612, 6, 0, 0, -1).
+device(pci, addr(0, 28, 0), 4130, 4608, 6, 0, 0, -1).
+device(pci, addr(0, 28, 1), 4130, 4609, 6, 0, 0, -1).
+device(pci, addr(0, 28, 2), 4130, 4610, 6, 0, 0, -1).
+device(pci, addr(0, 28, 3), 4130, 4611, 6, 0, 0, -1).
+device(pci, addr(0, 28, 4), 4130, 4612, 6, 0, 0, -1).
+device(pci, addr(0, 29, 0), 4130, 4608, 6, 0, 0, -1).
+device(pci, addr(0, 29, 1), 4130, 4609, 6, 0, 0, -1).
+device(pci, addr(0, 29, 2), 4130, 4610, 6, 0, 0, -1).
+device(pci, addr(0, 29, 3), 4130, 4611, 6, 0, 0, -1).
+device(pci, addr(0, 29, 4), 4130, 4612, 6, 0, 0, -1).
+device(pci, addr(0, 30, 0), 4130, 4608, 6, 0, 0, -1).
+device(pci, addr(0, 30, 1), 4130, 4609, 6, 0, 0, -1).
+device(pci, addr(0, 30, 2), 4130, 4610, 6, 0, 0, -1).
+device(pci, addr(0, 30, 3), 4130, 4611, 6, 0, 0, -1).
+device(pci, addr(0, 30, 4), 4130, 4612, 6, 0, 0, -1).
+device(pci, addr(0, 31, 0), 4130, 4608, 6, 0, 0, -1).
+device(pci, addr(0, 31, 1), 4130, 4609, 6, 0, 0, -1).
+device(pci, addr(0, 31, 2), 4130, 4610, 6, 0, 0, -1).
+device(pci, addr(0, 31, 3), 4130, 4611, 6, 0, 0, -1).
+device(pci, addr(0, 31, 4), 4130, 4612, 6, 0, 0, -1).
+device(pcie, addr(128, 0, 0), 4318, 94, 5, 128, 0, -1).
+device(pcie, addr(128, 1, 0), 4318, 211, 5, 128, 0, -1).
+device(pcie, addr(128, 10, 0), 4318, 87, 6, 128, 0, 0).
+device(pcie, addr(131, 0, 0), 32902, 4221, 2, 0, 0, 0).
+device(pcie, addr(132, 0, 0), 32902, 4221, 2, 0, 0, 0).
+
+
+
+
+
+
+pci_discovery_done.
+
+
+

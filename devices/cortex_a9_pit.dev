@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * cortex_a9_pit.dev
+ *
+ * DESCRIPTION: Cortex A9 Private Timer and watchdog
+ *
+ * This is derived from:
+ *
+ * Cortex-A9 MPCore Technical Reference Manual
+ * (DDI0407G_cortex_a9_mpcore_r3p0_trm.pdf)
+ *
+ * This implements private timers and watchdogs
+ */
+ 
+ device cortex_a9_pit msbfirst ( addr base ) "Cortex A9 Private Timer and watchdog" {
+ 	
+ 	register TimerLoad addr(base, 0x0) "Private Timer Load Register" type(uint32);
+ 	
+ 	register TimerCounter addr(base, 0x4) "Private Timer Counter Register" type(uint32);
+ 	
+ 	register TimerControl addr(base, 0x8) "Private Timer Control Register" {
+ 		_				16	rsvd;
+ 		prescale		8	rw		"Prescale factor";
+ 		_				5	rsvd;
+ 		int_enable		1	rw		"Interrupt enable bit";
+ 		auto_reload		1	rw		"Single shot or reload mode";
+ 		timer_enable	1	rw		"Timer enable bit";
+ 	};
+ 	
+ 	register TimerIntStat addr(base, 0xc) "Private Timer Interrupt Status Register" {
+ 		_				31	rsvd;
+ 		event_flag		1	rw;
+ 	};
+ 	
+ 	register WatchdogLoad addr(base, 0x20) "Watchdog Load Register" type(uint32);
+ 	
+ 	register WatchdogCounter addr(base, 0x24) "Watchdog Counter Register" type(uint32);
+ 	
+ 	register WatchdogControl addr(base, 0x28) "Watchdog Control Register" {
+ 		_				16	rsvd;
+ 		prescale		8	rw		"Prescale factor";
+ 		_				4	rsvd;
+ 		wd_mode			1	rw		"Selects Watchdog or Timer mode";
+ 		int_enable		1	rw		"Interrupt enable bit";
+ 		auto_reload		1	rw		"Single shot or reload mode";
+ 		wd_enable		1	rw		"Timer enable bit";
+ 	};
+ 	
+ 	register WatchdogIntStat addr(base, 0x2c) "Watchdog Interrupt Status Register" {
+ 		_				31	rsvd;
+ 		event_flag		1	rw;
+ 	};
+ 	
+ 	register WatchdogResStat addr(base, 0x30) "Watchdog Reset Status Register" {
+ 		_				31	rsvd;
+ 		reset_flag		1	rw;
+ 	};
+ 	
+ 	//write 0x12345678 then 0x87654321 to this register to disable watchdog mode
+ 	register WatchdogDisable wo addr(base, 0x34) "Watchdog Disable Register" type(uint32);
+ 	
+ 	
+ };

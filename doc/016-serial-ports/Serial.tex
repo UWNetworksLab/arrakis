@@ -1,0 +1,219 @@
+\documentclass[a4paper,twoside]{report} % for a report (default)
+
+\usepackage{amsmath}
+\usepackage{bftn} % You need this
+\usepackage{cite}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{xspace}
+
+\title{Serial ports in Barrelfish}   % title of report
+\author{Timothy Roscoe}	% author
+\tnnumber{016}  % give the number of the tech report
+\tnkey{Serial ports} % Short title, will appear in footer
+
+% \date{Month Year} % Not needed - will be taken from version history
+
+\begin{document}
+\maketitle
+
+%
+% Include version history first
+%
+\begin{versionhistory}
+\vhEntry{0.0}{08.07.2012}{TR}{Initial version}
+\end{versionhistory}
+
+% \intro{Abstract}		% Insert abstract here
+% \intro{Acknowledgements}	% Uncomment (if needed) for acknowledgements
+% \tableofcontents		% Uncomment (if needed) for final draft
+% \listoffigures		% Uncomment (if needed) for final draft
+% \listoftables			% Uncomment (if needed) for final draft
+
+\lstset{
+  language=C,
+  basicstyle=\ttfamily \small,
+  flexiblecolumns=false,
+  basewidth={0.5em,0.45em},
+  boxpos=t,
+}
+
+\newcommand{\note}[1]{[\textcolor{red}{\emph{#1}}]}
+\newcommand{\Intf}{\texttt{/kernel/include/serial.h}\xspace}
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+
+This technical note describes the use of serial ports (UARTS) in
+Barrelfish.  
+
+At present, it only describes the kernel-space interface
+to serial ports, used internally by CPU drivers for debugging and
+console output.  
+
+In the future, it will also describe the interface to user-space UART
+drivers and other console subsystems. 
+
+\chapter{CPU driver interface}\label{cha:cpudriver}
+
+CPU drivers use serial port access for printing debug information,
+status messages during startup, and connecting a debugger such as GDB
+to a processor. 
+
+Each CPU driver implements a serial port subsystem which provides a
+small number serial ports to the rest of the CPU driver.  
+
+The interface to this subsystem is specified in the file
+\Intf, and is described in this chapter.
+Check the header file for a (possibly) more-up-to-date description. 
+
+The interface is intentionally very basic.  It assumes each UART runs
+at a fixed, default speed with basic settings (typically 115000 baud,
+8-bit words, no parity, no flow control).   Serious applications
+should use a full user-space UART driver instead. 
+
+\section{Physical ports}
+
+Serial ports available inside a CPU driver are numbered starting at
+zero. 
+
+The number of available serial ports is given by:
+\begin{alltt}
+  extern const unsigned serial\_num\_physical\_ports;
+\end{alltt}
+
+\subsection{Initialization}
+
+Each port must be initialized before it can be used:
+\begin{alltt}
+  extern errval\_t serial\_init(unsigned port);
+\end{alltt}
+This call should fail with \texttt{SYS\_ERR\_SERIAL\_PORT\_INVALID} if
+the port cannot be initialized, or the port number is out of range.
+
+Initializing a serial port more than once, however, is permissible:
+subsequent attempts to initialize an initialized port are silently
+ignored.  The motivation for this is to handle the case where the
+console and debug logical ports share the same physical port. 
+
+In some cases it is necessary to do an ``early'' initializaton, for
+example while running in physical address space before the MMU is
+enabled.  In such cases the CPU driver should call, and the code
+implement, the following:
+\begin{alltt}
+  extern errval\_t serial\_early\_init(unsigned port);
+\end{alltt}
+
+This returns the same errors as \texttt{serial\_init()}, but it is a
+bug to call this function more than once with the same port number,
+and doing so will cause an assertion failure. 
+
+\subsection{Input/output}
+
+Each serial port provides polled, blocking, single-character
+programmed I/O:
+\begin{alltt}
+  extern void serial\_putchar(unsigned port, char c);
+  extern char serial\_getchar(unsigned port);
+\end{alltt}
+It is a bug to call these with a port number that is out of range
+(i.e. one that is greater than or equal to
+\texttt{serial\_num\_physical\_ports}), and doing so will cause an
+assertion failure.  It may also cause an assertion failure to call
+these functions on a serial port which has not yet been initialized
+with a call to \texttt{serial\_init()} or
+\texttt{serial\_early\_init()}. 
+
+Note that implementations of these functions should not attempt to use
+DMA or interrupts.  They should also not buffer any data in software
+(though they may use a hardware FIFO in the UART if appropriate). 
+
+\section{Logical ports}
+
+Barrelfish CPU drivers have access to two logical serial ports: 
+\begin{itemize}
+\item The \emph{console} port is used for general logging and debug
+  information.  It is principally called by \texttt{kputchar()}, which
+  implements line-buffering and is in turn called by the kernel
+  \texttt{printf()} function.
+\item The \emph{debug} port can be used to attach an external debugger
+  like \texttt{gdb}. 
+\end{itemize}
+
+Both logical ports are assigned to sensible default physical ports by
+the serial port implementation, but they can be changed by writing
+these variables:
+\begin{alltt}
+  extern unsigned serial\_console\_port;
+  extern unsigned serial\_debug\_port;
+\end{alltt}
+
+Note that it is not unusual for both logical ports to be assigned to
+the same physical port. 
+
+The file \Intf also includes inline functions to initialize whichever
+physical port is currently assigned to a logical port:
+\begin{alltt}
+  static inline errval\_t serial\_console\_init(void);
+  static inline errval\_t serial\_debug\_init(void);
+\end{alltt}
+
+There are also input functions, which simply call
+\texttt{serial\_getchar()} with the appropriate port number:
+\begin{alltt}
+  static inline char serial\_console\_getchar(void);
+  static inline char serial\_debug\_getchar(void);
+\end{alltt}
+
+Output functions are similar, but in addition replace any LF character
+with the sequence CR/LF:
+\begin{alltt}
+  static inline void serial\_console\_putchar(char c);
+  static inline void serial\_debug\_putchar(char c);
+\end{alltt}
+
+\section{Implementing a serial port subsystem}
+
+Typically, a rudimentary console driver is the first thing to be
+implemented when writing a CPU driver for a new architecture.   
+
+The serial port subsystem for a CPU driver must implement all the
+functionality in \Intf that deals with physical serial ports, in other
+words:
+\begin{verbatim}
+  const unsigned serial_num_physical_ports;
+  errval_t serial_init(unsigned port);
+  errval_t serial_early_init(unsigned port);
+  void serial_putchar(unsigned port, char c);
+  char serial_getchar(unsigned port);
+  unsigned serial_console_port;  
+  unsigned serial_debug_port;
+\end{verbatim}
+
+Functions for logical ports are provided by inline functions in the
+header file. 
+
+Initializing a serial port typically consists of configuring the UART
+hardware, and then mapping the registers appropriately into the
+kernel's virtual address space. 
+
+Examples of serial port implementations at time of writing include:
+\begin{itemize}
+\item \texttt{/kernel/arch/omap44xx/omap\_uart.c}
+\item \texttt{/kernel/arch/x86/serial.c}
+\end{itemize}
+
+\subsection{Multiprocessor considerations}
+
+This document does not address accessing a single UART from more than
+CPU driver.  If this happens at all, it is typically hidden by the
+implementation (for example, some x86 CPU drivers use a global
+spinlock, since performance is not an issue anyway).  Care should be
+taken not to initialize the UARTs multiple times in such
+circumstances. 
+
+
+
+\end{document}

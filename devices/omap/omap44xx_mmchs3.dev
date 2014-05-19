@@ -1,0 +1,1241 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_mmchs3.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_mmchs3 msbfirst ( addr base ) "" {
+    
+    
+    register mmchs_hl_rev ro addr(base, 0x0) "IP Revision Identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants retmode_status width(1) "" {
+        RETMODE_0 = 0 "Retention mode disabled";
+        RETMODE_1 = 1 "Retention mode enabled";
+    };
+
+    constants mem_size_status width(4) "" {
+        MEM_SIZE_1_r = 1 "Memory of 512 bytes, max block length is 512 bytes";
+        MEM_SIZE_2_r = 2 "Memory of 1024 bytes, max block length is 1024 bytes";
+        MEM_SIZE_4_r = 4 "Memory of 2048 bytes, max block length is 2048 bytes";
+        MEM_SIZE_8_r = 8 "Memory of 4096 bytes, max block length is 2048 bytes";
+    };
+
+    constants merge_mem_status width(1) "" {
+        MERGE_MEM_0_r = 0 "2 memories instantiated, one per data transfer direction.";
+        MERGE_MEM_1_r = 1 "A single memory is used with multiplexed addresses, data and clocks.";
+    };
+
+    constants madma_en_status width(1) "" {
+        MADMA_EN_0_r = 0 "No Master DMA (ADMA) management supported";
+        MADMA_EN_1_r = 1 "Controller supports ADMA";
+    };
+    
+    register mmchs_hl_hwinfo addr(base, 0x4) "Information about the IP module's hardware configuration, that is, typically the module's HDL generics (if any). Actual field format and encoding is up to the module's designer to decide." {
+        _ 25 mbz;
+        retmode 1 ro type(retmode_status) "Retention mode generic parameter This bit field indicates whether the retention mode is supported using the pin PIRFFRET.";
+        mem_size 4 ro type(mem_size_status) "Memory size for FIFO buffer:";
+        merge_mem 1 ro type(merge_mem_status) "Memory merged for FIFO buffer: This register defines the configuration of FIFO buffer architecture. If the bit is set STA and DFT shall support clock multiplexing and balancing.";
+        madma_en 1 ro type(madma_en_status) "Master DMA enabled generic parameter: This register defines the configuration of the controller to know if it supports the master DMA management called ADMA.";
+    };
+
+    constants standbymode_status width(2) "" {
+        STANDBYMODE_0 = 0 "Force-standby mode: local initiator is unconditionally placed in standby state.Backup mode, for debug only.";
+        STANDBYMODE_1 = 1 "No-standby mode: local initiator is unconditionally placed out of standby state.Backup mode, for debug only.";
+        STANDBYMODE_2 = 2 "Smart-standby mode: local initiator standby status depends on local conditions, that is, the module's functional requirement from the initiator.IP module shall not generate (initiator-related) wakeup events.";
+        STANDBYMODE_3 = 3 "Smart-Standby wakeup-capable mode: local initiator standby status depends on local conditions, that is, the module's functional requirement from the initiator. IP module may generate (master-related) wakeup events when in standby state.Mode is only relevant if the appropriate IP module 'mwakeup' output is implemented.";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle mode: local target's idle state follows (acknowledges) the system's idle requests unconditionally, that is, regardless of the IP module's internal requirements.Backup mode, for debug only.";
+        IDLEMODE_1 = 1 "No-idle mode: local target never enters idle state.Backup mode, for debug only.";
+        IDLEMODE_2 = 2 "Smart-idle mode: local target's idle state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements.IP module shall not generate (IRQ- or DMA-request-related) wakeup events.";
+        IDLEMODE_3 = 3 "Smart-idle wakeup-capable mode: local target's idle state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements.IP module may generate (IRQ- or DMA-request-related) wakeup events when in idle state.Mode is only relevant if the appropriate IP module 'swakeup' output(s) is (are) implemented.";
+    };
+
+    constants freeemu_status width(1) "" {
+        FREEEMU_0 = 0 "IP module is sensitive to emulation suspend";
+        FREEEMU_1 = 1 "IP module is not sensitive to emulation suspend";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_w = 0 "No action";
+        SOFTRESET_0_r = 0 "Reset done, no pending action";
+        SOFTRESET_1_r = 1 "Reset (software or other) ongoing";
+        SOFTRESET_1_w = 1 "Initiate software reset";
+    };
+    
+    register mmchs_hl_sysconfig addr(base, 0x10) "Clock management configuration" {
+        _ 26 mbz;
+        standbymode 2 rw type(standbymode_status) "Configuration of the local initiator state management mode. By definition, initiator may generate read/write transaction as long as it is out of STANDBY state.";
+        idlemode 2 rw type(idlemode_status) "Configuration of the local target state management mode. By definition, target can handle read/write transaction as long as it is out of IDLE state.";
+        freeemu 1 rw type(freeemu_status) "Sensitivity to emulation (debug) suspend input signal. Functionality NOT implemented in MMCHS.";
+        softreset 1 rw type(softreset_status) "Software reset. (Optional)";
+    };
+
+    constants standbymode_status1 width(2) "" {
+        STANDBYMODE_0_1 = 0 "Force-standby. Mstandby is forced unconditionnaly.";
+        STANDBYMODE_1_1 = 1 "No-standby. Mstandby is never asserted.";
+        STANDBYMODE_2_1 = 2 "Smart-standby mode: local initiator standby status depends on local conditions, that is, the module's functional requirement from the initiator.IP module shall not generate (initiator-related) wakeup events.";
+        STANDBYMODE_3_1 = 3 "Smart-Standby wakeup-capable mode: local initiator standby status depends on local conditions, that is, the module's functional requirement from the initiator. IP module may generate (master-related) wakeup events when in standby state.Mode is only relevant if the appropriate IP module 'mwakeup' output is implemented.";
+    };
+
+    constants clockactivity_status width(2) "" {
+        CLOCKACTIVITY_0 = 0 "Interface and Functional clock may be switched off.";
+        CLOCKACTIVITY_1 = 1 "Interface clock is maintained. Functional clock may be switched-off.";
+        CLOCKACTIVITY_2 = 2 "Functional clock is maintained. Interface clock may be switched-off.";
+        CLOCKACTIVITY_3 = 3 "Interface and Functional clocks are maintained.";
+    };
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0 = 0 "If an idle request is detected, the MMCHS acknowledges it unconditionally and goes in Inactive mode. Interrupt and DMA requests are unconditionally de-asserted.";
+        SIDLEMODE_1 = 1 "If an idle request is detected, the request is ignored and the module keeps on behaving normally.";
+        SIDLEMODE_2 = 2 "Smart-idle mode: local target's idle state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements.IP module shall not generate (IRQ- or DMA-request-related) wakeup events.";
+        SIDLEMODE_3 = 3 "Smart-idle wakeup-capable mode: local target's idle state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements.IP module may generate (IRQ- or DMA-request-related) wakeup events when in idle state.Mode is only relevant if the appropriate IP module 'swakeup' output(s) is (are) implemented.";
+    };
+
+    constants enawakeup_status width(1) "" {
+        ENAWAKEUP_0 = 0 "Wakeup capability is disabled";
+        ENAWAKEUP_1 = 1 "Wakeup capability is enabled";
+    };
+
+    constants softreset_status1 width(1) "" {
+        SOFTRESET_0_r_1 = 0 "Normal mode";
+        SOFTRESET_0_w_1 = 0 "No effect.";
+        SOFTRESET_1_w_1 = 1 "Trigger a module reset.";
+        SOFTRESET_1_r_1 = 1 "The module is reset.";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "Clocks are free-running";
+        AUTOIDLE_1 = 1 "Automatic clock gating strategy is applied, based on the Interconnect and MMC interface activity";
+    };
+    
+    register mmchs_sysconfig addr(base, 0x110) "System Configuration Register This register allows controlling various parameters of the Interconnect interface." {
+        _ 18 mbz;
+        standbymode 2 rw type(standbymode_status1) "Master interface power Management, standby/wait control. The bit field is only useful when generic parameter MMCHS_HL_HWINFO[0] MADMA_EN (Master ADMA enable) is set as active, otherwise it is a read only register read a 0.";
+        _ 2 mbz;
+        clockactivity 2 rw type(clockactivity_status) "Clocks activity during wake up mode period. Bit8: Interface clock Bit9: Functional clock";
+        _ 1 mbz;
+        _ 1 mbz;
+        _ 1 mbz;
+        sidlemode 2 rw type(sidlemode_status) "Power management";
+        enawakeup 1 rw type(enawakeup_status) "Wakeup feature control";
+        softreset 1 rw type(softreset_status1) "Software reset. The bit is automatically reset by the hardware. During reset, it always returns 0.";
+        autoidle 1 rw type(autoidle_status) "Internal Clock gating strategy";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Internal module reset is on-going";
+        RESETDONE_1_r = 1 "Reset completed.";
+    };
+    
+    register mmchs_sysstatus addr(base, 0x114) "System Status Register This register provides status information about the module excluding the interrupt status information" {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal Reset Monitoring Note: the debounce clock , the system clock (Interface) and the functional clock shall be provided to the MMC/SD/SDIO host controller to allow the internal reset monitoring.";
+    };
+    
+    register mmchs_csre rw addr(base, 0x124) "Card status response error This register enables the host controller to detect card status errors of response type R1, R1b for all cards and of R5, R5b and R6 response for cards types SD or SDIO. When a bit [i] is set to 1, if the corresponding bit at the same position in the response [i] is set to 1, the host controller indicates a card error ([CERR]) interrupt status to avoid the host driver reading the response register (). Note: No automatic card error detection for autoCMD12 is implemented; the host system has to check autoCMD12 response register () for possible card errors." type(uint32);
+
+    constants sdcd_status width(1) "" {
+        SDCD_0_r = 0 "The card detect pin is driven low.";
+        SDCD_1_r = 1 "The card detect pin is driven high.";
+    };
+
+    constants sdwp_status width(1) "" {
+        SDWP_0_r = 0 "The write protect pin SDWP is driven low.";
+        SDWP_1_r = 1 "The write protect pin SDWP is driven high.";
+    };
+
+    constants wakd_status width(1) "" {
+        WAKD_0_w = 0 "The pin SWAKEUP is driven low.";
+        WAKD_0_r = 0 "No action. Returns 0.";
+        WAKD_1_w = 1 "The pin SWAKEUP is driven high.";
+        WAKD_1_r = 1 "No action. Returns 1.";
+    };
+
+    constants ssb_status width(1) "" {
+        SSB_0_w = 0 "Clear this SSB bit field. Writing 0 does not clear already set status bits;";
+        SSB_0_r = 0 "No action. Returns 0.";
+        SSB_1_r = 1 "No action. Returns 1.";
+        SSB_1_w = 1 "Force to 1 all status bits of the interrupt status register () only if the corresponding bit field in the Interrupt signal enable register () is set.";
+    };
+
+    constants d7d_status width(1) "" {
+        D7D_0_r = 0 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT7 line (low). If [3] DDIR = 0 (output mode direction), returns 0";
+        D7D_0_w = 0 "If[3] DDIR = 0 (output mode direction), the DAT7 line is driven low. If [3] DDIR = 1 (input mode direction), no effect.";
+        D7D_1_r = 1 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT7 line (high) If [3] DDIR = 0 (output mode direction), returns 1";
+        D7D_1_w = 1 "If[3] DDIR = 0 (output mode direction), the DAT7 line is driven high. If [3] DDIR = 1 (input mode direction), no effect.";
+    };
+
+    constants d6d_status width(1) "" {
+        D6D_0_r = 0 "If SYSTEST[DDIR] = 1 (input mode direction), returns the value on the DAT6 line (low). If [3] DDIR = 0 (output mode direction), returns 0";
+        D6D_0_w = 0 "If[3] DDIR = 0 (output mode direction), the DAT6 line is driven low. If [3] DDIR = 1 (input mode direction), no effect.";
+        D6D_1_r = 1 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT6 line (high) If [3] DDIR = 0 (output mode direction), returns 1";
+        D6D_1_w = 1 "If[3] DDIR = 0 (output mode direction), the DAT6 line is driven high. If [3] DDIR = 1 (input mode direction), no effect.";
+    };
+
+    constants d5d_status width(1) "" {
+        D5D_0_r = 0 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT5 line (low). If [3] DDIR = 0 (output mode direction), returns 0";
+        D5D_0_w = 0 "If[3] DDIR = 0 (output mode direction), the DAT5 line is driven low. If [3] DDIR = 1 (input mode direction), no effect.";
+        D5D_1_r = 1 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT5 line (high) If [3] DDIR = 0 (output mode direction), returns 1";
+        D5D_1_w = 1 "If[3] DDIR = 0 (output mode direction), the DAT5 line is driven high. If [3] DDIR = 1 (input mode direction), no effect.";
+    };
+
+    constants d4d_status width(1) "" {
+        D4D_0_w = 0 "If[3] DDIR = 0 (output mode direction), the DAT4 line is driven low. If [3] DDIR = 1 (input mode direction), no effect.";
+        D4D_0_r = 0 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT4 line (low). If [3] DDIR = 0 (output mode direction), returns 0";
+        D4D_1_w = 1 "If[3] DDIR = 0 (output mode direction), the DAT4 line is driven high. If [3] DDIR = 1 (input mode direction), no effect.";
+        D4D_1_r = 1 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT4 line (high) If [3] DDIR = 0 (output mode direction), returns 1";
+    };
+
+    constants d3d_status width(1) "" {
+        D3D_0_w = 0 "If[3] DDIR = 0 (output mode direction), the DAT3 line is driven low. If [3] DDIR = 1 (input mode direction), no effect.";
+        D3D_0_r = 0 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT3 line (low). If [3] DDIR = 0 (output mode direction), returns 0";
+        D3D_1_r = 1 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT3 line (high) If [3] DDIR = 0 (output mode direction), returns 1";
+        D3D_1_w = 1 "If[3] DDIR = 0 (output mode direction), the DAT3 line is driven high. If [3] DDIR = 1 (input mode direction), no effect.";
+    };
+
+    constants d2d_status width(1) "" {
+        D2D_0_w = 0 "If[3] DDIR = 0 (output mode direction), the DAT2 line is driven low. If [3] DDIR = 1 (input mode direction), no effect.";
+        D2D_0_r = 0 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT2 line (low). If [3] DDIR = 0 (output mode direction), returns 0";
+        D2D_1_w = 1 "If[3] DDIR = 0 (output mode direction), the DAT2 line is driven high. If [3] DDIR = 1 (input mode direction), no effect.";
+        D2D_1_r = 1 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT2 line (high) If [3] DDIR = 0 (output mode direction), returns 1";
+    };
+
+    constants d1d_status width(1) "" {
+        D1D_0_r = 0 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT1 line (low). If [3] DDIR = 0 (output mode direction), returns 0";
+        D1D_0_w = 0 "If[3] DDIR = 0 (output mode direction), the DAT1 line is driven low. If [3] DDIR = 1 (input mode direction), no effect.";
+        D1D_1_r = 1 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT1 line (high) If [3] DDIR = 0 (output mode direction), returns 1";
+        D1D_1_w = 1 "If[3] DDIR = 0 (output mode direction), the DAT1 line is driven high. If [3] DDIR = 1 (input mode direction), no effect.";
+    };
+
+    constants d0d_status width(1) "" {
+        D0D_0_w = 0 "If[3] DDIR = 0 (output mode direction), the DAT0 line is driven low. If [3] DDIR = 1 (input mode direction), no effect.";
+        D0D_0_r = 0 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT0 line (low). If [3] DDIR = 0 (output mode direction), returns 0";
+        D0D_1_w = 1 "If[3] DDIR = 0 (output mode direction), the DAT0 line is driven high. If [3] DDIR = 1 (input mode direction), no effect.";
+        D0D_1_r = 1 "If[3] DDIR = 1 (input mode direction), returns the value on the DAT0 line (high) If [3] DDIR = 0 (output mode direction), returns 1";
+    };
+
+    constants ddir_status width(1) "" {
+        DDIR_0_w = 0 "The DAT lines are outputs (host to card)";
+        DDIR_0_r = 0 "No action. Returns 0.";
+        DDIR_1_r = 1 "No action. Returns 1.";
+        DDIR_1_w = 1 "The DAT lines are inputs (card to host)";
+    };
+
+    constants cdat_status width(1) "" {
+        CDAT_0_w = 0 "If[1] CDIR = 0 (output mode direction), the CMD line is driven low. If [1] CDIR = 1 (input mode direction), no effect.";
+        CDAT_0_r = 0 "If[1] CDIR = 1 (input mode direction), returns the value on the CMD line (low). If [1] CDIR = 0 (output mode direction), returns 0";
+        CDAT_1_w = 1 "If[1] CDIR = 0 (output mode direction), the CMD line is driven high. If [1] CDIR = 1 (input mode direction), no effect.";
+        CDAT_1_r = 1 "If[1] CDIR = 1 (input mode direction), returns the value on the CMD line (high) If [1] CDIR = 0 (output mode direction), returns 1";
+    };
+
+    constants cdir_status width(1) "" {
+        CDIR_0_r = 0 "No action. Returns 0.";
+        CDIR_0_w = 0 "The CMD line is an output (host to card)";
+        CDIR_1_r = 1 "No action. Returns 1.";
+        CDIR_1_w = 1 "The CMD line is an input (card to host)";
+    };
+
+    constants mckd_status width(1) "" {
+        MCKD_0_r = 0 "No action. Returns 0.";
+        MCKD_0_w = 0 "The output clock is driven low.";
+        MCKD_1_w = 1 "The output clock is driven high.";
+        MCKD_1_r = 1 "No action. Returns 1.";
+    };
+    
+    register mmchs_systest addr(base, 0x128) "System Test register This register is used to control the signals that connect to I/O pins when the module is configured in system test (SYSTEST) mode for boundary connectivity verification. Note: In SYSTEST mode, a write into register will not start a transfer. The buffer behaves as a stack accessible only by the local host (push and pop operations). In this mode, the Transfer Block Size ([11:0] BLEN) and the Blocks count for current transfer ([31:16] NBLK) are needed to generate a Buffer write ready interrupt ([4] BWR) or a Buffer read ready interrupt ([5] BRR) and DMA requests if enabled." {
+        _ 15 mbz;
+        obi 1 rw type(standbymode_status) "Out-Of-Band Interrupt (OBI) data value";
+        sdcd 1 ro type(sdcd_status) "Card detect input signal (SDCD) data value";
+        sdwp 1 ro type(sdwp_status) "Write protect input signal (SDWP) data value";
+        wakd 1 rw type(wakd_status) "Wake request output signal data value";
+        ssb 1 rw type(ssb_status) "Set status bit This bit must be cleared prior attempting to clear a status bit of the interrupt status register (MMCHS_STAT).";
+        d7d 1 rw type(d7d_status) "DAT7 input/output signal data value";
+        d6d 1 rw type(d6d_status) "DAT6 input/output signal data value";
+        d5d 1 rw type(d5d_status) "DAT5 input/output signal data value";
+        d4d 1 rw type(d4d_status) "DAT4 input/output signal data value";
+        d3d 1 rw type(d3d_status) "DAT3 input/output signal data value";
+        d2d 1 rw type(d2d_status) "DAT2 input/output signal data value";
+        d1d 1 rw type(d1d_status) "DAT1 input/output signal data value";
+        d0d 1 rw type(d0d_status) "DAT0 input/output signal data value";
+        ddir 1 rw type(ddir_status) "Control of the DAT[7:0] pins direction.";
+        cdat 1 rw type(cdat_status) "CMD input/output signal data value";
+        cdir 1 rw type(cdir_status) "Control of the CMD pin direction.";
+        mckd 1 rw type(mckd_status) "MMC clock output signal data value";
+    };
+
+    constants sdma_lne_status width(1) "" {
+        SDMA_LNE_0 = 0 "Slave DMA edge sensitive, Early DMA de-assertion";
+        SDMA_LNE_1 = 1 "Slave DMA level sensitive, Late DMA de-assertion";
+    };
+
+    constants dma_mns_status width(1) "" {
+        DMA_MNS_0 = 0 "The controller is slave on data transfers with system.";
+        DMA_MNS_1 = 1 "The controller is master on data exchange with system, controller must be configured as using DMA.";
+    };
+
+    constants ddr_status width(1) "" {
+        DDR_0 = 0 "Standard mode : data are transmitted on a single edge depending on[2] HSPE.";
+        DDR_1 = 1 "Data Bytes and CRC are transmitted on both edge.";
+    };
+
+    constants boot_cf0_status width(1) "" {
+        BOOT_CF0_0_w = 0 "CMD line is released when it was previously forced to 0 by a boot sequence.";
+        BOOT_CF0_0_r = 0 "CMD line not forced";
+        BOOT_CF0_1_r = 1 "CMD line forced to 0 is enabled";
+        BOOT_CF0_1_w = 1 "CMD line forced to 0 is enabled and will be active after writing into";
+    };
+
+    constants boot_ack_status width(1) "" {
+        BOOT_ACK_0 = 0 "No acknowledge to be received";
+        BOOT_ACK_1 = 1 "A boot status will be received on DAT0 line after issuing a command.";
+    };
+
+    constants clkextfree_status width(1) "" {
+        CLKEXTFREE_0 = 0 "External card clock is cut off outside active transaction period.";
+        CLKEXTFREE_1 = 1 "External card clock is maintain even out of active transaction period only if[2] CEN is set.";
+    };
+
+    constants paden_status width(1) "" {
+        PADEN_0 = 0 "ADPIDLE module pin is not forced, it is automatically generated by the MMC fsms.";
+        PADEN_1 = 1 "ADPIDLE module pin is forced to active state.";
+    };
+
+    constants obie_status width(1) "" {
+        OBIE_0 = 0 "Out-of-Band interrupt detection disabled";
+        OBIE_1 = 1 "Out-of-Band interrupt detection enabled";
+    };
+
+    constants obip_status width(1) "" {
+        OBIP_0 = 0 "active high level";
+        OBIP_1 = 1 "active low level";
+    };
+
+    constants ceata_status width(1) "" {
+        CEATA_0 = 0 "Standard MMC/SD/SDIO mode.";
+        CEATA_1 = 1 "CE-ATA mode next commands are considered as CE-ATA commands.";
+    };
+
+    constants ctpl_status width(1) "" {
+        CTPL_0 = 0 "Disable all the input buffers outside of a transaction.";
+        CTPL_1 = 1 "Disable all the input buffers except the buffer of DAT[1] outside of a transaction.";
+    };
+
+    constants dval_status width(2) "" {
+        DVAL_0 = 0 "33 us debounce period";
+        DVAL_1 = 1 "231 us debounce period";
+        DVAL_2 = 2 "1 ms debounce period";
+        DVAL_3 = 3 "8,4 ms debounce period";
+    };
+
+    constants mit_status width(1) "" {
+        MIT_0 = 0 "Command timeout enabled";
+        MIT_1 = 1 "Command timeout disabled";
+    };
+
+    constants dw8_status width(1) "" {
+        DW8_0 = 0 "1-bit or 4-bit Data width (DAT[0] used, MMC, SD cards)";
+        DW8_1 = 1 "8-bit Data width (DAT[7:0] used, MMC cards)";
+    };
+
+    constants mode_status width(1) "" {
+        MODE_0 = 0 "Functional mode. Transfers to the MMC/SD/SDIO cards follow the card protocol. MMC clock is enabled. MMC/SD transfers are operated under the control of the CMD register.";
+        MODE_1 = 1 "SYSTEST mode The signal pins are configured as general-purpose input/output and the 1024-byte buffer is configured as a stack memory accessible only by the local host or system DMA. The pins retain their default type (input, output or in-out). SYSTEST mode is operated under the control of the SYSTEST register.";
+    };
+
+    constants str_status width(1) "" {
+        STR_0 = 0 "Block oriented data transfer";
+        STR_1 = 1 "Stream oriented data transfer";
+    };
+
+    constants od_status width(1) "" {
+        OD_0 = 0 "No Open Drain";
+        OD_1 = 1 "Open Drain or Broadcast host response";
+    };
+    
+    register mmchs_con addr(base, 0x12C) "Configuration register This register is used: - to select the functional mode or the SYSTEST mode for any card. - to send an initialization sequence to any card. - to enable the detection on DAT[1] of a card interrupt for SDIO cards only. and also to configure : - specific data and command transfers for MMC cards only. - the parameters related to the card detect and write protect input signals." {
+        _ 10 mbz;
+        sdma_lne 1 rw type(sdma_lne_status) "Slave DMA Level/Edge Request: The waveform of the DMA request can be configured either edge sensitive with early de-assertion on first access to MMCHS_DATA register or late de-assertion, request remains active until last allowed data written into MMCHS_DATA.";
+        dma_mns 1 rw type(dma_mns_status) "DMA Master or Slave selection: When this bit is set and the controller is configured to use the DMA, Interconnect master interface is used to get datas from system using ADMA2 procedure (direct access to the memory).This option is only available if generic parameter MMCHS_HL_HWINFO[0] MADMA_EN is asserted to 1.";
+        ddr 1 rw type(ddr_status) "Dual Data Rate mode: When this register is set, the controller uses both clock edge to emit or receive data. Odd bytes are transmitted on falling edges and even bytes are transmitted on rise edges. It only applies on Data bytes and CRC, Start, end bits and CRC status are kept full cycle. This bit field is only meaningful and active for even clock divider ratio of MMCHS_SYSCTL[15:6] CLKD, it is insensitive to MMCHS_HCTL[2] HSPE setting.";
+        boot_cf0 1 rw type(boot_cf0_status) "Boot status supported: This register is set when the CMD line need to be forced to 0 for a boot sequence. CMD line is driven to 0 after writing in MMCHS_CMD. The line is released when this bit field is de-asserted and abort data transfer in case of a pending transaction.";
+        boot_ack 1 rw type(boot_ack_status) "Book acknowledge received: When this bit is set the controller should receive a boot status on DAT0 line after next command issued. If no status is received a data timeout will be generated.";
+        clkextfree 1 rw type(clkextfree_status) "External clock free running: This register is used to maintain card clock out of transfer transaction to enable slave module for example to generate a synchronous interrupt on DAT[1]. The Clock will be maintain only if MMCHS_SYSCTL[2] CEN is set.";
+        paden 1 rw type(paden_status) "Control Power for MMC Lines: This register is only useful when MMC PADs contain power saving mechanism to minimize its leakage power. It works as a GPIO that directly control the ACTIVE pin of PADs. Excepted for DAT[1], the signal is also combine outside the module with the dedicated power control MMCHS_CON[11] CTPL bit.";
+        obie 1 rw type(obie_status) "Out-of-Band Interrupt Enable MMC cards only: This bit enables the detection of Out-of-Band Interrupt on MMCOBI input pin. The usage of the Out-of-Band signal (OBI) is optional and depends on the system integration.";
+        obip 1 rw type(obip_status) "Out-of-Band Interrupt Polarity MMC cards only: This bit selects the active level of the out-of-band interrupt coming from MMC cards. The usage of the Out-of-Band signal (OBI) is optional and depends on the system integration.";
+        ceata 1 rw type(ceata_status) "CE-ATA control mode MMC cards compliant with CE-ATA:By default, this bit is set to 0. It is use to indicate that next commands are considered as specific CE-ATA commands that potentially use 'command completion' features.";
+        ctpl 1 rw type(ctpl_status) "Control Power for DAT[1] line MMC and SD cards: By default, this bit is set to 0 and the host controller automatically disables all the input buffers outside of a transaction to minimize the leakage current. SDIO cards: When this bit is set to 1, the host controller automatically disables all the input buffers except the buffer of DAT[1] outside of a transaction in order to detect asynchronous card interrupt on DAT[1] line and minimize the leakage current of the buffers.";
+        dval 2 rw type(dval_status) "Debounce filter value All cards This register is used to define a debounce period to filter the card detect input signal (SDCD). The usage of the card detect input signal (SDCD) is optional and depends on the system integration and the type of the connector housing that accommodates the card.";
+        wpp 1 rw type(obip_status) "Write protect polarity For SD and SDIO cards only This bit selects the active level of the write protect input signal (SDWP). The usage of the write protect input signal (SDWP) is optional and depends on the system integration and the type of the connector housing that accommodates the card.";
+        cdp 1 rw type(obip_status) "Card detect polarity All cards This bit selects the active level of the card detect input signal (SDCD). The usage of the card detect input signal (SDCD) is optional and depends on the system integration and the type of the connector housing that accommodates the card.";
+        mit 1 rw type(mit_status) "MMC interrupt command Only for MMC cards. This bit must be set to 1, when the next write access to the command register (MMCHS_CMD) is for writing a MMC interrupt command (CMD40) requiring the command timeout detection to be disabled for the command response.";
+        dw8 1 rw type(dw8_status) "8-bit mode MMC select For SD/SDIO cards, this bit must be set to 0. For MMC card, this bit must be set following a valid SWITCH command (CMD6) with the correct value and extend CSD index written in the argument. Prior to this command, the MMC card configuration register (CSD and EXT_CSD) must be verified for compliancy with MMC standard specification 4.x (see section 3.6).";
+        mode 1 rw type(mode_status) "Mode select All cards These bits select between Functional mode and SYSTEST mode.";
+        str 1 rw type(str_status) "Stream command Only for MMC cards. This bit must be set to 1 only for the stream data transfers (read or write) of the adtc commands. Stream read is a class 1 command (CMD11: READ_DAT_UNTIL_STOP). Stream write is a class 3 command (CMD20: WRITE_DAT_UNTIL_STOP).";
+        hr 1 rw type(standbymode_status) "Broadcast host response Only for MMC cards. This register is used to force the host to generate a 48-bit response for bc command type. It can be used to terminate the interrupt mode by generating a CMD40 response by the core (see section 4.3, 'Interrupt Mode', in the MMC [1] specification). In order to have the host response to be generated in open drain mode, the register MMCHS_CON[0] OD must be set to 1. When MMCHS_CON[12] CEATA is set to 1 and MMCHS_ARG set to 0x00000000 when writing 0x00000000 into MMCHS_CMD register, the host controller performs a 'command completion signal disable' token that is, CMD line held to 0 during 47 cycles followed by a 1.";
+        init 1 rw type(standbymode_status) "Send initialization stream All cards. When this bit is set to 1, and the card is idle, an initialization sequence is sent to the card. An initialization sequence consists of setting the CMD line to 1 during 80 clock cycles. The initialisation sequence is mandatory - but it is not required to do it through this bit - this bit makes it easier. Clock divider (MMCHS_SYSCTL[15:6] CLKD) should be set to ensure that 80 clock periods are greater than 1ms. (see section 9.3, 'Power-Up', in the MMC card specification [1], or section 6.4 in the SD card specification [2]). Note: in this mode, there is no command sent to the card and no response is expected";
+        od 1 rw type(od_status) "Card open drain mode. Only for MMC cards. This bit must be set to 1 for MMC card commands 1, 2, 3 and 40, and if the MMC card bus is operating in open-drain mode during the response phase to the command sent. Typically, during card identification mode when the card is either in idle, ready or ident state. It is also necessary to set this bit to 1, for a broadcast host response (see Broadcast host response register MMCHS_CON[2] HR)";
+    };
+
+    constants pwrcnt_status width(16) "" {
+        PWRCNT_0 = 0 "No additional delay added";
+        PWRCNT_1 = 1 "TCF delay (card clock period)";
+        PWRCNT_2 = 2 "TCF x 2 delay (card clock period)";
+        PWRCNT_65534 = 65534 "TCF x 65534 delay (card clock period)";
+        PWRCNT_65535 = 65535 "TCF x 65535 delay (card clock period)";
+    };
+    
+    register mmchs_pwcnt addr(base, 0x130) "Power counter register This register is used to program a mmc counter to delay command transfers after activating the PAD power, this value depends on PAD characteristics and voltage." {
+        _ 16 mbz;
+        pwrcnt 16 rw type(pwrcnt_status) "Power counter register. This register is used to introduce a delay between the PAD ACTIVE pin assertion and the command issued.";
+    };
+
+    constants nblk_status width(16) "" {
+        NBLK_0 = 0 "Stop count";
+        NBLK_1 = 1 "1 block";
+        NBLK_2 = 2 "2 blocks";
+        NBLK_65535 = 65535 "65535 blocks";
+    };
+
+    constants blen_status width(12) "" {
+        BLEN_0 = 0 "No data transfer";
+        BLEN_1 = 1 "1 byte block length";
+        BLEN_2 = 2 "2 bytes block length";
+        BLEN_3 = 3 "3 bytes block length";
+        BLEN_511 = 511 "511 bytes block length";
+        BLEN_512 = 512 "512 bytes block length";
+        BLEN_1024 = 1024 "1024 bytes block length";
+    };
+    
+    register mmchs_blk addr(base, 0x204) "Transfer Length Configuration register [11:0] BLEN is the block size register. [31:16] NBLK is the block count register. This register shall be used for any card." {
+        nblk 16 rw type(nblk_status) "Blocks count for current transfer This register is enabled when Block count Enable (MMCHS_CMD[1] BCE) is set to 1 and is valid only for multiple block transfers. Setting the block count to 0 results no data blocks being transferred. Note: The host controller decrements the block count after each block transfer and stops when the count reaches zero. This register can be accessed only if no transaction is executing (i.e, after a transaction has stopped). Read operations during transfers may return an invalid value and write operation will be ignored. In suspend context, the number of blocks yet to be transferred can be determined by reading this register. When restoring transfer context prior to issuing a Resume command, The local host shall restore the previously saved block count.";
+        _ 4 mbz;
+        blen 12 rw type(blen_status) "Transfer Block Size. This register specifies the block size for block data transfers. Read operations during transfers may return an invalid value, and write operations are ignored. When a CMD12 command is issued to stop the transfer, a read of the BLEN field after transfer completion (MMCHS_STAT[1] TC set to 1) will not return the true byte number of data length while the stop occurs but the value written in this register before transfer is launched.";
+    };
+    
+    register mmchs_arg rw addr(base, 0x208) "Command argument Register This register contains command argument specified as bit 39-8 of Command-Format These registers must be initialized prior to sending the command itself to the card (write action into the register register). Only exception is for a command index specifying stuff bits in arguments, making a write unnecessary." type(uint32);
+
+    constants indx_status width(6) "" {
+        INDX_0 = 0 "CMD0 or ACMD0";
+        INDX_1 = 1 "CMD1 or ACMD1";
+        INDX_2 = 2 "CMD2 or ACMD2";
+        INDX_3 = 3 "CMD3 or ACMD3";
+        INDX_4 = 4 "CMD4 or ACMD4";
+        INDX_5 = 5 "CMD5 or ACMD5";
+        INDX_6 = 6 "CMD6 or ACMD6";
+        INDX_7 = 7 "CMD7 or ACMD7";
+        INDX_8 = 8 "CMD8 or ACMD8";
+        INDX_9 = 9 "CMD9 or ACMD9";
+        INDX_10 = 10 "CMD10 or ACMD10";
+        INDX_11 = 11 "CMD11 or ACMD11";
+        INDX_12 = 12 "CMD12 or ACMD12";
+        INDX_13 = 13 "CMD13 or ACMD13";
+        INDX_14 = 14 "CMD14 or ACMD14";
+        INDX_15 = 15 "CMD15 or ACMD15";
+        INDX_16 = 16 "CMD16 or ACMD16";
+        INDX_17 = 17 "CMD17 or ACMD17";
+        INDX_18 = 18 "CMD18 or ACMD18";
+        INDX_19 = 19 "CMD19 or ACMD19";
+        INDX_20 = 20 "CMD20 or ACMD20";
+        INDX_21 = 21 "CMD21 or ACMD21";
+        INDX_22 = 22 "CMD22 or ACMD22";
+        INDX_23 = 23 "CMD23 or ACMD23";
+        INDX_24 = 24 "CMD24 or ACMD24";
+        INDX_25 = 25 "CMD25 or ACMD25";
+        INDX_26 = 26 "CMD26 or ACMD26";
+        INDX_27 = 27 "CMD27 or ACMD27";
+        INDX_28 = 28 "CMD28 or ACMD28";
+        INDX_29 = 29 "CMD29 or ACMD29";
+        INDX_30 = 30 "CMD30 or ACMD30";
+        INDX_31 = 31 "CMD31 or ACMD31";
+        INDX_32 = 32 "CMD32 or ACMD32";
+        INDX_33 = 33 "CMD33 or ACMD33";
+        INDX_34 = 34 "CMD34 or ACMD34";
+        INDX_35 = 35 "CMD35 or ACMD35";
+        INDX_36 = 36 "CMD36 or ACMD36";
+        INDX_37 = 37 "CMD37 or ACMD37";
+        INDX_38 = 38 "CMD38 or ACMD38";
+        INDX_39 = 39 "CMD39 or ACMD39";
+        INDX_40 = 40 "CMD40 or ACMD40";
+        INDX_41 = 41 "CMD41 or ACMD41";
+        INDX_42 = 42 "CMD42 or ACMD42";
+        INDX_43 = 43 "CMD43 or ACMD43";
+        INDX_44 = 44 "CMD44 or ACMD44";
+        INDX_45 = 45 "CMD45 or ACMD45";
+        INDX_46 = 46 "CMD46 or ACMD46";
+        INDX_47 = 47 "CMD47 or ACMD47";
+        INDX_48 = 48 "CMD48 or ACMD48";
+        INDX_49 = 49 "CMD49 or ACMD49";
+        INDX_50 = 50 "CMD50 or ACMD50";
+        INDX_51 = 51 "CMD51 or ACMD51";
+        INDX_52 = 52 "CMD52 or ACMD52";
+        INDX_53 = 53 "CMD53 or ACMD53";
+        INDX_54 = 54 "CMD54 or ACMD54";
+        INDX_55 = 55 "CMD55 or ACMD55";
+        INDX_56 = 56 "CMD56 or ACMD56";
+        INDX_57 = 57 "CMD57 or ACMD57";
+        INDX_58 = 58 "CMD58 or ACMD58";
+        INDX_59 = 59 "CMD59 or ACMD59";
+        INDX_60 = 60 "CMD60 or ACMD60";
+        INDX_61 = 61 "CMD61 or ACMD61";
+        INDX_62 = 62 "CMD62 or ACMD62";
+        INDX_63 = 63 "CMD63 or ACMD63";
+    };
+
+    constants cmd_type_status width(2) "" {
+        CMD_TYPE_0 = 0 "Others Commands";
+        CMD_TYPE_1 = 1 "CMD52 for writing 'Bus Suspend' in CCCR";
+        CMD_TYPE_2 = 2 "CMD52 for writing 'Function Select' in CCCR";
+        CMD_TYPE_3 = 3 "Abort command CMD12, CMD52 for writing ' I/O Abort' in CCCR";
+    };
+
+    constants dp_status width(1) "" {
+        DP_0 = 0 "Command with no data transfer";
+        DP_1 = 1 "Command with data transfer";
+    };
+
+    constants cice_status width(1) "" {
+        CICE_0 = 0 "Index check disable";
+        CICE_1 = 1 "Index check enable";
+    };
+
+    constants ccce_status width(1) "" {
+        CCCE_0 = 0 "CRC7 check disable";
+        CCCE_1 = 1 "CRC7 check enable";
+    };
+
+    constants rsp_type_status width(2) "" {
+        RSP_TYPE_0 = 0 "No response";
+        RSP_TYPE_1 = 1 "Response Length 136 bits";
+        RSP_TYPE_2 = 2 "Response Length 48 bits";
+        RSP_TYPE_3 = 3 "Response Length 48 bits with busy after response";
+    };
+
+    constants msbs_status width(1) "" {
+        MSBS_0 = 0 "Single block. If this bit is 0, it is not necessary to set the register [31:16] NBLK.";
+        MSBS_1 = 1 "Multi block. When Block Count is disabled ([1] BCE is set to 0) in Multiple block transfers ([5] MSBS is set to 1), the module can perform infinite transfer.";
+    };
+
+    constants ddir_status1 width(1) "" {
+        DDIR_0 = 0 "Data Write (host to card)";
+        DDIR_1 = 1 "Data Read (card to host)";
+    };
+
+    constants acen_status width(1) "" {
+        ACEN_0 = 0 "Auto CMD12 disable";
+        ACEN_1 = 1 "Auto CMD12 enable or CCS detection enabled.";
+    };
+
+    constants de_status width(1) "" {
+        DE_0 = 0 "DMA mode disable";
+        DE_1 = 1 "DMA mode enable";
+    };
+    
+    register mmchs_cmd addr(base, 0x20C) "Command and transfer mode register [31:16] = the command register [15:0] = the transfer mode. This register configures the data and command transfers. A write into the most significant byte send the command. A write into [15:0] registers during data transfer has no effect. This register shall be used for any card. Note: In SYSTEST mode, a write into register will not start a transfer." {
+        _ 2 mbz;
+        indx 6 rw type(indx_status) "Command index Binary encoded value from 0 to 63 specifying the command number send to card";
+        cmd_type 2 rw type(cmd_type_status) "Command type This register specifies three types of special command: Suspend, Resume and Abort. These bits shall be set to 00b for all other commands.";
+        dp 1 rw type(dp_status) "Data present select This register indicates that data is present and DAT line shall be used. It must be set to 0 in the following conditions: - command using only CMD line - command with no data transfer but using busy signal on DAT[0] - Resume command";
+        cice 1 rw type(cice_status) "Command Index check enable This bit must be set to 1 to enable index check on command response to compare the index field in the response against the index of the command. If the index is not the same in the response as in the command, it is reported as a command index error (MMCHS_STAT[19] CIE set to1) Note: The register CICE cannot be configured for an Auto CMD12, then index check is automatically checked when this command is issued.";
+        ccce 1 rw type(ccce_status) "Command CRC check enable This bit must be set to 1 to enable CRC7 check on command response to protect the response against transmission errors on the bus. If an error is detected, it is reported as a command CRC error (MMCHS_STAT[17] CCRC set to 1). Note: The register CCCE cannot be configured for an Auto CMD12, and then CRC check is automatically checked when this command is issued.";
+        _ 1 mbz;
+        rsp_type 2 rw type(rsp_type_status) "Response type This bits defines the response type of the command";
+        _ 10 mbz;
+        msbs 1 rw type(msbs_status) "Multi/Single block select This bit must be set to 1 for data transfer in case of multi block command. For any others command this bit shall be set to 0.";
+        ddir 1 rw type(ddir_status1) "Data transfer Direction Select This bit defines either data transfer will be a read or a write.";
+        _ 1 mbz;
+        acen 1 rw type(acen_status) "Auto CMD12 Enable SDIO does not support this feature. When this bit is set to 1, the host controller issues a CMD12 automatically after the transfer completion of the last block. The Host Driver shall not set this bit to issue commands that do not require CMD12 to stop data transfer. In particular, safe commands do not require CMD12.";
+        bce 1 rw type(standbymode_status) "Block Count Enable Multiple block transfers only. This bit is used to enable the block count register (MMCHS_BLK[31:16] NBLK). When Block Count is disabled (MMCHS_CMD[1] BCE is set to 0) in Multiple block transfers (MMCHS_CMD[5] MSBS is set to 1), the module can perform infinite transfer.";
+        de 1 rw type(de_status) "DMA Enable This bit is used to enable DMA mode for host data access.";
+    };
+    
+    register mmchs_rsp10 addr(base, 0x210) "Command response[31:0] Register This 32-bit register holds bits positions [31:0] of command response type R1/R1b/R2/R3/R4/R5/R5b/R6" {
+        rsp1 16 ro "Command Response [31:16]";
+        rsp0 16 ro "Command Response [15:0]";
+    };
+    
+    register mmchs_rsp32 addr(base, 0x214) "Command response[63:32] Register This 32-bit register holds bits positions [63:32] of command response type R2" {
+        rsp3 16 ro "Command Response [63:48]";
+        rsp2 16 ro "Command Response [47:32]";
+    };
+    
+    register mmchs_rsp54 addr(base, 0x218) "Command response[95:64] Register This 32-bit register holds bits positions [95:64] of command response type R2" {
+        rsp5 16 ro "Command Response [95:80]";
+        rsp4 16 ro "Command Response [79:64]";
+    };
+    
+    register mmchs_rsp76 addr(base, 0x21C) "Command response[127:96] Register This 32-bit register holds bits positions [127:96] of command response type R2" {
+        rsp7 16 ro "Command Response [127:112]";
+        rsp6 16 ro "Command Response [111:96]";
+    };
+    
+    register mmchs_data rw addr(base, 0x220) "Data Register This register is the 32-bit entry point of the buffer for read or write data transfers. The buffer size is 32bits x256(1024 bytes). Bytes within a word are stored and read in little endian format. This buffer can be used as two 512 byte buffers to transfer data efficiently without reducing the throughput. Sequential and contiguous access is necessary to increment the pointer correctly. Random or skipped access is not allowed. In little endian, if the local host accesses this register byte-wise or 16bit-wise, the least significant byte (bits [7:0]) must always be written/read first. The update of the buffer address is done on the most significant byte write for full 32-bit DATA register or on the most significant byte of the last word of block transfer. Example 1: Byte or 16-bit access Mbyteen[3:0]=&gt;0001 (1-byte) = Mbyteen[3:0]=0010 (1-byte) =&gt; Mbyteen[3:0]=1100 (2-bytes) OK Mbyteen[3:0]=&gt;0001 (1-byte) = Mbyteen[3:0]=0010 (1-byte) =&gt; Mbyteen[3:0]=0100 (1-byte) OK Mbyteen[3:0]=&gt;0001 (1-byte) = Mbyteen[3:0]=0010 (1-byte) =&gt; Mbyteen[3:0]=1000 (1-byte) Bad" type(uint32);
+
+    constants clev_status width(1) "" {
+        CLEV_0_r = 0 "The CMD line level is 0.";
+        CLEV_1_r = 1 "The CMD line level is 1.";
+    };
+
+    constants wp_status width(1) "" {
+        WP_0_r = 0 "If[8] WPP is set to 0 (default), the card is write protected, otherwise the card is not protected.";
+        WP_1_r = 1 "If[8] WPP is set to 0 (default), the card is not write protected, otherwise the card is protected.";
+    };
+
+    constants cdpl_status width(1) "" {
+        CDPL_0_r = 0 "The value of the card detect input pin (SDCD) is 1";
+        CDPL_1_r = 1 "The value of the card detect input pin (SDCD) is 0";
+    };
+
+    constants css_status width(1) "" {
+        CSS_0_r = 0 "Reset or Debouncing";
+        CSS_1_r = 1 "No card or card inserted";
+    };
+
+    constants cins_status width(1) "" {
+        CINS_0_r = 0 "If[7] CDP is set to 0 (default), no card is detected. The card may have been removed from the card slot. If [7] CDP is set to 1, the card has been inserted.";
+        CINS_1_r = 1 "If[7] CDP is set to 0 (default), the card has been inserted from the card slot. If [7] CDP is set to 1, no card is detected. The card may have been removed from the card slot.";
+    };
+
+    constants bre_status width(1) "" {
+        BRE_0_r = 0 "Read BLEN bytes disable";
+        BRE_1_r = 1 "Read BLEN bytes enable. Readable data exists in the buffer.";
+    };
+
+    constants bwe_status width(1) "" {
+        BWE_0_r = 0 "There is no room left in the buffer to write BLEN bytes of data.";
+        BWE_1_r = 1 "There is enough space in the buffer to write BLEN bytes of data.";
+    };
+
+    constants rta_status width(1) "" {
+        RTA_0_r = 0 "No valid data on the DAT lines.";
+        RTA_1_r = 1 "read data transfer on going.";
+    };
+
+    constants wta_status width(1) "" {
+        WTA_0_r = 0 "No valid data on the DAT lines.";
+        WTA_1_r = 1 "Write data transfer on going.";
+    };
+
+    constants dla_status width(1) "" {
+        DLA_0_r = 0 "DAT Line inactive";
+        DLA_1_r = 1 "DAT Line active";
+    };
+
+    constants dati_status width(1) "" {
+        DATI_0_r = 0 "Issuing of command using the DAT lines is allowed";
+        DATI_1_r = 1 "Issuing of command using DAT lines is not allowed";
+    };
+    
+    register mmchs_pstate addr(base, 0x224) "Present state register The Host can get status of the Host Controller from this 32-bit read only register." {
+        _ 7 mbz;
+        clev 1 ro type(clev_status) "CMD line signal level This status is used to check the CMD line level to recover from errors, and for debugging. The value of this register after reset depends on the CMD line level at that time.";
+        dlev 4 ro "DAT[3:0] line signal level DAT[3] =&amp;gt; bit 23 DAT[2] =&amp;gt; bit 22 DAT[1] =&amp;gt; bit 21 DAT[0] =&amp;gt; bit 20 This status is used to check DAT line level to recover from errors, and for debugging. This is especially useful in detecting the busy signal level from DAT[0]. The value of these registers after reset depends on the DAT lines level at that time.";
+        wp 1 ro type(wp_status) "Write protect switch pin level For SDIO cards only. This bit reflects the write protect input pin (SDWP) level. The value of this register after reset depends on the protect input pin (SDWP) level at that time.";
+        cdpl 1 ro type(cdpl_status) "Card detect pin level This bit reflects the inverse value of the card detect input pin (SDCD), debouncing is not performed on this bit and bit is valid only when Card State Stable (MMCHS_PSTATE[17] CSS) is set to 1. Use of this bit is limited to testing since it must be debounced y software. The value of this register after reset depends on the card detect input pin (SDCD) level at that time.";
+        css 1 ro type(css_status) "Card State Stable This bit is used for testing. It is set to 1 only when Card Detect Pin Level is stable (MMCHS_PSTATE[18] CDPL). Debouncing is performed on the card detect input pin (SDCD) to detect card stability. This bit is not affected by a software reset.";
+        cins 1 ro type(cins_status) "Card inserted This bit is the debounced value of the card detect input pin (SDCD). An inactive to active transition of the card detect input pin (SDCD) will generate a card insertion interrupt (MMCHS_STAT[6] CINS). A active to inactive transition of the card detect input pin (SDCD) will generate a card removal interrupt (MMCHS_STAT[7] CREM). This bit is not affected by a software reset.";
+        _ 4 mbz;
+        bre 1 ro type(bre_status) "Buffer read enable This bit is used for non-DMA read transfers. It indicates that a complete block specified by MMCHS_BLK[11:0] BLEN has been written in the buffer and is ready to be read. It is set to 0 when the entire block is read from the buffer. It is set to 1 when a block data is ready in the buffer and generates the Buffer read ready status of interrupt (MMCHS_STAT[5] BRR).";
+        bwe 1 ro type(bwe_status) "Buffer Write enable This status is used for non-DMA write transfers. It indicates if space is available for write data.";
+        rta 1 ro type(rta_status) "Read transfer active This status is used for detecting completion of a read transfer. It is set to 1 after the end bit of read command or by activating a continue request (MMCHS_HCTL[17] CR) following a stop at block gap request. This bit is set to 0 when all data have been read by the local host after last block or after a stop at block gap request.";
+        wta 1 ro type(wta_status) "Write transfer active This status indicates a write transfer active. It is set to 1 after the end bit of write command or by activating a continue request (MMCHS_HCTL[17] CR) following a stop at block gap request. This bit is set to 0 when CRC status has been received after last block or after a stop at block gap request.";
+        _ 5 mbz;
+        dla 1 ro type(dla_status) "DAT line active This status bit indicates whether one of the DAT line is in use. In the case of read transactions (card to host): This bit is set to 1 after the end bit of read command or by activating continue request MMCHS_HCTL[17] CR. This bit is set to 0 when the host controller received the end bit of the last data block or at the beginning of the read wait mode. In the case of write transactions (host to card): This bit is set to 1 after the end bit of write command or by activating continue request MMCHS_HCTL[17] CR. This bit is set to 0 on the end of busy event for the last block; host controller must wait 8 clock cycles with line not busy to really consider not 'busy state' or after the busy block as a result of a stop at gap request.";
+        dati 1 ro type(dati_status) "Command inhibit(DAT) This status bit is generated if either DAT line is active (MMCHS_PSTATE[2] DLA) or Read transfer is active (MMCHS_PSTATE[9] RTA) or when a command with busy is issued. This bit prevents the local host to issue a command. A change of this bit from 1 to 0 generates a transfer complete interrupt (MMCHS_STAT[1] TC).";
+        cmdi 1 ro type(boot_cf0_status) "Command inhibit(CMD) This status bit indicates that the CMD line is in use. This bit is set to 0 when the most significant byte is written into the command register. This bit is not set when Auto CMD12 is transmitted. This bit is set to 0 in either the following cases: - After the end bit of the command response, excepted if there is a command conflict error (MMCHS_STAT[17] CCRC or MMCHS_STAT[18] CEB set to 1) or a Auto CMD12 is not executed (MMCHS_AC12[0] ACNE). - After the end bit of the command without response (MMCHS_CMD[17:16] RSP_TYPE set to '00') In case of a command data error is detected (MMCHS_STAT[16] CTO set to 1), this register is not automatically cleared.";
+    };
+
+    constants rem_status width(1) "" {
+        REM_0 = 0 "Disable wakeup on card removal";
+        REM_1 = 1 "Enable wakeup on card removal";
+    };
+
+    constants ins_status width(1) "" {
+        INS_0 = 0 "Disable wakeup on card insertion";
+        INS_1 = 1 "Enable wakeup on card insertion";
+    };
+
+    constants iwe_status width(1) "" {
+        IWE_0 = 0 "Disable wakeup on card interrupt";
+        IWE_1 = 1 "Enable wakeup on card interrupt";
+    };
+
+    constants rwc_status width(1) "" {
+        RWC_0 = 0 "Disable Read Wait Control. Suspend/Resume cannot be supported.";
+        RWC_1 = 1 "Enable Read Wait Control";
+    };
+
+    constants cr_status width(1) "" {
+        CR_0 = 0 "No affect";
+        CR_1 = 1 "transfer restart";
+    };
+
+    constants sbgr_status width(1) "" {
+        SBGR_0 = 0 "Transfer mode";
+        SBGR_1 = 1 "Stop at block gap";
+    };
+
+    constants sdvs_status width(3) "" {
+        SDVS_5 = 5 "1.8V (Typical)";
+        SDVS_6 = 6 "3.0V (Typical)";
+        SDVS_7 = 7 "3.3V (Typical)";
+    };
+
+    constants sdbp_status width(1) "" {
+        SDBP_0 = 0 "Power off";
+        SDBP_1 = 1 "Power on";
+    };
+
+    constants cdss_status width(1) "" {
+        CDSS_0 = 0 "SDCD# is selected (for normal use)";
+        CDSS_1 = 1 "The Card Detect Test Level is selected (for test purpose)";
+    };
+
+    constants cdtl_status width(1) "" {
+        CDTL_0 = 0 "No Card";
+        CDTL_1 = 1 "Card Inserted";
+    };
+
+    constants dmas_status width(2) "" {
+        DMAS_0 = 0 "Reserved";
+        DMAS_1 = 1 "Reserved";
+        DMAS_2 = 2 "32-bit Address ADMA2 is selected";
+        DMAS_3 = 3 "Reserved";
+    };
+
+    constants hspe_status width(1) "" {
+        HSPE_0 = 0 "Normal speed mode";
+        HSPE_1 = 1 "High speed mode";
+    };
+
+    constants dtw_status width(1) "" {
+        DTW_0 = 0 "1-bit Data width (DAT[0] used)";
+        DTW_1 = 1 "4-bit Data width (DAT[3:0] used)";
+    };
+    
+    register mmchs_hctl addr(base, 0x228) "Control register This register defines the host controls to set power, wakeup and transfer parameters. [31:24] = Wakeup control [23:16] = Block gap control [15:8] = Power control [7:0] = Host control" {
+        _ 4 mbz;
+        obwe 1 rw type(standbymode_status) "Wakeup event enable for 'Out-of-Band' Interrupt. This bit enables wakeup events for 'Out-of-Band' assertion. Wakeup is generated if the wakeup feature is enabled (MMCHS_SYSCONFIG[2] ENAWAKEUP). The write to this register is ignored when MMCHS_CON[14] OBIE is not set.";
+        rem 1 rw type(rem_status) "Wakeup event enable on SD card removal This bit enables wakeup events for card removal assertion. Wakeup is generated if the wakeup feature is enabled (MMCHS_SYSCONFIG[2] ENAWAKEUP).";
+        ins 1 rw type(ins_status) "Wakeup event enable on SD card insertion This bit enables wakeup events for card insertion assertion. Wakeup is generated if the wakeup feature is enabled (MMCHS_SYSCONFIG[2] ENAWAKEUP).";
+        iwe 1 rw type(iwe_status) "Wakeup event enable on SD card interrupt This bit enables wakeup events for card interrupt assertion. Wakeup is generated if the wakeup feature is enabled (MMCHS_SYSCONFIG[2] ENAWAKEUP).";
+        _ 4 mbz;
+        ibg 1 rw type(standbymode_status) "Interrupt block at gap This bit is valid only in 4-bit mode of SDIO card to enable interrupt detection in the interrupt cycle at block gap for a multiple block transfer. For MMC cards and for SD card this bit should be set to 0.";
+        rwc 1 rw type(rwc_status) "Read wait control The read wait function is optional only for SDIO cards. If the card supports read wait, this bit must be enabled, then requesting a stop at block gap (MMCHS_HCTL[16] SBGR) generates a read wait period after the current end of block. Be careful, if read wait is not supported it may cause a conflict on DAT line.";
+        cr 1 rw type(cr_status) "Continue request This bit is used to restart a transaction that was stopped by requesting a stop at block gap (MMCHS_HCTL[16] SBGR). Set this bit to 1 restarts the transfer. The bit is automatically set to 0 by the host controller when transfer has restarted i.e DAT line is active (MMCHS_PSTATE[2] DLA) or transferring data (MMCHS_PSTATE[8] WTA). The Stop at block gap request must be disabled (MMCHS_HCTL[16] SBGR = 0) before setting this bit.";
+        sbgr 1 rw type(sbgr_status) "Stop at block gap request This bit is used to stop executing a transaction at the next block gap. The transfer can restart with a continue request (MMCHS_HCTL[17] CR) or during a suspend/resume sequence. In case of read transfer, the card must support read wait control. In case of write transfer, the host driver shall set this bit after all block data written. Until the transfer completion (MMCHS_STAT[1] TC set to 1), the host driver shall leave this bit set to 1. If this bit is set, the local host shall not write to the data register (MMCHS_DATA).";
+        _ 4 mbz;
+        sdvs 3 rw type(sdvs_status) "SD bus voltage select All cards. The host driver should set to these bits to select the voltage level for the card according to the voltage supported by the system (MMCHS_CAPA[26:24]) before starting a transfer.";
+        sdbp 1 rw type(sdbp_status) "SD bus power Before setting this bit, the host driver shall select the SD bus voltage (MMCHS_HCTL[11:9] SDVS). If the host controller detects the No card state, this bit is automatically set to 0. If the module is power off, a write in the command register (MMCHS_CMD) will not start the transfer. A write to this bit has no effect if the selected SD bus voltage is not supported according to capability register (MMCHS_CAPA[26:24]).";
+        cdss 1 rw type(cdss_status) "Card Detect Signal Selection This bit selects source for the card detection.When the source for the card detection is switched, the interrupt should be disabled during the switching period by clearing the Interrupt Status/Signal Enable register in order to mask unexpected interrupt being caused by the glitch. The Interrupt Status/Signal Enable should be disabled during over the period of debouncing.";
+        cdtl 1 rw type(cdtl_status) "Card Detect Test Level: This bit is enabled while the Card Detect Signal Selection is set to 1 and it indicates card inserted or not.";
+        _ 1 mbz;
+        dmas 2 rw type(dmas_status) "DMA Select Mode: One of supported DMA modes can be selected. The host driver shall check support of DMA modes by referring the Capabilities register. Use of selected DMA is determined by DMA Enable of the Transfer Mode register. This register is only meaningful when MMCHS_HL_HWINFO[0] MADMA_EN is set to 1. When MMCHS_HL_HWINFO[0] MADMA_EN is set to 0 the bit field is read only and returned value is 0.";
+        hspe 1 rw type(hspe_status) "High Speed Enable: Before setting this bit, the Host Driver shall check the High Speed Support in the Capabilities register. If this bit is set to 0 (default), the Host Controller outputs CMD line and DAT lines at the falling edge of the SD Clock. If this bit is set to 1, the Host Controller outputs CMD line and DAT lines at the rising edge of the SD Clock.This bit shall not be set when dual data rate mode is activated in MMCHS_CON[19] DDR.";
+        dtw 1 rw type(dtw_status) "Data transfer width For MMC card, this bit must be set following a valid SWITCH command (CMD6) with the correct value and extend CSD index written in the argument. Prior to this command, the MMC card configuration register (CSD and EXT_CSD) must be verified for compliance with MMC standard specification 4.x (see section 3.6). This register has no effect when the MMC 8-bit mode is selected (register MMCHS_CON[5] DW8 set to1 ), For SD/SDIO cards, this bit must be set following a valid SET_BUS_WIDTH command (ACMD6) with the value written in bit 1 of the argument. Prior to this command, the SD card configuration register (SCR) must be verified for the supported bus width by the SD card.";
+        led 1 ro "Reserved bit. LED control feature is not supported This bit is initialized to zero, and writes to it are ignored.";
+    };
+
+    constants srd_status width(1) "" {
+        SRD_0 = 0 "Reset completed";
+        SRD_1 = 1 "Software reset for DAT line";
+    };
+
+    constants src_status width(1) "" {
+        SRC_0 = 0 "Reset completed";
+        SRC_1 = 1 "Software reset for CMD line";
+    };
+
+    constants sra_status width(1) "" {
+        SRA_0 = 0 "Reset completed";
+        SRA_1 = 1 "Software reset for all the design";
+    };
+
+    constants dto_status width(4) "" {
+        DTO_0 = 0 "TCF x 213";
+        DTO_1 = 1 "TCF x 214";
+        DTO_14 = 14 "TCF x 227";
+        DTO_15 = 15 "Reserved";
+    };
+
+    constants clkd_status width(10) "" {
+        CLKD_0 = 0 "MMCi_FCLK bypass";
+        CLKD_1 = 1 "MMCi_FCLK bypass";
+        CLKD_2 = 2 "MMCi_FCLK / 2";
+        CLKD_3 = 3 "MMCi_FCLK / 3";
+        CLKD_1023 = 1023 "MMCi_FCLK / 1023";
+    };
+
+    constants cen_status width(1) "" {
+        CEN_0 = 0 "The clock is not provided to the card . Clock frequency can be changed .";
+        CEN_1 = 1 "The clock is provided to the card and can be automatically gated when[0] AUTOIDLE is set to 1 (default value) . The host driver shall wait to set this bit to 1 until the Internal clock is stable ([1] ICS).";
+    };
+
+    constants ics_status width(1) "" {
+        ICS_0_r = 0 "The internal clock is not stable.";
+        ICS_1_r = 1 "The internal clock is stable after enabling the clock ([1] ICE) or after changing the clock ratio ([15:6] CLKD).";
+    };
+
+    constants ice_status width(1) "" {
+        ICE_0 = 0 "The internal clock is stopped (very low power state).";
+        ICE_1 = 1 "The internal clock oscillates and can be automatically gated when[0] AUTOIDLE is set to 1 (default value) .";
+    };
+    
+    register mmchs_sysctl addr(base, 0x22C) "SD system control register This register defines the system controls to set software resets, clock frequency management and data timeout. [31:24] = Software resets [23:16] = Timeout control [15:0] = Clock control" {
+        _ 5 mbz;
+        srd 1 rw type(srd_status) "Software reset for DAT line. This bit is set to 1 for reset and released to 0 when completed. For more information about SRD bit manipulation, see , . DAT finite state machine in both clock domain are also reset. The following registers are cleared by MMCHS_SYSCTL[26] SRD: - MMCHS_DATA - MMCHS_PSTATE[11] BRE, MMCHS_PSTATE[10] BWE, MMCHS_PSTATE[9] RTA, MMCHS_PSTATE[8] WTA, MMCHS_PSTATE[2] DLA, MMCHS_PSTATE[1] DATI - MMCHS_HCTL: SBGR and CR - MMCHS_STAT: MMCHS_STAT[5] BRR, MMCHS_STAT[4] BWR, MMCHS_STAT[2] BGE and MMCHS_STAT[1] TC Interconnect and MMC buffer data management is reinitialized.";
+        src 1 rw type(src_status) "Software reset for CMD line For more information about SRC bit manipulation, see , . This bit is set to 1 for reset and released to 0 when completed. CMD finite state-machine in both clock domain are also reset. The following registers are cleared by MMCHS_SYSCTL[25] SRC: - MMCHS_PSTATE[0] CMDI - MMCHS_STAT[0] CC Interconnect and MMC command status management is reinitialized.";
+        sra 1 rw type(sra_status) "Software reset for all This bit is set to 1 for reset, and released to 0 when completed. This reset affects the entire host controller except for the card detection circuit and capabilities registers.";
+        _ 4 mbz;
+        dto 4 rw type(dto_status) "Data timeout counter value and busy timeout. This value determines the interval by which DAT lines timeouts are detected. The host driver needs to set this bit field based on - the maximum read access time (NAC) (Refer to the SD Specification Part1 Physical Layer), - the data read access time values (TAAC and NSAC) in the card specific data register (CSD) of the card, - the timeout clock base frequency (MMCHS_CAPA[5:0] TCF). If the card does not respond within the specified number of cycles, a data timeout error occurs (MMCHS_STAT[20] DTO). The MMCHS_SYSCTL[19:16] DTO register is also used to check busy duration, to generate busy timeout for commands with busy response or for busy programming during a write command. Timeout on CRC status is generated if no CRC token is present after a block write.";
+        clkd 10 rw type(clkd_status) "Clock frequency select These bits define the ratio between MMCi_FCLK and the output clock frequency on the CLK pin of either the memory card (MMC, SD or SDIO).";
+        _ 3 mbz;
+        cen 1 rw type(cen_status) "Clock enable This bit controls if the clock is provided to the card or not.";
+        ics 1 ro type(ics_status) "Internal clock stable (status) This bit indicates either the internal clock is stable or not.";
+        ice 1 rw type(ice_status) "Internal clock enable This register controls the internal clock activity. In very low power state, the internal clock is stopped. Note: The activity of the debounce clock (used for wakeup events) and the interface clock (used for reads and writes to the module register map) are not affected by this register.";
+    };
+
+    constants bada_status width(1) "" {
+        BADA_0_w = 0 "Status bit unchanged";
+        BADA_0_r = 0 "No Interrupt.";
+        BADA_1_r = 1 "Bad Access";
+        BADA_1_w = 1 "Status is cleared";
+    };
+
+    constants cerr_status width(1) "" {
+        CERR_0_w = 0 "Status bit unchanged";
+        CERR_0_r = 0 "No Error";
+        CERR_1_w = 1 "Status is cleared";
+        CERR_1_r = 1 "Card error";
+    };
+
+    constants admae_status width(1) "" {
+        ADMAE_0_w = 0 "Status bit unchanged";
+        ADMAE_0_r = 0 "No Interrupt.";
+        ADMAE_1_w = 1 "Status is cleared";
+        ADMAE_1_r = 1 "ADMA error";
+    };
+
+    constants ace_status width(1) "" {
+        ACE_0_w = 0 "Status bit unchanged";
+        ACE_0_r = 0 "No Error.";
+        ACE_1_r = 1 "AutoCMD12 error";
+        ACE_1_w = 1 "Status is cleared";
+    };
+
+    constants deb_status width(1) "" {
+        DEB_0_r = 0 "No Error";
+        DEB_0_w = 0 "Status bit unchanged";
+        DEB_1_w = 1 "Status is cleared";
+        DEB_1_r = 1 "Data end bit error";
+    };
+
+    constants dcrc_status width(1) "" {
+        DCRC_0_r = 0 "No Error.";
+        DCRC_0_w = 0 "Status bit unchanged";
+        DCRC_1_r = 1 "Data CRC error";
+        DCRC_1_w = 1 "Status is cleared";
+    };
+
+    constants dto_status1 width(1) "" {
+        DTO_0_r = 0 "No error.";
+        DTO_0_w = 0 "Status bit unchanged";
+        DTO_1_w = 1 "Status is cleared";
+        DTO_1_r = 1 "Time out";
+    };
+
+    constants cie_status width(1) "" {
+        CIE_0_r = 0 "No error.";
+        CIE_0_w = 0 "Status bit unchanged";
+        CIE_1_r = 1 "Command index error";
+        CIE_1_w = 1 "Status is cleared";
+    };
+
+    constants ceb_status width(1) "" {
+        CEB_0_w = 0 "Status bit unchanged";
+        CEB_0_r = 0 "No error.";
+        CEB_1_r = 1 "Command end bit error";
+        CEB_1_w = 1 "Status is cleared";
+    };
+
+    constants ccrc_status width(1) "" {
+        CCRC_0_r = 0 "No Error.";
+        CCRC_0_w = 0 "Status bit unchanged";
+        CCRC_1_w = 1 "Status is cleared";
+        CCRC_1_r = 1 "Command CRC error";
+    };
+
+    constants cto_status width(1) "" {
+        CTO_0_w = 0 "Status bit unchanged";
+        CTO_0_r = 0 "No error";
+        CTO_1_r = 1 "Time Out";
+        CTO_1_w = 1 "Status is cleared";
+    };
+
+    constants erri_status width(1) "" {
+        ERRI_0_r = 0 "No Interrupt.";
+        ERRI_1_r = 1 "Error interrupt event(s) occurred";
+    };
+
+    constants bsr_status width(1) "" {
+        BSR_0_w = 0 "Status bit unchanged";
+        BSR_0_r = 0 "No Interrupt.";
+        BSR_1_w = 1 "Status is cleared";
+        BSR_1_r = 1 "Boot status received interrupt.";
+    };
+
+    constants obi_status width(1) "" {
+        OBI_0_r_1 = 0 "No Out-Of-Band interrupt.";
+        OBI_0_w = 0 "Status bit unchanged";
+        OBI_1_r_1 = 1 "Interrupt Out-Of-Band occurs";
+        OBI_1_w = 1 "Status is cleared";
+    };
+
+    constants cirq_status width(1) "" {
+        CIRQ_0_r = 0 "No card interrupt";
+        CIRQ_1_r = 1 "Generate card interrupt";
+    };
+
+    constants crem_status width(1) "" {
+        CREM_0_w = 0 "Status bit unchanged";
+        CREM_0_r = 0 "Card state stable or Debouncing";
+        CREM_1_r = 1 "Card removed";
+        CREM_1_w = 1 "Status is cleared";
+    };
+
+    constants cins_status1 width(1) "" {
+        CINS_0_r_1 = 0 "Card state stable or debouncing";
+        CINS_0_w = 0 "Status bit unchanged";
+        CINS_1_w = 1 "Status is cleared";
+        CINS_1_r_1 = 1 "Card inserted";
+    };
+
+    constants brr_status width(1) "" {
+        BRR_0_r = 0 "Not Ready to read buffer";
+        BRR_0_w = 0 "Status bit unchanged";
+        BRR_1_r = 1 "Ready to read buffer";
+        BRR_1_w = 1 "Status is cleared";
+    };
+
+    constants bwr_status width(1) "" {
+        BWR_0_w = 0 "Status bit unchanged";
+        BWR_0_r = 0 "Not Ready to write buffer";
+        BWR_1_r = 1 "Ready to write buffer";
+        BWR_1_w = 1 "Status is cleared";
+    };
+
+    constants dma_status width(1) "" {
+        DMA_0_r = 0 "Dma interrupt detected";
+        DMA_0_w = 0 "Status bit unchanged";
+        DMA_1_w = 1 "Status is cleared";
+        DMA_1_r = 1 "No dma interrupt";
+    };
+
+    constants bge_status width(1) "" {
+        BGE_0_r = 0 "No block gap event";
+        BGE_0_w = 0 "Status bit unchanged";
+        BGE_1_w = 1 "Status is cleared";
+        BGE_1_r = 1 "Transaction stopped at block gap";
+    };
+
+    constants tc_status width(1) "" {
+        TC_0_w = 0 "Status bit unchanged";
+        TC_0_r = 0 "No transfer complete";
+        TC_1_w = 1 "Status is cleared";
+        TC_1_r = 1 "Data transfer complete";
+    };
+
+    constants cc_status width(1) "" {
+        CC_0_w = 0 "Status bit unchanged";
+        CC_0_r = 0 "No Command complete";
+        CC_1_w = 1 "Status is cleared";
+        CC_1_r = 1 "Command complete";
+    };
+    
+    register mmchs_stat addr(base, 0x230) "Interrupt status register The interrupt status regroups all the status of the module internal events that can generate an interrupt. [31:16] = Error Interrupt Status [15:0] = Normal Interrupt Status" {
+        _ 2 mbz;
+        bada 1 rw type(bada_status) "Bad access to data space This bit is set automatically to indicate a bad access to buffer when not allowed: -This bit is set during a read access to the data register (MMCHS_DATA) while buffer reads are not allowed (MMCHS_PSTATE[11] BRE = 0) -This bit is set during a write access to the data register (MMCHS_DATA) while buffer writes are not allowed (MMCHS_PSTATE[10] BWE = 0)";
+        cerr 1 rw type(cerr_status) "Card error This bit is set automatically when there is at least one error in a response of type R1, R1b, R6, R5 or R5b. Only bits referenced as type E(error) in status field in the response can set a card status error. An error bit in the response is flagged only if corresponding bit in card status response error MMCHS_CSRE in set. There is no card error detection for autoCMD12 command. The host driver shall read MMCHS_RSP76 register to detect error bits in the command response.";
+        _ 2 mbz;
+        admae 1 rw type(admae_status) "ADMA Error: This bit is set when the Host Controller detects errors during ADMA based data transfer. The state of the ADMA at an error occurrence is saved in the ADMA Error Status Register.In addition, the Host Controller generates this interrupt when it detects invalid descriptor data (Valid=0) at the ST_FDS state. ADMA Error State in the ADMA Error Status indicates that an error occurs in ST_FDS state. The Host Driver may find that Valid bit is not set at the error descriptor.";
+        ace 1 rw type(ace_status) "Auto CMD12 error This bit is set automatically when one of the bits in Auto CMD12 Error status register has changed from 0 to 1.";
+        cle 1 ro "Reserved. Current limit error is not supported. These bits are initialized to zero, and writes to them are ignored.";
+        deb 1 rw type(deb_status) "Data End Bit error This bit is set automatically when detecting a 0 at the end bit position of read data on DAT line or at the end position of the CRC status in write mode.";
+        dcrc 1 rw type(dcrc_status) "Data CRC Error This bit is set automatically when there is a CRC16 error in the data phase response following a block read command or if there is a 3-bit CRC status different of a position '010' token during a block write command.";
+        dto 1 rw type(dto_status1) "Data timeout error This bit is set automatically according to the following conditions: - busy timeout for R1b, R5b response type - busy timeout after write CRC status - write CRC status timeout - read data timeout";
+        cie 1 rw type(cie_status) "Command index error This bit is set automatically when response index differs from corresponding command index previously emitted. It depends on the enable in MMCHS_CMD[20] CICE register.";
+        ceb 1 rw type(ceb_status) "Command end bit error This bit is set automatically when detecting a 0 at the end bit position of a command response.";
+        ccrc 1 rw type(ccrc_status) "Command CRC Error This bit is set automatically when there is a CRC7 error in the command response depending on the enable in MMCHS_CMD[19] CCCE register.";
+        cto 1 rw type(cto_status) "Command Timeout Error This bit is set automatically when no response is received within 64 clock cycles from the end bit of the command. For commands that reply within 5 clock cycles - the timeout is still detected at 64 clock cycles.";
+        erri 1 ro type(erri_status) "Error Interrupt If any of the bits in the Error Interrupt Status register (MMCHS_STAT[24:15]) are set, then this bit is set to 1. Therefore the host driver can efficiently test for an error by checking this bit first. Writes to this bit are ignored.";
+        _ 4 mbz;
+        bsr 1 rw type(bsr_status) "Boot status received interrupt This bit is set automatically when MMCHS_CON[18] BOOT_CF0 is set 0x0 or 0x1 and a boot status is received on DAT[0] line. This interrupt is only useful for MMC card.";
+        obi 1 rw type(obi_status) "Out-Of-Band interrupt This bit is set automatically when MMCHS_CON[14] OBIE is set and an Out-of-Band interrupt occurs on OBI pin. The interrupt detection depends on polarity controlled by MMCHS_CON[13] OBIP. This interrupt is only useful for MMC card. The Out-of-Band interrupt signal is a system specific feature for future use, this signal is not required for existing specification implementation.";
+        cirq 1 ro type(cirq_status) "Card interrupt This bit is only used for SD and SDIO and CE-ATA cards. In 1-bit mode, interrupt source is asynchronous (can be a source of asynchronous wakeup). In 4-bit mode, interrupt source is sampled during the interrupt cycle. In CE-ATA mode, interrupt source is detected when the card drives CMD line to zero during one cycle after data transmission end.All modes above are fully exclusive. The controller interrupt must be clear by setting MMCHS_IE[8] CIRQ_ENABLE to 0, then the host driver must start the interrupt service with card (clearing card interrupt status) to remove card interrupt source. Otherwise the Controller interrupt will be reasserted as soon as MMCHS_IE[8] CIRQ_ENABLE is set to 1. Writes to this bit are ignored.";
+        crem 1 rw type(crem_status) "Card removal This bit is set automatically when MMCHS_PSTATE[16] CINS changes from 1 to 0. A clear of this bit doesn't affect Card inserted present state (MMCHS_PSTATE[16] CINS).";
+        cins 1 rw type(cins_status1) "Card insertion This bit is set automatically when MMCHS_PSTATE[16] changes from 0 to 1. A clear of this bit doesn't affect Card inserted present state (MMCHS_PSTATE[16] CINS).";
+        brr 1 rw type(brr_status) "Buffer read ready This bit is set automatically during a read operation to the card (see class 2 - block oriented read commands) when one block specified by MMCHS_BLK[11:0] BLEN is completely written in the buffer. It indicates that the memory card has filled out the buffer and that the local host needs to empty the buffer by reading it. Note: If the DMA receive-mode is enabled, this bit is never set; instead a DMA receive request to the main DMA controller of the system is generated.";
+        bwr 1 rw type(bwr_status) "Buffer write ready This bit is set automatically during a write operation to the card (see class 4 - block oriented write command) when the host can write a complete block as specified by MMCHS_BLK[11:0] BLEN. It indicates that the memory card has emptied one block from the buffer and that the local host is able to write one block of data into the buffer. Note: If the DMA transmit mode is enabled, this bit is never set; instead, a DMA transmit request to the main DMA controller of the system is generated.";
+        dma 1 rw type(dma_status) "DMA interrupt : This status is set when an interrupt is required in the ADMA instruction and after the data transfer completion.";
+        bge 1 rw type(bge_status) "Block gap event When a stop at block gap is requested (MMCHS_HCTL[16] SBGR), this bit is automatically set when transaction is stopped at the block gap during a read or write operation. This event does not occur when the stop at block gap is requested on the last block. In read mode, a 1-to-0 transition of the DAT Line active status (MMCHS_PSTATE[2] DLA) between data blocks generates a Block gap event interrupt.";
+        tc 1 rw type(tc_status) "Transfer completed This bit is always set when a read/write transfer is completed or between two blocks when the transfer is stopped due to a stop at block gap request (MMCHS_HCTL[16] SBGR). In Read mode: This bit is automatically set on completion of a read transfer (MMCHS_PSTATE[9] RTA). In write mode: This bit is set automatically on completion of the DAT line use (MMCHS_PSTATE[2] DLA).";
+        cc 1 rw type(cc_status) "Command complete This bit is set when a 1-to-0 transition occurs in the register command inhibit (MMCHS_PSTATE[0] CMDI) If the command is a type for which no response is expected, then the command complete interrupt is generated at the end of the command. A command timeout error (MMCHS_STAT[16] CTO) has higher priority than command complete (MMCHS_STAT[0] CC). If a response is expected but none is received, then a command timeout error is detected and signaled instead of the command complete interrupt.";
+    };
+
+    constants bada_enable_status width(1) "" {
+        BADA_ENABLE_0 = 0 "Masked";
+        BADA_ENABLE_1 = 1 "Enabled";
+    };
+
+    constants dto_enable_status width(1) "" {
+        DTO_ENABLE_0 = 0 "The data timeout detection is deactivated. The host controller provides the clock to the card until the card sends the data or the transfer is aborted.";
+        DTO_ENABLE_1 = 1 "The data timeout detection is enabled.";
+    };
+    
+    register mmchs_ie addr(base, 0x234) "Interrupt SD enable register This register allows to enable/disable the module to set status bits, on an event-by-event basis. [31:16] = Error Interrupt Status Enable [15:0] = Normal Interrupt Status Enable" {
+        _ 2 mbz;
+        bada_enable 1 rw type(bada_enable_status) "Bad access to data space Interrupt Enable";
+        cerr_enable 1 rw type(bada_enable_status) "Card error interrupt Enable";
+        _ 2 mbz;
+        admae_enable 1 rw type(bada_enable_status) "ADMA error Interrupt Enable";
+        ace_enable 1 rw type(bada_enable_status) "Auto CMD12 error Interrupt Enable";
+        cle 1 ro "Reserved bit. Current limit error is not supported. These bits are initialized to zero, and writes to them are ignored.";
+        deb_enable 1 rw type(bada_enable_status) "Data end bit error Interrupt Enable";
+        dcrc_enable 1 rw type(bada_enable_status) "Data CRC error Interrupt Enable";
+        dto_enable 1 rw type(dto_enable_status) "Data timeout error Interrupt Enable";
+        cie_enable 1 rw type(bada_enable_status) "Command index error Interrupt Enable";
+        ceb_enable 1 rw type(bada_enable_status) "Command end bit error Interrupt Enable";
+        ccrc_enable 1 rw type(bada_enable_status) "Command CRC error Interrupt Enable";
+        cto_enable 1 rw type(bada_enable_status) "Command timeout error Interrupt Enable";
+        null 1 ro "Fixed to 0 The host driver shall control error interrupts using the Error Interrupt Signal Enable register. Writes to this bit are ignored";
+        _ 4 mbz;
+        bsr_enable 1 rw type(bada_enable_status) "Boot status interrupt Enable A write to this register when MMCHS_CON[17] BOOT_ACK is set to 0x0 is ignored.";
+        obi_enable 1 rw type(bada_enable_status) "Out-of-Band interrupt Enable A write to this register when MMCHS_CON[14] OBIE is set to 0 is ignored.";
+        cirq_enable 1 rw type(bada_enable_status) "Card interrupt Enable A clear of this bit also clears the corresponding status bit. During 1-bit mode, if the interrupt routine doesn't remove the source of a card interrupt in the SDIO card, the status bit is reasserted when this bit is set to 1.";
+        crem_enable 1 rw type(bada_enable_status) "Card removal Interrupt Enable";
+        cins_enable 1 rw type(bada_enable_status) "Card insertion Interrupt Enable";
+        brr_enable 1 rw type(bada_enable_status) "Buffer Read Ready Interrupt Enable";
+        bwr_enable 1 rw type(bada_enable_status) "Buffer Write Ready Interrupt Enable";
+        dma_enable 1 rw type(bada_enable_status) "DMA interrupt Enable";
+        bge_enable 1 rw type(bada_enable_status) "Block Gap Event Interrupt Enable";
+        tc_enable 1 rw type(bada_enable_status) "Transfer completed Interrupt Enable";
+        cc_enable 1 rw type(bada_enable_status) "Command completed Interrupt Enable";
+    };
+    
+    register mmchs_ise addr(base, 0x238) "Interrupt signal enable register This register allows to enable/disable the module internal sources of status, on an event-by-event basis. [31:16] = Error Interrupt Signal Enable [15:0] = Normal Interrupt Signal Enable" {
+        _ 2 mbz;
+        bada_sigen 1 rw type(bada_enable_status) "Bad access to data space signal status Enable";
+        cerr_sigen 1 rw type(bada_enable_status) "Card error interrupt signal status Enable";
+        _ 2 mbz;
+        admae_sigen 1 rw type(bada_enable_status) "ADMA error signal status Enable";
+        ace_sigen 1 rw type(bada_enable_status) "Auto CMD12 error signal status Enable";
+        cle 1 ro "Reserved bit. Current limit error is not supported. These bits are initialized to zero, and writes to them are ignored.";
+        deb_sigen 1 rw type(bada_enable_status) "Data end bit error signal status Enable";
+        dcrc_sigen 1 rw type(bada_enable_status) "Data CRC error signal status Enable";
+        dto_sigen 1 rw type(bada_enable_status) "Data timeout error signal status Enable";
+        cie_sigen 1 rw type(bada_enable_status) "Command index error signal status Enable";
+        ceb_sigen 1 rw type(bada_enable_status) "Command end bit error signal status Enable";
+        ccrc_sigen 1 rw type(bada_enable_status) "Command CRC error signal status Enable";
+        cto_sigen 1 rw type(bada_enable_status) "Command timeout error signal status Enable";
+        null 1 ro "Fixed to 0 The host driver shall control error interrupts using the Error Interrupt Signal Enable register. Writes to this bit are ignored";
+        _ 4 mbz;
+        bsr_sigen 1 rw type(bada_enable_status) "Boot status signal status EnableA write to this register whenMMCHS_CON[17] BOOT_ACK is set to 0x0 is ignored.";
+        obi_sigen 1 rw type(bada_enable_status) "Out-Of-Band Interrupt signal status Enable A write to this register when MMCHS_CON[14] OBIE is set to 0 is ignored.";
+        cirq_sigen 1 rw type(bada_enable_status) "Card interrupt signal status Enable";
+        crem_sigen 1 rw type(bada_enable_status) "Card removal signal status Enable";
+        cins_sigen 1 rw type(bada_enable_status) "Card insertion signal status Enable";
+        brr_sigen 1 rw type(bada_enable_status) "Buffer Read Ready signal status Enable";
+        bwr_sigen 1 rw type(bada_enable_status) "Buffer Write Ready signal status Enable";
+        dma_sigen 1 rw type(bada_enable_status) "DMA interrupt Signal status enable";
+        bge_sigen 1 rw type(bada_enable_status) "Black Gap Event signal status Enable";
+        tc_sigen 1 rw type(bada_enable_status) "Transfer completed signal status Enable";
+        cc_sigen 1 rw type(bada_enable_status) "Command completed signal status Enable";
+    };
+
+    constants cni_status width(1) "" {
+        CNI_0_r = 0 "Not error";
+        CNI_1_r = 1 "Command not issued";
+    };
+
+    constants acie_status width(1) "" {
+        ACIE_0_r = 0 "No error";
+        ACIE_1_r = 1 "Auto CMD12 Index Error";
+    };
+
+    constants aceb_status width(1) "" {
+        ACEB_0_r = 0 "No error";
+        ACEB_1_r = 1 "AutoCMD12 End bit Error";
+    };
+
+    constants acce_status width(1) "" {
+        ACCE_0_r = 0 "No error";
+        ACCE_1_r = 1 "Auto CMD12 CRC Error";
+    };
+
+    constants acto_status width(1) "" {
+        ACTO_0_r = 0 "No error";
+        ACTO_1_r = 1 "Auto CMD12 Time Out";
+    };
+
+    constants acne_status width(1) "" {
+        ACNE_0_r = 0 "Auto CMD12 Executed";
+        ACNE_1_r = 1 "Auto CMD12 Not Executed";
+    };
+    
+    register mmchs_ac12 addr(base, 0x23C) "Auto CMD12 Error Status Register The host driver may determine which of the errors cases related to Auto CMD12 has occurred by checking this register when an Auto CMD12 Error interrupt occurs. This register is valid only when Auto CMD12 is enabled ([2] ACEN) and Auto CMD12Error ([24] ACE) is set to 1. Note: These bits are automatically reset when starting a new adtc command with data." {
+        _ 24 mbz;
+        cni 1 ro type(cni_status) "Command not issue by Auto CMD12 error If this bit is set to 1, it means that pending command is not executed due to Auto CMD12 error : ACEB, ACCE, ACTO or ACNE.";
+        _ 2 mbz;
+        acie 1 ro type(acie_status) "Auto CMD12 index error This bit is a set to 1 when response index differs from corresponding command auto CMD12 index previously emitted. This bit depends on the command index check enable (MMCHS_CMD[20] CICE).";
+        aceb 1 ro type(aceb_status) "Auto CMD12 end bit error This bit is set to 1 when detecting a 0 at the end bit position of auto CMD12 command response.";
+        acce 1 ro type(acce_status) "Auto CMD12 CRC error This bit is automatically set to 1 when a CRC7 error is detected in the auto CMD12 command response depending on the enable in MMCHS_CMD[19] CCCE register.";
+        acto 1 ro type(acto_status) "Auto CMD12 timeout error This bit is set to 1 if no response is received within 64 clock cycles from the end bit of the auto CMD12 command.";
+        acne 1 ro type(acne_status) "Auto CMD12 not executed This bit is set to 1 if multiple block data transfer command has started and if an error occurs in command before Auto CMD12 starts.";
+    };
+
+    constants bit64_status width(1) "" {
+        BIT64_0_r = 0 "32-bit system bus address";
+        BIT64_1_r = 1 "64-bit system bus address";
+    };
+
+    constants vs18_status width(1) "" {
+        VS18_0_w = 0 "1.8 V not supported";
+        VS18_0_r = 0 "1.8 V not supported";
+        VS18_1_r = 1 "1.8 V supported";
+        VS18_1_w = 1 "1.8 V supported";
+    };
+
+    constants vs30_status width(1) "" {
+        VS30_0_r = 0 "3.0 V not supported";
+        VS30_0_w = 0 "3.0 V not supported";
+        VS30_1_w = 1 "3.0 V supported";
+        VS30_1_r = 1 "3.0 V supported";
+    };
+
+    constants vs33_status width(1) "" {
+        VS33_0_r = 0 "3.3 V not supported";
+        VS33_0_w = 0 "3.3 V not supported";
+        VS33_1_w = 1 "3.3 V supported";
+        VS33_1_r = 1 "3.3 V supported";
+    };
+
+    constants ds_status width(1) "" {
+        DS_0_r = 0 "DMA not supported";
+        DS_1_r = 1 "DMA supported";
+    };
+
+    constants hss_status width(1) "" {
+        HSS_0_r = 0 "High speed not supported";
+        HSS_1_r = 1 "High speed supported";
+    };
+
+    constants ad2s_status width(1) "" {
+        AD2S_0_r = 0 "ADMA2 not supported";
+        AD2S_1_r = 1 "ADMA2 supported";
+    };
+
+    constants mbl_status width(2) "" {
+        MBL_0_r = 0 "512 bytes";
+        MBL_1_r = 1 "1024 bytes";
+        MBL_2_r = 2 "2048 bytes";
+    };
+
+    constants tcu_status width(1) "" {
+        TCU_0_r = 0 "kHz";
+        TCU_1_r = 1 "MHz";
+    };
+    
+    register mmchs_capa addr(base, 0x240) "Capabilities register This register lists the capabilities of the MMC/SD/SDIO host controller." {
+        _ 3 mbz;
+        bit64 1 ro type(bit64_status) "64-bit system bus support: Setting 1 to this bit indicates that the Host Controller supports 64-bit address descriptor mode and is connected to 64-bit address system bus.";
+        _ 1 mbz;
+        vs18 1 rw type(vs18_status) "Voltage support 1.8 V Initialization of this register (via a write access to this register) depends on the system capabilities. The host driver shall not modify this register after the initilaization. This register is only reinitialized by a hard reset (via RESETN signal)";
+        vs30 1 rw type(vs30_status) "Voltage support 3.0 V Initialization of this register (via a write access to this register) depends on the system capabilities. The host driver shall not modify this register after the initilaization. This register is only reinitialized by a hard reset (via RESETN signal)";
+        vs33 1 rw type(vs33_status) "Voltage support 3.3 V Initialization of this register (via a write access to this register) depends on the system capabilities. The host driver shall not modify this register after the initilaization. This register is only reinitialized by a hard reset (via RESETN signal)";
+        srs 1 ro type(standbymode_status) "Suspend/Resume support (SDIO cards only) This bit indicates whether the host controller supports suspend/resume functionality.";
+        ds 1 ro type(ds_status) "DMA support This bit indicates that the Host Controller is able to use DMA to transfer data between system memory and the Host Controller directly.";
+        hss 1 ro type(hss_status) "High-speed support This bit indicates that the host controller supports high-speed operations and can supply an up-to maximum card frequency.";
+        _ 1 mbz;
+        ad2s 1 ro type(ad2s_status) "ADMA2 support: This bit indicates whether the host controller is capable of using ADMA2. It depends on setting of generic parameter MMCHS_HL_HWINFO[0] MADMA_EN";
+        _ 1 mbz;
+        mbl 2 ro type(mbl_status) "Maximum block length This value indicates the maximum block size that the host driver can read and write to the buffer in the host controller. This value depends on definition of generic parameter with a max value of 2048 bytes. The host controller supports 512- byte and 1024-byte block transfers.";
+        _ 2 mbz;
+        bcf 6 ro type(merge_mem_status) "Base clock frequency for clock provided to the card.";
+        tcu 1 ro type(tcu_status) "Timeout clock unit This bit shows the unit of base clock frequency used to detect Data Timeout Error (MMCHS_STAT[20] DTO).";
+        _ 1 mbz;
+        tcf 6 ro type(merge_mem_status) "Timeout clock frequency The timeout clock frequency is used to detect Data Timeout Error (MMCHS_STAT[20] DTO).";
+    };
+    
+    register mmchs_cur_capa addr(base, 0x248) "Maximum current capabilities Register This register indicates the maximum current capability for each voltage. The value is meaningful if the voltage support is set in the capabilities register (). Initialization of this register (via a write access to this register) depends on the system capabilities. The host driver shall not modify this register after the initilaization. This register is only reinitialized by a hard reset (via RESETN signal)" {
+        _ 8 mbz;
+        cur_1v8 8 rw type(merge_mem_status) "Maximum current for 1.8V";
+        cur_3v0 8 rw type(merge_mem_status) "Maximum current for 3.0V";
+        cur_3v3 8 rw type(merge_mem_status) "Maximum current for 3.3V";
+    };
+
+    constants fe_bada_status width(1) "" {
+        FE_BADA_0_w = 0 "No effect, No Interrupt.";
+        FE_BADA_1_w = 1 "Interrupt Forced";
+    };
+    
+    register mmchs_fe addr(base, 0x250) "Force Event Register for Error Interrupt status The force Event Register is not a physically implemented register. Rather, it is an address at which the Error Interrupt Status register can be written. The effect of a write to this address will be reflected in the Error Interrupt Status Register, if corresponding bit of the Error Interrupt Status Enable Register is set." {
+        _ 2 mbz;
+        fe_bada 1 wo type(fe_bada_status) "Force Event Bad access to data space";
+        fe_cerr 1 wo type(fe_bada_status) "Force Event Card error";
+        _ 2 mbz;
+        fe_admae 1 wo type(fe_bada_status) "Force Event ADMA Error:";
+        fe_ace 1 wo type(fe_bada_status) "Force Event Auto CMD12 error";
+        fe_cle 1 rsvd "Reserved. Current limit error is not supported. These bits are initialized to zero, and writes to them are ignored.";
+        fe_deb 1 wo type(fe_bada_status) "Force Event Data End Bit error";
+        fe_dcrc 1 wo type(fe_bada_status) "Force Event Data CRC Error";
+        fe_dto 1 wo type(fe_bada_status) "Force Event Data timeout error";
+        fe_cie 1 wo type(fe_bada_status) "Force Event Command index error";
+        fe_ceb 1 wo type(fe_bada_status) "Force Event Command end bit error";
+        fe_ccrc 1 wo type(fe_bada_status) "Force Event Command CRC Error";
+        fe_cto 1 wo type(admae_status) "Command Timeout ErrorThis bit is set automatically when no response is received within 64 clock cycles from the end bit of the command. . For commands that reply within 5 clock cycles - the timeout is still detected at 64 clock cycles. .";
+        _ 8 mbz;
+        fe_cni 1 wo type(fe_bada_status) "Force Event Command not issue by Auto CMD12 error";
+        _ 2 mbz;
+        fe_acie 1 wo type(fe_bada_status) "Force Event Auto CMD12 index error";
+        fe_aceb 1 wo type(fe_bada_status) "Force Event Auto CMD12 end bit error";
+        fe_acce 1 wo type(fe_bada_status) "Force Event Auto CMD12 CRC error";
+        fe_acto 1 wo type(fe_bada_status) "Force Event Auto CMD12 timeout error";
+        fe_acne 1 wo type(fe_bada_status) "Force Event Auto CMD12 not executed";
+    };
+
+    constants srev_status width(8) "" {
+        SREV_0_r = 0 "SD Host Specification Version 1.0";
+        SREV_1_r = 1 "SD Host Specification Version 2.0";
+    };
+    
+    register mmchs_rev addr(base, 0x2FC) "Versions Register This register contains the hard coded RTL vendor revision number, the version number of SD specification compliancy and a slot status bit. [31:16] = Host controller version [15:0] = Slot Interrupt Status" {
+        vrev 8 ro "Vendor Version Number: IP revision [7:4] Major revision [3:0] Minor revision Examples: 0x10 for 1.0 0x21 for 2.1";
+        srev 8 ro type(srev_status) "Specification Version Number This status indicates the Standard SD Host Controller Specification Version. The upper and lower 4-bits indicate the version.";
+        _ 15 mbz;
+        sis 1 ro "Slot Interrupt Status This status bit indicates the inverted state of interrupt signal for the module. By a power on reset or by setting a software reset for all (MMCHS_SYSCTL[24] SRA), the interrupt signal shall be de-asserted and this status shall read 0.";
+    };
+};

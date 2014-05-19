@@ -1,0 +1,1466 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_cmu.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_cmu msbfirst ( addr base ) "" {
+    
+
+    constants linestep_status width(3) "" {
+        LINESTEP_0 = 0 "Line Step = 4 bytes.";
+        LINESTEP_1 = 1 "Line Step = 8 bytes.";
+        LINESTEP_2 = 2 "Line Step = 16 bytes.";
+        LINESTEP_3 = 3 "Line Step = 32 bytes.";
+        LINESTEP_4 = 4 "Line Step = 64 bytes.";
+        LINESTEP_5 = 5 "Line Step = 128 bytes.";
+        LINESTEP_6 = 6 "Line Step = 256 bytes.";
+        LINESTEP_7 = 7 "Line Step = 512 bytes.";
+    };
+    
+    register cmuconfigreg addr(base, 0x0) "CMU Configuration Register" {
+        threads 4 ro "Number of parallel CMO threads that can be simultaneously processed.";
+        qentries 12 ro "Number of Queue Entries Configured";
+        _ 5 mbz;
+        disablepipelining 1 rw "Disable pipelining of requests.";
+        disableparallel 1 rw "Force sequential operation by disabling any parallelism between RangeSets.";
+        inten 1 rw "Enable Interrupt on Set Completion. 0b0 = Don't interrupt. 0b1 = Interrupt on Completion.";
+        _ 4 mbz;
+        ennswr 1 rw "This enables Non-Safe programs to write this register. Out of reset - this bit is 0 which will prevent Non-Safe programs from writing it. Reading is always allowed. This bit can be set to 0x1 only through a Special Safe Monitor API. For more information about the API, see the Initialization chapter. The ROM Code will set this bit to 1 at boot time. The API can be used at runtime by the NS SW to enable/disable when necessary.";
+        linestep 3 ro type(linestep_status) "Size of smallest cache line size, log2 - 2.";
+    };
+    
+    register cmustatusreg addr(base, 0x4) "CMU Status." {
+        _ 31 mbz;
+        busy 1 ro "Indicates that at least one set is active. 0b0 = CMU is idle. 0b1 = At least one set is active.";
+    };
+    
+    register cmuintrack addr(base, 0xC) "Interrupt Acknowledgment Register. Returns the index of the RangeSet that caused the interrupt. An error bit indicates an error completion. Since there is a queue of interrupt acknowledgments, there is also a valid bit that indicates that there were no more interrupts on the queue." {
+        valid 1 ro "Indicates that the label field is valid. Can read the entire queue of entries by reading until get Valid = 0.";
+        _ 15 mbz;
+        error 1 ro "Indicates that the RangeSet operation completed with an error.";
+        _ 3 mbz;
+        index 12 ro "The index of the RangeSet that caused the interrupt.";
+    };
+    
+    register cmuallocate addr(base, 0x10) "Returns the index of a RangeSet in the Free state." {
+        none 1 ro "Returns 0b0 if Index is valid or 0b1 if no RangeSets available for allocation";
+        _ 23 mbz;
+        index 8 ro "Returns the Index of a RangeSet if one is available or zero.";
+    };
+    
+    register cmudeallocate addr(base, 0x14) "An index stored to this register frees the RangeSet with that index." {
+        _ 24 mbz;
+        index 8 rw "RangeSet Index written here is deallocated (set to the Free state).";
+    };
+    
+    register cmudebug addr(base, 0x1C) "Debug register to configure how MSuspend from the various CPUs need to be looked at by CMU to either send or not send traffic during debug session." {
+        _ 27 mbz;
+        and_msuspend 1 rw "This bit can be set so that only if all the MSuspends of all the CPUs present are enabled, CMU will suspend activity to ACP. Bits 3 and 2 need to be set to 0.";
+        or_msuspend 1 rw "This bit can be set so that if any of the MSuspends of CPUs present are enabled, then CMU will suspend activity to ACP. Bits 4 and 2 need to be 0.";
+        spec_msuspend 1 rw "This bit enables CMU to look at the MSuspend of a specific CPU to suspend CMU activity to ACP. Bits 4, 3 need to be 0 when bit 2 is 1.";
+        cpu_msuspend 2 rw "This field allows CMU to look at the MSuspend of a specific CPU to suspend traffic to ACP. When bit 4:2 = 3'b001, bits 1:0 indicates which CPU's MSuspend needs to be looked at. If the appropriate CPU's MSuspend is 1, then CMU will not generate any more activity to ACP and rest of system to have a non-intrusive debug session. When Bit 2 = 0, specific CPU's MSuspend cannot be used to control CMU's activity.";
+    };
+
+    constants completion_status width(2) "" {
+        COMPLETION_0 = 0 "No notification of normal or error completion.";
+        COMPLETION_1 = 1 "Interrupt on normal or error completion.";
+        COMPLETION_2 = 2 "Interrupt on error but not normal completion.";
+        COMPLETION_3 = 3 "Reserved.";
+    };
+
+    constants opnsel_status width(4) "" {
+        OPNSEL_0 = 0 "No operation is performed. A RangeSet activated with this OpnSel is immediately moved to the completed state.";
+        OPNSEL_1 = 1 "Invalidate.";
+        OPNSEL_2 = 2 "Clean.";
+        OPNSEL_3 = 3 "Clean and Invalidate.";
+        OPNSEL_4 = 4 "Reserved.";
+        OPNSEL_5 = 5 "Reserved.";
+        OPNSEL_6 = 6 "Reserved.";
+        OPNSEL_7 = 7 "Reserved.";
+        OPNSEL_8 = 8 "Reserved";
+        OPNSEL_9 = 9 "Reserved.";
+        OPNSEL_10 = 10 "Reserved.";
+        OPNSEL_11 = 11 "Reserved.";
+        OPNSEL_12 = 12 "Reserved.";
+        OPNSEL_13 = 13 "Reserved.";
+        OPNSEL_14 = 14 "Reserved.";
+        OPNSEL_15 = 15 "Always moves the RangeSet to the Error State.";
+    };
+    
+    register cmuoperation_i_0 addr(base, 0x1000) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_1 addr(base, 0x1010) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_2 addr(base, 0x1020) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_3 addr(base, 0x1030) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_4 addr(base, 0x1040) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_5 addr(base, 0x1050) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_6 addr(base, 0x1060) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_7 addr(base, 0x1070) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_8 addr(base, 0x1080) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_9 addr(base, 0x1090) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_10 addr(base, 0x10A0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_11 addr(base, 0x10B0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_12 addr(base, 0x10C0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_13 addr(base, 0x10D0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_14 addr(base, 0x10E0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_15 addr(base, 0x10F0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_16 addr(base, 0x1100) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_17 addr(base, 0x1110) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_18 addr(base, 0x1120) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_19 addr(base, 0x1130) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_20 addr(base, 0x1140) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_21 addr(base, 0x1150) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_22 addr(base, 0x1160) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_23 addr(base, 0x1170) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_24 addr(base, 0x1180) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_25 addr(base, 0x1190) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_26 addr(base, 0x11A0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_27 addr(base, 0x11B0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_28 addr(base, 0x11C0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_29 addr(base, 0x11D0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_30 addr(base, 0x11E0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_31 addr(base, 0x11F0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_32 addr(base, 0x1200) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_33 addr(base, 0x1210) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_34 addr(base, 0x1220) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_35 addr(base, 0x1230) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_36 addr(base, 0x1240) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_37 addr(base, 0x1250) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_38 addr(base, 0x1260) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_39 addr(base, 0x1270) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_40 addr(base, 0x1280) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_41 addr(base, 0x1290) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_42 addr(base, 0x12A0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_43 addr(base, 0x12B0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_44 addr(base, 0x12C0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_45 addr(base, 0x12D0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_46 addr(base, 0x12E0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_47 addr(base, 0x12F0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_48 addr(base, 0x1300) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_49 addr(base, 0x1310) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_50 addr(base, 0x1320) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_51 addr(base, 0x1330) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_52 addr(base, 0x1340) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_53 addr(base, 0x1350) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_54 addr(base, 0x1360) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_55 addr(base, 0x1370) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_56 addr(base, 0x1380) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_57 addr(base, 0x1390) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_58 addr(base, 0x13A0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_59 addr(base, 0x13B0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_60 addr(base, 0x13C0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_61 addr(base, 0x13D0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_62 addr(base, 0x13E0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmuoperation_i_63 addr(base, 0x13F0) "Controls the operation of one RangeSet of the CMU. Storing this register enqueues or activates the RangeSet. Note: must not write to any of the rangeset registers if State != 0b00. That indicates that previous values have not yet been transferred to the queue!" {
+        ns 1 rw "Not Safe. Set to NS used to access StartPA register. Writing one to this bit will perform the operation as non-safe. The software can not clear this bit to 0x0 after.";
+        _ 20 mbz;
+        completion 2 rw type(completion_status) "Completion Signaling Options:";
+        wait 1 rw "Wait to start. 0b1 = Wait until all previous requests are complete. 0b0 = may proceed in parallel with previous requests.";
+        _ 4 mbz;
+        opnsel 4 rw type(opnsel_status) "Selects the Cache Management Operation. If an operation is started with a reserved OpnSel, the RangeSet is immediately moved to the Error state.";
+    };
+    
+    register cmustartpa_i_0 rw addr(base, 0x1004) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_1 rw addr(base, 0x1014) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_2 rw addr(base, 0x1024) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_3 rw addr(base, 0x1034) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_4 rw addr(base, 0x1044) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_5 rw addr(base, 0x1054) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_6 rw addr(base, 0x1064) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_7 rw addr(base, 0x1074) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_8 rw addr(base, 0x1084) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_9 rw addr(base, 0x1094) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_10 rw addr(base, 0x10A4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_11 rw addr(base, 0x10B4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_12 rw addr(base, 0x10C4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_13 rw addr(base, 0x10D4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_14 rw addr(base, 0x10E4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_15 rw addr(base, 0x10F4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_16 rw addr(base, 0x1104) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_17 rw addr(base, 0x1114) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_18 rw addr(base, 0x1124) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_19 rw addr(base, 0x1134) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_20 rw addr(base, 0x1144) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_21 rw addr(base, 0x1154) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_22 rw addr(base, 0x1164) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_23 rw addr(base, 0x1174) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_24 rw addr(base, 0x1184) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_25 rw addr(base, 0x1194) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_26 rw addr(base, 0x11A4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_27 rw addr(base, 0x11B4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_28 rw addr(base, 0x11C4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_29 rw addr(base, 0x11D4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_30 rw addr(base, 0x11E4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_31 rw addr(base, 0x11F4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_32 rw addr(base, 0x1204) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_33 rw addr(base, 0x1214) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_34 rw addr(base, 0x1224) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_35 rw addr(base, 0x1234) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_36 rw addr(base, 0x1244) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_37 rw addr(base, 0x1254) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_38 rw addr(base, 0x1264) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_39 rw addr(base, 0x1274) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_40 rw addr(base, 0x1284) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_41 rw addr(base, 0x1294) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_42 rw addr(base, 0x12A4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_43 rw addr(base, 0x12B4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_44 rw addr(base, 0x12C4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_45 rw addr(base, 0x12D4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_46 rw addr(base, 0x12E4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_47 rw addr(base, 0x12F4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_48 rw addr(base, 0x1304) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_49 rw addr(base, 0x1314) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_50 rw addr(base, 0x1324) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_51 rw addr(base, 0x1334) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_52 rw addr(base, 0x1344) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_53 rw addr(base, 0x1354) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_54 rw addr(base, 0x1364) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_55 rw addr(base, 0x1374) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_56 rw addr(base, 0x1384) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_57 rw addr(base, 0x1394) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_58 rw addr(base, 0x13A4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_59 rw addr(base, 0x13B4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_60 rw addr(base, 0x13C4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_61 rw addr(base, 0x13D4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_62 rw addr(base, 0x13E4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmustartpa_i_63 rw addr(base, 0x13F4) "Starting (lower, inclusive) 32-bit physical address." type(uint32);
+    
+    register cmulength_i_0 addr(base, 0x1008) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_1 addr(base, 0x1018) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_2 addr(base, 0x1028) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_3 addr(base, 0x1038) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_4 addr(base, 0x1048) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_5 addr(base, 0x1058) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_6 addr(base, 0x1068) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_7 addr(base, 0x1078) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_8 addr(base, 0x1088) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_9 addr(base, 0x1098) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_10 addr(base, 0x10A8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_11 addr(base, 0x10B8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_12 addr(base, 0x10C8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_13 addr(base, 0x10D8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_14 addr(base, 0x10E8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_15 addr(base, 0x10F8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_16 addr(base, 0x1108) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_17 addr(base, 0x1118) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_18 addr(base, 0x1128) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_19 addr(base, 0x1138) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_20 addr(base, 0x1148) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_21 addr(base, 0x1158) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_22 addr(base, 0x1168) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_23 addr(base, 0x1178) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_24 addr(base, 0x1188) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_25 addr(base, 0x1198) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_26 addr(base, 0x11A8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_27 addr(base, 0x11B8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_28 addr(base, 0x11C8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_29 addr(base, 0x11D8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_30 addr(base, 0x11E8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_31 addr(base, 0x11F8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_32 addr(base, 0x1208) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_33 addr(base, 0x1218) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_34 addr(base, 0x1228) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_35 addr(base, 0x1238) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_36 addr(base, 0x1248) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_37 addr(base, 0x1258) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_38 addr(base, 0x1268) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_39 addr(base, 0x1278) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_40 addr(base, 0x1288) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_41 addr(base, 0x1298) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_42 addr(base, 0x12A8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_43 addr(base, 0x12B8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_44 addr(base, 0x12C8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_45 addr(base, 0x12D8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_46 addr(base, 0x12E8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_47 addr(base, 0x12F8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_48 addr(base, 0x1308) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_49 addr(base, 0x1318) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_50 addr(base, 0x1328) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_51 addr(base, 0x1338) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_52 addr(base, 0x1348) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_53 addr(base, 0x1358) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_54 addr(base, 0x1368) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_55 addr(base, 0x1378) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_56 addr(base, 0x1388) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_57 addr(base, 0x1398) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_58 addr(base, 0x13A8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_59 addr(base, 0x13B8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_60 addr(base, 0x13C8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_61 addr(base, 0x13D8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_62 addr(base, 0x13E8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+    
+    register cmulength_i_63 addr(base, 0x13F8) "Length in bytes of the range - 1, giving a representable range of 1 byte to 4k bytes." {
+        _ 20 mbz;
+        len 12 rw "Length of range minus 1.";
+    };
+
+    constants state_status width(3) "" {
+        STATE_0_r = 0 "RangeSet is unallocated.";
+        STATE_1_r = 1 "RangeSet allocated but not yet activated.";
+        STATE_2_r = 2 "Reserved";
+        STATE_3_r = 3 "RangeSet is active, either sequencing through cache lines, awaiting completion of earlier RangeSets or awaiting processing resources.";
+        STATE_4_r = 4 "Reserved";
+        STATE_5_r = 5 "Reserved";
+        STATE_6_r = 6 "RangeSet operation completed without errors.";
+        STATE_7_r = 7 "RangeSet encountered an error. Processing of the RangeSet stops with the first error. It is reported as complete with error.";
+    };
+    
+    register cmurangestate_i_0 addr(base, 0x100C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_1 addr(base, 0x101C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_2 addr(base, 0x102C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_3 addr(base, 0x103C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_4 addr(base, 0x104C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_5 addr(base, 0x105C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_6 addr(base, 0x106C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_7 addr(base, 0x107C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_8 addr(base, 0x108C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_9 addr(base, 0x109C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_10 addr(base, 0x10AC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_11 addr(base, 0x10BC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_12 addr(base, 0x10CC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_13 addr(base, 0x10DC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_14 addr(base, 0x10EC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_15 addr(base, 0x10FC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_16 addr(base, 0x110C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_17 addr(base, 0x111C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_18 addr(base, 0x112C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_19 addr(base, 0x113C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_20 addr(base, 0x114C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_21 addr(base, 0x115C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_22 addr(base, 0x116C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_23 addr(base, 0x117C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_24 addr(base, 0x118C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_25 addr(base, 0x119C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_26 addr(base, 0x11AC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_27 addr(base, 0x11BC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_28 addr(base, 0x11CC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_29 addr(base, 0x11DC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_30 addr(base, 0x11EC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_31 addr(base, 0x11FC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_32 addr(base, 0x120C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_33 addr(base, 0x121C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_34 addr(base, 0x122C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_35 addr(base, 0x123C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_36 addr(base, 0x124C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_37 addr(base, 0x125C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_38 addr(base, 0x126C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_39 addr(base, 0x127C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_40 addr(base, 0x128C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_41 addr(base, 0x129C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_42 addr(base, 0x12AC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_43 addr(base, 0x12BC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_44 addr(base, 0x12CC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_45 addr(base, 0x12DC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_46 addr(base, 0x12EC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_47 addr(base, 0x12FC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_48 addr(base, 0x130C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_49 addr(base, 0x131C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_50 addr(base, 0x132C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_51 addr(base, 0x133C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_52 addr(base, 0x134C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_53 addr(base, 0x135C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_54 addr(base, 0x136C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_55 addr(base, 0x137C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_56 addr(base, 0x138C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_57 addr(base, 0x139C) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_58 addr(base, 0x13AC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_59 addr(base, 0x13BC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_60 addr(base, 0x13CC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_61 addr(base, 0x13DC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_62 addr(base, 0x13EC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+    
+    register cmurangestate_i_63 addr(base, 0x13FC) "State of the Range Operation. Used to poll RangeSet for error or completion." {
+        state 3 ro type(state_status) "State of the RangeSet Request.";
+        _ 29 mbz;
+    };
+};

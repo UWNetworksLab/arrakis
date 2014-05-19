@@ -1,0 +1,53 @@
+\chapter*{Introduction}
+\epigraph{The Filet-o-Fish contains a battered fish patty made mostly
+          from pollock and/or hoki.}{Wikipedia}
+
+
+Filet-o-Fish, abbreviated \emph{FoF} hereafter, is a tool for the
+working language designer. Developed in the context of
+Barrelfish\cite{mmcs-barrelfish}, FoF aims at easing the development
+of Domain-Specific Languages (DSL) as well as enhancing their
+safety. As a side effect of FoF's design, it also becomes easier for
+the user of a DSL to understand ``what is going on''.
+
+To achieve this goal, Filet-o-Fish defines a set of
+\emph{combinators}. A combinator is a Haskell function manipulating
+some Haskell data-types. In this case, our combinators manipulate an
+abstraction of the C language constructs, such as integers, floats,
+structures, arrays, etc. Altogether, this set of combinators defines
+an \emph{embedded language} in Haskell. To avoid the confusion with
+the DSLs we are willing to implement, we term this embedded language
+the \emph{meta-language}. 
+
+You seems confused now. Listen. The Hamlet compiler is implemented
+with Filet-o-Fish. Hamlet is a Domain-Specific Language. In Hamlet's
+compiler, we use FoF to \emph{get the job done}, ie. to get the actual
+C code out of our capability system description. Hence, the Hamlet
+compiler is partly developed in the FoF meta-language. Understood?
+
+However, Filet-o-Fish is much more than a language to get the job
+done: being able to compile the meta-language to C is just one
+side-effect of our work. By writing a DSL compiler with FoF, you
+actually define the \emph{semantics} of the DSL. Whereas the syntax
+defines the set of legal expressions of a language, the semantics
+assign a meaning to the terms of the language. Note that the C
+language does not have any formal semantics. And, no, this is not
+normal. This is Evil.
+
+For a DSL, the benefit of having a formal semantics is twofold. First,
+the semantics of your DSL is the most precise and accurate description
+of the behavior of your domain-specific constructs. An informal,
+in-English specification of the DSL might fail to capture some
+specific points. The formal semantics is an ultimate documentation,
+which doesn't lie. Second, defining a formal semantics is a necessary
+step before any compiler correctness proof, be it mechanized or on
+paper. Therefore, thanks to FoF, you get a formal, mechanized
+semantics of your DSL. And this is for free.
+
+Finally, this document is the literate Haskell code of Filet-o-Fish:
+the code described in the following pages is the one that is compiled
+by the Haskell compiler. Therefore, this is the most accurate,
+up-to-date documentation of Fof's internals.
+
+So much marketing, let us look at the code.
+

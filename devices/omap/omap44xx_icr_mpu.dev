@@ -1,0 +1,92 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_icr_mpu.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_icr_mpu msbfirst ( addr base ) "" {
+    
+    
+    register icr_revision ro addr(base, 0x0) "This register contains the IP revision code." type(uint32);
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle";
+        IDLEMODE_1 = 1 "No-idle";
+        IDLEMODE_3 = 3 "Reserved";
+        IDLEMODE_2 = 2 "Smart-idle";
+    };
+    
+    register sys_config addr(base, 0x10) "This register allows controlling various parameters of the OCP interface." {
+        _ 27 mbz;
+        idlemode 2 rw type(idlemode_status) "Slave interface power management, req/ack control";
+        _ 1 mbz;
+        softreset 1 rw "Software reset. Set this bit to 1 to trigger a module reset. The bit is automatically reset by the hardware. During reads, it always return 0. 0: Normal mode 1: The module is reset";
+        autoidle 1 rw "Internal OCP clock gating 0: OCP clock is free running 1: Automatic OCP clock gating strategy is applied based on the OCP interface activity";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_1_r = 1 "Reset completed";
+        RESETDONE_0_r = 0 "Internal module reset in ongoing";
+    };
+    
+    register sys_status addr(base, 0x14) "This register provides status information about the module, excluding the interrupt status information." {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal reset monitoring 0: Internal module reset ongoing 1: Reset completed";
+    };
+
+    constants flag_set_status width(1) "" {
+        FLAG_SET_0_w = 0 "Received command (Rx path) status bit unchanged";
+        FLAG_SET_1_w = 1 "Received command (Rx path) status bit is reset";
+        FLAG_SET_1_r = 1 "Received command (Rx path) is true ('pending')";
+        FLAG_SET_0_r = 0 "Received command (Rx path) false";
+    };
+    
+    register m_irq_status addr(base, 0x18) "The interrupt status register regroups all the status of the module internal events that can generate an interrupt - Write 1 to a given bit resets this bit." {
+        _ 30 mbz;
+        flag_set 1 rw type(flag_set_status) "Flag has been set inG_ICR register.";
+        flag_reset 1 rw type(flag_set_status) "Flag has been reset inM_ICR register.";
+    };
+    
+    register g_irq_status addr(base, 0x1C) "The interrupt status register regroups all the status of the module internal events that can generate an interrupt - Write 1 to a given bit resets this bit." {
+        _ 30 mbz;
+        flag_set 1 rw1c type(flag_set_status) "Flag has been set inM_ICR register.";
+        flag_reset 1 rw1c type(flag_set_status) "Flag has been reset inG_ICR register.";
+    };
+    
+    register m_icr rw1c addr(base, 0x20) "Flags are used to notify an event to the other subsystem. The meaning of each flag is software dependent." type(uint32);
+    
+    register g_icr rw addr(base, 0x24) "Flags are used to notify an event to the other subsystem. The meaning of each flag is software dependent." type(uint32);
+    
+    register m_ctl addr(base, 0x28) "Enables interrupts to subsystems." {
+        _ 30 mbz;
+        g_icr_inten 1 ro "Enable interrupt to MPU-S 0: No interrupt is generated 1: An interrupt is generated when Modem-S sets a flag to MPU-S";
+        m_icr_inten 1 ro "Enable interrupt to MPU-S 0: No interrupt is generated 1: An interrupt is generated when Modem-S resets a flag set by MPU-S";
+    };
+    
+    register g_ctl addr(base, 0x2C) "Enables interrupts to subsystems." {
+        _ 30 mbz;
+        m_icr_inten 1 rw "Enable interrupt to Modem-S 0: No interrupt is generated 1: An interrupt is generated when MPU-S sets a flag to Modem-S";
+        g_icr_inten 1 rw "Enable interrupt to Modem-S 0: No interrupt is generated 1: An interrupt is generated when MPU-S resets a flag set by Modem-S";
+    };
+};

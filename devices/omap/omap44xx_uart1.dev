@@ -1,0 +1,937 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_uart1.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_uart1 msbfirst ( addr base ) "" {
+    
+    
+    register uart_dll addr(base, 0x0) "This register, with, stores the 14-bit divisor for generation of the baud clock in the baud rate generator. DLH stores the most-significant part of the divisor. DLL stores the least-significant part of the divisor." {
+        _ 24 mbz;
+        clock_lsb 8 rw "Stores the 8-bit LSB divisor value";
+    };
+    
+    register uart_rhr addr(base, 0x0) "The receiver section consists of the receiver holding register (RHR) and the receiver shift register. The RHR is a 64-byte FIFO. The receiver shift register receives serial data from RX input. The data is converted to parallel data and moved to the RHR. If the FIFO is disabled, location 0 of the FIFO stores the single data character.Note:If an overflow occurs, the data in the RHR is not overwritten." {
+        _ 24 mbz;
+        rhr 8 ro "Receive holding register";
+    };
+    
+    register uart_thr addr(base, 0x0) "The transmitter section consists of the transmit holding register (THR) and the transmit shift register. The THR is a 64-byte FIFO. The local host (LH) writes data to the THR. The data is placed in the transmit shift register where it is shifted out serially on the TX output. If the FIFO is disabled, location 0 of the FIFO stores the data." {
+        _ 24 mbz;
+        thr 8 wo "Transmit holding register";
+    };
+    
+    register uart_dlh addr(base, 0x4) "This register, with, stores the 14-bit divisor for generating the baud clock in the baud rate generator. DLH stores the most-significant part of the divisor. DLL stores the least-significant part of the divisor." {
+        _ 24 mbz;
+        _ 2 mbz;
+        clock_msb 6 rw "Stores the 6-bit MSB divisor value";
+    };
+
+    constants cts_it_status width(1) "" {
+        CTS_IT_0 = 0 "Disables the CTS* interrupt";
+        CTS_IT_1 = 1 "Enables the CTS* interrupt";
+    };
+
+    constants rts_it_status width(1) "" {
+        RTS_IT_0 = 0 "Disables the RTS* interrupt";
+        RTS_IT_1 = 1 "Enables the RTS* interrupt";
+    };
+
+    constants xoff_it_status width(1) "" {
+        XOFF_IT_0 = 0 "Disables the XOFF interrupt";
+        XOFF_IT_1 = 1 "Enables the XOFF interrupt";
+    };
+
+    constants sleep_mode_status width(1) "" {
+        SLEEP_MODE_0 = 0 "Disables sleep mode";
+        SLEEP_MODE_1 = 1 "Enables sleep mode (stop baud rate clock when the module is inactive)";
+    };
+
+    constants modem_sts_it_status width(1) "" {
+        MODEM_STS_IT_0 = 0 "Disables the modem status register interrupt";
+        MODEM_STS_IT_1 = 1 "Enables the modem status register interrupt";
+    };
+
+    constants thr_it_status width(1) "" {
+        THR_IT_0 = 0 "Disables the THR interrupt";
+        THR_IT_1 = 1 "Enables the THR interrupt";
+    };
+
+    constants rhr_it_status width(1) "" {
+        RHR_IT_0 = 0 "Disables the RHR interrupt and time-out interrupt";
+        RHR_IT_1 = 1 "Enables the RHR interrupt and time-out interrupt";
+    };
+    
+    register uart_ier addr(base, 0x4) "Interrupt enable register" {
+        _ 24 mbz;
+        cts_it 1 rw type(cts_it_status) "";
+        rts_it 1 rw type(rts_it_status) "";
+        xoff_it 1 rw type(xoff_it_status) "";
+        sleep_mode 1 rw type(sleep_mode_status) "";
+        modem_sts_it 1 rw type(modem_sts_it_status) "";
+        line_sts_it 1 rw type(modem_sts_it_status) "";
+        thr_it 1 rw type(thr_it_status) "";
+        rhr_it 1 rw type(rhr_it_status) "";
+    };
+
+    constants tx_status_it_status width(1) "" {
+        TX_STATUS_IT_0 = 0 "Disables the TX status interrupt";
+        TX_STATUS_IT_1 = 1 "Enables the TX status interrupt";
+    };
+
+    constants rx_overrun_it_status width(1) "" {
+        RX_OVERRUN_IT_0 = 0 "Disables the RX overrun interrupt";
+        RX_OVERRUN_IT_1 = 1 "Enables the RX overrun interrupt";
+    };
+
+    constants rx_stop_it_status width(1) "" {
+        RX_STOP_IT_0 = 0 "Disables the receive stop interrupt";
+        RX_STOP_IT_1 = 1 "Enables the receive stop interrupt";
+    };
+
+    constants rhr_it_status1 width(1) "" {
+        RHR_IT_0_1 = 0 "Disables the RHR interrupt";
+        RHR_IT_1_1 = 1 "Enables the RHR interrupt";
+    };
+    
+    register uart_ier_cir addr(base, 0x4) "There are 6 types of interrupt in these modes: TX status, status FIFO interrupt, RX overrun, last byte in RX FIFO, THR interrupt, and RHR interrupt. These interrupts can be enabled and disabled individually. Note: The RX_STOP_IT interrupt is generated based on the value set in the BOF Length register (EBLR). In IR-CIR mode, contrary to the IR-IRDA mode, the TX_STATUS_IT has only one meaning that corresponds to the case MDR2[0] = 0." {
+        _ 24 mbz;
+        _ 2 mbz;
+        tx_status_it 1 rw type(tx_status_it_status) "";
+        _ 1 mbz;
+        rx_overrun_it 1 rw type(rx_overrun_it_status) "";
+        rx_stop_it 1 rw type(rx_stop_it_status) "";
+        thr_it 1 rw type(thr_it_status) "";
+        rhr_it 1 rw type(rhr_it_status1) "";
+    };
+
+    constants eof_it_status width(1) "" {
+        EOF_IT_0 = 0 "Disables the received EOF interrupt";
+        EOF_IT_1 = 1 "Enables the received EOF interrupt";
+    };
+
+    constants sts_fifo_trig_it_status width(1) "" {
+        STS_FIFO_TRIG_IT_0 = 0 "Disables status FIFO trigger level interrupt";
+        STS_FIFO_TRIG_IT_1 = 1 "Enables status FIFO trigger level interrupt";
+    };
+
+    constants last_rx_byte_it_status width(1) "" {
+        LAST_RX_BYTE_IT_0 = 0 "Disables the last byte of frame in RX FIFO interrupt";
+        LAST_RX_BYTE_IT_1 = 1 "Enables the last byte of frame in RX FIFO interrupt";
+    };
+    
+    register uart_ier_irda addr(base, 0x4) "There are 8 types of interrupt in these modes: received EOF, LSR interrupt, TX status, status FIFO interrupt, RX overrun, last byte in RX FIFO, THR interrupt, and RHR interrupt. These interrupts can be enabled and disabled individually. Note: The TX_STATUS_IT interrupt reflects two possible conditions. The MDR2[0] should be read to determine the status in the event of this interrupt." {
+        _ 24 mbz;
+        eof_it 1 rw type(eof_it_status) "";
+        line_sts_it 1 rw type(modem_sts_it_status) "";
+        tx_status_it 1 rw type(tx_status_it_status) "";
+        sts_fifo_trig_it 1 rw type(sts_fifo_trig_it_status) "";
+        rx_overrun_it 1 rw type(rx_overrun_it_status) "";
+        last_rx_byte_it 1 rw type(last_rx_byte_it_status) "";
+        thr_it 1 rw type(thr_it_status) "";
+        rhr_it 1 rw type(rhr_it_status) "";
+    };
+
+    constants auto_cts_en_status width(1) "" {
+        AUTO_CTS_EN_0 = 0 "Normal operation";
+        AUTO_CTS_EN_1 = 1 "Auto-CTS flow control is enabled. Transmission is halted when the CTS* pin is high (inactive).";
+    };
+
+    constants auto_rts_en_status width(1) "" {
+        AUTO_RTS_EN_0 = 0 "Normal operation";
+        AUTO_RTS_EN_1 = 1 "Auto-RTS flow control is enabled. RTS* pin goes high (inactive) when the RX FIFO HALT trigger level,[3:0], is reached, and goes low (active) when the RX FIFO RESTORE transmission trigger level is reached.";
+    };
+
+    constants special_char_detect_status width(1) "" {
+        SPECIAL_CHAR_DETECT_0 = 0 "Normal operation";
+        SPECIAL_CHAR_DETECT_1 = 1 "Special character detect enable. Received data is compared with XOFF2 data. If a match occurs, the received data is transferred to the RX FIFO and the[4] bit is set to 1 to indicate that a special character was detected.";
+    };
+
+    constants enhanced_en_status width(1) "" {
+        ENHANCED_EN_0 = 0 "Disables writing to IER bits 4-7, bits 4-5, and MCR bits 5-7.";
+        ENHANCED_EN_1 = 1 "Enables writing to IER bits 4-7, bits 4-5, and MCR bits 5-7.";
+    };
+    
+    register uart_efr addr(base, 0x8) "Enhanced feature register" {
+        _ 24 mbz;
+        auto_cts_en 1 rw type(auto_cts_en_status) "Auto-CTS enable bit";
+        auto_rts_en 1 rw type(auto_rts_en_status) "Auto-RTS enable bit";
+        special_char_detect 1 rw type(special_char_detect_status) "";
+        enhanced_en 1 rw type(enhanced_en_status) "Enhanced functions write enable bit";
+        sw_flow_control 4 rw "Combinations of software flow control can be selected by programming bit 3 - bit 0. See.";
+    };
+
+    constants dma_mode_status width(1) "" {
+        DMA_MODE_0_w = 0 "DMA_MODE 0 (No DMA)";
+        DMA_MODE_1_w = 1 "DMA_MODE 1 (UART_nDMA_REQ[0] in TX, UART_nDMA_REQ[1] in RX)";
+    };
+
+    constants tx_fifo_clear_status width(1) "" {
+        TX_FIFO_CLEAR_0_w = 0 "No change";
+        TX_FIFO_CLEAR_1_w = 1 "Clears the TX FIFO and resets its counter logic to 0. Returns to 0 after clearing FIFO.";
+    };
+
+    constants rx_fifo_clear_status width(1) "" {
+        RX_FIFO_CLEAR_0_w = 0 "No change";
+        RX_FIFO_CLEAR_1_w = 1 "Clears the RX FIFO and resets its counter logic to 0. Returns to 0 after clearing FIFO.";
+    };
+
+    constants fifo_en_status width(1) "" {
+        FIFO_EN_0_w = 0 "Disables the transmit and RX FIFOs. The transmit and receive holding registers are 1-byte FIFOs.";
+        FIFO_EN_1_w = 1 "Enables the transmit and RX FIFOs. The transmit and receive holding registers are 64-byte FIFOs.";
+    };
+    
+    register uart_fcr addr(base, 0x8) "FIFO control register" {
+        _ 24 mbz;
+        rx_fifo_trig 2 wo "Sets the trigger level for the RX FIFO: If UART_SCR[7] = 0 and UART_TLR[7:4] = 0000: 00: 8 characters 01: 16 characters 10: 56 characters 11: 60 characters If UART_SCR[7] = 0 and UART_TLR[7:4] != 0000, RX_FIFO_TRIG is not considered. If UART_SCR[7] = 1, RX_FIFO_TRIG is 2 LSBs of the trigger level (1-63 on 6 bits) with the granularity 1.";
+        tx_fifo_trig 2 wo "Sets the trigger level for the TX FIFO: If UART_SCR[6] = 0 and UART_TLR[3:0] = 0000: 00: 8 spaces 01: 16 spaces 10: 32 spaces 11: 56 spaces If UART_SCR[6] = 0 and UART_TLR[3:0] != 0000, TX_FIFO_TRIG is not considered. If UART_SCR[6] = 1, TX_FIFO_TRIG is 2 LSBs of the trigger level (1-63 on 6 bits) with the granularity 1";
+        dma_mode 1 wo type(dma_mode_status) "This register is considered ifUART_SCR[0] = 0.";
+        tx_fifo_clear 1 wo type(tx_fifo_clear_status) "";
+        rx_fifo_clear 1 wo type(rx_fifo_clear_status) "";
+        fifo_en 1 wo type(fifo_en_status) "";
+    };
+
+    constants it_type_status width(5) "" {
+        IT_TYPE_1_r = 1 "THR interrupt. Priority = 3";
+        IT_TYPE_2_r = 2 "RHR interrupt. Priority = 2";
+        IT_TYPE_3_r = 3 "Receiver line status error. Priority = 3";
+        IT_TYPE_6_r = 6 "Rx time-out. Priority = 2";
+        IT_TYPE_8_r = 8 "XOFF/special character. Priority = 5";
+        IT_TYPE_16_r = 16 "CTS, RTS, DSR change state from active (low) to inactive (high) Priority = 6";
+    };
+
+    constants it_pending_status width(1) "" {
+        IT_PENDING_1_r = 1 "No interrupt is pending.";
+    };
+    
+    register uart_iir addr(base, 0x8) "Interrupt identification register." {
+        _ 24 mbz;
+        fcr_mirror 2 ro "Mirror the contents ofUART_FCR[0] on both bits.";
+        it_type 5 ro type(it_type_status) "Read 0x0: Modem interrupt. Priority = 4";
+        it_pending 1 ro type(it_pending_status) "Read 0x0: An interrupt is pending.";
+    };
+
+    constants tx_status_it_status1 width(1) "" {
+        TX_STATUS_IT_1_r = 1 "TX status interrupt active";
+    };
+
+    constants rx_oe_it_status width(1) "" {
+        RX_OE_IT_1_r = 1 "RX overrun interrupt active";
+    };
+
+    constants rx_stop_it_status1 width(1) "" {
+        RX_STOP_IT_1_r = 1 "Receive stop interrupt active";
+    };
+
+    constants thr_it_status1 width(1) "" {
+        THR_IT_1_r = 1 "THR interrupt active";
+    };
+
+    constants rhr_it_status2 width(1) "" {
+        RHR_IT_1_r = 1 "RHR interrupt active";
+    };
+    
+    register uart_iir_cir addr(base, 0x8) "The interrupt line is activated whenever one of the 6 interrupts is active." {
+        _ 24 mbz;
+        _ 2 mbz;
+        tx_status_it 1 ro type(tx_status_it_status1) "Read 0x0: TX status interrupt inactive";
+        _ 1 mbz;
+        rx_oe_it 1 ro type(rx_oe_it_status) "Read 0x0: RX overrun interrupt inactive";
+        rx_stop_it 1 ro type(rx_stop_it_status1) "Read 0x0: Receive stop interrupt inactive";
+        thr_it 1 ro type(thr_it_status1) "Read 0x0: THR interrupt inactive";
+        rhr_it 1 ro type(rhr_it_status2) "Read 0x0: RHR interrupt inactive";
+    };
+
+    constants eof_it_status1 width(1) "" {
+        EOF_IT_0_r = 0 "Receive EOF interrupt inactive";
+        EOF_IT_1_r = 1 "Received EOF interrupt active";
+    };
+
+    constants line_sts_it_status width(1) "" {
+        LINE_STS_IT_0_r = 0 "Receiver line status interrupt inactive";
+        LINE_STS_IT_1_r = 1 "Receiver line status interrupt active";
+    };
+
+    constants tx_status_it_status2 width(1) "" {
+        TX_STATUS_IT_0_r = 0 "TX status interrupt inactive";
+        TX_STATUS_IT_1_r_1 = 1 "TX status interrupt active";
+    };
+
+    constants rx_oe_it_status1 width(1) "" {
+        RX_OE_IT_0_r = 0 "RX overrun interrupt inactive";
+        RX_OE_IT_1_r_1 = 1 "RX overrun interrupt active";
+    };
+
+    constants thr_it_status2 width(1) "" {
+        THR_IT_0_r = 0 "THR interrupt inactive";
+        THR_IT_1_r_1 = 1 "THR interrupt active";
+    };
+
+    constants rhr_it_status3 width(1) "" {
+        RHR_IT_0_r = 0 "RHR interrupt inactive";
+        RHR_IT_1_r_1 = 1 "RHR interrupt active";
+    };
+    
+    register uart_iir_irda addr(base, 0x8) "The interrupt line is activated whenever one of the 8 interrupts is active." {
+        _ 24 mbz;
+        eof_it 1 ro type(eof_it_status1) "";
+        line_sts_it 1 ro type(line_sts_it_status) "";
+        tx_status_it 1 ro type(tx_status_it_status2) "";
+        sts_fifo_it 1 ro type(sts_fifo_trig_it_status) "";
+        rx_oe_it 1 ro type(rx_oe_it_status1) "";
+        rx_fifo_last_byte_it 1 ro type(last_rx_byte_it_status) "";
+        thr_it 1 ro type(thr_it_status2) "";
+        rhr_it 1 ro type(rhr_it_status3) "";
+    };
+
+    constants div_en_status width(1) "" {
+        DIV_EN_0 = 0 "Normal operating condition";
+        DIV_EN_1 = 1 "Divisor latch enable. Allows access to DLL, DLH, and other registers (see and ).";
+    };
+
+    constants break_en_status width(1) "" {
+        BREAK_EN_0 = 0 "Normal operating condition";
+        BREAK_EN_1 = 1 "Forces the transmitter output to go low to alert the communication terminal";
+    };
+
+    constants parity_type1_status width(1) "" {
+        PARITY_TYPE1_0 = 0 "Odd parity is generated (if[3] = 1).";
+        PARITY_TYPE1_1 = 1 "Even parity is generated (if[3] = 1).";
+    };
+
+    constants parity_en_status width(1) "" {
+        PARITY_EN_1 = 1 "A parity bit is generated during transmission and the receiver checks for received parity.";
+    };
+
+    constants nb_stop_status width(1) "" {
+        NB_STOP_0 = 0 "1 stop-bit (word length = 5, 6, 7, 8)";
+        NB_STOP_1 = 1 "1.5 stop-bits (word length = 5) 2 stop-bits (word length = 6, 7, 8)";
+    };
+
+    constants char_length_status width(2) "" {
+        CHAR_LENGTH_0 = 0 "5 bits";
+        CHAR_LENGTH_1 = 1 "6 bits";
+        CHAR_LENGTH_2 = 2 "7 bits";
+        CHAR_LENGTH_3 = 3 "8 bits";
+    };
+    
+    register uart_lcr addr(base, 0xC) "Line control register" {
+        _ 24 mbz;
+        div_en 1 rw type(div_en_status) "";
+        break_en 1 rw type(break_en_status) "Break control bit";
+        parity_type2 1 rw "Selects the forced parity format (ifUART_LCR[3] = 1). If UART_LCR[5] = 1 and UART_LCR[4] = 0, the parity bit is forced to 1 in the transmitted and received data. If UART_LCR[5] = 1 and UART_LCR[4] = 1, the parity bit is forced to 0 in the transmitted and received data.";
+        parity_type1 1 rw type(parity_type1_status) "";
+        parity_en 1 rw type(parity_en_status) "0x0: No parity";
+        nb_stop 1 rw type(nb_stop_status) "Specifies the number of stop-bits";
+        char_length 2 rw type(char_length_status) "Specifies the word length to be transmitted or received";
+    };
+
+    constants tcr_tlr_status width(1) "" {
+        TCR_TLR_1 = 1 "Enables access to the and registers";
+    };
+
+    constants xon_en_status width(1) "" {
+        XON_EN_1 = 1 "Enable XON any function.";
+    };
+
+    constants loopback_en_status width(1) "" {
+        LOOPBACK_EN_1 = 1 "Enable local loopback mode (internal). In this mode, the MCR[3:0] signals are looped back into the[7:4] bit field. The transmit output is looped back to the receive input internally.";
+    };
+
+    constants cd_sts_ch_status width(1) "" {
+        CD_STS_CH_1 = 1 "In loopback, forces DCD* input low and IRQ outputs to inactive state";
+    };
+
+    constants ri_sts_ch_status width(1) "" {
+        RI_STS_CH_1 = 1 "In loopback, forces RI* input low";
+    };
+
+    constants rts_status width(1) "" {
+        RTS_0 = 0 "Force RTS* output to inactive (high).";
+        RTS_1 = 1 "Force RTS* output to active (low).";
+    };
+
+    constants dtr_status width(1) "" {
+        DTR_1 = 1 "Force DTR* output to active (low).";
+    };
+    
+    register uart_mcr addr(base, 0x10) "Modem control register" {
+        _ 24 mbz;
+        _ 1 mbz;
+        tcr_tlr 1 rw type(tcr_tlr_status) "0x0: No action";
+        xon_en 1 rw type(xon_en_status) "0x0: Disable XON any function.";
+        loopback_en 1 rw type(loopback_en_status) "0x0: Normal operating mode";
+        cd_sts_ch 1 rw type(cd_sts_ch_status) "0x0: In loopback, forces DCD* input high and IRQ outputs to inactive state";
+        ri_sts_ch 1 rw type(ri_sts_ch_status) "0x0: In loopback, forces RI* input high";
+        rts 1 rw type(rts_status) "In loopback, controls theUART_MSR[4] bit. If auto-RTS is enabled, the RTS* output is controlled by hardware flow control.";
+        dtr 1 rw type(dtr_status) "0x0: Force DTR* output to inactive (high).";
+    };
+    
+    register uart_xon1_addr1 addr(base, 0x10) "UART mode: XON1 character, IrDA mode: ADDR1 address" {
+        _ 24 mbz;
+        xon_word1 8 rw "Stores the 8-bit XON1 character in UART modes and ADDR1 address 1 for IrDA modes";
+    };
+
+    constants rx_fifo_sts_status width(1) "" {
+        RX_FIFO_STS_1_r = 1 "At least one parity error, framing error, or break indication in the RX FIFO. Bit 7 is cleared when no more errors are present in the RX FIFO.";
+    };
+
+    constants tx_sr_e_status width(1) "" {
+        TX_SR_E_1_r = 1 "Transmitter hold (TX FIFO) and shift registers are empty.";
+    };
+
+    constants rx_bi_status width(1) "" {
+        RX_BI_1_r = 1 "A break was detected while the data from the RX FIFO was received (for example, RX input was low for one character + 1 bit time frame).";
+    };
+
+    constants rx_pe_status width(1) "" {
+        RX_PE_1_r = 1 "Parity error in data from RX FIFO";
+    };
+
+    constants rx_oe_status width(1) "" {
+        RX_OE_1_r = 1 "Overrun error occurred. Set when the character in the receive shift register is not transferred to the RX FIFO. This occurs only when the RX FIFO is full.";
+    };
+    
+    register uart_lsr addr(base, 0x14) "Line status register" {
+        _ 24 mbz;
+        rx_fifo_sts 1 ro type(rx_fifo_sts_status) "Read 0x0: Normal operation";
+        tx_sr_e 1 ro type(tx_sr_e_status) "Read 0x0: Transmitter hold (TX FIFO) and shift registers are not empty.";
+        tx_fifo_e 1 ro type(tx_sr_e_status) "Read 0x0: Transmit hold register (TX FIFO) is not empty.";
+        rx_bi 1 ro type(rx_bi_status) "Read 0x0: No break condition";
+        rx_fe 1 ro type(last_rx_byte_it_status) "Read 0x0: No framing error in data RX FIFO";
+        rx_pe 1 ro type(rx_pe_status) "Read 0x0: No parity error in data from RX FIFO";
+        rx_oe 1 ro type(rx_oe_status) "Read 0x0: No overrun error";
+        rx_fifo_e 1 ro type(last_rx_byte_it_status) "Read 0x0: No data in the RX FIFO";
+    };
+
+    constants rx_stop_status width(1) "" {
+        RX_STOP_0_r = 0 "Reception is ongoing or waiting for a new frame.";
+        RX_STOP_1_r = 1 "Reception is complete.";
+    };
+
+    constants rx_fifo_e_status width(1) "" {
+        RX_FIFO_E_1_r_1 = 1 "No data in the RX FIFO";
+    };
+    
+    register uart_lsr_cir addr(base, 0x14) "Line status register in CIR mode" {
+        _ 24 mbz;
+        thr_empty 1 ro type(tx_sr_e_status) "Read 0x0: Transmit holding register (TX FIFO) is not empty.";
+        _ 1 mbz;
+        rx_stop 1 ro type(rx_stop_status) "The RX_STOP is generated based on the value set in the BOF Length register (UART_EBLR). It is cleared on a single read of the UART_LSR register.";
+        _ 4 mbz;
+        rx_fifo_e 1 ro type(rx_fifo_e_status) "Read 0x0: At least one data character in the RX FIFO";
+    };
+
+    constants sts_fifo_full_status width(1) "" {
+        STS_FIFO_FULL_1_r = 1 "Status FIFO full";
+    };
+
+    constants rx_last_byte_status width(1) "" {
+        RX_LAST_BYTE_1_r = 1 "The RX FIFO (RHR) contains the last byte of the frame to be read. This bit is set only when the last byte of a frame is available to be read. It determines the frame boundary. It is cleared on a single read of the LSR register. See the note below.";
+    };
+
+    constants frame_too_long_status width(1) "" {
+        FRAME_TOO_LONG_1_r = 1 "Frame-too-long error in the frame at the top of the STATUS FIFO, (next character to be read). This bit is set to 1 when a frame exceeding the maximum length (set by RXFLH and RXFLL registers) is received. When this error is detected, current frame reception is terminated. Reception is stopped until the next START flag is detected.";
+    };
+
+    constants abort_status width(1) "" {
+        ABORT_1_r = 1 "Abort pattern is received. SIR and MIR: Abort pattern FIR: Illegal symbol";
+    };
+
+    constants crc_status width(1) "" {
+        CRC_1_r = 1 "CRC error in the frame at the top of the STATUS FIFO (next character to be read)";
+    };
+
+    constants sts_fifo_e_status width(1) "" {
+        STS_FIFO_E_1_r = 1 "Status FIFO empty";
+    };
+    
+    register uart_lsr_irda addr(base, 0x14) "When the LSR is read, LSR[4:2] reflect the error bits [FL, CRC, ABORT] of the frame at the top of the STATUS FIFO (next frame status to be read)." {
+        _ 24 mbz;
+        thr_empty 1 ro type(tx_sr_e_status) "Read 0x0: Transmit holding register (TX FIFO) is not empty.";
+        sts_fifo_full 1 ro type(sts_fifo_full_status) "Read 0x0: Status FIFO not full";
+        rx_last_byte 1 ro type(rx_last_byte_status) "Read 0x0: The RX FIFO (RHR) does not contain the last byte of the frame to be read.";
+        frame_too_long 1 ro type(frame_too_long_status) "Read 0x0: No frame-too-long error in frame";
+        abort 1 ro type(abort_status) "Read 0x0: No abort pattern error in frame";
+        crc 1 ro type(crc_status) "Read 0x0: No CRC error in frame";
+        sts_fifo_e 1 ro type(sts_fifo_e_status) "Read 0x0: Status FIFO not empty";
+        rx_fifo_e 1 ro type(last_rx_byte_it_status) "Read 0x0: No data in the RX FIFO";
+    };
+    
+    register uart_xon2_addr2 addr(base, 0x14) "Stores the 8-bit XON2 character in UART moldes and ADDR2 address 2 for IrDA modes" {
+        _ 24 mbz;
+        xon_word2 8 rw "Stores the 8-bit XON2 character in UART modes and ADDR2 address 2 for IrDA modes";
+    };
+
+    constants dsr_sts_status width(1) "" {
+        DSR_STS_1_r = 1 "Indicates that DSR* input (or[0] in loopback) changed state. Cleared on a read.";
+    };
+    
+    register uart_msr addr(base, 0x18) "Modem status register. UART mode only." {
+        _ 24 mbz;
+        ncd_sts 1 ro "This bit is the complement of the DCD* input. In loopback mode, it is equivalent toUART_MCR[3].";
+        nri_sts 1 ro "This bit is the complement of the RI* input. In loopback mode, it is equivalent toUART_MCR[2].";
+        ndsr_sts 1 ro "This bit is the complement of the DSR* input. In loopback mode, it is equivalent toUART_MCR[0].";
+        ncts_sts 1 ro "This bit is the complement of the CTS* input. In loopback mode, it is equivalent toUART_MCR[1].";
+        dcd_sts 1 ro "Indicates that DCD* input (orUART_MCR[3] in loopback) changed. Cleared on a read.";
+        ri_sts 1 ro "Indicates that RI* input (orUART_MCR[2] in loopback) changed state from low to high. Cleared on a read.";
+        dsr_sts 1 ro type(dsr_sts_status) "";
+        cts_sts 1 ro type(auto_cts_en_status) "";
+    };
+    
+    register uart_tcr addr(base, 0x18) "Transmission control register" {
+        _ 24 mbz;
+        rx_fifo_trig_start 4 rw "RX FIFO trigger level to RESTORE transmission (0 - 60)";
+        rx_fifo_trig_halt 4 rw "RX FIFO trigger level to HALT transmission (0 - 60)";
+    };
+    
+    register uart_xoff1 addr(base, 0x18) "UART mode XOFF1 character" {
+        _ 24 mbz;
+        xoff_word1 8 rw "Stores the 8-bit XOFF1 character used in UART modes";
+    };
+    
+    register uart_spr addr(base, 0x1C) "Scratchpad register" {
+        _ 24 mbz;
+        spr_word 8 rw "Scratchpad register";
+    };
+    
+    register uart_tlr addr(base, 0x1C) "Trigger level register" {
+        _ 24 mbz;
+        rx_fifo_trig_dma 4 rw "Receive FIFO trigger level";
+        tx_fifo_trig_dma 4 rw "Transmit FIFO trigger level";
+    };
+    
+    register uart_xoff2 addr(base, 0x1C) "UART mode XOFF2 character" {
+        _ 24 mbz;
+        xoff_word2 8 rw "Stores the 8-bit XOFF2 character used in UART modes.";
+    };
+
+    constants frame_end_mode_status width(1) "" {
+        FRAME_END_MODE_0 = 0 "Frame-length method";
+        FRAME_END_MODE_1 = 1 "Set EOT bit method";
+    };
+
+    constants sip_mode_status width(1) "" {
+        SIP_MODE_0 = 0 "Manual SIP mode: SIP is generated with the control of ACREG[3].";
+        SIP_MODE_1 = 1 "Automatic SIP mode: SIP is generated after each transmission.";
+    };
+
+    constants sct_status width(1) "" {
+        SCT_0 = 0 "Starts the infrared transmission when a value is written to THR";
+        SCT_1 = 1 "Starts the infrared transmission with the control of ACREG[2]. Note: Before starting any transmission, there must be no reception ongoing.";
+    };
+
+    constants set_txir_status width(1) "" {
+        SET_TXIR_0 = 0 "a) No action if MDR2[7] = 0 b) TXIR pin output is forced low if MDR2[7] = 1.";
+        SET_TXIR_1 = 1 "IRTX pin output is forced high (not dependent on MDR2[7] value).";
+    };
+
+    constants ir_sleep_status width(1) "" {
+        IR_SLEEP_1 = 1 "IrDA/CIR sleep mode enabled";
+    };
+
+    constants mode_select_status width(3) "" {
+        MODE_SELECT_1 = 1 "SIR mode";
+        MODE_SELECT_2 = 2 "UART 16x auto-baud";
+        MODE_SELECT_3 = 3 "UART 13x mode";
+        MODE_SELECT_4 = 4 "MIR mode";
+        MODE_SELECT_5 = 5 "FIR mode";
+        MODE_SELECT_6 = 6 "CIR mode";
+        MODE_SELECT_7 = 7 "Disable (default state)";
+    };
+    
+    register uart_mdr1 addr(base, 0x20) "Mode definition register 1" {
+        _ 24 mbz;
+        frame_end_mode 1 rw type(frame_end_mode_status) "IrDA mode only";
+        sip_mode 1 rw type(sip_mode_status) "MIR/FIR modes only";
+        sct 1 rw type(sct_status) "Store and control the transmission.";
+        set_txir 1 rw type(set_txir_status) "Used to configure the infrared transceiver";
+        ir_sleep 1 rw type(ir_sleep_status) "0x0: IrDA/CIR sleep mode disabled";
+        mode_select 3 rw type(mode_select_status) "0x0: UART 16x mode";
+    };
+
+    constants set_txir_alt_status width(1) "" {
+        SET_TXIR_ALT_0 = 0 "Normal mode";
+        SET_TXIR_ALT_1 = 1 "Alternate mode for SET_TXIR";
+    };
+
+    constants irrxinvert_status width(1) "" {
+        IRRXINVERT_0 = 0 "Inversion is performed.";
+        IRRXINVERT_1 = 1 "No inversion is performed.";
+    };
+
+    constants cir_pulse_mode_status width(2) "" {
+        CIR_PULSE_MODE_0 = 0 "Pulse width of 3 from 12 cycles";
+        CIR_PULSE_MODE_1 = 1 "Pulse width of 4 from 12 cycles";
+        CIR_PULSE_MODE_2 = 2 "Pulse width of 5 from 12 cycles";
+        CIR_PULSE_MODE_3 = 3 "Pulse width of 6 from 12 cycles";
+    };
+
+    constants uart_pulse_status width(1) "" {
+        UART_PULSE_0 = 0 "Normal UART mode";
+        UART_PULSE_1 = 1 "UART mode with a pulse shaping";
+    };
+
+    constants sts_fifo_trig_status width(2) "" {
+        STS_FIFO_TRIG_0 = 0 "1 entry";
+        STS_FIFO_TRIG_1 = 1 "4 entries";
+        STS_FIFO_TRIG_2 = 2 "7 entries";
+        STS_FIFO_TRIG_3 = 3 "8 entries";
+    };
+    
+    register uart_mdr2 addr(base, 0x24) "Mode definition register 2" {
+        _ 24 mbz;
+        set_txir_alt 1 ro type(set_txir_alt_status) "Provide alternate function for MDR1[4] (SET_TXIR).";
+        irrxinvert 1 rw type(irrxinvert_status) "IR mode only (IrDA and CIR). Invert RX pin in the module before the voting or sampling system logic of the infrared block. This does not affect the RX path in UART modem modes.";
+        cir_pulse_mode 2 rw type(cir_pulse_mode_status) "CIR pulse modulation definition. Defines high level of the pulse width associated with a digit:";
+        uart_pulse 1 rw type(uart_pulse_status) "UART mode only. Allows pulse shaping in UART mode.";
+        sts_fifo_trig 2 rw type(sts_fifo_trig_status) "IR-IrDA mode only. Frame status FIFO threshold select:";
+        irtx_underrun 1 ro type(modem_sts_it_status) "IrDA transmission status interrupt. When theUART_IIR[5] interrupt occurs, the meaning of the interrupt is:";
+    };
+    
+    register uart_sflsr addr(base, 0x28) "Status FIFO line status register" {
+        _ 24 mbz;
+        _ 3 mbz;
+        oe_error 1 ro "Read 0x1: Overrun error in RX FIFO when frame at top of RX FIFO was received Top of RX FIFO = Next frame to be read from RX FIFO";
+        frame_too_long_error 1 ro "Read 0x1: Frame-length too long error in frame at top of RX FIFO";
+        abort_detect 1 ro "Read 0x1: Abort pattern detected in frame at top of RX FIFO";
+        crc_error 1 ro "Read 0x1: CRC error in frame at top of RX FIFO";
+        _ 1 mbz;
+    };
+    
+    register uart_txfll addr(base, 0x28) "Transmit frame length register low" {
+        _ 24 mbz;
+        txfll 8 wo "LSB register used to specify the frame length";
+    };
+    
+    register uart_resume addr(base, 0x2C) "IR-IrDA and IR-CIR modes only. This register is used to clear internal flags, which halt transmission/reception when an underrun/overrun error occurs. Reading this register resumes the halted operation. This register does not physically exist and reads always as 0x00." {
+        _ 24 mbz;
+        resume 8 ro "Dummy read to restart the TX or RX";
+    };
+    
+    register uart_txflh addr(base, 0x2C) "Transmit frame length register high" {
+        _ 24 mbz;
+        _ 3 mbz;
+        txflh 5 wo "MSB register used to specify the frame length";
+    };
+    
+    register uart_rxfll addr(base, 0x30) "Received frame length register low" {
+        _ 24 mbz;
+        rxfll 8 wo "LSB register used to specify the frame length in reception";
+    };
+    
+    register uart_sfregl addr(base, 0x30) "Status FIFO register low" {
+        _ 24 mbz;
+        sfregl 8 ro "LSB part of the frame length";
+    };
+    
+    register uart_rxflh addr(base, 0x34) "Received frame length register high" {
+        _ 24 mbz;
+        _ 4 mbz;
+        rxflh 4 wo "MSB register used to specify the frame length in reception";
+    };
+    
+    register uart_sfregh addr(base, 0x34) "Status FIFO register high" {
+        _ 24 mbz;
+        _ 4 mbz;
+        sfregh 4 ro "MSB part of the frame length";
+    };
+
+    constants xbof_type_status width(1) "" {
+        XBOF_TYPE_0 = 0 "0xFF";
+        XBOF_TYPE_1 = 1 "0xC0";
+    };
+    
+    register uart_blr addr(base, 0x38) "BOF control register" {
+        _ 24 mbz;
+        sts_fifo_reset 1 rw "Status FIFO reset. This bit is self-clearing.";
+        xbof_type 1 rw type(xbof_type_status) "SIR xBOF select";
+        _ 6 mbz;
+    };
+
+    constants parity_type_status width(2) "" {
+        PARITY_TYPE_1_r = 1 "Parity space";
+        PARITY_TYPE_2_r = 2 "Even parity";
+        PARITY_TYPE_3_r = 3 "Odd parity";
+    };
+
+    constants bit_by_char_status width(1) "" {
+        BIT_BY_CHAR_1_r = 1 "8-bit character identified";
+    };
+
+    constants speed_status width(5) "" {
+        SPEED_0_r = 0 "No speed identified";
+        SPEED_1_r = 1 "115,200 baud";
+        SPEED_2_r = 2 "57,600 baud";
+        SPEED_3_r = 3 "38,400 baud";
+        SPEED_4_r = 4 "28,800 baud";
+        SPEED_5_r = 5 "19,200 baud";
+        SPEED_6_r = 6 "14,400 baud";
+        SPEED_7_r = 7 "9,600 baud";
+        SPEED_8_r = 8 "4,800 baud";
+        SPEED_9_r = 9 "2,400 baud";
+        SPEED_10_r = 10 "1,200 baud";
+    };
+    
+    register uart_uasr addr(base, 0x38) "UART autobauding status register" {
+        _ 24 mbz;
+        parity_type 2 ro type(parity_type_status) "Read 0x0: No parity identified";
+        bit_by_char 1 ro type(bit_by_char_status) "Read 0x0: 7-bit character identified";
+        speed 5 ro type(speed_status) "Used to report the speed identified";
+    };
+
+    constants pulse_type_status width(1) "" {
+        PULSE_TYPE_0 = 0 "3/16 of baud-rate pulse width";
+        PULSE_TYPE_1 = 1 "1.6 us";
+    };
+
+    constants sd_mod_status width(1) "" {
+        SD_MOD_0 = 0 "SD pin is set to high.";
+        SD_MOD_1 = 1 "SD pin is set to low.";
+    };
+
+    constants dis_tx_underrun_status width(1) "" {
+        DIS_TX_UNDERRUN_0 = 0 "Long stop-bits cannot be transmitted; TX underrun is enabled.";
+        DIS_TX_UNDERRUN_1 = 1 "Long stop-bits can be transmitted; TX underrun is disabled.";
+    };
+
+    constants send_sip_status width(1) "" {
+        SEND_SIP_0 = 0 "No action";
+        SEND_SIP_1 = 1 "Send SIP pulse.";
+    };
+    
+    register uart_acreg addr(base, 0x3C) "Auxiliary control register. IR-IrDA and IR-CIR modes only." {
+        _ 24 mbz;
+        pulse_type 1 rw type(pulse_type_status) "SIR pulse width select";
+        sd_mod 1 rw type(sd_mod_status) "Primary output used to configure transceivers. Connected to the SD/MODE input pin of IrDA transceivers.";
+        dis_ir_rx 1 rw type(fifo_en_status) "0x0: Normal operation (RX input automatically disabled during transmit but enabled outside of transmit operation)";
+        dis_tx_underrun 1 rw type(dis_tx_underrun_status) "It is recommended to disable TX FIFO underrun capability by masking corresponding underrun interrupt. When disabling underrun by setting ACREG[4] = 1, garbage data is sent over TX line.";
+        send_sip 1 rw type(send_sip_status) "MIR/FIR modes only. Send serial infrared interaction pulse (SIP). If this bit is set during an MIR/FIR transmission, the SIP is sent at the end of it. This bit is cleared automatically at the end of the SIP transmission.";
+        sctx_en 1 rw "Store and controlled TX start. When MDR1[5] = 1 and the LH writes 1 to this bit, the TX state-machine starts frame transmission. This bit is self-clearing.";
+        abort_en 1 rw "Frame abort. The LH can intentionally abort transmission of a frame by writing 1 to this bit. Neither the end flag nor the CRC bits are appended to the frame. If TX FIFO is not empty and MDR1[5] = 1, UART IrDA starts a new transfer with data of the previous frame when the abort frame is sent. Therefore, TX FIFO must be reset before sending an abort frame.";
+        eot_en 1 rw "EOT (end of transmission) bit. The LH writes 1 to this bit just before it writes the last byte to the TX FIFO in set-EOT bit frame closing method. This bit is cleared automatically when the LH writes to the THR (TX FIFO).";
+    };
+
+    constants dsr_it_status width(1) "" {
+        DSR_IT_1 = 1 "Enables DSR* interrupt";
+    };
+
+    constants rx_cts_dsr_wake_up_enable_status width(1) "" {
+        RX_CTS_DSR_WAKE_UP_ENABLE_1 = 1 "Waits for a falling edge of pins RX, CTS*, or DSR* to generate an interrupt";
+    };
+
+    constants tx_empty_ctl_it_status width(1) "" {
+        TX_EMPTY_CTL_IT_1 = 1 "The THR interrupt is generated when TX FIFO and TX shift register are empty.";
+    };
+
+    constants dma_mode_2_status width(2) "" {
+        DMA_MODE_2_0 = 0 "DMA mode 0 (no DMA)";
+        DMA_MODE_2_1 = 1 "DMA mode 1 (UART_nDMA_REQ[0] in TX, UART_nDMA_REQ[1] in RX)";
+        DMA_MODE_2_2 = 2 "DMA mode 2 (UART_nDMA_REQ[0] in RX)";
+        DMA_MODE_2_3 = 3 "DMA mode 3 (UART_nDMA_REQ[0] in TX)";
+    };
+
+    constants dma_mode_ctl_status width(1) "" {
+        DMA_MODE_CTL_1 = 1 "The DMA_MODE is set with[2:1].";
+    };
+    
+    register uart_scr addr(base, 0x40) "Supplementary control register" {
+        _ 24 mbz;
+        rx_trig_granu1 1 rw type(fifo_en_status) "0x0: Disables the granularity of 1 for trigger RX level";
+        tx_trig_granu1 1 rw type(dis_tx_underrun_status) "0x0: Disables the granularity of 1 for trigger TX level";
+        dsr_it 1 rw type(dsr_it_status) "0x0: Disables DSR* interrupt";
+        rx_cts_dsr_wake_up_enable 1 rw type(rx_cts_dsr_wake_up_enable_status) "0x0: Disables the wake-up interrupt and clears SSR[1]";
+        tx_empty_ctl_it 1 rw type(tx_empty_ctl_it_status) "0x0: Normal mode for THR interrupt (see UART mode interrupts table)";
+        dma_mode_2 2 rw type(dma_mode_2_status) "Used to specify the DMA mode valid if theUART_SCR[0] bit = 1";
+        dma_mode_ctl 1 rw type(dma_mode_ctl_status) "0x0: The DMA_MODE is set withUART_FCR[3].";
+    };
+
+    constants dma_counter_rst_status width(1) "" {
+        DMA_COUNTER_RST_1 = 1 "The DMA counter will be reset if corresponding FIFO is reset (through FCR[1] or FCR[2]).";
+    };
+
+    constants rx_cts_dsr_wake_up_sts_status width(1) "" {
+        RX_CTS_DSR_WAKE_UP_STS_1_r = 1 "A falling edge occurred on RX, CTS*, or DSR*.";
+    };
+
+    constants tx_fifo_full_status width(1) "" {
+        TX_FIFO_FULL_1_r = 1 "TX FIFO is full.";
+    };
+    
+    register uart_ssr addr(base, 0x44) "Supplementary status register" {
+        _ 24 mbz;
+        _ 5 mbz;
+        dma_counter_rst 1 rw type(dma_counter_rst_status) "0x0: The DMA counter will not be reset if the corresponding FIFO is reset (through FCR[1] or FCR[2]).";
+        rx_cts_dsr_wake_up_sts 1 ro type(rx_cts_dsr_wake_up_sts_status) "Read 0x0: No falling edge event on RX, CTS*, and DSR*";
+        tx_fifo_full 1 ro type(tx_fifo_full_status) "Read 0x0: TX FIFO is not full.";
+    };
+    
+    register uart_eblr addr(base, 0x48) "BOF length register" {
+        _ 24 mbz;
+        eblr 8 rw "IR-IrDA mode: This register allows definition of up to 176 xBOFs, the maximum required by IrDA specification.";
+    };
+    
+    register uart_mvr ro addr(base, 0x50) "Module version register" type(uint32);
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle: Idle request is acknowledged unconditionally.";
+        IDLEMODE_1 = 1 "No-idle: Idle request is never acknowledged.";
+        IDLEMODE_2 = 2 "Smart-idle: Idle request is acknowledged based in module internal activity.";
+        IDLEMODE_3 = 3 "Smart-idle Wake-up: Acknowledgement to an idle request is given based in the internal activity of the module. The module is allowed to generate wake-up request.";
+    };
+
+    constants enawakeup_status width(1) "" {
+        ENAWAKEUP_0 = 0 "Wakeup is disabled.";
+        ENAWAKEUP_1 = 1 "Wake-up capability is enabled.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "Normal mode";
+        SOFTRESET_1 = 1 "The module is reset.";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "Clock is running.";
+        AUTOIDLE_1 = 1 "Automatic OCP clock gating strategy is applied, based on OCP interface activity";
+    };
+    
+    register uart_sysc addr(base, 0x54) "System configuration register" {
+        _ 24 mbz;
+        _ 3 mbz;
+        idlemode 2 rw type(idlemode_status) "Power management req/ack control ref: OCP Design Guidelines Version 1.1";
+        enawakeup 1 rw type(enawakeup_status) "Wake-up feature control";
+        softreset 1 rw type(softreset_status) "Software reset. Set this bit to 1 to trigger a module reset. This bit is automatically reset by the hardware. Read returns 0.";
+        autoidle 1 rw type(autoidle_status) "Internal OCP clock gating strategy";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Internal module reset is ongoing.";
+        RESETDONE_1_r = 1 "Reset complete";
+    };
+    
+    register uart_syss addr(base, 0x58) "System status register" {
+        _ 24 mbz;
+        _ 7 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal reset monitoring";
+    };
+
+    constants tx_wakeup_en_status width(1) "" {
+        TX_WAKEUP_EN_1 = 1 "Event can wake up the system: it can be THR_IT or TX_DMA request and/or TX_SATUS_IT.";
+    };
+
+    constants event_6_receiver_line_status_interrupt_status width(1) "" {
+        EVENT_6_RECEIVER_LINE_STATUS_INTERRUPT_1 = 1 "Event can wake up the system.";
+    };
+
+    constants event_3_dcd_cd_activity_status width(1) "" {
+        EVENT_3_DCD_CD_ACTIVITY_1 = 1 "Event can wake up the system";
+    };
+    
+    register uart_wer addr(base, 0x5C) "Wake-up enable register" {
+        _ 24 mbz;
+        tx_wakeup_en 1 rw type(tx_wakeup_en_status) "0x0: Event is not allowed to wake up the system.";
+        event_6_receiver_line_status_interrupt 1 rw type(event_6_receiver_line_status_interrupt_status) "0x0: Event is not allowed to wake up the system.";
+        event_5_rhr_interrupt 1 rw type(event_6_receiver_line_status_interrupt_status) "0x0: Event is not allowed to wake up the system.";
+        event_4_rx_activity 1 rw type(event_6_receiver_line_status_interrupt_status) "0x0: Event is not allowed to wake up the system.";
+        event_3_dcd_cd_activity 1 rw type(event_3_dcd_cd_activity_status) "0x0: Event is not allowed to wake up the system";
+        event_2_ri_activity 1 rw type(event_6_receiver_line_status_interrupt_status) "0x0: Event is not allowed to wake up the system.";
+        event_1_dsr_activity 1 rw type(event_6_receiver_line_status_interrupt_status) "0x0: Event is not allowed to wake up the system.";
+        event_0_cts_activity 1 rw type(event_6_receiver_line_status_interrupt_status) "0x0: Event is not allowed to wake up the system.";
+    };
+    
+    register uart_cfps addr(base, 0x60) "Carrier frequency prescaler" {
+        _ 24 mbz;
+        cfps 8 rw "System clock frequency prescaler at (12x multiple). Examples for CFPS values:Target Freq (kHz) CFPS (decimal) Actual Freq (kHz) . 30 133 30.08 . 32.75 122 32.79 . 36 111 36.04 . 36.7 109 36.69 . 38* 105 38.1 . 40 100 40 . 56.8 70 57.14 . *configured at reset to this value . Note:CFPS = 0 is not supported. .";
+    };
+    
+    register uart_rxfifo_lvl addr(base, 0x64) "Level of the RX FIFO" {
+        _ 24 mbz;
+        rxfifo_lvl 8 ro "Shows the number of received bytes in the RX FIFO";
+    };
+    
+    register uart_txfifo_lvl addr(base, 0x68) "Level of the TX FIFO" {
+        _ 24 mbz;
+        txfifo_lvl 8 ro "Shows the number of written bytes in the TX FIFO";
+    };
+
+    constants en_txfifo_empty_status width(1) "" {
+        EN_TXFIFO_EMPTY_0 = 0 "Enables EN_TXFIFO_EMPTY interrupt";
+        EN_TXFIFO_EMPTY_1 = 1 "Disables EN_TXFIFO_EMPTY interrupt";
+    };
+
+    constants en_rxfifo_empty_status width(1) "" {
+        EN_RXFIFO_EMPTY_0 = 0 "Enables EN_RXFIFO_EMPTY interrupt";
+        EN_RXFIFO_EMPTY_1 = 1 "Disables EN_RXFIFO_EMPTY interrupt";
+    };
+    
+    register uart_ier2 addr(base, 0x6C) "Enables RX/TX FIFOs empty corresponding interrupts" {
+        _ 30 mbz;
+        en_txfifo_empty 1 rw type(en_txfifo_empty_status) "Enables TX FIFO empty corresponding interrupt";
+        en_rxfifo_empty 1 rw type(en_rxfifo_empty_status) "Enables RX FIFO empty corresponding interrupt";
+    };
+
+    constants txfifo_empty_sts_status width(1) "" {
+        TXFIFO_EMPTY_STS_0 = 0 "TXFIFO_EMPTY interrupt not pending.";
+        TXFIFO_EMPTY_STS_1 = 1 "TXFIFO_EMPTY interrupt pending.";
+    };
+
+    constants rxfifo_empty_sts_status width(1) "" {
+        RXFIFO_EMPTY_STS_0 = 0 "RXFIFO_EMPTY interrupt not pending.";
+        RXFIFO_EMPTY_STS_1 = 1 "RXFIFO_EMPTY interrupt pending.";
+    };
+    
+    register uart_isr2 addr(base, 0x70) "Status of RX/TX FIFOs empty corresponding interrupts" {
+        _ 30 mbz;
+        txfifo_empty_sts 1 rw type(txfifo_empty_sts_status) "Used to generate interrupt if the TX_FIFO is empty (software flow control)";
+        rxfifo_empty_sts 1 rw type(rxfifo_empty_sts_status) "Used to generate interrupt if the RX_FIFO is empty (software flow control)";
+    };
+    
+    register uart_freq_sel addr(base, 0x74) "Sample per bit selector" {
+        _ 24 mbz;
+        freq_sel 8 rw "Sets the sample per bit if nondefault frequency is used. MDR3[1] must be set to 1 after this value is set. Must be equal to or higher then 6.";
+    };
+
+    constants nondefault_freq_status width(1) "" {
+        NONDEFAULT_FREQ_0 = 0 "Disables using NONDEFAULT fclk frequencies.";
+        NONDEFAULT_FREQ_1 = 1 "Enables using NONDEFAULT fclk frequencies (set FREQ_SEL and DLH/DLL).";
+    };
+
+    constants disable_cir_rx_demod_status width(1) "" {
+        DISABLE_CIR_RX_DEMOD_0 = 0 "Enables CIR RX demodulation.";
+        DISABLE_CIR_RX_DEMOD_1 = 1 "Disables CIR RX demodulation.";
+    };
+    
+    register uart_mdr3 addr(base, 0x80) "Mode definition register 3" {
+        _ 29 mbz;
+        set_dma_tx_threshold 1 rw "Enable to set different TXDMA threshold inUART_TX_DMA_THRESHOLD register.";
+        nondefault_freq 1 rw type(nondefault_freq_status) "Used to enable the NONDEFAULT fclk frequencies.";
+        disable_cir_rx_demod 1 rw type(disable_cir_rx_demod_status) "Used to enable CIR RX demodulation.";
+    };
+    
+    register uart_tx_dma_threshold addr(base, 0x84) "Use to manually set the TX DMA threshold level. [2] SET_TX_DMA_THRESHOLD must be 1 and must be value + tx_trigger_level = 64 (TX FIFO size). If not, 64-tx_trigger_level will be used without modifying the value of this register." {
+        _ 26 mbz;
+        tx_dma_threshold 6 rw "Used to manually set the TX DMA threshold level";
+    };
+};

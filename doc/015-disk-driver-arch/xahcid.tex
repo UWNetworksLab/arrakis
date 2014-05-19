@@ -1,0 +1,69 @@
+\label{chap:ahcid}
+
+\section{Introduction}
+
+\subsection{Public IDC Interface}
+
+ahcid's design is modeled after netd. It has a small \acs{idc} interface that
+facilitates user access to a port: when registering for a port, the user is
+given the capability for the port registers. Interrupts are forwarded via
+\acs{idc} messages.  Currently the interface also provides access to the {\tt
+IDENTIFY} data of all available disks. This is useful to determine the type of
+device and total disk space without having to open the port.
+
+\begin{center}
+\begin{minipage}{100mm}
+\begin{lstlisting}[label={code:ahci_mgmt.if}, caption={ahci management Flounder
+interface}]
+interface ahci_mgmt "AHCI Management Daemon" {
+
+    rpc list(out uint8 port_ids[len]);
+    rpc identify(in uint8 port_id,
+                 out uint8 identify_data[data_len]);
+
+    rpc open(in uint8 port_id, out errval status,
+             out cap controller_mem, out
+             uint64 offset, out uint32 capabilities);
+    rpc close(in uint8 port_id, out errval status);
+
+    message command_completed(uint8 port_id,
+                              uint32 interrupt_status);
+};
+\end{lstlisting}
+\end{minipage}
+\end{center}
+
+\section{Initialization}
+
+ahcid registers itself as a driver for the \ac{ahci} device class. Once the
+init procedure is called, ahcid consults the received base address registers to
+find the memory region used for the \acs{hba}'s registers.
+
+As a first step, the \ac{hba} is reset in order to get to a known state. The
+\ac{hba} is also put into \ac{ahci} mode. After the initial reset, ahcid
+discovers the number of ports and detects which of them are implemented and
+have a disk connected.  Discovered disks are assigned a system-wide unique port
+id and are registered with the skb. For every disk, an \ac{ata} {\tt IDENTIFY}
+command is sent to determine the disk's parameters. A copy of the {\tt
+IDENTIFY} response is cached in ahcid for later use.
+
+After all attached disks are initialized, ahcid exports the ahci management
+interface, which clients can then use to register themselves for a single port.
+
+\section{Interrupt Handling}
+
+ahcid registers itself as an interrupt handler for the \ac{ahci} \ac{hba}
+controller when calling \lstinline+pci_register_driver_irq+. The interrupt
+handler extracts the current interrupt state of the controller from the device
+memory and decides if the interrupt was triggered by the \ac{hba}. If the
+interrupt was triggered by the \ac{hba}, the handler loops over all ports and
+checks which ports received an interrupt and clears the port's interrupt
+register. The \ac{hba}'s interrupt register is cleared after all port interrupt
+registers have been cleared. At last, if a client is registered for a port that
+has received an interrupt, ahcid sends a \lstinline+command_completed+ message
+(\autoref{code:ahci_mgmt.if}) using the established \lstinline+ahci_mgmt+
+interface. Clearing the interrupts before delivering the completion messages to
+the respective users ensures that we do not miss interrupts that would be
+triggered as a consequence of any commands issued in the command completion
+handler. Missing any interrupts for further completions could deadlock a user
+since we do not poll the port's state if no interrupts have been triggered.

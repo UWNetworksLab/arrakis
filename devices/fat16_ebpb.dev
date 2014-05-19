@@ -1,0 +1,38 @@
+/*
+ * Copyright (c) 2011, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * fat16_ebpb.dev
+ *
+ * DESCRIPTION: FAT16 file system extended BIOS parameter block.
+ * 
+ */
+
+device fat16_ebpb msbfirst (addr b) "FAT16 Extended BIOS Parameter Block (EBPB)" {
+
+    register drv  rw addr(b,0x24) "Drive number" type(uint8);
+
+    // In [1], this is described as "current head". The same document says that
+    // because it is not used as such, Windows NT uses it as follows instead (lsbfirst):
+    //   - bit 0: need disk check
+    //   - bit 1: need surface scan
+    // [1] http://support.microsoft.com/kb/140418
+    register rsv  rw addr(b,0x25) "Reserved" type(uint8);
+
+    // Should be 0x29 to indicate this is an EBPB. 0x28 Also possible, in which
+    // only the serial number follows.
+    register ebs  rw addr(b,0x26) "Extended boot signature" type(uint8);
+
+    register vsn  rw addr(b,0x27) "Volume serial number" type(uint32);
+
+    regarray vlb  rw addr(b,0x2b) [11] "Volume label" type(uint8);
+
+    // Should be "FAT16   "
+    regarray fst  rw addr(b,0x36) [8] "File system type, informative" type(uint8);
+
+};

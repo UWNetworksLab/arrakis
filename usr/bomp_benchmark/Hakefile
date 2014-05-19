@@ -1,0 +1,34 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/bomp_benchmark
+--
+--------------------------------------------------------------------------
+
+let commonCFiles = [ "c_timers.c", "c_print_results.c", "c_randdp.c", "wtime.c"]
+    template = application { omitCFlags = [ "-Wshadow", "-Wstrict-prototypes", 
+                                        "-Wmissing-prototypes",
+                                        "-Wmissing-declarations", "-Wall", 
+                                        "-Werror" ],
+                         addCFlags = [ "-DBOMP", "-fopenmp", "-Wno-unused", 
+                                       "-Wno-old-style-definition", 
+                                       "-Wno-implicit-function-declaration", 
+                                       "-Wno-aggregate-return" ],
+                         addIncludes = [ "/lib/bomp" ],
+                         addLibraries = [ "bomp" ],
+                         architectures = [ "x86_64" ]
+                       }
+
+in
+  [ build template { target = "bomp_benchmark_cg", 
+                     cFiles = "cg.c" : commonCFiles },
+    build template { target = "bomp_benchmark_ft",
+                     cFiles = "ft.c" : commonCFiles },
+    build template { target = "bomp_benchmark_is",
+                     cFiles = "is.c" : commonCFiles }
+  ]

@@ -1,0 +1,293 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_dsi1_pllctrl_l4_per.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_dsi1_pllctrl_l4_per msbfirst ( addr base ) "" {
+    
+
+    constants hsdiv_sysreset_status width(1) "" {
+        HSDIV_SYSRESET_0 = 0 "HSDIVIDER SYSRESET controlled by power FSM";
+        HSDIV_SYSRESET_1 = 1 "HSDIVIDER SYSRESET forced active";
+    };
+
+    constants pll_sysreset_status width(1) "" {
+        PLL_SYSRESET_0 = 0 "PLL SYSRESET controlled by power FSM";
+        PLL_SYSRESET_1 = 1 "PLL SYSRESET forced active";
+    };
+
+    constants pll_haltmode_status width(1) "" {
+        PLL_HALTMODE_0 = 0 "PLL will not be halted";
+        PLL_HALTMODE_1 = 1 "PLL will be halted based on activity";
+    };
+
+    constants pll_gatemode_status width(1) "" {
+        PLL_GATEMODE_0 = 0 "CLKIN4DDR clock on";
+        PLL_GATEMODE_1 = 1 "CLKIN4DDR clock gated by DSI Protocol Engine activity";
+    };
+
+    constants pll_automode_status width(1) "" {
+        PLL_AUTOMODE_0 = 0 "Manual mode";
+        PLL_AUTOMODE_1 = 1 "Automatic mode";
+    };
+    
+    register dsi_pll_control addr(base, 0x0) "This register controls the PLL reset/power and modes" {
+        _ 27 mbz;
+        hsdiv_sysreset 1 rw type(hsdiv_sysreset_status) "Force HSDIVIDER SYSRESET";
+        pll_sysreset 1 rw type(pll_sysreset_status) "Force DSI PLL SYSRESET";
+        pll_haltmode 1 rw type(pll_haltmode_status) "Allow PLL to be halted if no activity. Reserved when DSI1_PLLCTRL_AUTO is 0.";
+        pll_gatemode 1 rw type(pll_gatemode_status) "Allow PLL clock gating for power saving Reserved when DSI1_PLLCTRL_AUTO is 0.";
+        pll_automode 1 rw type(pll_automode_status) "Automatic update mode. If this bit is set then the configuration updates will be synchronised to DISPCUpdateSync. If this bit is clear configuration updates will be done immediately. Reserved when DSI1_PLLCTRL_AUTO is 0.";
+    };
+
+    constants ssc_en_ack_status width(1) "" {
+        SSC_EN_ACK_0_r = 0 "Spread Spectrum Clocking inactive";
+        SSC_EN_ACK_1_r = 1 "Spread Spectrum Clocking active";
+    };
+
+    constants m7_clock_ack_status width(1) "" {
+        M7_CLOCK_ACK_0_r = 0 "M7 clock inactive";
+        M7_CLOCK_ACK_1_r = 1 "M7 clock active";
+    };
+
+    constants bypassackz_status width(1) "" {
+        BYPASSACKZ_0_r = 0 "DSI_PHY and HSDIVIDER have switched to using the bypass clocks.";
+        BYPASSACKZ_1_r = 1 "PLL outputs are still being used by DSI_PHY or HSDIVIDER";
+    };
+
+    constants m5_clock_ack_status width(1) "" {
+        M5_CLOCK_ACK_0_r = 0 "M5 Protocol Engine clock inactive";
+        M5_CLOCK_ACK_1_r = 1 "M5 Protocol Engine clock active";
+    };
+
+    constants m4_clock_ack_status width(1) "" {
+        M4_CLOCK_ACK_0_r = 0 "M4 clock inactive";
+        M4_CLOCK_ACK_1_r = 1 "M4 clock active";
+    };
+
+    constants pll_bypass_status width(1) "" {
+        PLL_BYPASS_0_r = 0 "PLL not bypassing";
+        PLL_BYPASS_1_r = 1 "PLL bypass";
+    };
+
+    constants pll_highjitter_status width(1) "" {
+        PLL_HIGHJITTER_0_r = 0 "PLL in normal jitter condition";
+        PLL_HIGHJITTER_1_r = 1 "PLL in high jitter condition: Phase error &gt; 24%";
+    };
+
+    constants pll_limp_status width(1) "" {
+        PLL_LIMP_0_r = 0 "LIMP mode inactive";
+        PLL_LIMP_1_r = 1 "LIMP mode active";
+    };
+
+    constants pll_lossref_status width(1) "" {
+        PLL_LOSSREF_0_r = 0 "Reference input active";
+        PLL_LOSSREF_1_r = 1 "Reference input inactive";
+    };
+
+    constants pll_recal_status width(1) "" {
+        PLL_RECAL_0_r = 0 "Recalibration is not required";
+        PLL_RECAL_1_r = 1 "Recalibration is required";
+    };
+
+    constants pll_lock_status width(1) "" {
+        PLL_LOCK_0_r = 0 "PLL is not locked";
+        PLL_LOCK_1_r = 1 "PLL is locked";
+    };
+
+    constants dsi1_pllctrl_reset_done_status width(1) "" {
+        DSI1_PLLCTRL_RESET_DONE_0_r = 0 "Reset is in progress";
+        DSI1_PLLCTRL_RESET_DONE_1_r = 1 "Reset has completed";
+    };
+    
+    register dsi_pll_status addr(base, 0x4) "This register contains the status information" {
+        _ 19 mbz;
+        ssc_en_ack 1 ro type(ssc_en_ack_status) "Spread Spectrum Clocking acknowledge";
+        m7_clock_ack 1 ro type(m7_clock_ack_status) "Acknowledge for enable of clock Verify the status before selecting this source in the clock mux";
+        _ 1 mbz;
+        bypassackz 1 ro type(bypassackz_status) "State of bypass mode on PHY and HSDIVIDER";
+        m5_clock_ack 1 ro type(m5_clock_ack_status) "Acknowledge for enable of DSI Protcol Engine clock Verify the status before selecting this source in the DSI Protcol Engine clock mux";
+        m4_clock_ack 1 ro type(m4_clock_ack_status) "Acknowledge for enable of clock Verify the status before selecting this source in the clock mux";
+        pll_bypass 1 ro type(pll_bypass_status) "DSI PLL Bypass status";
+        pll_highjitter 1 ro type(pll_highjitter_status) "PLL High Jitter status";
+        pll_limp 1 ro type(pll_limp_status) "PLL Limp status";
+        pll_lossref 1 ro type(pll_lossref_status) "PLL Reference Loss status";
+        pll_recal 1 ro type(pll_recal_status) "PLL recalibration status If this bit is active, the PLL needs to be recalibrated";
+        pll_lock 1 ro type(pll_lock_status) "PLL Lock status See the programming guide for the use of this bit";
+        dsi1_pllctrl_reset_done 1 ro type(dsi1_pllctrl_reset_done_status) "DSI1_PLLCTRL reset done status";
+    };
+
+    constants pll_go_status width(1) "" {
+        PLL_GO_0 = 0 "No pending action";
+        PLL_GO_1 = 1 "Request PLL (re-)locking/locking pending";
+    };
+    
+    register dsi_pll_go addr(base, 0x8) "This register contains the GO bit" {
+        _ 31 mbz;
+        pll_go 1 rw type(pll_go_status) "Request (re-)locking sequence of the PLL. If the AutoMode bit is set, then this will be deferred until DISPCUpdate Sync goes active";
+    };
+
+    constants pll_stopmode_status width(1) "" {
+        PLL_STOPMODE_0 = 0 "STOPMODE is not selected";
+        PLL_STOPMODE_1 = 1 "STOPMODE is selected";
+    };
+    
+    register dsi_pll_configuration1 addr(base, 0xC) "This register contains the latched PLL and HSDIVDER configuration bits" {
+        _ 1 mbz;
+        m5_clock_div 5 rw "Divider value for Protocol Engine clock source M5REG";
+        m4_clock_div 5 rw "Divider value for clock source M4REG";
+        pll_regm 12 rw "M Divider for PLL";
+        pll_regn 8 rw "N Divider for PLL (Reference)Note: As a result of device-specific integration, the 8th MSB of this field has no effect; thus, the divider factor can be 0 to 127. .";
+        pll_stopmode 1 rw type(pll_stopmode_status) "PLL STOPMODE";
+    };
+
+    constants m7_clock_pwdn_status width(1) "" {
+        M7_CLOCK_PWDN_0 = 0 "M7 clock divider is active";
+        M7_CLOCK_PWDN_1 = 1 "M7 clock divider is powered-down";
+    };
+
+    constants m7_clock_en_status width(1) "" {
+        M7_CLOCK_EN_0 = 0 "M7 clock divider is disbled";
+        M7_CLOCK_EN_1 = 1 "M7 clock divider is enabled";
+    };
+
+    constants hsdivbypass_status width(1) "" {
+        HSDIVBYPASS_0 = 0 "HSDIVIDER in normal operation. Bypass controlled by PLL.";
+        HSDIVBYPASS_1 = 1 "HSDIVIDER forced to bypass mode.";
+    };
+
+    constants m5_clock_pwdn_status width(1) "" {
+        M5_CLOCK_PWDN_0 = 0 "DSI Protocol Engine clock divider is active";
+        M5_CLOCK_PWDN_1 = 1 "DSI Protocol Engine clock divider is powered-down";
+    };
+
+    constants m4_clock_pwdn_status width(1) "" {
+        M4_CLOCK_PWDN_0 = 0 "clock divider is active";
+        M4_CLOCK_PWDN_1 = 1 "clock divider is powered-down";
+    };
+
+    constants m4_clock_en_status width(1) "" {
+        M4_CLOCK_EN_0 = 0 "clock divider is disabled";
+        M4_CLOCK_EN_1 = 1 "clock divider is enabled";
+    };
+
+    constants bypassen_status width(1) "" {
+        BYPASSEN_0 = 0 "PLL controls CLKIN4DDR clock source: PLL DCO if PLL is locked functional clock if not locked";
+        BYPASSEN_1 = 1 "Force functional clock to be used as CLKIN4DDR clock source";
+    };
+
+    constants phy_clkinen_status width(1) "" {
+        PHY_CLKINEN_0 = 0 "CLKIN4DDR clock is disabled";
+        PHY_CLKINEN_1 = 1 "CLKIN4DDR clock is enabled";
+    };
+
+    constants pll_refen_status width(1) "" {
+        PLL_REFEN_0 = 0 "PLL reference clock disabled";
+        PLL_REFEN_1 = 1 "PLL reference clock enabled";
+    };
+
+    constants pll_locksel_status width(2) "" {
+        PLL_LOCKSEL_0 = 0 "Phase Lock";
+        PLL_LOCKSEL_1 = 1 "Frequency Lock";
+        PLL_LOCKSEL_2 = 2 "Spare";
+    };
+
+    constants pll_driftguarden_status width(1) "" {
+        PLL_DRIFTGUARDEN_0 = 0 "Only RECAL flag is asserted in case of temperature drift. The programmer should take appropriate action.";
+        PLL_DRIFTGUARDEN_1 = 1 "Temperature drift will initiate automatic recalibration. RECAL flag will be asserted while this is taking place.";
+    };
+
+    constants pll_lowcurrstby_status width(1) "" {
+        PLL_LOWCURRSTBY_0 = 0 "LOWCURRSTBY is not selected";
+        PLL_LOWCURRSTBY_1 = 1 "LOWCURRSTBY is selected";
+    };
+
+    constants pll_plllpmode_status width(1) "" {
+        PLL_PLLLPMODE_0 = 0 "Full performance, minimised jitter";
+        PLL_PLLLPMODE_1 = 1 "Reduced power, increased jitter";
+    };
+
+    constants pll_idle_status width(1) "" {
+        PLL_IDLE_0 = 0 "IDLE is not selected";
+        PLL_IDLE_1 = 1 "IDLE is selected";
+    };
+    
+    register dsi_pll_configuration2 addr(base, 0x10) "This register contains the unlatched PLL and HSDIVDER configuration bits These bits are 'shadowed' when automatic mode is selected" {
+        _ 5 mbz;
+        m7_clock_pwdn 1 rw type(m7_clock_pwdn_status) "Power down for M7 clock source";
+        m7_clock_en 1 rw type(m7_clock_en_status) "Enable for M7 clock source";
+        _ 1 mbz;
+        _ 1 mbz;
+        _ 2 mbz;
+        hsdivbypass 1 rw type(hsdivbypass_status) "Forces HSDIVIDER to bypass mode";
+        m5_clock_pwdn 1 rw type(m5_clock_pwdn_status) "Power down for Protocol Engine clock source";
+        m5_clock_en 1 rw type(m5_clock_pwdn_status) "Enable for Protocol Engine clock source";
+        m4_clock_pwdn 1 rw type(m4_clock_pwdn_status) "Power down for M4 clock source";
+        m4_clock_en 1 rw type(m4_clock_en_status) "Enable for M4 clock source";
+        bypassen 1 rw type(bypassen_status) "Selects functional clock asCLKIN4DDR clock source";
+        phy_clkinen 1 rw type(phy_clkinen_status) "CLKIN4DDR clock control";
+        pll_refen 1 rw type(pll_refen_status) "PLL reference clock control";
+        _ 1 mbz;
+        _ 1 mbz;
+        pll_locksel 2 rw type(pll_locksel_status) "Selects the lock criteria for the PLL";
+        pll_driftguarden 1 rw type(pll_driftguarden_status) "PLL DRIFTGUARDEN";
+        _ 1 mbz;
+        pll_lowcurrstby 1 rw type(pll_lowcurrstby_status) "PLL LOW CURRENT STANDBY";
+        pll_plllpmode 1 rw type(pll_plllpmode_status) "Select the power / performance of the PLL";
+        _ 1 mbz;
+        _ 3 mbz;
+        pll_idle 1 rw type(pll_idle_status) "PLL IDLE:";
+    };
+    
+    register dsi_pll_configuration3 addr(base, 0x14) "HSDIVIDER configuration bits for the M5 and M6 dividers" {
+        _ 14 mbz;
+        _ 8 mbz;
+        m7_clock_div 5 rw "Divider value for M7 divider.";
+        _ 5 mbz;
+    };
+
+    constants downspread_status width(1) "" {
+        DOWNSPREAD_0 = 0 "Clock spreading not forced.";
+        DOWNSPREAD_1 = 1 "Spectrum spreading only in down direction.";
+    };
+
+    constants en_ssc_status width(1) "" {
+        EN_SSC_0 = 0 "Spread Spectrum Clockiing disabled";
+        EN_SSC_1 = 1 "Spread Spectrum Clockiing enabled";
+    };
+    
+    register dsi_pll_ssc_configuration1 addr(base, 0x18) "Configuration for PLL Spread Spectrum Clocking modulation" {
+        _ 29 mbz;
+        downspread 1 rw type(downspread_status) "Forces the clock spreading only in the down spectrum.";
+        _ 1 mbz;
+        en_ssc 1 rw type(en_ssc_status) "Spread Spectrum Clockiing enable";
+    };
+    
+    register dsi_pll_ssc_configuration2 addr(base, 0x1C) "Configuration for PLL Spread Spectrum Clocking modulation" {
+        _ 2 mbz;
+        modfreqdivider 10 rw "Modulation Frequency Divider (ModFreqDivider) control for SSCThe ModFreqDivider is split into Mantissa and 2Exponent(ModFreqDivider = ModFreqDividerMantissa * 2ModFreqDividerExponent). . Bits [29:23] define the Mantissa. . Bits [22:20] define the Exponent. .";
+        deltam 20 rw "DeltaM control for SSC. Split into integer and fractional parts.Bits [19:18] define the integer part. . Bits [17:0] define the fractional part. .";
+    };
+};

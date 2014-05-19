@@ -1,0 +1,101 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_wkup_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_wkup_prm msbfirst ( addr base ) "" {
+    
+
+    constants lostcontext_dff_status width(1) "" {
+        LOSTCONTEXT_DFF_0 = 0 "Context has been maintained";
+        LOSTCONTEXT_DFF_1 = 1 "Context has been lost";
+    };
+    
+    register rm_wkup_l4wkup_context addr(base, 0x24) "This register contains dedicated L4WKUP context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of WKUP_RST signal)";
+    };
+
+    constants wkupdep_wdt2_mpu_m3_status width(1) "" {
+        WKUPDEP_WDT2_MPU_M3_0 = 0 "Dependency is disabled";
+        WKUPDEP_WDT2_MPU_M3_1 = 1 "Dependency is enabled";
+    };
+    
+    register pm_wkup_wdtimer2_wkdep addr(base, 0x30) "This register controls wakeup dependency based on WDT2 service requests." {
+        _ 30 mbz;
+        wkupdep_wdt2_mpu_m3 1 rw type(wkupdep_wdt2_mpu_m3_status) "Wakeup dependency from WDT2 module (softwareakeup signal) towards MPU_A3 + L3_2 + L3_1 + L4_CFG domains";
+        wkupdep_wdt2_mpu 1 rw type(wkupdep_wdt2_mpu_m3_status) "Wakeup dependency from WDT2 module (softwareakeup signal) towards MPU + L3_1 + L4_CFG domains";
+    };
+    
+    register rm_wkup_wdtimer2_context addr(base, 0x34) "This register contains dedicated WDT2 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of WKUP_RST signal)";
+    };
+    
+    register pm_wkup_gpio1_wkdep addr(base, 0x38) "This register controls wakeup dependency based on GPIO1 service requests." {
+        _ 25 mbz;
+        wkupdep_gpio1_irq2_dsp 1 ro type(wkupdep_wdt2_mpu_m3_status) "Wakeup dependency from GPIO1 module (POINTRsoftwareAKEUP2 signal) towards DSP + L3_1 + L4_CFG domains";
+        _ 4 mbz;
+        wkupdep_gpio1_irq1_mpu_m3 1 rw type(wkupdep_wdt2_mpu_m3_status) "Wakeup dependency from GPIO1 module (POINTRsoftwareAKEUP1 signal) module towards MPU_A3 + L3_2 + L3_1 + L4_CFG domains";
+        wkupdep_gpio1_irq1_mpu 1 rw type(wkupdep_wdt2_mpu_m3_status) "Wakeup dependency from GPIO1 module (POINTRsoftwareAKEUP1 signal) towards MPU + L3_1 + L4_CFG domains";
+    };
+    
+    register rm_wkup_gpio1_context addr(base, 0x3C) "This register contains dedicated GPIO1 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of WKUP_RST signal)";
+    };
+    
+    register pm_wkup_gptimer1_wkdep addr(base, 0x40) "This register controls wakeup dependency based on TIMER1 service requests." {
+        _ 31 mbz;
+        wkupdep_timer1_mpu 1 ro type(wkupdep_wdt2_mpu_m3_status) "Wakeup dependency from TIMER1 module (softwareakeup signal) towards MPU + L3_1 + L4_CFG domains";
+    };
+    
+    register rm_wkup_gptimer1_context addr(base, 0x44) "This register contains dedicated TIMER1 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of WKUP_RST signal)";
+    };
+    
+    register rm_wkup_32ktimer_context addr(base, 0x54) "This register contains dedicated SYNCTIMER context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of WKUP_SYS_PWRON_RST signal)";
+    };
+    
+    register rm_wkup_sarram_context addr(base, 0x64) "This register contains dedicated SARRAM context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_wkup_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in WKUP_BANK memory bank has been lost due to a previous global cold reset.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of WKUP_RST signal)";
+    };
+    
+    register pm_wkup_keyboard_wkdep addr(base, 0x78) "This register controls wakeup dependency based on KEYBOARD service requests." {
+        _ 31 mbz;
+        wkupdep_keyboard_mpu 1 ro type(wkupdep_wdt2_mpu_m3_status) "Wakeup dependency from KEYBOARD module (softwareakeup signal) towards MPU + L3_1 + L4_CFG domains";
+    };
+    
+    register rm_wkup_keyboard_context addr(base, 0x7C) "This register contains dedicated KEYBOARD context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of WKUP_RST signal)";
+    };
+};

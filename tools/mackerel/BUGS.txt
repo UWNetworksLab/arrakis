@@ -1,0 +1,223 @@
+
+ * Constants can't be bigger than 32 bits.  For example: 
+    constants mcg_ctl_val "Global MC control values" {
+	mc_enable	= 0xffffffffffffffff;
+	mc_disable	= 0x0;
+    };
+    - again. 
+
+ * Required additional checks are now:
+    - Constant values all fit into the bit width specified
+
+ * How will we do device inheritance?  Clearly the new device is a
+   new type, but it also needs a new operation for every register,
+   even those inherited from the base device type.  This suggests that
+   register definitions should always be copied from the base type,
+   but register type definitions (and constant declarations) should
+   simply be referenced. 
+
+   New syntax for inheritance: 
+     1) extends(xapic) as an extra device attribute. 
+     2) override register foo ... to override a register definition. 
+     3) elide register bar; removes defn of bar from the new device. 
+
+ * Generalize register field attributes.  Specify fixed values
+   properly, as either a literal, or a constant value name, or
+   (possibly) a compile-time expression.  Split up whether the driver
+   can read or write the field, and in what way, from what
+   consequences there are of reading or writing the field.
+
+   What is the difference between the read cycles permissible by the
+   hardware, and the read operations that the user might want to be able
+   to initiate?
+
+   Well, whether the hardware allows reads or not is simply a bit. 
+     Hardware-readable: boolean. False => never generate a read
+     cycle.   This is a property of a register, not a field!
+
+   What reads the user is allowed to perform is always one of:
+     R : 'read_value' :  Return any value to user (expose a read operation)
+     RF: 'read_as' Always same constant value (expose sanity check to drivers)
+     RC: 'read_clears' Reads as some value, and also clears. 
+     RN: 'no_read' Can't be read.
+    These are properties of fields; register properties are templates
+     for these. 
+
+   Can you allow a hardware write or not? 
+     If you can, what are the constraints on this? These are field
+     properties, but might apply to the register as a whole. 
+
+   Options for writing:
+     W : 'write_value' Set to any value of a type (expose a write operation)
+     WN: 'no_write' Cannot be written/writes ignored (not exposed to user)
+     WF: 'write_as' Must write a specific value (not exposed to user)
+     WP: 'preserve' Must preserve previous value (not exposed to user)
+     WC: 'write_to_clear(v)' Must write a specific value to clear register
+     WS: 'write_to_set(v)' Must write a specific value to set register
+
+   Options for other actions:
+     sticky: once written, value will never change. 
+
+   Shorthand:
+     rw		=> read_value write_value
+     ro		=> readable no_write
+     wo		=> no_read writeable
+     always(v)	=> read_as(v) write_as(v)
+     mbz	=> no_read write_as(0)
+     mb1	=> no_read write_as(1s)
+     rsvd	=> no_read preserve
+     ros	=> readable no_write sticky
+     rwc	=> readable writeable write_to_clear(1s)
+     rwzc	=> readable writeable write_to_clear(0)
+     rws	=> readable writeable sticky
+
+  Functions to generate for a field: 
+     readable, read_as => read_field
+     read_as => check_field
+     read_clears, write_to_clear(v) => clear_field
+     writeable => write_field
+
+ * Register fields that can be given an initial value: initial(val)
+
+ * Variant format types.  A format can have several different
+   variants.  Some fields are common to all variants, others only
+   appear in some variants.  There must be a way of determining which
+   variant a format is
+ 
+ * Back-end to print out memory map of device, or even pictures. 
+ * Selectively enable/disable specific checks
+ * Collect all parse errors before exiting. 
+ * Generate device models.
+
+ * Devil's notion of 'values', derived from registers (e.g. by
+   concatenating two fields from different registers together).  This
+   should allow constant parts of values: for example, in PTEs, one
+   needs to concat a bit field with a bunch of zeros to get an
+   address. 
+ 
+ * Preconditions and postconditions, e.g. for handling register select
+   registers.  These also tend to imply software state variables used
+   to track the state of the hardware for the driver.
+
+ * Higher-level state machine constraints on how to program the
+   hardware.  For example, to read the ESR below you must first
+   write once to it.  To clear it you need to perform two
+   back-to-back writes.   Don't ask....
+
+ * Messages, as opposed to addresses.  Composing access to devices
+   that can only be accessed by sending messages using writes to
+
+ * Register overlap checks should allow non-'also' registers to
+   overlap if one is non-writeable and the other is non-readable.
+
+  * Compile time checks:
+    - Duplicate register names
+    - Duplicate register type names
+    - Overlapping address spaces
+    - Type mismatch between device arg and register base
+    - Undefined register types
+
+ * What are the name spaces?
+    - Register and constant types
+    - Register names
+    - Constant value names
+    - Fields within a particular format
+    - Device parameters
+
+ * Good (bad) test cases for Mackerel:
+    - PageTableEntries for x86, with alternative values
+      (e.g. superpages)
+    - ARM coprocessor registers
+    - x86 CPUID instructions, including clockout of cache params
+    - Access modes for LPC PIC, DMAC, and Clock hardware
+
+
+-------------------------
+Experiences:
+
+ - In contrast to Devil, accessing device registers is easier these
+   days since there is lots of address space.  Consequently,
+   pre-conditions on registers and indexes are much less of an issue,
+   and Mackerel doesn't support them
+
+ - Mackerel specs are intended to be as close as possible to the data
+   sheets.  While Devil wanted manufacturers to publish Devil specs
+   along with data sheets, we are less idealistic.  We want to make it
+   as easy as possible for a programmer to type in a spec from teh
+   data sheet. 
+
+ - What is hard these days is that registers have lots of fields, and
+   reserved fields which must be read before being written. 
+
+ - HyperV MSR problem: RSVD registers.
+
+ - It was invaluable having working driver for APIC while debugging
+   the Mackerel version.  Hopefully this is not the case once Mackerel
+   is debugging and reliable. 
+
+ - It has got to be reliable: you need to feel comfortable Mackeral
+   isn't crashing your code. 
+
+ - Mackerel code is transparent: it's readable, and intuitive. 
+
+ - Most existing code uses (a) mapped structs, (b) bitfields, (c)
+   Macros giving masks and shifts
+
+ - We can do full device dumps
+
+ - Source code inline is shorter and more intuitive.
+
+ - Specs are easier to write than structs or macros.
+
+ - Mackerel errors do get caught (esp. register widths catch incorrect
+   field sizes).
+
+ - We build all our drivers using Mackerel now, plus MSRs.
+
+ - Haskell was good.  Parsing, etc.  Formatting. 
+
+ - Generated code is remarkably efficient.  Assembly looks almost the
+   same. 
+
+ - Same file used for user and kernel space. 
+
+ - Lots of volatile errors.  Fix once in Mackerel.h, and then done.
+   Programmer is saved from having to deal with them further. 
+
+ - Still dependent on GCC features, but fewer of them appear in inline
+   code and those that do (e.g. inline struct literals) are more
+   syntactic sugar than code directives like volatile.  This makes us
+   more compiler independent.  
+ 
+ - Descriptions are really nice.  Lots of ad-hoc code got written to
+   do this.   snprintf is the right way. 
+
+ - Mackerel-generated files are large, with many types, and many
+   inlined functions.   Generated code, however, is very compact. 
+
+ - List devices so far.
+
+ - RWCS, RWS, etc. can be supported (e.g. device models).
+
+ - Code inflates by approx.  10x (.dev -> .h)
+ 
+ - Takes a while to type in all the registers, but (1) it's easier
+   than working out struct formats, (2) it's basically transcribing
+   the data sheet, so a good way of getting acquainted with the
+   device. 
+
+-----------------------
+
+acpi_ec.dev:1:1: File acpi_ec.dev describes dev EC not acpi_ec
+arm_icp_pic.dev:1:1: File arm_icp_pic.dev describes dev arm_icp_pic0 not arm_icp_pic
+hpet.dev:1:1: File hpet.dev describes dev HPET not hpet
+ixp2800_icp_pic.dev:1:1: File ixp2800_icp_pic.dev describes dev ixp2800_icp_pic0 not ixp2800_icp_pic
+ixp2800_uart.dev:1:1: File ixp2800_uart.dev describes dev IXP2800_UART not ixp2800_uart
+lpc_dma.dev:1:1: File lpc_dma.dev describes dev LPC_dma not lpc_dma
+lpc_ioapic.dev:1:1: File lpc_ioapic.dev describes dev LPC_IOAPIC not lpc_ioapic
+lpc_pic.dev:1:1: File lpc_pic.dev describes dev LPC_PIC not lpc_pic
+lpc_rtc.dev:1:1: File lpc_rtc.dev describes dev LPC_rtc not lpc_rtc
+lpc_rtc_spaces.dev:1:1: File lpc_rtc_spaces.dev describes dev LPC_rtc not lpc_rtc_spaces
+lpc_timer.dev:1:1: File lpc_timer.dev describes dev LPC_timer not lpc_timer
+pc16550d_uart.dev:1:1: File pc16550d_uart.dev describes dev PC16550D_UART not pc16550d_uart
+pl011_uart.dev:1:1: File pl011_uart.dev describes dev PL011_UART not pl011_uart

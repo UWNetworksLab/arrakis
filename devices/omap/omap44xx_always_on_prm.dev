@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_always_on_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_always_on_prm msbfirst ( addr base ) "" {
+    
+
+    constants wkupdep_sr_mpu_mpu_status width(1) "" {
+        WKUPDEP_SR_MPU_MPU_1_r = 1 "Dependency is enabled";
+    };
+    
+    register pm_alwon_sr_mpu_wkdep addr(base, 0x28) "This register controls wakeup dependency based on SR_MPU service requests." {
+        _ 31 mbz;
+        wkupdep_sr_mpu_mpu 1 ro type(wkupdep_sr_mpu_mpu_status) "Wakeup dependency from SR_MPU module (softwareakeup signal) towards MPU + L3_1 + L4_CFG domains";
+    };
+
+    constants lostcontext_dff_status width(1) "" {
+        LOSTCONTEXT_DFF_0 = 0 "Context has been maintained";
+        LOSTCONTEXT_DFF_1 = 1 "Context has been lost";
+    };
+    
+    register rm_alwon_sr_mpu_context addr(base, 0x2C) "This register contains dedicated SR_MPU context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of Always_on_CORE_RST signal)";
+    };
+
+    constants wkupdep_sr_iva_mpu_m3_status width(1) "" {
+        WKUPDEP_SR_IVA_MPU_M3_0 = 0 "Dependency is disabled";
+        WKUPDEP_SR_IVA_MPU_M3_1 = 1 "Dependency is enabled";
+    };
+    
+    register pm_alwon_sr_iva_wkdep addr(base, 0x30) "This register controls wakeup dependency based on SR_IVA service requests." {
+        _ 30 mbz;
+        wkupdep_sr_iva_mpu_m3 1 rw type(wkupdep_sr_iva_mpu_m3_status) "Wakeup dependency from SR_IVA module (softwareakeup signal) towards MPU_A3 + L3_2 + L3_1 + L4_CFG domains";
+        wkupdep_sr_iva_mpu 1 rw type(wkupdep_sr_iva_mpu_m3_status) "Wakeup dependency from SR_IVA module (softwareakeup signal) towards MPU + L3_1 + L4_CFG domains";
+    };
+    
+    register rm_alwon_sr_iva_context addr(base, 0x34) "This register contains dedicated SR_IVA context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of Always_on_CORE_RST signal)";
+    };
+    
+    register pm_alwon_sr_core_wkdep addr(base, 0x38) "This register controls wakeup dependency based on SR_CORE service requests." {
+        _ 30 mbz;
+        wkupdep_sr_core_mpu_m3 1 rw type(wkupdep_sr_iva_mpu_m3_status) "Wakeup dependency from SR_CORE module (softwareakeup signal) towards MPU_A3 + L3_2 + L3_1 + L4_CFG domains";
+        wkupdep_sr_core_mpu 1 rw type(wkupdep_sr_iva_mpu_m3_status) "Wakeup dependency from SR_CORE module (softwareakeup signal) towards MPU + L3_1 + L4_CFG domains";
+    };
+    
+    register rm_alwon_sr_core_context addr(base, 0x3C) "This register contains dedicated SR_CORE context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of Always_on_CORE_RST signal)";
+    };
+};

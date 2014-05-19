@@ -1,0 +1,137 @@
+/*
+ * Copyright (c) 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * arm.dev
+ *
+ * DESCRIPTION: ARM architecture definitions
+ * 
+ * See:
+ *   ARM Architecture Reference Manual
+ */
+
+device arm msbfirst () "ARM architecture" {
+
+    // A.2.5
+    regtype status "Status register" {
+	n	1 "Negative result";
+	z	1 "Zero result";
+	c	1 "Carry";
+	v	1 "Overflow";
+	q	1 "DSP overflow";
+	_	19;
+	i	1 "IRQ disable";
+	f	1 "FIQ disable";
+	t	1 "Thumb mode";
+	m	5 type(cpu_mode) "Mode";
+    };
+    constants cpu_mode "CPU mode bits" {
+	user	= 0b10000 "User";
+	fiq	= 0b10001 "FIQ";
+	irq	= 0b10010 "IRQ";
+	super	= 0b10011 "Supervisor";
+	abort	= 0b10111 "Abort";
+	undef	= 0b11011 "Undefined";
+	system  = 0b11111 "System";
+    };
+
+    // A.2.6
+    constants exc_vector "Exception vector addresses" {
+	vec_reset	= 0x00000000 "Reset";
+	vec_undef	= 0x00000004 "Undefined instruction";
+	vec_swi		= 0x00000008 "Software interrupt";
+	vec_pref_abort	= 0x0000000C "Prefetch abort";
+	vec_data_abort	= 0x00000010 "Data abort";
+	vec_irq		= 0x00000018 "Interrupt";
+	vec_fiq		= 0x0000001C "Fast interrupt";
+    };
+
+    space cp15(reg, opcode) valuewise "Coprocessor 15";
+
+    // B.2.4
+    register control rw cp15(0x01) "CP15 control register" {
+	_	16 mbz;
+	l4	1 "Backwards compatible loads";
+	rr	1 "Predictable cache replacement strategy";
+	v	1 "High exception vectors enable";
+	i	1 "Instruction cache enable";
+	z	1 "Branch prediction enable";
+	f	1 "Implementation defined";
+	r	1 "ROM protection bit";
+	s	1 "System protection bit";
+	b	1 "Big endian";
+	l	1 "Late abort model";
+	d	1 "26-bit address exception checking";
+	p	1 "26/32-bit exception handler mode";
+	w	1 "Write buffer enable";
+	c	1 "Data or unified cache enable";
+	a	1 "Alignment fault checking enable";
+	m	1 "MMU enable";
+    };
+
+    // 
+    // Memory Management Unit functions
+    // 
+
+    // B.3.6.1
+    constants fault_type "Faulting access type" {
+	terminal	= 0b0010 "Terminal exception";
+	vector		= 0b0000 "Vector exception";
+	alignment	= 0b0001 "Alignment";
+	alignment_2	= 0b0011 "Alternate alignment";
+	l1extabort	= 0b1100 "Level 1 external abort on translation";
+	l2extabort	= 0b1110 "Level 2 external abort on translation";
+	sec_trans	= 0b0101 "Section translation";
+	page_trans	= 0b0111 "Page transation";
+	sec_dom		= 0b1001 "Section domain";
+	page_dom	= 0b1011 "Page domain";
+	sec_perm	= 0b1101 "Section permissions";
+	page_perm	= 0b1111 "Page permissions";
+	sec_linef	= 0b0100 "Section external abort on linefetch";
+	page_linef	= 0b0110 "Page external abort on linefetch";
+	sec_nlinef	= 0b1000 "Section external abort on non-linefetch";
+	page_nlinef	= 0b1010 "Page external abort on non-linefetch";
+    };
+
+	
+    // B.3.7.2
+    register ttbase rw cp15(0x02) "Translation table base" {
+	base	18 "Base address high bits";
+	_	14 mbz;
+    };
+
+    // B.3.7.3
+    register domacc rw cp15(0x03) "Domain access control" type(uint32);
+    
+    // B.3.7.5 
+    register faultstat rw cp15(0x05) "Fault status" {
+	_	23 mbz;
+	_	1 mbz;
+	domain	4 "Faulting domain";
+	status	4 type(fault_type) "Access type";
+    };
+
+    // 3.7.6
+    register faultaddr rw cp15(6) "Fault address" type(uint32);
+
+    // 3.7.7 XXX opcode2, and CRm dependent
+    register tlbfunc wo cp15(8) "TLB functions" type(uint32);
+    
+    // 3.7.8 XXX opcode2, and CRm dependent
+    register tlblock rw cp15(10) "TLB lockdown" {
+	entry	31 "Base and victim (variable width)";
+	p	1  "Protected from CP8 invalidates";
+    };
+};
+
+    
+	    
+
+    
+    
+	

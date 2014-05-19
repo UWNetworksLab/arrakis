@@ -1,0 +1,30 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for lib/spawndomain
+-- 
+--------------------------------------------------------------------------
+
+[(let
+     common_srcs = [ "spawn_vspace.c", "spawn.c", "getopt.c", "multiboot.c" ]
+
+     arch_srcs "x86_32"  = [ "arch/x86/spawn_arch.c" ]
+     arch_srcs "x86_64"  = [ "arch/x86/spawn_arch.c" ]
+     arch_srcs "arm"     = [ "arch/arm/spawn_arch.c" ]
+     arch_srcs _         = []
+
+  in
+    build library { target = "spawndomain",
+                    cFiles = common_srcs ++ arch_srcs (archFamily arch),
+                    addIncludes = [ "/lib/barrelfish/include/arch" 
+                                    ./. archFamily arch ],
+                    flounderDefs = [ "monitor" ],
+                    architectures = [ arch ],
+                    addLibraries = [ "trace" ]
+                }
+ )  | arch <- allArchitectures ]

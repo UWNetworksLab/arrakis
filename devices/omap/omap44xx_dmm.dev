@@ -1,0 +1,1091 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_dmm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_dmm msbfirst ( addr base ) "" {
+    
+    
+    register dmm_revision ro addr(base, 0x0) "DMM Revision Number" type(uint32);
+    
+    register dmm_hwinfo addr(base, 0x4) "DMM hardware configuration" {
+        _ 12 mbz;
+        robin_cnt 4 ro "Number of ROBIN in the DMM";
+        _ 4 mbz;
+        ella_cnt 4 ro "Number of ELLA in the DMM";
+        _ 4 mbz;
+        tiler_cnt 4 ro "Number of TILER in the DMM";
+    };
+    
+    register dmm_lisa_hwinfo addr(base, 0x8) "DMM hardware configuration for LISA" {
+        _ 20 mbz;
+        sdrc_cnt 4 ro "Number of attached SDRAM controllers";
+        _ 3 mbz;
+        section_cnt 5 ro "Number of DMM sections";
+    };
+
+    constants idle_mode_status width(2) "" {
+        IDLE_MODE_0 = 0 "Force-idle mode: local target's idle state follows (acknowledges) the system's idle requests unconditionally, that is, regardless of the IP module's internal requirements. Backup mode, for debug only.";
+        IDLE_MODE_1 = 1 "No-idle mode: local target never enters idle state. Backup mode, for debug only";
+        IDLE_MODE_3 = 3 "Reserved";
+        IDLE_MODE_2 = 2 "Smart-idle mode: local target's idle state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements. IP module shall not generate (IRQ- or DMA-request-related) wake-up events.";
+    };
+    
+    register dmm_sysconfig addr(base, 0x10) "DMM clock management configuration" {
+        _ 28 mbz;
+        idle_mode 2 rw type(idle_mode_status) "Configuration of the local target state management mode.";
+        _ 2 mbz;
+    };
+
+    constants lock_status width(1) "" {
+        LOCK_0_w = 0 "No effect (clear on reset only)";
+        LOCK_0_r = 0 "unlocked";
+        LOCK_1_r = 1 "locked";
+        LOCK_1_w = 1 "Locking registers";
+    };
+    
+    register dmm_lisa_lock addr(base, 0x1C) "DMM memory mapping lock" {
+        _ 31 mbz;
+        lock 1 rw type(lock_status) "DMM lock map";
+    };
+
+    constants sys_size_status width(3) "" {
+        SYS_SIZE_0 = 0 "16-MB section";
+        SYS_SIZE_1 = 1 "32-MB section";
+        SYS_SIZE_2 = 2 "64-MB section";
+        SYS_SIZE_3 = 3 "128-MB section";
+        SYS_SIZE_4 = 4 "256-MB section";
+        SYS_SIZE_5 = 5 "512-MB section";
+        SYS_SIZE_6 = 6 "1-GB section";
+        SYS_SIZE_7 = 7 "2-GB section";
+    };
+    
+    register dmm_lisa_map_i_0 addr(base, 0x40) "DMM memory mapping register" {
+        sys_addr 8 rw "DMM system section address MSB for view mapping i";
+        _ 1 mbz;
+        sys_size 3 rw type(sys_size_status) "DMM system section size for view mapping i";
+        sdrc_intl 2 rw "SDRAM controller interleaving mode 0x0: No interleaving 0x1: 128-byte interleaving 0x2: 256-byte interleaving 0x3: 512-byte interleaving The 128-/256-/512-byte interleaving applies only to nontiled regions. If accesses are made to tiled regions, interleaving is forced to 1kiB. SDRC_INTL is don't care if SDRC_MAP is not 0x3 (no interleaving).";
+        sdrc_addrspc 2 rw "SDRAM controller address space for view mapping i";
+        _ 6 mbz;
+        sdrc_map 2 rw "SDRAM controller mapping for view mapping i 0x0: Unmapped 0x1: Mapped on EMIF1 only (not interleaved) 0x2: Mapped on EMIF2 only (not interleaved) 0x3: Mapped on EMIF1 and EMIF2 (interleaved) To enable interleaving, SDRC_MAP must be 0x3 and SDRC_INTL must be a nonzero value.";
+        sdrc_addr 8 rw "SDRAM controller address MSB for view mapping i";
+    };
+    
+    register dmm_lisa_map_i_1 addr(base, 0x44) "DMM memory mapping register" {
+        sys_addr 8 rw "DMM system section address MSB for view mapping i";
+        _ 1 mbz;
+        sys_size 3 rw type(sys_size_status) "DMM system section size for view mapping i";
+        sdrc_intl 2 rw "SDRAM controller interleaving mode 0x0: No interleaving 0x1: 128-byte interleaving 0x2: 256-byte interleaving 0x3: 512-byte interleaving The 128-/256-/512-byte interleaving applies only to nontiled regions. If accesses are made to tiled regions, interleaving is forced to 1kiB. SDRC_INTL is don't care if SDRC_MAP is not 0x3 (no interleaving).";
+        sdrc_addrspc 2 rw "SDRAM controller address space for view mapping i";
+        _ 6 mbz;
+        sdrc_map 2 rw "SDRAM controller mapping for view mapping i 0x0: Unmapped 0x1: Mapped on EMIF1 only (not interleaved) 0x2: Mapped on EMIF2 only (not interleaved) 0x3: Mapped on EMIF1 and EMIF2 (interleaved) To enable interleaving, SDRC_MAP must be 0x3 and SDRC_INTL must be a nonzero value.";
+        sdrc_addr 8 rw "SDRAM controller address MSB for view mapping i";
+    };
+    
+    register dmm_lisa_map_i_2 addr(base, 0x48) "DMM memory mapping register" {
+        sys_addr 8 rw "DMM system section address MSB for view mapping i";
+        _ 1 mbz;
+        sys_size 3 rw type(sys_size_status) "DMM system section size for view mapping i";
+        sdrc_intl 2 rw "SDRAM controller interleaving mode 0x0: No interleaving 0x1: 128-byte interleaving 0x2: 256-byte interleaving 0x3: 512-byte interleaving The 128-/256-/512-byte interleaving applies only to nontiled regions. If accesses are made to tiled regions, interleaving is forced to 1kiB. SDRC_INTL is don't care if SDRC_MAP is not 0x3 (no interleaving).";
+        sdrc_addrspc 2 rw "SDRAM controller address space for view mapping i";
+        _ 6 mbz;
+        sdrc_map 2 rw "SDRAM controller mapping for view mapping i 0x0: Unmapped 0x1: Mapped on EMIF1 only (not interleaved) 0x2: Mapped on EMIF2 only (not interleaved) 0x3: Mapped on EMIF1 and EMIF2 (interleaved) To enable interleaving, SDRC_MAP must be 0x3 and SDRC_INTL must be a nonzero value.";
+        sdrc_addr 8 rw "SDRAM controller address MSB for view mapping i";
+    };
+    
+    register dmm_lisa_map_i_3 addr(base, 0x4C) "DMM memory mapping register" {
+        sys_addr 8 rw "DMM system section address MSB for view mapping i";
+        _ 1 mbz;
+        sys_size 3 rw type(sys_size_status) "DMM system section size for view mapping i";
+        sdrc_intl 2 rw "SDRAM controller interleaving mode 0x0: No interleaving 0x1: 128-byte interleaving 0x2: 256-byte interleaving 0x3: 512-byte interleaving The 128-/256-/512-byte interleaving applies only to nontiled regions. If accesses are made to tiled regions, interleaving is forced to 1kiB. SDRC_INTL is don't care if SDRC_MAP is not 0x3 (no interleaving).";
+        sdrc_addrspc 2 rw "SDRAM controller address space for view mapping i";
+        _ 6 mbz;
+        sdrc_map 2 rw "SDRAM controller mapping for view mapping i 0x0: Unmapped 0x1: Mapped on EMIF1 only (not interleaved) 0x2: Mapped on EMIF2 only (not interleaved) 0x3: Mapped on EMIF1 and EMIF2 (interleaved) To enable interleaving, SDRC_MAP must be 0x3 and SDRC_INTL must be a nonzero value.";
+        sdrc_addr 8 rw "SDRAM controller address MSB for view mapping i";
+    };
+
+    constants or_cnt_status width(5) "" {
+        OR_CNT_1_r = 1 "One orientation entry";
+        OR_CNT_2_r = 2 "Two orientation entries";
+        OR_CNT_4_r = 4 "Four orientation entries";
+        OR_CNT_8_r = 8 "Eight orientation entries";
+        OR_CNT_16_r = 16 "Sixteen orientation entries";
+    };
+    
+    register dmm_tiler_hwinfo addr(base, 0x208) "DMM hardware configuration for TILER" {
+        _ 27 mbz;
+        or_cnt 5 ro type(or_cnt_status) "Number of TILER orientation entries";
+    };
+
+    constants w7_status width(1) "" {
+        W7_0_w = 0 "OR7 field is unchanged";
+        W7_1_w = 1 "OR7 field is updated";
+    };
+
+    constants w6_status width(1) "" {
+        W6_0_w = 0 "OR6 field is unchanged";
+        W6_1_w = 1 "OR6 field is updated";
+    };
+
+    constants w5_status width(1) "" {
+        W5_0_w = 0 "OR5 field is unchanged";
+        W5_1_w = 1 "OR5 field is updated";
+    };
+
+    constants w4_status width(1) "" {
+        W4_0_w = 0 "OR4 field is unchanged";
+        W4_1_w = 1 "OR4 field is updated";
+    };
+
+    constants w3_status width(1) "" {
+        W3_0_w = 0 "OR3 field is unchanged";
+        W3_1_w = 1 "OR3 field is updated";
+    };
+
+    constants w2_status width(1) "" {
+        W2_0_w = 0 "OR2 field is unchanged";
+        W2_1_w = 1 "OR2 field is updated";
+    };
+
+    constants w1_status width(1) "" {
+        W1_0_w = 0 "OR1 field is unchanged";
+        W1_1_w = 1 "OR1 field is updated";
+    };
+
+    constants w0_status width(1) "" {
+        W0_0_w = 0 "OR0 field is unchanged";
+        W0_1_w = 1 "OR0 field is updated";
+    };
+    
+    register dmm_tiler_or0 addr(base, 0x220) "DMM TILER orientation (initiators 0 to 7)" {
+        w7 1 rw type(w7_status) "Write-enable for OR7 bit field";
+        or7 3 rw "Orientation for initiator 7";
+        w6 1 rw type(w6_status) "Write-enable for OR6 bit field";
+        or6 3 rw "Orientation for initiator 6";
+        w5 1 rw type(w5_status) "Write-enable for OR5 bit field";
+        or5 3 rw "Orientation for initiator 5";
+        w4 1 rw type(w4_status) "Write-enable for OR4 bit field";
+        or4 3 rw "Orientation for initiator 4";
+        w3 1 rw type(w3_status) "Write-enable for OR3 bit field";
+        or3 3 rw "Orientation for initiator 3";
+        w2 1 rw type(w2_status) "Write-enable for OR2 bit field";
+        or2 3 rw "Orientation for initiator 2";
+        w1 1 rw type(w1_status) "Write-enable for OR1 bit field";
+        or1 3 rw "Orientation for initiator 1";
+        w0 1 rw type(w0_status) "Write-enable for OR0 bit field";
+        or0 3 rw "Orientation for initiator 0";
+    };
+
+    constants w15_status width(1) "" {
+        W15_0_w = 0 "OR15 field is unchanged";
+        W15_1_w = 1 "OR15 field is updated";
+    };
+
+    constants w14_status width(1) "" {
+        W14_0_w = 0 "OR14 field is unchanged";
+        W14_1_w = 1 "OR14 field is updated";
+    };
+
+    constants w13_status width(1) "" {
+        W13_0_w = 0 "OR13 field is unchanged";
+        W13_1_w = 1 "OR13 field is updated";
+    };
+
+    constants w12_status width(1) "" {
+        W12_0_w = 0 "OR12 field is unchanged";
+        W12_1_w = 1 "OR12 field is updated";
+    };
+
+    constants w11_status width(1) "" {
+        W11_0_w = 0 "OR11 field is unchanged";
+        W11_1_w = 1 "OR11 field is updated";
+    };
+
+    constants w10_status width(1) "" {
+        W10_0_w = 0 "OR10 field is unchanged";
+        W10_1_w = 1 "OR10 field is updated";
+    };
+
+    constants w9_status width(1) "" {
+        W9_0_w = 0 "OR9 field is unchanged";
+        W9_1_w = 1 "OR9 field is updated";
+    };
+
+    constants w8_status width(1) "" {
+        W8_0_w = 0 "OR8 field is unchanged";
+        W8_1_w = 1 "OR8 field is updated";
+    };
+    
+    register dmm_tiler_or1 addr(base, 0x224) "DMM TILER orientation (initiators 8 to 15)" {
+        w15 1 rw type(w15_status) "Write-enable for OR15 bit field";
+        or15 3 rw "Orientation for initiator 15";
+        w14 1 rw type(w14_status) "Write-enable for OR14 bit field";
+        or14 3 rw "Orientation for initiator 14";
+        w13 1 rw type(w13_status) "Write-enable for OR13 bit field";
+        or13 3 rw "Orientation for initiator 13";
+        w12 1 rw type(w12_status) "Write-enable for OR12 bit field";
+        or12 3 rw "Orientation for initiator 12";
+        w11 1 rw type(w11_status) "Write-enable for OR11 bit field";
+        or11 3 rw "Orientation for initiator 11";
+        w10 1 rw type(w10_status) "Write-enable for OR10 bit field";
+        or10 3 rw "Orientation for initiator 10";
+        w9 1 rw type(w9_status) "Write-enable for OR9 bit field";
+        or9 3 rw "Orientation for initiator 9";
+        w8 1 rw type(w8_status) "Write-enable for OR8 bit field";
+        or8 3 rw "Orientation for initiator 8";
+    };
+
+    constants view_map_cnt_status width(4) "" {
+        VIEW_MAP_CNT_1_r = 1 "One view map";
+        VIEW_MAP_CNT_2_r = 2 "Two view maps";
+        VIEW_MAP_CNT_4_r = 4 "Four view maps";
+        VIEW_MAP_CNT_8_r = 8 "Eight view maps";
+    };
+
+    constants view_cnt_status width(7) "" {
+        VIEW_CNT_1_r = 1 "One view entry";
+        VIEW_CNT_2_r = 2 "Two view entries";
+        VIEW_CNT_4_r = 4 "Four view entries";
+        VIEW_CNT_8_r = 8 "Eight view entries";
+        VIEW_CNT_16_r = 16 "Sixteen view entries";
+        VIEW_CNT_32_r = 32 "Thirty-two view entries";
+        VIEW_CNT_64_r = 64 "Sixty-four view entries";
+    };
+    
+    register dmm_pat_hwinfo addr(base, 0x408) "DMM hardware configuration for PAT" {
+        _ 3 mbz;
+        engine_cnt 5 ro "Number of PAT refill engines";
+        _ 3 mbz;
+        lut_cnt 5 ro "Number of PAT LUT for page-grained physical address translation";
+        _ 4 mbz;
+        view_map_cnt 4 ro type(view_map_cnt_status) "Number of internal PAT view mappings.";
+        _ 1 mbz;
+        view_cnt 7 ro type(view_cnt_status) "Number of PAT view entries";
+    };
+
+    constants cont_hght_status width(3) "" {
+        CONT_HGHT_1_r = 1 "Container height of 32 pages";
+        CONT_HGHT_2_r = 2 "Container height of 64 pages";
+        CONT_HGHT_4_r = 4 "Container height of 128 pages";
+    };
+
+    constants cont_wdth_status width(4) "" {
+        CONT_WDTH_2_r = 2 "Container width of 64 pages";
+        CONT_WDTH_4_r = 4 "Container width of 128 pages";
+        CONT_WDTH_8_r = 8 "Container width of 256 pages";
+    };
+
+    constants addr_range_status width(6) "" {
+        ADDR_RANGE_1_r = 1 "128-MB range";
+        ADDR_RANGE_2_r = 2 "256-MB range";
+        ADDR_RANGE_4_r = 4 "512-MB range";
+        ADDR_RANGE_8_r = 8 "1-GB range";
+        ADDR_RANGE_16_r = 16 "2-GB range";
+        ADDR_RANGE_32_r = 32 "4-GB range";
+    };
+
+    constants page_sz_status width(5) "" {
+        PAGE_SZ_1_r = 1 "4-KB page";
+        PAGE_SZ_4_r = 4 "16-KB page";
+        PAGE_SZ_16_r = 16 "64-KB page";
+    };
+    
+    register dmm_pat_geometry addr(base, 0x40C) "PAT geometry-related settings" {
+        _ 5 mbz;
+        cont_hght 3 ro type(cont_hght_status) "Container height in pages";
+        _ 4 mbz;
+        cont_wdth 4 ro type(cont_wdth_status) "Container width in pages";
+        _ 2 mbz;
+        addr_range 6 ro type(addr_range_status) "PAT output physical address range";
+        _ 3 mbz;
+        page_sz 5 ro type(page_sz_status) "Page size in 4-KB granularity";
+    };
+
+    constants mode3_status width(1) "" {
+        MODE3_0 = 0 "Normal mode";
+        MODE3_1 = 1 "Direct LUT access";
+    };
+    
+    register dmm_pat_config addr(base, 0x410) "This is the PAT configuration register aimed at defining the major PAT configuration of each refill engine." {
+        _ 28 mbz;
+        mode3 1 rw type(mode3_status) "Mode of refill engine 3";
+        mode2 1 rw type(mode3_status) "Mode of refill engine 2";
+        mode1 1 rw type(mode3_status) "Mode of refill engine 1";
+        mode0 1 rw type(mode3_status) "Mode of refill engine 0";
+    };
+
+    constants w7_status1 width(1) "" {
+        W7_0_w_1 = 0 "V7 field is unchanged";
+        W7_1_w_1 = 1 "V7 field is updated";
+    };
+
+    constants w6_status1 width(1) "" {
+        W6_0_w_1 = 0 "V6 field is unchanged";
+        W6_1_w_1 = 1 "V6 field is updated";
+    };
+
+    constants w5_status1 width(1) "" {
+        W5_0_w_1 = 0 "V5 field is unchanged";
+        W5_1_w_1 = 1 "V5 field is updated";
+    };
+
+    constants w4_status1 width(1) "" {
+        W4_0_w_1 = 0 "V4 field is unchanged";
+        W4_1_w_1 = 1 "V4 field is updated";
+    };
+
+    constants w3_status1 width(1) "" {
+        W3_0_w_1 = 0 "V3 field is unchanged";
+        W3_1_w_1 = 1 "V3 field is updated";
+    };
+
+    constants w2_status1 width(1) "" {
+        W2_0_w_1 = 0 "V2 field is unchanged";
+        W2_1_w_1 = 1 "V2 field is updated";
+    };
+
+    constants w1_status1 width(1) "" {
+        W1_0_w_1 = 0 "V1 field is unchanged";
+        W1_1_w_1 = 1 "V1 field is updated";
+    };
+
+    constants w0_status1 width(1) "" {
+        W0_0_w_1 = 0 "V0 field is unchanged";
+        W0_1_w_1 = 1 "V0 field is updated";
+    };
+    
+    register dmm_pat_view0 addr(base, 0x420) "DMM PAT View register (initiators 0 to 7)" {
+        w7 1 rw type(w7_status1) "Write-enable for V7 bit field";
+        _ 1 mbz;
+        v7 2 rw "PAT view for initiator 7";
+        w6 1 rw type(w6_status1) "Write-enable for V6 bit field";
+        _ 1 mbz;
+        v6 2 rw "PAT view for initiator 6";
+        w5 1 rw type(w5_status1) "Write-enable for V5 bit field";
+        _ 1 mbz;
+        v5 2 rw "PAT view for initiator 5";
+        w4 1 rw type(w4_status1) "Write-enable for V4 bit field";
+        _ 1 mbz;
+        v4 2 rw "PAT view for initiator 4";
+        w3 1 rw type(w3_status1) "Write-enable for V3 bit field";
+        _ 1 mbz;
+        v3 2 rw "PAT view for initiator 3";
+        w2 1 rw type(w2_status1) "Write-enable for V2 bit field";
+        _ 1 mbz;
+        v2 2 rw "PAT view for initiator 2";
+        w1 1 rw type(w1_status1) "Write-enable for V1 bit field";
+        _ 1 mbz;
+        v1 2 rw "PAT view for initiator 1";
+        w0 1 rw type(w0_status1) "Write-enable for V0 bit field";
+        _ 1 mbz;
+        v0 2 rw "PAT view for initiator 0";
+    };
+
+    constants w15_status1 width(1) "" {
+        W15_0_w_1 = 0 "V15 field is unchanged";
+        W15_1_w_1 = 1 "V15 field is updated";
+    };
+
+    constants w14_status1 width(1) "" {
+        W14_0_w_1 = 0 "V14 field is unchanged";
+        W14_1_w_1 = 1 "V14 field is updated";
+    };
+
+    constants w13_status1 width(1) "" {
+        W13_0_w_1 = 0 "V13 field is unchanged";
+        W13_1_w_1 = 1 "V13 field is updated";
+    };
+
+    constants w12_status1 width(1) "" {
+        W12_0_w_1 = 0 "V12 field is unchanged";
+        W12_1_w_1 = 1 "V12 field is updated";
+    };
+
+    constants w11_status1 width(1) "" {
+        W11_0_w_1 = 0 "V11 field is unchanged";
+        W11_1_w_1 = 1 "V11 field is updated";
+    };
+
+    constants w10_status1 width(1) "" {
+        W10_0_w_1 = 0 "V10 field is unchanged";
+        W10_1_w_1 = 1 "V10 field is updated";
+    };
+
+    constants w9_status1 width(1) "" {
+        W9_0_w_1 = 0 "V9 field is unchanged";
+        W9_1_w_1 = 1 "V9 field is updated";
+    };
+
+    constants w8_status1 width(1) "" {
+        W8_0_w_1 = 0 "V8 field is unchanged";
+        W8_1_w_1 = 1 "V8 field is updated";
+    };
+    
+    register dmm_pat_view1 addr(base, 0x424) "DMM PAT view register (initiators 8 to 15)" {
+        w15 1 rw type(w15_status1) "Write-enable for V15 bit field";
+        _ 1 mbz;
+        v15 2 rw "PAT view for initiator 15";
+        w14 1 rw type(w14_status1) "Write-enable for V14 bit field";
+        _ 1 mbz;
+        v14 2 rw "PAT view for initiator 14";
+        w13 1 rw type(w13_status1) "Write-enable for V13 bit field";
+        _ 1 mbz;
+        v13 2 rw "PAT view for initiator 13";
+        w12 1 rw type(w12_status1) "Write-enable for V12 bit field";
+        _ 1 mbz;
+        v12 2 rw "PAT view for initiator 12";
+        w11 1 rw type(w11_status1) "Write-enable for V11 bit field";
+        _ 1 mbz;
+        v11 2 rw "PAT view for initiator 11";
+        w10 1 rw type(w10_status1) "Write-enable for V10 bit field";
+        _ 1 mbz;
+        v10 2 rw "PAT view for initiator 10";
+        w9 1 rw type(w9_status1) "Write-enable for V9 bit field";
+        _ 1 mbz;
+        v9 2 rw "PAT view for initiator 9";
+        w8 1 rw type(w8_status1) "Write-enable for V8 bit field";
+        _ 1 mbz;
+        v8 2 rw "PAT view for initiator 8";
+    };
+
+    constants access_page_status width(1) "" {
+        ACCESS_PAGE_0 = 0 "Direct access, container base address given in CONT_PAGE";
+        ACCESS_PAGE_1 = 1 "Indirect access through the LUT indexed by CONT_PAGE";
+    };
+
+    constants access_32_status width(1) "" {
+        ACCESS_32_0 = 0 "Direct access, container base address given in CONT_32";
+        ACCESS_32_1 = 1 "Indirect access through the LUT indexed by CONT_32";
+    };
+
+    constants access_16_status width(1) "" {
+        ACCESS_16_0 = 0 "Direct access, container base address given in CONT_16";
+        ACCESS_16_1 = 1 "Indirect access through the LUT indexed by CONT_16";
+    };
+
+    constants access_8_status width(1) "" {
+        ACCESS_8_0 = 0 "Direct access, container base address given in CONT_8";
+        ACCESS_8_1 = 1 "Indirect access through the LUT indexed by CONT_8";
+    };
+    
+    register dmm_pat_view_map_i_0 addr(base, 0x440) "PAT view mapping register" {
+        access_page 1 rw type(access_page_status) "Kind of access for this page mode container in view mapping i";
+        _ 3 mbz;
+        cont_page 4 rw "Container for page mode in view mapping i";
+        access_32 1 rw type(access_32_status) "Kind of access for this 32-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_32 4 rw "Container for 32-bit mode in view mapping i";
+        access_16 1 rw type(access_16_status) "Kind of access for this 16-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_16 4 rw "Container for 16-bit mode in view mapping i";
+        access_8 1 rw type(access_8_status) "Kind of access for this 8-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_8 4 rw "Container for 8-bit mode in view mapping i";
+    };
+    
+    register dmm_pat_view_map_i_1 addr(base, 0x444) "PAT view mapping register" {
+        access_page 1 rw type(access_page_status) "Kind of access for this page mode container in view mapping i";
+        _ 3 mbz;
+        cont_page 4 rw "Container for page mode in view mapping i";
+        access_32 1 rw type(access_32_status) "Kind of access for this 32-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_32 4 rw "Container for 32-bit mode in view mapping i";
+        access_16 1 rw type(access_16_status) "Kind of access for this 16-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_16 4 rw "Container for 16-bit mode in view mapping i";
+        access_8 1 rw type(access_8_status) "Kind of access for this 8-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_8 4 rw "Container for 8-bit mode in view mapping i";
+    };
+    
+    register dmm_pat_view_map_i_2 addr(base, 0x448) "PAT view mapping register" {
+        access_page 1 rw type(access_page_status) "Kind of access for this page mode container in view mapping i";
+        _ 3 mbz;
+        cont_page 4 rw "Container for page mode in view mapping i";
+        access_32 1 rw type(access_32_status) "Kind of access for this 32-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_32 4 rw "Container for 32-bit mode in view mapping i";
+        access_16 1 rw type(access_16_status) "Kind of access for this 16-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_16 4 rw "Container for 16-bit mode in view mapping i";
+        access_8 1 rw type(access_8_status) "Kind of access for this 8-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_8 4 rw "Container for 8-bit mode in view mapping i";
+    };
+    
+    register dmm_pat_view_map_i_3 addr(base, 0x44C) "PAT view mapping register" {
+        access_page 1 rw type(access_page_status) "Kind of access for this page mode container in view mapping i";
+        _ 3 mbz;
+        cont_page 4 rw "Container for page mode in view mapping i";
+        access_32 1 rw type(access_32_status) "Kind of access for this 32-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_32 4 rw "Container for 32-bit mode in view mapping i";
+        access_16 1 rw type(access_16_status) "Kind of access for this 16-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_16 4 rw "Container for 16-bit mode in view mapping i";
+        access_8 1 rw type(access_8_status) "Kind of access for this 8-bit mode container in view mapping i";
+        _ 3 mbz;
+        cont_8 4 rw "Container for 8-bit mode in view mapping i";
+    };
+    
+    register dmm_pat_view_map_base addr(base, 0x460) "Base address of all view mappings" {
+        base_addr 1 rw "MSB of the PAT view mapping base address";
+        _ 31 mbz;
+    };
+
+    constants err_lut_miss1_status width(1) "" {
+        ERR_LUT_MISS1_0_w = 0 "Keep current error event";
+        ERR_LUT_MISS1_0_r = 0 "No such error event";
+        ERR_LUT_MISS1_1_r = 1 "Error event happened";
+        ERR_LUT_MISS1_1_w = 1 "Set error event";
+    };
+
+    constants fill_lst1_status width(1) "" {
+        FILL_LST1_0_w = 0 "Keep area 1 refill done event";
+        FILL_LST1_0_r = 0 "Area 1 is yet-to-be refilled";
+        FILL_LST1_1_r = 1 "Area 1 is refilled";
+        FILL_LST1_1_w = 1 "Set area 1 refill done event";
+    };
+
+    constants fill_lst0_status width(1) "" {
+        FILL_LST0_0_w = 0 "Keep area 0 refill done event";
+        FILL_LST0_0_r = 0 "Area 0 is yet-to-be refilled";
+        FILL_LST0_1_r = 1 "Area 0 is refilled";
+        FILL_LST0_1_w = 1 "Set area 0 refill done event";
+    };
+    
+    register dmm_pat_irqstatus_raw addr(base, 0x480) "Per-event raw interrupt status vector. Raw status is set even if the related event is not enabled. Write 1 to set the (raw) status, mostly for debug. n = 0 for the first interrupt status raw register, n = 1 for the second interrupt status raw register." {
+        _ 16 mbz;
+        err_lut_miss1 1 rw type(err_lut_miss1_status) "Access to a yet-to-be-refilled area event in area 4.n+1";
+        err_upd_data1 1 rw type(err_lut_miss1_status) "Data register update while refilling error event in area 4.n+1";
+        err_upd_ctrl1 1 rw type(err_lut_miss1_status) "Control register update while refilling error event in area 4.n+1";
+        err_upd_area1 1 rw type(err_lut_miss1_status) "Area register update while refilling error event in area 4.n+1";
+        err_inv_data1 1 rw type(err_lut_miss1_status) "Invalid entry-table pointer error event in area 4.n+1";
+        err_inv_dsc1 1 rw type(err_lut_miss1_status) "Invalid descriptor pointer error event in area 4.n+1";
+        fill_lst1 1 rw type(fill_lst1_status) "End of refill event for the last descriptor in area 4.n+1";
+        fill_dsc1 1 rw type(fill_lst1_status) "End of refill event for any descriptor in area 4.n+1";
+        err_lut_miss0 1 rw type(err_lut_miss1_status) "Access to a yet-to-be-refilled area event in area 4.n";
+        err_upd_data0 1 rw type(err_lut_miss1_status) "Data register update while refilling error event in area 4.n";
+        err_upd_ctrl0 1 rw type(err_lut_miss1_status) "Control register update while refilling error event in area 4.n";
+        err_upd_area0 1 rw type(err_lut_miss1_status) "Area register update while refilling error event in area 4.n";
+        err_inv_data0 1 rw type(err_lut_miss1_status) "Invalid entry-table pointer error event in area 4.n";
+        err_inv_dsc0 1 rw type(err_lut_miss1_status) "Invalid descriptor pointer error event in area 4.n";
+        fill_lst0 1 rw type(fill_lst0_status) "End of refill event for the last descriptor in area 4.n";
+        fill_dsc0 1 rw type(fill_lst0_status) "End of refill event for any descriptor in area 4.n";
+    };
+
+    constants err_lut_miss1_status1 width(1) "" {
+        ERR_LUT_MISS1_0_w_1 = 0 "Keep current maskable error event";
+        ERR_LUT_MISS1_0_r_1 = 0 "No such error event or this event is masked";
+        ERR_LUT_MISS1_1_r_1 = 1 "Error event happened";
+        ERR_LUT_MISS1_1_w_1 = 1 "Clear this maskable error event";
+    };
+
+    constants fill_lst1_status1 width(1) "" {
+        FILL_LST1_0_w_1 = 0 "Keep current area refill done maskable event";
+        FILL_LST1_0_r_1 = 0 "Current area is yet-to-be refilled or this event is masked";
+        FILL_LST1_1_r_1 = 1 "Current area is refilled";
+        FILL_LST1_1_w_1 = 1 "Clear current area refill done maskable event";
+    };
+    
+    register dmm_pat_irqstatus addr(base, 0x490) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless the event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled). n = 0 for the first interrupt status register, n = 1 for the second interrupt status register." {
+        _ 16 mbz;
+        err_lut_miss1 1 rw1c type(err_lut_miss1_status1) "Access to a yet-to-be-refilled area event in area 4.n+1";
+        err_upd_data1 1 rw1c type(err_lut_miss1_status1) "Data register update while refilling error event in area 4.n+1";
+        err_upd_ctrl1 1 rw1c type(err_lut_miss1_status1) "Control register update while refilling error event in area 4.n+1";
+        err_upd_area1 1 rw1c type(err_lut_miss1_status1) "Area register update while refilling error event in area 4.n+1";
+        err_inv_data1 1 rw1c type(err_lut_miss1_status1) "Invalid entry-table pointer error event in area 4.n+1";
+        err_inv_dsc1 1 rw1c type(err_lut_miss1_status1) "Invalid descriptor pointer error event in area 4.n+1";
+        fill_lst1 1 rw1c type(fill_lst1_status1) "End of refill event for the last descriptor in area 4.n+1";
+        fill_dsc1 1 rw1c type(fill_lst1_status1) "End of refill event for any descriptor in area 4.n+1";
+        err_lut_miss0 1 rw1c type(err_lut_miss1_status1) "Access to a yet-to-be-refilled area event in area 4.n";
+        err_upd_data0 1 rw1c type(err_lut_miss1_status1) "Data register update while refilling error event in area 4.n";
+        err_upd_ctrl0 1 rw1c type(err_lut_miss1_status1) "Control register update while refilling error event in area 4.n";
+        err_upd_area0 1 rw1c type(err_lut_miss1_status1) "Area register update while refilling error event in area 4.n";
+        err_inv_data0 1 rw1c type(err_lut_miss1_status1) "Invalid entry-table pointer error event in area 4.n";
+        err_inv_dsc0 1 rw1c type(err_lut_miss1_status1) "Invalid descriptor pointer error event in area 4.n";
+        fill_lst0 1 rw1c type(fill_lst1_status1) "End of refill event for the last descriptor in area 4.n";
+        fill_dsc0 1 rw1c type(fill_lst1_status1) "End of refill event for any descriptor in area 4.n";
+    };
+
+    constants err_lut_miss1_status2 width(1) "" {
+        ERR_LUT_MISS1_0_w_2 = 0 "Keep current mask of this interrupt source";
+        ERR_LUT_MISS1_0_r_2 = 0 "This interrupt source is disabled (masked)";
+        ERR_LUT_MISS1_1_r_2 = 1 "This interrupt source is enabled (unmasked)";
+        ERR_LUT_MISS1_1_w_2 = 1 "Enable (unmask) this interrupt source";
+    };
+    
+    register dmm_pat_irqenable_set addr(base, 0x4A0) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register. n = 0 for the first interrupt enable set register, n = 1 for the second interrupt enable set register." {
+        _ 16 mbz;
+        err_lut_miss1 1 rw type(err_lut_miss1_status2) "Unexpected access to a yet-to-be-refilled area interrupt source mask for area 4.n+1";
+        err_upd_data1 1 rw type(err_lut_miss1_status2) "Unexpected data register update while refilling interrupt source mask for area 4.n+1";
+        err_upd_ctrl1 1 rw type(err_lut_miss1_status2) "Unexpected control register update while refilling interrupt source mask for area 4.n+1";
+        err_upd_area1 1 rw type(err_lut_miss1_status2) "Unexpected area register update while refilling interrupt source mask for area 4.n+1";
+        err_inv_data1 1 rw type(err_lut_miss1_status2) "Invalid entry-table pointer interrupt source mask for area 4.n+1";
+        err_inv_dsc1 1 rw type(err_lut_miss1_status2) "Invalid descriptor pointer interrupt source mask for area 4.n+1";
+        fill_lst1 1 rw type(err_lut_miss1_status2) "End of refill interrupt source mask for the last descriptor in area 4.n+1";
+        fill_dsc1 1 rw type(err_lut_miss1_status2) "End of refill interrupt source mask for any descriptor in area 4.n+1";
+        err_lut_miss0 1 rw type(err_lut_miss1_status2) "Unexpected access to a yet-to-be-refilled area interrupt source mask for area 4.n";
+        err_upd_data0 1 rw type(err_lut_miss1_status2) "Unexpected data register update while refilling interrupt source mask for area 4.n";
+        err_upd_ctrl0 1 rw type(err_lut_miss1_status2) "Unexpected control register update while refilling interrupt source mask for area 4.n";
+        err_upd_area0 1 rw type(err_lut_miss1_status2) "Unexpected area register update while refilling interrupt source mask for area 4.n";
+        err_inv_data0 1 rw type(err_lut_miss1_status2) "Invalid entry-table pointer interrupt source mask for area 4.n";
+        err_inv_dsc0 1 rw type(err_lut_miss1_status2) "Invalid descriptor pointer interrupt source mask for area 4.n";
+        fill_lst0 1 rw type(err_lut_miss1_status2) "End of refill interrupt source mask for the last descriptor in area 4.n";
+        fill_dsc0 1 rw type(err_lut_miss1_status2) "End of refill interrupt source mask for any descriptor in area 4.n";
+    };
+
+    constants err_lut_miss1_status3 width(1) "" {
+        ERR_LUT_MISS1_0_w_3 = 0 "Keep current mask of this interrupt source";
+        ERR_LUT_MISS1_0_r_3 = 0 "This interrupt source is disabled (masked)";
+        ERR_LUT_MISS1_1_r_3 = 1 "This interrupt source is enabled (unmasked)";
+        ERR_LUT_MISS1_1_w_3 = 1 "Disable (mask) this interrupt source";
+    };
+    
+    register dmm_pat_irqenable_clr addr(base, 0x4B0) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register. n = 0 for the first interrupt enable clear register, n = 1 for the second interrupt enable clear register." {
+        _ 16 mbz;
+        err_lut_miss1 1 rw1c type(err_lut_miss1_status3) "Unexpected access to a yet-to-be-refilled area interrupt source mask for area 4.n+1";
+        err_upd_data1 1 rw1c type(err_lut_miss1_status3) "Unexpected data register update while refilling interrupt source mask for area 4.n+1";
+        err_upd_ctrl1 1 rw1c type(err_lut_miss1_status3) "Unexpected control register update while refilling interrupt source mask for area 4.n+1";
+        err_upd_area1 1 rw1c type(err_lut_miss1_status3) "Unexpected area register update while refilling interrupt source mask for area 4.n+1";
+        err_inv_data1 1 rw1c type(err_lut_miss1_status3) "Invalid entry-table pointer interrupt source mask for area 4.n+1";
+        err_inv_dsc1 1 rw1c type(err_lut_miss1_status3) "Invalid descriptor pointer interrupt source mask for area 4.n+1";
+        fill_lst1 1 rw1c type(err_lut_miss1_status3) "End of refill interrupt source mask for the last descriptor in area 4.n+1";
+        fill_dsc1 1 rw1c type(err_lut_miss1_status3) "End of refill interrupt source mask for any descriptor in area 4.n+1";
+        err_lut_miss0 1 rw1c type(err_lut_miss1_status3) "Unexpected access to a yet-to-be-refilled area interrupt source mask for area 4.n";
+        err_upd_data0 1 rw1c type(err_lut_miss1_status3) "Unexpected data register update while refilling interrupt source mask for area 4.n";
+        err_upd_ctrl0 1 rw1c type(err_lut_miss1_status3) "Unexpected control register update while refilling interrupt source mask for area 4.n";
+        err_upd_area0 1 rw1c type(err_lut_miss1_status3) "Unexpected area register update while refilling interrupt source mask for area 4.n";
+        err_inv_data0 1 rw1c type(err_lut_miss1_status3) "Invalid entry-table pointer interrupt source mask for area 4.n";
+        err_inv_dsc0 1 rw1c type(err_lut_miss1_status3) "Invalid descriptor pointer interrupt source mask for area 4.n";
+        fill_lst0 1 rw1c type(err_lut_miss1_status3) "End of refill interrupt source mask for the last descriptor in area 4.n";
+        fill_dsc0 1 rw1c type(err_lut_miss1_status3) "End of refill interrupt source mask for any descriptor in area 4.n";
+    };
+
+    constants error_status width(6) "" {
+        ERROR_0_r = 0 "No error";
+        ERROR_1_r = 1 "Invalid descriptor provided";
+        ERROR_2_r = 2 "Invalid data pointer provided";
+        ERROR_4_r = 4 "Unexpected area register update while refilling";
+        ERROR_8_r = 8 "Unexpected control register update while refilling";
+        ERROR_16_r = 16 "Unexpected data register update while refilling";
+        ERROR_32_r = 32 "Unexpected access to a yet-to-be-refilled location";
+    };
+    
+    register dmm_pat_status_i_0 addr(base, 0x4C0) "Status register for each refill engine n = 0 for the first engine status register, n = 1 for the second engine status register." {
+        _ 7 mbz;
+        cnt 9 ro "Counter of remaining lines to reload for engine n";
+        error 6 ro type(error_status) "Error happened in engine n";
+        _ 2 mbz;
+        bypassed 1 ro "Engine n is bypassed. Direct access to the LUT is provided.";
+        _ 2 mbz;
+        linked 1 ro "Area reconfiguration link asserted for engine n";
+        done 1 ro "Area reloading finished for engine n";
+        run 1 ro "Area currently reloading for engine n";
+        valid 1 ro "Valid area description for engine n";
+        ready 1 ro "Area registers ready for engine n";
+    };
+    
+    register dmm_pat_status_i_1 addr(base, 0x4C4) "Status register for each refill engine n = 0 for the first engine status register, n = 1 for the second engine status register." {
+        _ 7 mbz;
+        cnt 9 ro "Counter of remaining lines to reload for engine n";
+        error 6 ro type(error_status) "Error happened in engine n";
+        _ 2 mbz;
+        bypassed 1 ro "Engine n is bypassed. Direct access to the LUT is provided.";
+        _ 2 mbz;
+        linked 1 ro "Area reconfiguration link asserted for engine n";
+        done 1 ro "Area reloading finished for engine n";
+        run 1 ro "Area currently reloading for engine n";
+        valid 1 ro "Valid area description for engine n";
+        ready 1 ro "Area registers ready for engine n";
+    };
+    
+    register dmm_pat_status_i_2 addr(base, 0x4C8) "Status register for each refill engine n = 0 for the first engine status register, n = 1 for the second engine status register." {
+        _ 7 mbz;
+        cnt 9 ro "Counter of remaining lines to reload for engine n";
+        error 6 ro type(error_status) "Error happened in engine n";
+        _ 2 mbz;
+        bypassed 1 ro "Engine n is bypassed. Direct access to the LUT is provided.";
+        _ 2 mbz;
+        linked 1 ro "Area reconfiguration link asserted for engine n";
+        done 1 ro "Area reloading finished for engine n";
+        run 1 ro "Area currently reloading for engine n";
+        valid 1 ro "Valid area description for engine n";
+        ready 1 ro "Area registers ready for engine n";
+    };
+    
+    register dmm_pat_status_i_3 addr(base, 0x4CC) "Status register for each refill engine n = 0 for the first engine status register, n = 1 for the second engine status register." {
+        _ 7 mbz;
+        cnt 9 ro "Counter of remaining lines to reload for engine n";
+        error 6 ro type(error_status) "Error happened in engine n";
+        _ 2 mbz;
+        bypassed 1 ro "Engine n is bypassed. Direct access to the LUT is provided.";
+        _ 2 mbz;
+        linked 1 ro "Area reconfiguration link asserted for engine n";
+        done 1 ro "Area reloading finished for engine n";
+        run 1 ro "Area currently reloading for engine n";
+        valid 1 ro "Valid area description for engine n";
+        ready 1 ro "Area registers ready for engine n";
+    };
+    
+    register dmm_pat_descr_i_0 addr(base, 0x500) "Physical address of the next table refill descriptor n = 0 for the descriptor register of the first engine, n = 1 for the descriptor register of the second engine. Writing to this register aborts the current ongoing area reload and resets the corresponding DMM_PAT_AREA__x, DMM_PAT_CTRL__x and DMM_PAT_DATA__x registers." {
+        addr 28 rw "Physical address of the next table refill descriptor of engine n";
+        _ 4 mbz;
+    };
+    
+    register dmm_pat_descr_i_1 addr(base, 0x510) "Physical address of the next table refill descriptor n = 0 for the descriptor register of the first engine, n = 1 for the descriptor register of the second engine. Writing to this register aborts the current ongoing area reload and resets the corresponding DMM_PAT_AREA__x, DMM_PAT_CTRL__x and DMM_PAT_DATA__x registers." {
+        addr 28 rw "Physical address of the next table refill descriptor of engine n";
+        _ 4 mbz;
+    };
+    
+    register dmm_pat_descr_i_2 addr(base, 0x520) "Physical address of the next table refill descriptor n = 0 for the descriptor register of the first engine, n = 1 for the descriptor register of the second engine. Writing to this register aborts the current ongoing area reload and resets the corresponding DMM_PAT_AREA__x, DMM_PAT_CTRL__x and DMM_PAT_DATA__x registers." {
+        addr 28 rw "Physical address of the next table refill descriptor of engine n";
+        _ 4 mbz;
+    };
+    
+    register dmm_pat_descr_i_3 addr(base, 0x530) "Physical address of the next table refill descriptor n = 0 for the descriptor register of the first engine, n = 1 for the descriptor register of the second engine. Writing to this register aborts the current ongoing area reload and resets the corresponding DMM_PAT_AREA__x, DMM_PAT_CTRL__x and DMM_PAT_DATA__x registers." {
+        addr 28 rw "Physical address of the next table refill descriptor of engine n";
+        _ 4 mbz;
+    };
+    
+    register dmm_pat_area_i_0 addr(base, 0x504) "Area definition for DMM physical address translator n = 0 for the area register of the first engine, n = 1 for the area register of the second engine." {
+        _ 1 mbz;
+        y1 7 rw "Y-coordinate of the bottom-right corner of the PAT area for engine n";
+        x1 8 rw "X-coordinate of the bottom-right corner of the PAT area for engine n";
+        _ 1 mbz;
+        y0 7 rw "Y-coordinate of the top-left corner of the PAT area for engine n";
+        x0 8 rw "X-coordinate of the top-left corner of the PAT area for engine n";
+    };
+    
+    register dmm_pat_area_i_1 addr(base, 0x514) "Area definition for DMM physical address translator n = 0 for the area register of the first engine, n = 1 for the area register of the second engine." {
+        _ 1 mbz;
+        y1 7 rw "Y-coordinate of the bottom-right corner of the PAT area for engine n";
+        x1 8 rw "X-coordinate of the bottom-right corner of the PAT area for engine n";
+        _ 1 mbz;
+        y0 7 rw "Y-coordinate of the top-left corner of the PAT area for engine n";
+        x0 8 rw "X-coordinate of the top-left corner of the PAT area for engine n";
+    };
+    
+    register dmm_pat_area_i_2 addr(base, 0x524) "Area definition for DMM physical address translator n = 0 for the area register of the first engine, n = 1 for the area register of the second engine." {
+        _ 1 mbz;
+        y1 7 rw "Y-coordinate of the bottom-right corner of the PAT area for engine n";
+        x1 8 rw "X-coordinate of the bottom-right corner of the PAT area for engine n";
+        _ 1 mbz;
+        y0 7 rw "Y-coordinate of the top-left corner of the PAT area for engine n";
+        x0 8 rw "X-coordinate of the top-left corner of the PAT area for engine n";
+    };
+    
+    register dmm_pat_area_i_3 addr(base, 0x534) "Area definition for DMM physical address translator n = 0 for the area register of the first engine, n = 1 for the area register of the second engine." {
+        _ 1 mbz;
+        y1 7 rw "Y-coordinate of the bottom-right corner of the PAT area for engine n";
+        x1 8 rw "X-coordinate of the bottom-right corner of the PAT area for engine n";
+        _ 1 mbz;
+        y0 7 rw "Y-coordinate of the top-left corner of the PAT area for engine n";
+        x0 8 rw "X-coordinate of the top-left corner of the PAT area for engine n";
+    };
+
+    constants sync_status width(1) "" {
+        SYNC_0 = 0 "Not synchronized";
+        SYNC_1 = 1 "Synchronized";
+    };
+    
+    register dmm_pat_ctrl_i_0 addr(base, 0x508) "DMM physical address translator control register n = 0 for the control register of the first engine, n = 1 for the control register of the second engine." {
+        initiator 4 rw "DMM PAT initiator for synchronization in engine n";
+        _ 11 mbz;
+        sync 1 rw type(sync_status) "DMM PAT table reload synchronization for engine n";
+        _ 9 mbz;
+        direction 3 rw "Direction of this PAT table refill for engine n";
+        _ 3 mbz;
+        start 1 rw "Starting a PAT table refill with engine n";
+    };
+    
+    register dmm_pat_ctrl_i_1 addr(base, 0x518) "DMM physical address translator control register n = 0 for the control register of the first engine, n = 1 for the control register of the second engine." {
+        initiator 4 rw "DMM PAT initiator for synchronization in engine n";
+        _ 11 mbz;
+        sync 1 rw type(sync_status) "DMM PAT table reload synchronization for engine n";
+        _ 9 mbz;
+        direction 3 rw "Direction of this PAT table refill for engine n";
+        _ 3 mbz;
+        start 1 rw "Starting a PAT table refill with engine n";
+    };
+    
+    register dmm_pat_ctrl_i_2 addr(base, 0x528) "DMM physical address translator control register n = 0 for the control register of the first engine, n = 1 for the control register of the second engine." {
+        initiator 4 rw "DMM PAT initiator for synchronization in engine n";
+        _ 11 mbz;
+        sync 1 rw type(sync_status) "DMM PAT table reload synchronization for engine n";
+        _ 9 mbz;
+        direction 3 rw "Direction of this PAT table refill for engine n";
+        _ 3 mbz;
+        start 1 rw "Starting a PAT table refill with engine n";
+    };
+    
+    register dmm_pat_ctrl_i_3 addr(base, 0x538) "DMM physical address translator control register n = 0 for the control register of the first engine, n = 1 for the control register of the second engine." {
+        initiator 4 rw "DMM PAT initiator for synchronization in engine n";
+        _ 11 mbz;
+        sync 1 rw type(sync_status) "DMM PAT table reload synchronization for engine n";
+        _ 9 mbz;
+        direction 3 rw "Direction of this PAT table refill for engine n";
+        _ 3 mbz;
+        start 1 rw "Starting a PAT table refill with engine n";
+    };
+    
+    register dmm_pat_data_i_0 addr(base, 0x50C) "Physical address of the current table refill entry data n = 0 for the data register of the first engine, n = 1 for the data register of the second engine." {
+        addr 28 rw "Physical address of the current table refill entry data or single actual entry data when in manual mode for engine n";
+        _ 4 mbz;
+    };
+    
+    register dmm_pat_data_i_1 addr(base, 0x51C) "Physical address of the current table refill entry data n = 0 for the data register of the first engine, n = 1 for the data register of the second engine." {
+        addr 28 rw "Physical address of the current table refill entry data or single actual entry data when in manual mode for engine n";
+        _ 4 mbz;
+    };
+    
+    register dmm_pat_data_i_2 addr(base, 0x52C) "Physical address of the current table refill entry data n = 0 for the data register of the first engine, n = 1 for the data register of the second engine." {
+        addr 28 rw "Physical address of the current table refill entry data or single actual entry data when in manual mode for engine n";
+        _ 4 mbz;
+    };
+    
+    register dmm_pat_data_i_3 addr(base, 0x53C) "Physical address of the current table refill entry data n = 0 for the data register of the first engine, n = 1 for the data register of the second engine." {
+        addr 28 rw "Physical address of the current table refill entry data or single actual entry data when in manual mode for engine n";
+        _ 4 mbz;
+    };
+
+    constants prio_cnt_status width(7) "" {
+        PRIO_CNT_1_r = 1 "One priority entry";
+        PRIO_CNT_2_r = 2 "Two priority entries";
+        PRIO_CNT_4_r = 4 "Four priority entries";
+        PRIO_CNT_8_r = 8 "Eight priority entries";
+        PRIO_CNT_16_r = 16 "Sixteen priority entries";
+        PRIO_CNT_32_r = 32 "Thirty-two priority entries";
+        PRIO_CNT_64_r = 64 "Sixty-four priority entries";
+    };
+    
+    register dmm_peg_hwinfo addr(base, 0x608) "DMM hardware configuration for PEG" {
+        _ 25 mbz;
+        prio_cnt 7 ro type(prio_cnt_status) "Number of PEG priority entries";
+    };
+
+    constants w7_status2 width(1) "" {
+        W7_0_w_2 = 0 "P7 field is unchanged";
+        W7_1_w_2 = 1 "P7 field is updated";
+    };
+
+    constants w6_status2 width(1) "" {
+        W6_0_w_2 = 0 "P6 field is unchanged";
+        W6_1_w_2 = 1 "P6 field is updated";
+    };
+
+    constants w5_status2 width(1) "" {
+        W5_0_w_2 = 0 "P5 field is unchanged";
+        W5_1_w_2 = 1 "P5 field is updated";
+    };
+
+    constants w4_status2 width(1) "" {
+        W4_0_w_2 = 0 "P4 field is unchanged";
+        W4_1_w_2 = 1 "P4 field is updated";
+    };
+
+    constants w3_status2 width(1) "" {
+        W3_0_w_2 = 0 "P3 field is unchanged";
+        W3_1_w_2 = 1 "P3 field is updated";
+    };
+
+    constants w2_status2 width(1) "" {
+        W2_0_w_2 = 0 "P2 field is unchanged";
+        W2_1_w_2 = 1 "P2 field is updated";
+    };
+
+    constants w1_status2 width(1) "" {
+        W1_0_w_2 = 0 "P1 field is unchanged";
+        W1_1_w_2 = 1 "P1 field is updated";
+    };
+
+    constants w0_status2 width(1) "" {
+        W0_0_w_2 = 0 "P0 field is unchanged";
+        W0_1_w_2 = 1 "P0 field is updated";
+    };
+    
+    register dmm_peg_prio_k_0 addr(base, 0x620) "DMM PEG Priority register" {
+        w7 1 rw type(w7_status2) "Write-enable for P7 bit field";
+        p7 3 rw "Priority for initiator 8.k+7";
+        w6 1 rw type(w6_status2) "Write-enable for P6 bit field";
+        p6 3 rw "Priority for initiator 8.k+6";
+        w5 1 rw type(w5_status2) "Write-enable for P5 bit field";
+        p5 3 rw "Priority for initiator 8.k+5";
+        w4 1 rw type(w4_status2) "Write-enable for P4 bit field";
+        p4 3 rw "Priority for initiator 8.k+4";
+        w3 1 rw type(w3_status2) "Write-enable for P3 bit field";
+        p3 3 rw "Priority for initiator 8.k+3";
+        w2 1 rw type(w2_status2) "Write-enable for P2 bit field";
+        p2 3 rw "Priority for initiator 8.k+2";
+        w1 1 rw type(w1_status2) "Write-enable for P1 bit field";
+        p1 3 rw "Priority for initiator 8.k+1";
+        w0 1 rw type(w0_status2) "Write-enable for P0 bit field";
+        p0 3 rw "Priority for initiator 8.k";
+    };
+    
+    register dmm_peg_prio_k_1 addr(base, 0x624) "DMM PEG Priority register" {
+        w7 1 rw type(w7_status2) "Write-enable for P7 bit field";
+        p7 3 rw "Priority for initiator 8.k+7";
+        w6 1 rw type(w6_status2) "Write-enable for P6 bit field";
+        p6 3 rw "Priority for initiator 8.k+6";
+        w5 1 rw type(w5_status2) "Write-enable for P5 bit field";
+        p5 3 rw "Priority for initiator 8.k+5";
+        w4 1 rw type(w4_status2) "Write-enable for P4 bit field";
+        p4 3 rw "Priority for initiator 8.k+4";
+        w3 1 rw type(w3_status2) "Write-enable for P3 bit field";
+        p3 3 rw "Priority for initiator 8.k+3";
+        w2 1 rw type(w2_status2) "Write-enable for P2 bit field";
+        p2 3 rw "Priority for initiator 8.k+2";
+        w1 1 rw type(w1_status2) "Write-enable for P1 bit field";
+        p1 3 rw "Priority for initiator 8.k+1";
+        w0 1 rw type(w0_status2) "Write-enable for P0 bit field";
+        p0 3 rw "Priority for initiator 8.k";
+    };
+    
+    register dmm_peg_prio_k_2 addr(base, 0x628) "DMM PEG Priority register" {
+        w7 1 rw type(w7_status2) "Write-enable for P7 bit field";
+        p7 3 rw "Priority for initiator 8.k+7";
+        w6 1 rw type(w6_status2) "Write-enable for P6 bit field";
+        p6 3 rw "Priority for initiator 8.k+6";
+        w5 1 rw type(w5_status2) "Write-enable for P5 bit field";
+        p5 3 rw "Priority for initiator 8.k+5";
+        w4 1 rw type(w4_status2) "Write-enable for P4 bit field";
+        p4 3 rw "Priority for initiator 8.k+4";
+        w3 1 rw type(w3_status2) "Write-enable for P3 bit field";
+        p3 3 rw "Priority for initiator 8.k+3";
+        w2 1 rw type(w2_status2) "Write-enable for P2 bit field";
+        p2 3 rw "Priority for initiator 8.k+2";
+        w1 1 rw type(w1_status2) "Write-enable for P1 bit field";
+        p1 3 rw "Priority for initiator 8.k+1";
+        w0 1 rw type(w0_status2) "Write-enable for P0 bit field";
+        p0 3 rw "Priority for initiator 8.k";
+    };
+    
+    register dmm_peg_prio_k_3 addr(base, 0x62C) "DMM PEG Priority register" {
+        w7 1 rw type(w7_status2) "Write-enable for P7 bit field";
+        p7 3 rw "Priority for initiator 8.k+7";
+        w6 1 rw type(w6_status2) "Write-enable for P6 bit field";
+        p6 3 rw "Priority for initiator 8.k+6";
+        w5 1 rw type(w5_status2) "Write-enable for P5 bit field";
+        p5 3 rw "Priority for initiator 8.k+5";
+        w4 1 rw type(w4_status2) "Write-enable for P4 bit field";
+        p4 3 rw "Priority for initiator 8.k+4";
+        w3 1 rw type(w3_status2) "Write-enable for P3 bit field";
+        p3 3 rw "Priority for initiator 8.k+3";
+        w2 1 rw type(w2_status2) "Write-enable for P2 bit field";
+        p2 3 rw "Priority for initiator 8.k+2";
+        w1 1 rw type(w1_status2) "Write-enable for P1 bit field";
+        p1 3 rw "Priority for initiator 8.k+1";
+        w0 1 rw type(w0_status2) "Write-enable for P0 bit field";
+        p0 3 rw "Priority for initiator 8.k";
+    };
+    
+    register dmm_peg_prio_k_4 addr(base, 0x630) "DMM PEG Priority register" {
+        w7 1 rw type(w7_status2) "Write-enable for P7 bit field";
+        p7 3 rw "Priority for initiator 8.k+7";
+        w6 1 rw type(w6_status2) "Write-enable for P6 bit field";
+        p6 3 rw "Priority for initiator 8.k+6";
+        w5 1 rw type(w5_status2) "Write-enable for P5 bit field";
+        p5 3 rw "Priority for initiator 8.k+5";
+        w4 1 rw type(w4_status2) "Write-enable for P4 bit field";
+        p4 3 rw "Priority for initiator 8.k+4";
+        w3 1 rw type(w3_status2) "Write-enable for P3 bit field";
+        p3 3 rw "Priority for initiator 8.k+3";
+        w2 1 rw type(w2_status2) "Write-enable for P2 bit field";
+        p2 3 rw "Priority for initiator 8.k+2";
+        w1 1 rw type(w1_status2) "Write-enable for P1 bit field";
+        p1 3 rw "Priority for initiator 8.k+1";
+        w0 1 rw type(w0_status2) "Write-enable for P0 bit field";
+        p0 3 rw "Priority for initiator 8.k";
+    };
+    
+    register dmm_peg_prio_k_5 addr(base, 0x634) "DMM PEG Priority register" {
+        w7 1 rw type(w7_status2) "Write-enable for P7 bit field";
+        p7 3 rw "Priority for initiator 8.k+7";
+        w6 1 rw type(w6_status2) "Write-enable for P6 bit field";
+        p6 3 rw "Priority for initiator 8.k+6";
+        w5 1 rw type(w5_status2) "Write-enable for P5 bit field";
+        p5 3 rw "Priority for initiator 8.k+5";
+        w4 1 rw type(w4_status2) "Write-enable for P4 bit field";
+        p4 3 rw "Priority for initiator 8.k+4";
+        w3 1 rw type(w3_status2) "Write-enable for P3 bit field";
+        p3 3 rw "Priority for initiator 8.k+3";
+        w2 1 rw type(w2_status2) "Write-enable for P2 bit field";
+        p2 3 rw "Priority for initiator 8.k+2";
+        w1 1 rw type(w1_status2) "Write-enable for P1 bit field";
+        p1 3 rw "Priority for initiator 8.k+1";
+        w0 1 rw type(w0_status2) "Write-enable for P0 bit field";
+        p0 3 rw "Priority for initiator 8.k";
+    };
+    
+    register dmm_peg_prio_k_6 addr(base, 0x638) "DMM PEG Priority register" {
+        w7 1 rw type(w7_status2) "Write-enable for P7 bit field";
+        p7 3 rw "Priority for initiator 8.k+7";
+        w6 1 rw type(w6_status2) "Write-enable for P6 bit field";
+        p6 3 rw "Priority for initiator 8.k+6";
+        w5 1 rw type(w5_status2) "Write-enable for P5 bit field";
+        p5 3 rw "Priority for initiator 8.k+5";
+        w4 1 rw type(w4_status2) "Write-enable for P4 bit field";
+        p4 3 rw "Priority for initiator 8.k+4";
+        w3 1 rw type(w3_status2) "Write-enable for P3 bit field";
+        p3 3 rw "Priority for initiator 8.k+3";
+        w2 1 rw type(w2_status2) "Write-enable for P2 bit field";
+        p2 3 rw "Priority for initiator 8.k+2";
+        w1 1 rw type(w1_status2) "Write-enable for P1 bit field";
+        p1 3 rw "Priority for initiator 8.k+1";
+        w0 1 rw type(w0_status2) "Write-enable for P0 bit field";
+        p0 3 rw "Priority for initiator 8.k";
+    };
+    
+    register dmm_peg_prio_k_7 addr(base, 0x63C) "DMM PEG Priority register" {
+        w7 1 rw type(w7_status2) "Write-enable for P7 bit field";
+        p7 3 rw "Priority for initiator 8.k+7";
+        w6 1 rw type(w6_status2) "Write-enable for P6 bit field";
+        p6 3 rw "Priority for initiator 8.k+6";
+        w5 1 rw type(w5_status2) "Write-enable for P5 bit field";
+        p5 3 rw "Priority for initiator 8.k+5";
+        w4 1 rw type(w4_status2) "Write-enable for P4 bit field";
+        p4 3 rw "Priority for initiator 8.k+4";
+        w3 1 rw type(w3_status2) "Write-enable for P3 bit field";
+        p3 3 rw "Priority for initiator 8.k+3";
+        w2 1 rw type(w2_status2) "Write-enable for P2 bit field";
+        p2 3 rw "Priority for initiator 8.k+2";
+        w1 1 rw type(w1_status2) "Write-enable for P1 bit field";
+        p1 3 rw "Priority for initiator 8.k+1";
+        w0 1 rw type(w0_status2) "Write-enable for P0 bit field";
+        p0 3 rw "Priority for initiator 8.k";
+    };
+
+    constants w_pat_status width(1) "" {
+        W_PAT_0_w = 0 "P_PAT field is updated";
+        W_PAT_1_w = 1 "P_PAT field is unchanged";
+    };
+    
+    register dmm_peg_prio_pat addr(base, 0x640) "DMM PEG priority register for the internal PAT engine." {
+        _ 28 mbz;
+        w_pat 1 rw type(w_pat_status) "Write-enable for P_PAT bit field";
+        p_pat 3 rw "Priority for PAT engine";
+    };
+};

@@ -1,0 +1,77 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (c) 2013 ETH Zurich.
+% All rights reserved.
+%
+% This file is distributed under the terms in the attached LICENSE file.
+% If you do not find this file, copies can be found by writing to:
+% ETH Zurich D-INFK, Universitaetstr. 6, CH-8092 Zurich. Attn: Systems Group.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,twoside]{report} % for a report (default)
+
+\usepackage{bftn,color} % You need this
+\usepackage{subfig}
+\usepackage{listings}
+\usepackage{verbatim}
+
+\usepackage{ifthen}
+\ifthenelse{\isundefined{\hypersetup}}{
+  \usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
+  \urlstyle{same} % normal text font (alternatives: tt, rm, sf)
+}{}
+
+
+
+
+\title{Barrelfish Practical Guide}   % title of report
+\author{Team Barrelfish}	% author
+\tnnumber{018}  % give the number of the tech report
+\tnkey{Barrelfish Practical guide} % Short title, will appear in footer
+
+% \date{Month Year} % Not needed - will be taken from version history
+
+%% \newcommand{\note}[1]{}
+\newcommand{\note}[1]{[\textcolor{red}{\textit{#1}}]}
+
+\begin{document}
+\maketitle
+
+%
+% Include version history first
+%
+%\begin{versionhistory}
+%\vhEntry{1.0}{06.12.2013}{Pravin}{Initial version}
+%\end{versionhistory}
+
+% \intro{Abstract}		% Insert abstract here
+% \intro{Acknowledgements}	% Uncomment (if needed) for acknowledgements
+\tableofcontents		% Uncomment (if needed) for final draft
+% \listoffigures		% Uncomment (if needed) for final draft
+% \listoftables			% Uncomment (if needed) for final draft
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+
+This note describes how to build and boot Barrelfish on 64-bit PC
+hardware, which is the default configuration for Barrelfish.  It then
+goes on to work through a simple ``hello, world''-style application
+which illustrates client-server programming in C on Barrelfish, and
+the use of the message-passing subsystem.
+
+Information on how to compile Barrelfish for other platforms, in
+particular ARM, are found in other documents.  However, the
+application programming section in this guide is still relevant.
+
+\chapter{PC compilation and installation}\label{chap:compilationInstallation}
+\input{readme}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Writing Hello World application}\label{chap:helloWorldApp}
+\input{helloWorldApp}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{abbrvnat}
+\bibliography{paper}
+
+\end{document}

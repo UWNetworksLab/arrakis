@@ -1,0 +1,131 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ */
+
+/*
+ * omap44xx_ctrlmod.dev
+ *
+ * DESCRIPTION: Control module
+ *
+ * See:
+ * OMAP4460 Multimedia Device Silicon Revision 1.x (Version Q)
+ * Chapter: 18
+ * Registers: 18.6, page 3688 
+ *
+ * XXX Need to write a register type for pad multiplexing
+ */
+ 
+ device omap44xx_ctrlmod msbfirst (addr gen_core, 
+                                   addr gen_wkup, 
+                                   addr pad_core, 
+                                   addr pad_wkup) "TI Control Module" {
+
+
+     // SYSCTRL_GENERAL_CORE registers
+     // relative to gen_core address
+     // --------------------------------------------------
+
+     register CONTROL_GEN_CORE_REVISION addr(gen_core, 0x0) 
+         "Control module instance revision identifier"
+         type(uint32);
+
+     // SYSCTRL_PADCONF_CORE registers
+     // relative to pad_core address
+     // --------------------------------------------------
+
+     // Register format for pad configuration
+     regtype pad_conf "Configuration of Pads. Two Pads per register" {
+         PAD2_WAKEUPEVENT            1    ro     "Pad_x wake-up event status latched in IO";
+         PAD2_WAKEUPENABLE           1    rw     "Input pad wake-up enable";
+         PAD2_OFFMODEPULLTYPESEL     1    rw     "OffMode mode pullup/down selection";
+         PAD2_OFFMODEPULLUDENABLE    1    rw     "OffMode mode pullup/down enable";
+         PAD2_OFFMODEOUTVALUE        1    rw     "OffMode mode output value";
+         PAD2_OFFMODEOUTENABLE       1    rw     "OffMode mode output enable value";
+         PAD2_OFFMODEENABLE          1    rw     "OffMode mode override control";
+         PAD2_INPUTENABLE            1    rw     "Input enable value";
+         _                           6 rsvd;
+         PAD2_MUXMODE                2    rw     "Functional mux selection";
+
+         PAD1_WAKEUPEVENT            1    ro     "Pad_x wake-up event status latched in IO";
+         PAD1_WAKEUPENAB             1    rw     "Input pad wake-up enable";
+         PAD1_OFFMODEPULLTYPESEL     1    rw     "OffMode mode pullup/down selection";
+         PAD1_OFFMODEPULLUDENABLE    1    rw     "OffMode mode pullup/down enable";
+         PAD1_OFFMODEOUTVALUE        1    rw     "OffMode mode output value";
+         PAD1_OFFMODEOUTENABLE       1    rw     "OffMode mode output enable value";
+         PAD1_OFFMODEENABLE          1    rw     "OffMode mode override control";
+         PAD1_INPUTENABLE            1    rw     "Input enable value";
+         _                           6 rsvd;
+         PAD1_MUXMODE                2    rw     "Functional mux selection";
+     };
+
+     register PAD_AD8 addr(pad_core, 0x50) type(pad_conf);
+     register PAD_AD10 addr(pad_core, 0x54) type(pad_conf);
+     register PAD_AD12 addr(pad_core, 0x58) type(pad_conf);
+     register PAD_AD14 addr(pad_core, 0x5c) type(pad_conf);
+     register PAD_NWP addr(pad_core, 0x7c) type(pad_conf);
+     register PAD_NAVD_ALE addr(pad_core, 0x80) type(pad_conf);
+     register PAD_USBC1 addr(pad_core, 0xe0) type(pad_conf);
+     register PAD_CMD addr(pad_core, 0xe4) type(pad_conf);
+     register PAD_DAT1 addr(pad_core, 0xe8) type(pad_conf);
+     register PAD_DAT3 addr(pad_core, 0xeC) type(pad_conf);
+     register PAD_DAT5 addr(pad_core, 0xf0) type(pad_conf);
+     register PAD_DAT7 addr(pad_core, 0xf4) type(pad_conf);
+
+     constants voltage "Voltage bit" {
+         vlt_low = 0b0 "1.8V";
+         vlt_hi  = 0b1 "3.0V";
+     };
+
+     register PBIASLITE addr(pad_core,0x600)
+         "PBIASLITE control for extended drain pad settings"
+     { 
+         USBC1_ICUSB_PWRDNZ           1 rw "PWRDNZ for USBC1 IO";
+         MMC1_PBIASLITE_VMODE         1 rw type(voltage) "MMC1 PBIAS VMODE control";
+         MMC1_PBIASLITE_PWRDNZ        1 rw "PWRDNZ for MMC1 PBIAS";
+         MMC1_PBIASLITE_VMODE_ERROR   1 ro "Error bit for MMC1 PBIAS VMODE";
+         MMC1_PBIASLITE_SUPPLY_HI_OUT 1 ro type(voltage) "Indicator for SDMMC1_VDDS voltage";
+         MMC1_PBIASLITE_HIZ_MODE      1 rw "MMC1 PBIAS hi-z mode";
+         MMC1_PWRDNZ                  1 rw "PWRDNZ for MMC1 IO";
+         PBIASLITE1_VMODE             1 rw type(voltage) "PBIAS VMODE control";
+         PBIASLITE1_PWRDNZ            1 rw "PWRDNZ for PBIAS";
+         PBIASLITE1_VMODE_ERROR       1 ro "Error bit for PBIAS VMODE";
+         PBIASLITE1_SUPPLY_HI_OUT     1 ro type(voltage) "Indicator for PBIAS voltage";
+         PBIASLITE1_HIZ_MODE          1 rw "PBIAS hi-z mode";
+         _                            20 rsvd;
+     };
+
+     constants usbc1_speeds "Clock speeds for usbc1" {
+         usbc1_spd_slow = 0b0 "FMAX = 26MHz @ 30pF";
+         usbc1_spd_fast = 0b1 "FMAX = 65MHz @ 30pF";
+     };
+
+     constants mmc1_speeds "Clock speeds for sdmmc1" {
+         mmc1_spd_slow = 0b000 "FMAX = 26MHz @ 30pF";
+         mmc1_spd_fast = 0b111 "FMAX = 65MHz @ 30pF";
+     };
+
+     constants mmc1_pustrengths "Pull up strenghts for sdmmc1" {
+         mmc1_pstr_strong = 0b0000 "Pull up with 50 to 110 kOhm";
+         mmc1_pstr_weak   = 0b1111 "Pull up with 10 to 50 kOhm";
+     };
+
+     register CONTROL_MMC1 addr(pad_core,0x628) "MMC1 control" {
+         _                      21 rsvd;
+         USBC1_ICUSB_DM_PDDIS   1 rw "ICUSB DM pull-down disable";
+         USBC1_ICUSB_DP_PDDIS   1 rw "ICUSB DP pull-down disable";
+         USB_FD_CDEN            1 rw "USB FD pull-down select";
+         USBC1_DR0_SPEEDCTRL    1 rw type(usbc1_speeds) "Speed control for USBC1";
+         /* Speedcontrol is actually 3 1-bit registers but afaict they should
+          * be set to the same value all the time -SG
+          */
+         SDMMC1_SPEEDCTRL       3 rw type(mmc1_speeds) "Speed control for SDMMC1";
+         /* Pullstrength control is actually 4 1-bit registers but afaict
+          * they should be set to the same value all the time -SG
+          */
+         SDMMC1_PUSTRENGTH      4 rw type(mmc1_pustrengths) "Pullstrength control for SDMMC1";
+     };
+ };

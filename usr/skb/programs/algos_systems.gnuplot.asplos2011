@@ -1,0 +1,20 @@
+clear
+reset
+set terminal postscript eps enhanced dashed color
+set output "algos_systems.eps"
+set boxwidth 0.1
+set xlabel "System"
+set ylabel "Physical address size needed [bytes]"
+set xtics ("sys1" 0,"sys2" 1,"sys3" 2,"sys4" 3,"sys5" 4,"sys6" 5,"sys7" 6,"sys8" 7,"sys9" 8)
+plot "algos_systems.dat" index 0 using ($0-0.1):8 title "Root size" with boxes,  "./algos_systems.dat" index 0 using ($0+0.1*0):3 title 'CLP' with boxes fill pattern 1, "./algos_systems.dat" index 1 using ($0+0.1*1):3 title 'postorder' with boxes fill pattern 2, "./algos_systems.dat" index 2 using ($0+0.1*2):3 title 'postorder\_sorted' with boxes fill pattern 3, "./algos_systems.dat" index 3 using ($0+0.1*3):3 title 'postorder\_sum' with boxes fill pattern 4, "./algos_systems.dat" index 4 using ($0+0.1*4):3 title 'postorder\_asc' with boxes fill pattern 5, "./algos_systems.dat" index 5 using ($0+0.1*5):3 title 'postorder\_asc\_sum' with boxes fill pattern 6, "./algos_systems.dat" index 6 using ($0+0.1*6):3 title 'Linux' with boxes fill pattern 7
+
+set output "algos_systems_padding.eps"
+set xlabel "System"
+set ylabel "Padding overhead [bytes]"
+plot  "./algos_systems.dat" index 0 using ($0+0.1*0):5 title 'CLP' with boxes fill pattern 1, "./algos_systems.dat" index 1 using ($0+0.1*1):5 title 'postorder' with boxes fill pattern 2, "./algos_systems.dat" index 2 using ($0+0.1*2):5 title 'postorder\_sorted' with boxes fill pattern 3, "./algos_systems.dat" index 3 using ($0+0.1*3):5 title 'postorder\_sum' with boxes fill pattern 4, "./algos_systems.dat" index 4 using ($0+0.1*4):5 title 'postorder\_asc' with boxes fill pattern 5, "./algos_systems.dat" index 5 using ($0+0.1*5):5 title 'postorder\_asc\_sum' with boxes fill pattern 6, "./algos_systems.dat" index 6 using ($0+0.1*6):5 title 'Linux' with boxes fill pattern 7
+
+set output "algos_systems_difference.eps"
+set xlabel "System"
+set ylabel "Difference to root limit"
+set key bottom right
+plot  "./algos_systems.dat" index 0 using ($0+0.1*0):12 title 'CLP' with boxes fill pattern 1, "./algos_systems.dat" index 1 using ($0+0.1*1):12 title 'postorder' with boxes fill pattern 2, "./algos_systems.dat" index 2 using ($0+0.1*2):12 title 'postorder\_sorted' with boxes fill pattern 3, "./algos_systems.dat" index 3 using ($0+0.1*3):12 title 'postorder\_sum' with boxes fill pattern 4, "./algos_systems.dat" index 4 using ($0+0.1*4):12 title 'postorder\_asc' with boxes fill pattern 5, "./algos_systems.dat" index 5 using ($0+0.1*5):12 title 'postorder\_asc\_sum' with boxes fill pattern 6, "./algos_systems.dat" index 6 using ($0+0.1*6):12 title 'Linux' with boxes fill pattern 7

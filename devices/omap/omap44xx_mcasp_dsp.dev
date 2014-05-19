@@ -1,0 +1,527 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_mcasp_dsp.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_mcasp_dsp msbfirst ( addr base ) "" {
+    
+    
+    register mcasp_pid ro addr(base, 0x0) "Peripheral identification register" type(uint32);
+    
+    register mcasp_sysconfig addr(base, 0x4) "Power idle module configuration register." {
+        _ 30 mbz;
+        idle_mode 2 rw "0x0: Force-idle mode 0x1: No-idle mode 0x2: Smart-idle mode - default state 0x3: Reserved";
+    };
+
+    constants afsx_status width(1) "" {
+        AFSX_0 = 0 "Pin functions as McASP pin";
+        AFSX_1 = 1 "Pin functions as GIO pin";
+    };
+    
+    register mcasp_pfunc addr(base, 0x10) "Specifies the function of the pins as either a McASP pin or a GPIO pin" {
+        _ 3 mbz;
+        afsx 1 rw type(afsx_status) "Determines if abe_mcasp_afsx pin functions as McASP or GPIO.";
+        ahclkx 1 rw type(afsx_status) "Determines if abe_mcasp_ahclkx pin functions as McASP or GPIO.";
+        aclkx 1 rw type(afsx_status) "Determines if abe_mcasp_aclkx pin functions as McASP or GPIO.";
+        amute 1 rw type(afsx_status) "Determines if abe_mcasp_amute pin functions as McASP or GPIO.";
+        _ 24 mbz;
+        axr0 1 rw type(afsx_status) "Determines if abe_mcasp_axr pin functions as McASP or GPIO.";
+    };
+
+    constants afsx_status1 width(1) "" {
+        AFSX_0_1 = 0 "Input";
+        AFSX_1_1 = 1 "Output";
+    };
+    
+    register mcasp_pdir addr(base, 0x14) "Pin direction register - specifies the direction of the McASP pins as either an input or an output pin. For the module to operate properly, configure them as outputs." {
+        _ 3 mbz;
+        afsx 1 rw type(afsx_status1) "Determines if abe_mcasp_afsx pin functions as an input or output.";
+        ahclkx 1 rw type(afsx_status1) "Determines if abe_mcasp_ahclkx pin functions as an input or output.";
+        aclkx 1 rw type(afsx_status1) "Determines if abe_mcasp_aclkx pin functions as an input or output.";
+        amute 1 rw type(afsx_status1) "Determines if abe_mcasp_amute pin functions as an input or output.";
+        _ 24 mbz;
+        axr0 1 rw type(afsx_status1) "Determines if abe_mcasp_axr pin functions as an input or output.";
+    };
+
+    constants afsx_status2 width(1) "" {
+        AFSX_0_2 = 0 "The pin drives low.";
+        AFSX_1_2 = 1 "The pin drives high.";
+    };
+    
+    register mcasp_pdout addr(base, 0x18) "Pin data output register - holds a value for data out at all times, and may be read back at all times. The value held by is not affected by writing to and . However, the data value in is driven out onto the McASP pin only if the corresponding bit in is set to 1 (GPIO function) and the corresponding bit in is set to 1 (output)." {
+        _ 3 mbz;
+        afsx 1 rw type(afsx_status2) "Determines drive on AFSX output pin when the correspondingMCASP_PFUNC[28] and MCASP_PDIR[28] bits are set to 1.";
+        ahclkx 1 rw type(afsx_status2) "Determines drive on AHCLKX output pin when the correspondingMCASP_PFUNC[27] and MCASP_PDIR[27] bits are set to 1.";
+        aclkx 1 rw type(afsx_status2) "Determines drive on ACLKX output pin when the correspondingMCASP_PFUNC[26] and MCASP_PDIR[26] bits are set to 1";
+        amute 1 rw type(afsx_status2) "Determines drive on AMUTE output pin when the correspondingMCASP_PFUNC[25] and MCASP_PDIR[25] bits are set to 1.";
+        _ 24 mbz;
+        axr0 1 rw type(afsx_status2) "Determines drive on abe_mcasp_axr output pin when the correspondingMCASP_PFUNC[0] and MCASP_PDIR[0] bits are set to 1.";
+    };
+
+    constants afsx_status3 width(1) "" {
+        AFSX_0_3 = 0 "Pin is logic low.";
+        AFSX_1_3 = 1 "Pin is logic high.";
+    };
+    
+    register mcasp_pdin addr(base, 0x1C) "Pin data input register - holds the state of all the McASP pins. allows reading the actual value of the pin, regardless of the state of and ." {
+        _ 3 mbz;
+        afsx 1 ro type(afsx_status3) "Logic level on abe_mcasp_afsx pin.";
+        ahclkx 1 ro type(afsx_status3) "Logic level on abe_mcasp_ahclkx pin.";
+        aclkx 1 ro type(afsx_status3) "Logic level on abe_mcasp_aclkx pin.";
+        amute 1 ro type(afsx_status3) "Logic level on abe_mcasp_amute pin.";
+        _ 24 mbz;
+        axr0 1 ro type(afsx_status3) "Logic level on abe_mcasp_axr pin.";
+    };
+
+    constants afsx_status4 width(1) "" {
+        AFSX_0_4 = 0 "No effect";
+        AFSX_1_4 = 1 "[28] bit is set to 1.";
+    };
+
+    constants ahclkx_status width(1) "" {
+        AHCLKX_0_4 = 0 "No effect";
+        AHCLKX_1_4 = 1 "[27] bit is set to 1.";
+    };
+
+    constants aclkx_status width(1) "" {
+        ACLKX_0_4 = 0 "No effect";
+        ACLKX_1_4 = 1 "[26] bit is set to 1.";
+    };
+
+    constants amute_status width(1) "" {
+        AMUTE_0_4 = 0 "No effect";
+        AMUTE_1_4 = 1 "[25] bit is set to 1.";
+    };
+
+    constants axr0_status width(1) "" {
+        AXR0_0_4 = 0 "No effect";
+        AXR0_1_4 = 1 "[0] bit is set to 1.";
+    };
+    
+    register mcasp_pdset addr(base, 0x1C) "The pin data set register is an alias of the pin data output register () for writes only. Writing a 1 to the bit sets the corresponding bit in and, if = 1 (GPIO function) and = 1 (output), drives a logic high on the pin." {
+        _ 3 mbz;
+        afsx 1 wo type(afsx_status4) "Allows the corresponding AFSX bit inMCASP_PDOUT to be set to a logic high without affecting other I/O pins controlled by the same port.";
+        ahclkx 1 wo type(ahclkx_status) "Allows the corresponding AHCLKX bit inMCASP_PDOUT to be set to a logic high without affecting other I/O pins controlled by the same port.";
+        aclkx 1 wo type(aclkx_status) "Allows the corresponding ACLKX bit inMCASP_PDOUT to be set to a logic high without affecting other I/O pins controlled by the same port.";
+        amute 1 wo type(amute_status) "Allows the corresponding AMUTE bit inMCASP_PDOUT to be set to a logic high without affecting other I/O pins controlled by the same port.";
+        _ 24 mbz;
+        axr0 1 wo type(axr0_status) "Allows the AXR0 bit inMCASP_PDOUT to be set to a logic high without affecting other I/O pins controlled by the same port.";
+    };
+
+    constants afsx_status5 width(1) "" {
+        AFSX_0_5 = 0 "No effect";
+        AFSX_1_5 = 1 "[28] bit is cleared to 0.";
+    };
+
+    constants ahclkx_status1 width(1) "" {
+        AHCLKX_0_5 = 0 "No effect";
+        AHCLKX_1_5 = 1 "[27] bit is cleared to 0.";
+    };
+
+    constants aclkx_status1 width(1) "" {
+        ACLKX_0_5 = 0 "No effect";
+        ACLKX_1_5 = 1 "[26] bit is cleared to 0.";
+    };
+
+    constants amute_status1 width(1) "" {
+        AMUTE_0_5 = 0 "No effect";
+        AMUTE_1_5 = 1 "[25] bit is cleared to 0.";
+    };
+
+    constants axr0_status1 width(1) "" {
+        AXR0_0_5 = 0 "No effect";
+        AXR0_1_5 = 1 "[0] bit is cleared to 0.";
+    };
+    
+    register mcasp_pdclr addr(base, 0x20) "The pin data clear register is an alias of the pin data output register () for writes only. Writing a 1 to the bit clears the corresponding bit in and, if = 1 (GPIO function) and = 1 (output), drives a logic low on the pin." {
+        _ 3 mbz;
+        afsx 1 rw type(afsx_status5) "Allows the corresponding AFSX bit inMCASP_PDOUT to be cleared to a logic low without affecting other I/O pins controlled by the same port.";
+        ahclkx 1 rw type(ahclkx_status1) "Allows the corresponding AHCLKX bit inMCASP_PDOUT to be cleared to a logic low without affecting other I/O pins controlled by the same port.";
+        aclkx 1 rw type(aclkx_status1) "Allows the corresponding ACLKX bit inMCASP_PDOUT to be cleared to a logic low without affecting other I/O pins controlled by the same port.";
+        amute 1 rw type(amute_status1) "Allows the corresponding AMUTE bit inMCASP_PDOUT to be cleared to a logic low without affecting other I/O pins controlled by the same port.";
+        _ 24 mbz;
+        axr0 1 rw type(axr0_status1) "Allows the AXR0 bit inMCASP_PDOUT to be cleared to a logic low without affecting other I/O pins controlled by the same port.";
+    };
+
+    constants xfrst_status width(1) "" {
+        XFRST_0 = 0 "The transmit frame-sync generator is reset.";
+        XFRST_1 = 1 "The transmit frame-sync generator is active. When released from reset, the transmit frame-sync generator begins counting serial clocks and generating frame sync as programmed.";
+    };
+
+    constants xsmrst_status width(1) "" {
+        XSMRST_0 = 0 "The transmit state-machine is held in reset.";
+        XSMRST_1 = 1 "The transmit state-machine is released from reset. When released from reset, the transmit state-machine immediately transfers data from XBUF[n] to XRSR[n]. The transmit state-machine sets the underrun flag (XUNDRN) in MCASP_TXSTAT, if XBUF[n] have not been preloaded with data before reset is released. The transmit state-machine also immediately begins detecting frame sync and is ready to transmit. Transmission of TDM time slot begins at slot 0 after reset is released.";
+    };
+
+    constants xsrclr_status width(1) "" {
+        XSRCLR_0 = 0 "The transmit serializer is cleared.";
+        XSRCLR_1 = 1 "The transmit serializer is active. When the transmit serializer is first taken out of reset (XSRCLR changes from 0 to 1), the transmit data ready bit (XDATA) in MCASP_TXSTAT is set to indicate XBUF is ready to be written.";
+    };
+
+    constants xclkrst_status width(1) "" {
+        XCLKRST_0 = 0 "The transmit clock divider is held in reset. When the clock divider is in reset, it passes through a divide-by-1 of its input.";
+        XCLKRST_1 = 1 "The transmit clock divider is running.";
+    };
+    
+    register mcasp_gblctl addr(base, 0x44) "Global transmit control register - provides initialization of the transmit section. The bit fields in are synchronized and latched by the abe_mcasp_aclkx clock. Before programming , ensure that the serial clocks are running. If the corresponding external serial clock, abe_mcasp_clkx, is not yet running, select the internal serial clock source in AHCLKXCTL and ACLKXCTL before programming . Also, after programming any bits in , do not proceed until reading back from and verifying that the bits in are latched." {
+        _ 19 mbz;
+        xfrst 1 rw type(xfrst_status) "Transmit frame-sync generator reset enable bit";
+        xsmrst 1 rw type(xsmrst_status) "Transmit state-machine reset enable bitabe_mcasp_axr pin state: If[0] = 0 and [0] = 1, the serializer drives the abe_mcasp_axr pin to the state specified for inactive time slot .";
+        xsrclr 1 rw type(xsrclr_status) "Transmit serializer clear enable bit. By clearing and then setting this bit, the transmit buffer is flushed to an empty state (XDATA = 1). If XSMRST = 1, XSRCLR = 1, XDATA = 1, and XBUF is not loaded with new data before the start of the next active time slot, an underrun occurs.";
+        xhclkrst 1 rw type(xfrst_status) "Transmit high-frequency clock divider reset enable bit";
+        xclkrst 1 rw type(xclkrst_status) "Transmit clock divider reset enable bit";
+        _ 8 mbz;
+    };
+
+    constants xdmaerr_status width(1) "" {
+        XDMAERR_0 = 0 "Drive is disabled. Detection of transmit DMA error is ignored by abe_mcasp_amute.";
+        XDMAERR_1 = 1 "Drive is enabled (active). Upon detection of transmit DMA error, abe_mcasp_amute is active and is driven according to MUTEN bits.";
+    };
+
+    constants xckfail_status width(1) "" {
+        XCKFAIL_0 = 0 "Drive is disabled. Detection of transmit clock failure is ignored by abe_mcasp_amute.";
+        XCKFAIL_1 = 1 "Drive is enabled (active). Upon detection of transmit clock failure, abe_mcasp_amute is active and is driven according to MUTEN bits.";
+    };
+
+    constants instat_status width(1) "" {
+        INSTAT_0_r = 0 "Inactive";
+        INSTAT_1_r = 1 "Active. Audio mute in error is detected.";
+    };
+
+    constants inen_status width(1) "" {
+        INEN_0 = 0 "Drive is disabled. abe_mcasp_amutein is ignored by abe_mcasp_amute.";
+        INEN_1 = 1 "Drive is enabled (active). INSTAT = 1 drives abe_mcasp_amute active.";
+    };
+
+    constants inpol_status width(1) "" {
+        INPOL_0 = 0 "Polarity is active high. A high on abe_mcasp_amutein sets INSTAT to 1.";
+        INPOL_1 = 1 "Polarity is active low. A low on abe_mcasp_amutein sets INSTAT to 1.";
+    };
+
+    constants muten_status width(2) "" {
+        MUTEN_0 = 0 "Disabled, pin goes to 3-state condition.";
+        MUTEN_1 = 1 "Pin is driven high if error is detected.";
+        MUTEN_2 = 2 "Pin is driven low if error is detected.";
+    };
+    
+    register mcasp_amute addr(base, 0x48) "Mute control register - Controls the McASP mute output pin (abe_mcasp_amute)" {
+        _ 19 mbz;
+        xdmaerr 1 rw type(xdmaerr_status) "Drives AMUTE active enable bit on transmit DMA error (XDMAERR).";
+        _ 1 mbz;
+        xckfail 1 rw type(xckfail_status) "XMT bad clock. Drives AMUTE active enable bit on transmit clock failure (XCKFAIL).";
+        _ 1 mbz;
+        xsyncerr 1 rw type(xckfail_status) "XMT unexpected FS. Drives AMUTE active enable bit on unexpected transmit frame-sync error (XSYNCERR).";
+        _ 1 mbz;
+        xundrn 1 rw type(xckfail_status) "XMT underrun occurs. Drives AMUTE active enable bit on ransmit underrun error (XUNDRN).";
+        _ 1 mbz;
+        instat 1 ro type(instat_status) "Status of mute in pin, determines drive on abe_mcasp_axr pin when theMCASP_PFUNC[0] and MCASP_PDIR[0] bits are set to 1.";
+        inen 1 rw type(inen_status) "Drive abe_mcasp_amute active when abe_mcasp_amutein error is active.";
+        inpol 1 rw type(inpol_status) "Audio mute in (abe_mcasp_amutein) polarity select bit";
+        muten 2 rw type(muten_status) "abe_mcasp_amute pin enable bit field (unless overridden by GPIO registers)";
+    };
+
+    constants vb_status width(1) "" {
+        VB_0 = 0 "V bit is 0 during odd DIT subframes.";
+        VB_1 = 1 "V bit is 1 during odd DIT subframes.";
+    };
+
+    constants va_status width(1) "" {
+        VA_0 = 0 "V bit is 0 during even DIT subframes.";
+        VA_1 = 1 "V bit is 1 during even DIT subframes.";
+    };
+
+    constants diten_status width(1) "" {
+        DITEN_0 = 0 "DIT mode is disabled.";
+        DITEN_1 = 1 "DIT mode is enabled. Transmitter operates in DIT encoded mode.";
+    };
+    
+    register mcasp_txditctl addr(base, 0x50) "Transmit DIT mode control register, controls DIT operations of the McASP" {
+        _ 28 mbz;
+        vb 1 rw type(vb_status) "Valid bit for odd time slots (DIT right subframe).";
+        va 1 rw type(va_status) "Valid bit for even time slots (DIT left subframe).";
+        _ 1 mbz;
+        diten 1 rw type(diten_status) "DIT mode enable bit";
+    };
+    
+    register mcasp_txmask rw addr(base, 0xA4) "Transmit format unit bit mask register - Determines which bits of the transmitted data are masked off before being shifted out the McASP" type(uint32);
+
+    constants xdatdly_status width(2) "" {
+        XDATDLY_0 = 0 "0 bit delay - The first transmit data bit, abe_mcasp_axr, occurs in the same abe_mcasp_aclkx cycle as the transmit frame sync (abe_mcasp_afsx).";
+        XDATDLY_1 = 1 "Reserved";
+        XDATDLY_2 = 2 "Reserved";
+    };
+
+    constants xssz_status width(4) "" {
+        XSSZ_15 = 15 "Slot size is 32 bits.";
+    };
+
+    constants xbusel_status width(1) "" {
+        XBUSEL_0 = 0 "Writes to XBUF originate from the data port. Writes to XBUF from the peripheral configuration port are ignored with no effect on the McASP.";
+        XBUSEL_1 = 1 "Writes to XBUF originate from the peripheral configuration port. Writes to XBUF from the data port are ignored with no effect on the McASP.";
+    };
+
+    constants xrot_status width(3) "" {
+        XROT_0 = 0 "Rotate right by 0 (no rotation).";
+        XROT_1 = 1 "Rotate right by 4 bit positions.";
+        XROT_2 = 2 "Rotate right by 8 bit positions.";
+        XROT_3 = 3 "Rotate right by 12 bit positions.";
+        XROT_4 = 4 "Rotate right by 16 bit positions.";
+        XROT_5 = 5 "Rotate right by 20 bit positions.";
+        XROT_6 = 6 "Rotate right by 24 bit positions.";
+        XROT_7 = 7 "Rotate right by 28 bit positions.";
+    };
+    
+    register mcasp_txfmt addr(base, 0xA8) "Transmit bitstream format register - configures the transmit data format" {
+        _ 14 mbz;
+        xdatdly 2 rw type(xdatdly_status) "Transmit sync bit delay";
+        xrvrs 1 rw "Transmit serial bitstream order 0x0: Bitstream is LSB first. No bit reversal is performed in transmit format unit. 0x1: Reserved";
+        xpad 2 rw "Pad value for extra bits in slot not belonging to word defined by XMASK. This field only applies to bits when XMASK[n] = 0. 0x0: Pad extra bits with 0. 0x1 to 0x3: Reserved";
+        _ 5 mbz;
+        xssz 4 rw type(xssz_status) "Transmit slot size0x0 to 0xE: Reserved .";
+        xbusel 1 rw type(xbusel_status) "Selects whether writes to the serializer buffer XBUF originate from the peripheral configuration port or the DMA port.";
+        xrot 3 rw type(xrot_status) "Right-rotation value for transmit rotate right format unit";
+    };
+
+    constants fxwid_status width(1) "" {
+        FXWID_0 = 0 "Single bit";
+        FXWID_1 = 1 "Reserved";
+    };
+
+    constants fsxm_status width(1) "" {
+        FSXM_0 = 0 "Reserved";
+        FSXM_1 = 1 "Internally-generated transmit frame sync";
+    };
+
+    constants fsxp_status width(1) "" {
+        FSXP_0 = 0 "Rising Edge - A rising edge on transmit frame sync (abe_mcasp_afsx) indicates the beginning of a frame.";
+        FSXP_1 = 1 "Reserved";
+    };
+    
+    register mcasp_txfmctl addr(base, 0xAC) "Transmit frame-sync control register - configures the transmit frame sync (abe_mcasp_afsx)." {
+        _ 16 mbz;
+        xmod 9 rw "Transmit frame-sync mode select bits 0x180: 384-slot DIT mode All other: Reserved";
+        _ 2 mbz;
+        fxwid 1 rw type(fxwid_status) "The transmit frame-sync width select bit indicates the width of the transmit frame sync (abe_mcasp_afsx) during its active period.";
+        _ 2 mbz;
+        fsxm 1 rw type(fsxm_status) "Transmit frame-sync generation select bit";
+        fsxp 1 rw type(fsxp_status) "Transmit frame-sync polarity select bit";
+    };
+
+    constants async_status width(1) "" {
+        ASYNC_0 = 0 "Reserved";
+        ASYNC_1 = 1 "Asynchronous";
+    };
+
+    constants clkxm_status width(1) "" {
+        CLKXM_0 = 0 "Reserved";
+        CLKXM_1 = 1 "Internal (output of divider)";
+    };
+    
+    register mcasp_aclkxctl addr(base, 0xB0) "Transmit clock control register - Configures the transmit bit clock (abe_mcasp_aclkx) and the transmit clock generator." {
+        _ 25 mbz;
+        async 1 rw type(async_status) "Transmit operation asynchronous enable bit";
+        clkxm 1 rw type(clkxm_status) "Transmit bit clock source bit";
+        clkxdiv 5 rw "Transmit bit clock divide ratio bits, determine the divide-down ratio from AHCLKX to ACLKX. 0x0: Divide-by-1 0x1: Divide-by-2 0x2 to 0x1F: Divide-by-3 to divide-by-32";
+    };
+    
+    register mcasp_ahclkxctl addr(base, 0xB4) "High-frequency transmit clock control register - Configures the transmit high-frequency master clock (abe_mcasp_ahclkx) and the transmit clock generator." {
+        _ 16 mbz;
+        hclkxm 1 rw type(fsxm_status) "Transmit high-frequency clock source bit";
+        _ 3 mbz;
+        hclkxdiv 12 rw "Transmit high-frequency clock divide ratio bits determine the divide-down ratio from AUXCLK to abe_mcasp_ahclkx. 0x0: Divide-by-1 0x1: Divide-by-2 0x2 to 0xFFF: Divide-by-3 to divide-by-4096";
+    };
+    
+    register mcasp_txtdm rw addr(base, 0xB8) "Transmit TDM slot 0-31 register - TDM time slot counter range is to 384 slots (to support SPDIF blocks of 384 subframes)." type(uint32);
+
+    constants xstafrm_status width(1) "" {
+        XSTAFRM_0 = 0 "Interrupt is disabled. A transmit-start-of-frame interrupt does not generate a McASP transmit interrupt (XINT).";
+        XSTAFRM_1 = 1 "Interrupt is enabled. A transmit-start-of-frame interrupt generates a McASP transmit interrupt (XINT).";
+    };
+
+    constants xdmaerr_status1 width(1) "" {
+        XDMAERR_0_1 = 0 "Interrupt is disabled. A transmit DMA error interrupt does not generate a McASP transmit interrupt (XINT).";
+        XDMAERR_1_1 = 1 "Interrupt is enabled. A transmit DMA error interrupt generates a McASP transmit interrupt (XINT).";
+    };
+
+    constants xsyncerr_status width(1) "" {
+        XSYNCERR_0_1 = 0 "Interrupt is disabled. An unexpected transmit frame-sync interrupt does not generate a McASP transmit interrupt (XINT).";
+        XSYNCERR_1_1 = 1 "Interrupt is enabled. An unexpected transmit frame-sync interrupt generates a McASP transmit interrupt (XINT).";
+    };
+    
+    register mcasp_evtctlx addr(base, 0xBC) "Transmitter Interrupt control register - controls generation of the McASP transmit interrupt (XINT). When the register bit(s) is set to 1, the occurrence of the enabled McASP condition(s) generates XINT." {
+        _ 24 mbz;
+        xstafrm 1 rw type(xstafrm_status) "Transmit start of frame interrupt enable bit";
+        _ 1 mbz;
+        xdata 1 rw type(xstafrm_status) "Transmit data-ready interrupt enable bit";
+        xlast 1 rw type(xstafrm_status) "Transmit last slot interrupt enable bit";
+        xdmaerr 1 rw type(xdmaerr_status1) "Transmit DMA error interrupt enable bit";
+        xckfail 1 rw type(xstafrm_status) "Transmit clock failure interrupt enable bit";
+        xsyncerr 1 rw type(xsyncerr_status) "Unexpected transmit frame-sync interrupt enable bit";
+        xundrn 1 rw type(xstafrm_status) "Transmitter underrun interrupt enable bit";
+    };
+
+    constants xerr_status width(1) "" {
+        XERR_0 = 0 "No errors have occurred.";
+        XERR_1 = 1 "An error has occurred.";
+    };
+
+    constants xdmaerr_status2 width(1) "" {
+        XDMAERR_0_2 = 0 "Transmit DMA error did not occur.";
+        XDMAERR_1_2 = 1 "Transmit DMA error occurred.";
+    };
+
+    constants xstafrm_status1 width(1) "" {
+        XSTAFRM_0_1 = 0 "No new transmit frame sync (AFSX) is detected.";
+        XSTAFRM_1_1 = 1 "A new transmit frame sync (AFSX) is detected.";
+    };
+
+    constants xdata_status width(1) "" {
+        XDATA_0_1 = 0 "XBUF is written and is full";
+        XDATA_1_1 = 1 "Data is copied from XBUF to XRSR. XBUF is empty and ready to be written. XDATA is also set when the transmit serializers are taken out of reset. When XDATA is set, it always causes a DMA event (AXEVT).";
+    };
+
+    constants xlast_status width(1) "" {
+        XLAST_0_1 = 0 "Current slot is not the last slot in a frame.";
+        XLAST_1_1 = 1 "Current slot is the last slot in a frame. XDATA is also set.";
+    };
+
+    constants xtdmslot_status width(1) "" {
+        XTDMSLOT_0_r = 0 "Current TDM time slot is odd.";
+        XTDMSLOT_1_r = 1 "Current TDM time slot is even.";
+    };
+
+    constants xckfail_status1 width(1) "" {
+        XCKFAIL_0_2 = 0 "Transmit clock failure did not occur.";
+        XCKFAIL_1_2 = 1 "Transmit clock failure occurred";
+    };
+
+    constants xundrn_status width(1) "" {
+        XUNDRN_0_2 = 0 "Transmitter underrun did not occur";
+        XUNDRN_1_2 = 1 "Transmitter underrun occurred.";
+    };
+    
+    register mcasp_txstat addr(base, 0xC0) "Transmitter status register - If the McASP logic attempts to set an interrupt flag in the same cycle that the CPU writes to the flag to clear it, the McASP logic has priority and the flag remains set. This also causes the generation of a new interrupt request." {
+        _ 23 mbz;
+        xerr 1 rw type(xerr_status) "XERR bit always returns a logic-OR of: XUNDRN | XSYNCERR | XCKFAIL | XDMAERR. Allows a single bit to be checked to determine if a transmitter error interrupt has occurred.";
+        xdmaerr 1 rw type(xdmaerr_status2) "Transmit DMA error flag. XDMAERR is set when the CPU or DMA writes more words to the data port of the McASPin a given time slot than it should. Causes a transmit interrupt (XINT) if this bit and XDMAERR inMCASP_EVTCTLX are set. This bit is cleared by writing a 1 to it. Writing a 0 has no effect.";
+        xstafrm 1 rw type(xstafrm_status1) "Transmit start of frame flag. Causes a transmit interrupt (XINT) if this bit and XSTAFRM inMCASP_EVTCTLX are set. This bit is cleared by writing a 1 to it. Writing a 0 has no effect.";
+        xdata 1 rw type(xdata_status) "Transmit data ready flag. Causes a transmit interrupt (XINT) if this bit and XDATA inMCASP_EVTCTLX are set. This bit is cleared by writing a 1 to iit. Writing a 0 has no effect";
+        xlast 1 rw type(xlast_status) "Transmit last slot flag. XLAST, along with XDATA, are set if the current slot is the last slot in a frame. Causes a transmit interrupt (XINT) if this bit and XLAST inMCASP_EVTCTLX are set. This bit is cleared by writing a 1 to iit. Writing a 0 has no effect.";
+        xtdmslot 1 ro type(xtdmslot_status) "Returns the LSB of XSLOT. Allows a single read of XSTAT to determine whether the current TDM time slot is even or odd.";
+        xckfail 1 rw type(xckfail_status1) "Transmit clock failure flag. XCKFAIL is set when the transmit clock failure detection circuit reports an error. Causes a transmit interrupt (XINT) if this bit and XCKFAIL inMCASP_EVTCTLX are set. This bit is cleared by writing a 1 to iit. Writing a 0 has no effect.";
+        xsyncerr 1 rw type(xfrst_status) "Unexpected transmit frame-sync flag. XSYNCERR is set when a new transmit frame sync (AFSX) occurs before it is expected. Causes a transmit interrupt (XINT) if this bit and XSYNCERR inMCASP_EVTCTLX are set. This bit is cleared by writing a 1 to iit. Writing a 0 has no effect.";
+        xundrn 1 rw type(xundrn_status) "Transmitter underrun flag. XUNDRN is set when the transmit serializer is instructed to transfer data from XBUF to XRSR, but XBUF has not yet been serviced with new data since the last transfer. Causes a transmit interrupt (XINT) if this bit and XUNDRN inMCASP_EVTCTLX are set. This bit is cleared by writing a 1 to iit. Writing a 0 has no effect.";
+    };
+    
+    register mcasp_txtdmslot addr(base, 0xC4) "Current transmit TDM time slot register" {
+        _ 22 mbz;
+        xslotcnt 10 ro "Current transmit time slot count. the value of this register is 0b0101111111 (0x17f) during reset and 0 after reset.";
+    };
+    
+    register mcasp_txclkchk addr(base, 0xC8) "Transmit clock check control register - configures the transmit clock failure detection circuit." {
+        xcnt 8 ro "Transmit clock count value (from previous measurement). The clock circuit continually counts the number of system clocks for every 32 transmit high-frequency master clock (abe_mcasp_ahclkx) signals, and stores the count in XCNT until the next measurement is taken";
+        xmax 8 rw "0x0 to 0xFF: Transmit clock maximum boundary. This 8-bit unsigned value sets the maximum allowed boundary for the clock check counter after 32 transmit high-frequency master clock (abe_mcasp_ahclkx) signals have been received. If the current counter value is greater than XMAX after counting 32 AHCLKX signals, XCKFAIL in XSTAT is set. The comparison is performed using unsigned arithmetic.";
+        xmin 8 rw "0x0 to 0xFF: Transmit clock minimum boundary. This 8-bit unsigned value sets the minimum allowed boundary for the clock check counter after 32 transmit high-frequency master clock (abe_mcasp_ahclkx) signals have been received. If XCNT is less than XMIN after counting 32 AHCLKX signals, XCKFAIL in XSTAT is set. The comparison is performed using unsigned arithmetic.";
+        _ 4 mbz;
+        xps 4 rw "Transmit clock check prescaler value 0x0: McASP system clock divided by 1 0x1: McASP system clock divided by 2 0x2: McASP system clock divided by 4 0x3: McASP system clock divided by 8 0x4: McASP system clock divided by 16 0x5: McASP system clock divided by 32 0x6: McASP system clock divided by 64 0x7: McASP system clock divided by 128 0x8: McASP system clock divided by 256 0x9 to 0xF: Reserved";
+    };
+
+    constants xdatdma_status width(1) "" {
+        XDATDMA_0 = 0 "The transmit data DMA request is enabled.";
+        XDATDMA_1 = 1 "The transmit data DMA request is disabled.";
+    };
+    
+    register mcasp_txevtctl addr(base, 0xCC) "Transmitter DMA event control register" {
+        _ 31 mbz;
+        xdatdma 1 rw type(xdatdma_status) "Transmit data DMA request enable bit. When writing to this field, always write the default value of 0.";
+    };
+    
+    register mcasp_ditcsrai_0 rw addr(base, 0x100) "DIT left channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrai_1 rw addr(base, 0x104) "DIT left channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrai_2 rw addr(base, 0x108) "DIT left channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrai_3 rw addr(base, 0x10C) "DIT left channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrai_4 rw addr(base, 0x110) "DIT left channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrai_5 rw addr(base, 0x114) "DIT left channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrbi_0 rw addr(base, 0x118) "DIT right channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrbi_1 rw addr(base, 0x11C) "DIT right channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrbi_2 rw addr(base, 0x120) "DIT right channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrbi_3 rw addr(base, 0x124) "DIT right channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrbi_4 rw addr(base, 0x128) "DIT right channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditcsrbi_5 rw addr(base, 0x12C) "DIT right channel status register - All six 32-bit registers (I = 0 to 5) can store 192 bits of channel status data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register file before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrai_0 rw addr(base, 0x130) "DIT left channel user data register - provides the user data of each left channel (even TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrai_1 rw addr(base, 0x134) "DIT left channel user data register - provides the user data of each left channel (even TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrai_2 rw addr(base, 0x138) "DIT left channel user data register - provides the user data of each left channel (even TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrai_3 rw addr(base, 0x13C) "DIT left channel user data register - provides the user data of each left channel (even TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrai_4 rw addr(base, 0x140) "DIT left channel user data register - provides the user data of each left channel (even TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrai_5 rw addr(base, 0x144) "DIT left channel user data register - provides the user data of each left channel (even TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrbi_0 rw addr(base, 0x148) "DIT right user data register - provides the user data of each right channel (odd TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrbi_1 rw addr(base, 0x14C) "DIT right user data register - provides the user data of each right channel (odd TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrbi_2 rw addr(base, 0x150) "DIT right user data register - provides the user data of each right channel (odd TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrbi_3 rw addr(base, 0x154) "DIT right user data register - provides the user data of each right channel (odd TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrbi_4 rw addr(base, 0x158) "DIT right user data register - provides the user data of each right channel (odd TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+    
+    register mcasp_ditudrbi_5 rw addr(base, 0x15C) "DIT right user data register - provides the user data of each right channel (odd TDM time slot). All six 32-bit registers (I = 0 to 5) can store 192 bits of user data for a complete block of transmission. The DIT reuses the same data for the next block. Make sure to update the register before a different set of data needs to be sent." type(uint32);
+
+    constants xrdy_status width(1) "" {
+        XRDY_0_r = 0 "The transmit buffer () contains data.";
+        XRDY_1_r = 1 "The transmit buffer () is empty and needs to be written before the start of the next time slot or a transmit underrun occurs.";
+    };
+
+    constants srmod_status width(2) "" {
+        SRMOD_0 = 0 "The serializer is inactive";
+        SRMOD_1 = 1 "The serializer is operating in transmit mode. 0x2: Reserved 0x3: Reserved";
+    };
+    
+    register mcasp_xrsrctl0 addr(base, 0x180) "Serializer control register" {
+        _ 27 mbz;
+        xrdy 1 ro type(xrdy_status) "Transmit buffer ready bit";
+        _ 2 mbz;
+        srmod 2 rw type(srmod_status) "Serializer mode bit";
+    };
+    
+    register mcasp_txbuf0 rw addr(base, 0x200) "Transmit buffer - The transmit buffer for the serializer holds data from the transmit format unit." type(uint32);
+};

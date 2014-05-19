@@ -1,0 +1,254 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_isp5_sys2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_isp5_sys2 msbfirst ( addr base ) "" {
+    
+
+    constants key1_en_status width(1) "" {
+        KEY1_EN_1_r = 1 "Enable";
+        KEY1_EN_0_r = 0 "Disable";
+    };
+    
+    register isp5_key_en1 addr(base, 0x0) "IPIPE eFuse enable." {
+        _ 31 mbz;
+        key1_en 1 ro type(key1_en_status) "eFuse enable Equals 1 when ISP5_EFUSE3_EN = 1 or 0 otherwise.";
+    };
+    
+    register isp5_key_en2 addr(base, 0x4) "ISIF eFuse enable." {
+        _ 31 mbz;
+        key1_en 1 ro type(key1_en_status) "eFuse enable Equals 1 when ISP5_EFUSE1_EN = 1 or 0 otherwise.";
+    };
+    
+    register isp5_key_en3 addr(base, 0x8) "ISIF eFuse enable." {
+        _ 31 mbz;
+        key_en 1 ro type(key1_en_status) "eFuse enable Equals 1 when ISP5_EFUSE3_EN = 1 or 0 otherwise.";
+    };
+    
+    register isp5_key_en4 addr(base, 0xC) "IPIPEIF eFuse enable." {
+        _ 30 mbz;
+        key2_en 1 ro type(key1_en_status) "eFuse enable Equals 1 when ISP5_EFUSE4_EN = 1 or 0 otherwise.";
+        key1_en 1 ro type(key1_en_status) "eFuse enable Equals 1 when ISP5_EFUSE1_EN = 1 or 0 otherwise.";
+    };
+    
+    register isp5_key_en5 addr(base, 0x10) "H3A eFuse enable." {
+        _ 31 mbz;
+        key_en 1 ro type(key1_en_status) "eFuse enable Equals 1 when ISP5_EFUSE2_EN = 1 or 0 otherwise.";
+    };
+    
+    register isp5_key_en6 addr(base, 0x14) "H3A eFuse enable." {
+        _ 31 mbz;
+        key_en 1 ro type(key1_en_status) "eFuse enable Equals 1 when ISP5_EFUSE3_EN = 1 or 0 otherwise.";
+    };
+
+    constants ipipe_hst_err_status width(1) "" {
+        IPIPE_HST_ERR_0_w = 0 "No action";
+        IPIPE_HST_ERR_1_w = 1 "Set event (debug)";
+        IPIPE_HST_ERR_1_r = 1 "Event pending";
+        IPIPE_HST_ERR_0_r = 0 "No event pending";
+    };
+    
+    register isp5_irqstatus_raw2_i_0 addr(base, 0x18) "Per-event raw interrupt status vector. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw type(ipipe_hst_err_status) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by the MPU or the DMA. When the data is read with the MPU, one need to pay attention to clear the ISP5_CTRL[26] HST_RD_CHK bit immediately after reading the last data, else this event will be set.";
+        isif_ovf 1 rw type(ipipe_hst_err_status) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw type(ipipe_hst_err_status) "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw type(ipipe_hst_err_status) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw type(ipipe_hst_err_status) "H3A module overflow interrupt.";
+    };
+    
+    register isp5_irqstatus_raw2_i_1 addr(base, 0x28) "Per-event raw interrupt status vector. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw type(ipipe_hst_err_status) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by the MPU or the DMA. When the data is read with the MPU, one need to pay attention to clear the ISP5_CTRL[26] HST_RD_CHK bit immediately after reading the last data, else this event will be set.";
+        isif_ovf 1 rw type(ipipe_hst_err_status) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw type(ipipe_hst_err_status) "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw type(ipipe_hst_err_status) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw type(ipipe_hst_err_status) "H3A module overflow interrupt.";
+    };
+    
+    register isp5_irqstatus_raw2_i_2 addr(base, 0x38) "Per-event raw interrupt status vector. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw type(ipipe_hst_err_status) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by the MPU or the DMA. When the data is read with the MPU, one need to pay attention to clear the ISP5_CTRL[26] HST_RD_CHK bit immediately after reading the last data, else this event will be set.";
+        isif_ovf 1 rw type(ipipe_hst_err_status) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw type(ipipe_hst_err_status) "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw type(ipipe_hst_err_status) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw type(ipipe_hst_err_status) "H3A module overflow interrupt.";
+    };
+    
+    register isp5_irqstatus_raw2_i_3 addr(base, 0x48) "Per-event raw interrupt status vector. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw type(ipipe_hst_err_status) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by the MPU or the DMA. When the data is read with the MPU, one need to pay attention to clear the ISP5_CTRL[26] HST_RD_CHK bit immediately after reading the last data, else this event will be set.";
+        isif_ovf 1 rw type(ipipe_hst_err_status) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw type(ipipe_hst_err_status) "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw type(ipipe_hst_err_status) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw type(ipipe_hst_err_status) "H3A module overflow interrupt.";
+    };
+
+    constants ipipe_hst_err_status1 width(1) "" {
+        IPIPE_HST_ERR_0_w_4 = 0 "No action";
+        IPIPE_HST_ERR_1_w_4 = 1 "Clear (raw) event";
+        IPIPE_HST_ERR_1_r_4 = 1 "Event pending";
+        IPIPE_HST_ERR_0_r_4 = 0 "No (enabled) event pending";
+    };
+    
+    register isp5_irqstatus2_i_0 addr(base, 0x1C) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled). Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw1c type(ipipe_hst_err_status1) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw1c type(ipipe_hst_err_status1) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw1c type(ipipe_hst_err_status1) "IPIPE BOXCAR module overflow Overflow errors are not recoverable at ISP level, a software reset is required at ISS level.";
+        ipipeif_udf 1 rw1c type(ipipe_hst_err_status1) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw1c type(ipipe_hst_err_status1) "H3A module overflow interrupt. Overflow errors are not recoverable at ISP level, a software reset is required at ISS level.";
+    };
+    
+    register isp5_irqstatus2_i_1 addr(base, 0x2C) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled). Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw1c type(ipipe_hst_err_status1) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw1c type(ipipe_hst_err_status1) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw1c type(ipipe_hst_err_status1) "IPIPE BOXCAR module overflow Overflow errors are not recoverable at ISP level, a software reset is required at ISS level.";
+        ipipeif_udf 1 rw1c type(ipipe_hst_err_status1) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw1c type(ipipe_hst_err_status1) "H3A module overflow interrupt. Overflow errors are not recoverable at ISP level, a software reset is required at ISS level.";
+    };
+    
+    register isp5_irqstatus2_i_2 addr(base, 0x3C) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled). Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw1c type(ipipe_hst_err_status1) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw1c type(ipipe_hst_err_status1) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw1c type(ipipe_hst_err_status1) "IPIPE BOXCAR module overflow Overflow errors are not recoverable at ISP level, a software reset is required at ISS level.";
+        ipipeif_udf 1 rw1c type(ipipe_hst_err_status1) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw1c type(ipipe_hst_err_status1) "H3A module overflow interrupt. Overflow errors are not recoverable at ISP level, a software reset is required at ISS level.";
+    };
+    
+    register isp5_irqstatus2_i_3 addr(base, 0x4C) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled). Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw1c type(ipipe_hst_err_status1) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw1c type(ipipe_hst_err_status1) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw1c type(ipipe_hst_err_status1) "IPIPE BOXCAR module overflow Overflow errors are not recoverable at ISP level, a software reset is required at ISS level.";
+        ipipeif_udf 1 rw1c type(ipipe_hst_err_status1) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw1c type(ipipe_hst_err_status1) "H3A module overflow interrupt. Overflow errors are not recoverable at ISP level, a software reset is required at ISS level.";
+    };
+
+    constants h3a_ovf_status width(1) "" {
+        H3A_OVF_0_w_8 = 0 "No action";
+        H3A_OVF_1_w_8 = 1 "Enable interrupt";
+        H3A_OVF_1_r_8 = 1 "Interrupt enabled";
+        H3A_OVF_0_r_8 = 0 "Interrupt disabled";
+    };
+    
+    register isp5_irqenable_set2_i_0 addr(base, 0x20) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw type(h3a_ovf_status) "H3A module overflow interrupt.";
+    };
+    
+    register isp5_irqenable_set2_i_1 addr(base, 0x30) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw type(h3a_ovf_status) "H3A module overflow interrupt.";
+    };
+    
+    register isp5_irqenable_set2_i_2 addr(base, 0x40) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw type(h3a_ovf_status) "H3A module overflow interrupt.";
+    };
+    
+    register isp5_irqenable_set2_i_3 addr(base, 0x50) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw type(h3a_ovf_status) "H3A module overflow interrupt.";
+    };
+
+    constants ipipe_hst_err_status2 width(1) "" {
+        IPIPE_HST_ERR_0_w_8 = 0 "No action";
+        IPIPE_HST_ERR_1_w_8 = 1 "Disable Interrupt";
+        IPIPE_HST_ERR_1_r_8 = 1 "Interrupt enabled";
+        IPIPE_HST_ERR_0_r_8 = 0 "Interrupt disabled";
+    };
+    
+    register isp5_irqenable_clr2_i_0 addr(base, 0x24) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw1c type(ipipe_hst_err_status2) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw1c type(ipipe_hst_err_status2) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw1c type(ipipe_hst_err_status2) "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw1c type(ipipe_hst_err_status2) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw1c type(ipipe_hst_err_status2) "H3A module overflow interrupt.";
+    };
+    
+    register isp5_irqenable_clr2_i_1 addr(base, 0x34) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw1c type(ipipe_hst_err_status2) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw1c type(ipipe_hst_err_status2) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw1c type(ipipe_hst_err_status2) "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw1c type(ipipe_hst_err_status2) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw1c type(ipipe_hst_err_status2) "H3A module overflow interrupt.";
+    };
+    
+    register isp5_irqenable_clr2_i_2 addr(base, 0x44) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw1c type(ipipe_hst_err_status2) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw1c type(ipipe_hst_err_status2) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw1c type(ipipe_hst_err_status2) "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw1c type(ipipe_hst_err_status2) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw1c type(ipipe_hst_err_status2) "H3A module overflow interrupt.";
+    };
+    
+    register isp5_irqenable_clr2_i_3 addr(base, 0x54) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register. Overflow / underflow errors are not recoverable at ISP level, a software reset is required at ISS level. The ISP outputs 4 interrupt lines ISP5_IRQ0 to ISP5_IRQ3. Any internal ISP event can be merged on the 4 lines. A same event must be enabled on only one interrupt line." {
+        _ 26 mbz;
+        _ 1 mbz;
+        ipipe_hst_err 1 rw1c type(ipipe_hst_err_status2) "IPIPE HISTOGRAM memory read error This error will happen when the histogram data is not read fast enough by either the MPU or the DMA.";
+        isif_ovf 1 rw1c type(ipipe_hst_err_status2) "ISIF module overflow";
+        ipipe_boxcar_ovf 1 rw1c type(ipipe_hst_err_status2) "IPIPE BOXCAR module overflow";
+        ipipeif_udf 1 rw1c type(ipipe_hst_err_status2) "IPIPEIF module underflow interrupt";
+        h3a_ovf 1 rw1c type(ipipe_hst_err_status2) "H3A module overflow interrupt.";
+    };
+};

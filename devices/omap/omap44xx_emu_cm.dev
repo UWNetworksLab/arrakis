@@ -1,0 +1,127 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_emu_cm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_emu_cm msbfirst ( addr base ) "" {
+    
+
+    constants clkactivity_core_dpll_emu_clk_status width(1) "" {
+        CLKACTIVITY_CORE_DPLL_EMU_CLK_0_r = 0 "Corresponding clock is definitely gated";
+        CLKACTIVITY_CORE_DPLL_EMU_CLK_1_r = 1 "Corresponding clock is running or gating/ungating transition is ongoing";
+    };
+
+    constants clktrctrl_status width(2) "" {
+        CLKTRCTRL_0_r = 0 "Reserved";
+        CLKTRCTRL_1_r = 1 "Reserved";
+        CLKTRCTRL_2 = 2 "SW_WKUP: Start a software forced wake-up transition on the domain.";
+        CLKTRCTRL_3 = 3 "HW_AUTO: Automatic transition is enabled. Sleep and wakeup transition are based upon hardware conditions.";
+    };
+    
+    register cm_emu_clkstctrl addr(base, 0x0) "This register enables the EMU domain power state transition. It controls the hardware supervised domain power state transition between ON-ACTIVE and ON-INACTIVE states. It also holds 1 status bit per clock input of the domain. [warm reset insensitive]" {
+        _ 22 mbz;
+        clkactivity_core_dpll_emu_clk 1 ro type(clkactivity_core_dpll_emu_clk_status) "This field indicates the state of the CORE_DPLL_EMU_CLK clock in the domain.";
+        clkactivity_emu_sys_clk 1 ro type(clkactivity_core_dpll_emu_clk_status) "This field indicates the state of the EMU_SYS_CLK clock in the domain.";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the clock state transition of the EMU clock domain.";
+    };
+
+    constants l3_2_dyndep_status width(1) "" {
+        L3_2_DYNDEP_1_r = 1 "Dependency is enabled";
+    };
+    
+    register cm_emu_dynamicdep addr(base, 0x8) "This register controls the dynamic domain depedencies from EMU domain towards 'target' domains. It is relevant only for domain having INTRCONN master port(s)." {
+        _ 4 mbz;
+        windowsize 4 rw "Size of sliding window used to monitor INTRCONN interface activity for determination of auto-sleep feature. Time unit defined byCM_DYN_DEP_PRESCAL register.";
+        _ 17 mbz;
+        l3_2_dyndep 1 ro type(l3_2_dyndep_status) "Dynamic dependency towards L3_2 clock domain";
+        _ 6 mbz;
+    };
+
+    constants clksel_pmd_stm_clk_status width(3) "" {
+        CLKSEL_PMD_STM_CLK_0_r = 0 "Reserved";
+        CLKSEL_PMD_STM_CLK_1 = 1 "STM_CLK is the selected STM source clock divided by 1";
+        CLKSEL_PMD_STM_CLK_2 = 2 "STM_CLK is the selected STM source clock divided by 2";
+        CLKSEL_PMD_STM_CLK_3_r = 3 "Reserved";
+        CLKSEL_PMD_STM_CLK_4 = 4 "STM_CLK is the selected STM source clock divided by 4";
+        CLKSEL_PMD_STM_CLK_5_r = 5 "Reserved";
+        CLKSEL_PMD_STM_CLK_6_r = 6 "Reserved";
+        CLKSEL_PMD_STM_CLK_7_r = 7 "Reserved";
+    };
+
+    constants clksel_pmd_trace_clk_status width(3) "" {
+        CLKSEL_PMD_TRACE_CLK_0_r = 0 "Reserved";
+        CLKSEL_PMD_TRACE_CLK_1 = 1 "TRACE_CLK is the selected TRACE source clock divided by 1";
+        CLKSEL_PMD_TRACE_CLK_2 = 2 "TRACE_CLK is the selected TRACE source clock divided by 2";
+        CLKSEL_PMD_TRACE_CLK_3_r = 3 "Reserved";
+        CLKSEL_PMD_TRACE_CLK_4 = 4 "TRACE_CLK is the selected TRACE source clock divided by 4";
+        CLKSEL_PMD_TRACE_CLK_5_r = 5 "Reserved";
+        CLKSEL_PMD_TRACE_CLK_6_r = 6 "Reserved";
+        CLKSEL_PMD_TRACE_CLK_7_r = 7 "Reserved";
+    };
+
+    constants pmd_trace_mux_ctrl_status width(2) "" {
+        PMD_TRACE_MUX_CTRL_0 = 0 "TRACE source clock is SYS_CLK";
+        PMD_TRACE_MUX_CTRL_1 = 1 "TRACE source clock is CORE_DPLL_EMU_CLK";
+        PMD_TRACE_MUX_CTRL_2_r = 2 "Reserved";
+        PMD_TRACE_MUX_CTRL_3_r = 3 "Reserved";
+    };
+
+    constants pmd_stm_mux_ctrl_status width(2) "" {
+        PMD_STM_MUX_CTRL_0 = 0 "STM source clock is SYS_CLK";
+        PMD_STM_MUX_CTRL_1 = 1 "STM source clock is CORE_DPLL_EMU_CLK";
+        PMD_STM_MUX_CTRL_2_r = 2 "Reserved";
+        PMD_STM_MUX_CTRL_3_r = 3 "Reserved";
+    };
+
+    constants stbyst_status width(1) "" {
+        STBYST_0_r = 0 "Module is functional (not in standby)";
+        STBYST_1_r = 1 "Module is in standby";
+    };
+
+    constants idlest_status width(2) "" {
+        IDLEST_0_r = 0 "Module is fully functional, including INTRCONN";
+        IDLEST_1_r = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_2_r = 2 "Module is in idle mode (only INTRCONN part). It is functional if using separate functional clock";
+        IDLEST_3_r = 3 "Module is disabled and cannot be accessed";
+    };
+
+    constants modulemode_status width(2) "" {
+        MODULEMODE_1_r = 1 "Module is managed automatically by hardware according to clock domain transition. A clock domain sleep transition put module into idle. A wakeup domain transition put it back into function. If CLKTRCTRL=3, any INTRCONN access to module is always granted. Module clocks may be gated according to the clock domain state.";
+    };
+    
+    register cm_emu_debugss_clkctrl addr(base, 0x20) "This register manages the DEBUGSS clocks. [warm reset insensitive]" {
+        _ 2 mbz;
+        clksel_pmd_stm_clk 3 rw type(clksel_pmd_stm_clk_status) "Selection of STM clock division";
+        clksel_pmd_trace_clk 3 rw type(clksel_pmd_trace_clk_status) "Selection of TRACE clock division";
+        pmd_trace_mux_ctrl 2 rw type(pmd_trace_mux_ctrl_status) "Selection of TRACE source clock";
+        pmd_stm_mux_ctrl 2 rw type(pmd_stm_mux_ctrl_status) "Selection of STM source clock";
+        _ 1 mbz;
+        stbyst 1 ro type(stbyst_status) "Module standby status";
+        idlest 2 ro type(idlest_status) "Module idle status";
+        _ 14 mbz;
+        modulemode 2 ro type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+};

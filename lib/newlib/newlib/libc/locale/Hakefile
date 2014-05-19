@@ -1,0 +1,18 @@
+if Config.libc == "newlib" then [ build library {
+  target = "locale",
+  cFiles = [
+    "locale.c",
+    "fix_grouping.c",
+    "ldpart.c",
+    "lmessages.c",
+    "lnumeric.c",
+    "lmonetary.c",
+    "nl_langinfo.c",
+    "timelocal.c",
+    "lctype.c" ],
+  addCFlags = Config.newlibAddCFlags,
+  omitCFlags = [ "-Wmissing-prototypes",
+                 "-Wmissing-declarations",
+                 "-Wimplicit-function-declaration",
+                 "-Werror" ]
+}] else []

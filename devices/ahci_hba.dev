@@ -1,0 +1,136 @@
+/*
+ * Copyright (c) 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ahci_hba.dev
+ *
+ * DESCRIPTION: AHCI (SATA) Host bus adaptor, generic registers (ports
+ *              have their own devive definition. 
+ * 
+ * Section numbers refer to the Serial ATA Advanced Host Controller
+ *   Interface (AHCI) specification 1.3, June 2008
+ */
+
+device ahci_hba msbfirst (addr b) "AHCI generic" {
+
+    // 3.1.1
+    
+    constants speed "Interface speed" {
+	gen1	= 0b0001 "Gen 1 (1.5 Gbps)";
+	gen2	= 0b0010 "Gen 2 (3 Gbps)";
+	gen3	= 0b0011 "Gen 3 (6 Gbps)";
+    };
+
+    register cap ro addr(b,0x00) "HBA capabilities" {
+	s64a	1 "Supports 64-bit addressing";
+	sncq	1 "Supports native command queueing";
+	ssntf	1 "Supports SNotification register";
+	smps	1 "Supports mechanical presence switch";
+	sss	1 "Supports staggered spin-up";
+	salp	1 "Supports aggressive link power management";
+	sal	1 "Supports activity LED";
+	sclo	1 "Supports command list override";
+	iss	4 type(speed) "Interface speed support";
+	_	1 rsvd;
+	sam	1 "Supports AHCI mode only";
+	spm	1 "Supports port multiplier";
+	fbss	1 "FIS-based switching supported";
+	pmd	1 "PIO multiple DRQ block";
+	ssc	1 "Slumber state capable";
+	psc	1 "Partial state capable";
+	ncs	5 "Number of command slots";
+	cccs	1 "Command completion coalescing supported";
+	ems	1 "Enclosure management supported";
+	sxs	1 "Supports external SATA";
+	np	5 "Number of ports";
+    };
+    
+    // 3.1.2
+    register ghc rw addr(b,0x04) "Global HBA control" {
+	ae	1 rw "AHCI enable";
+	_	28 rsvd;
+	mrsm	1 ro "MSI revert to single message";
+	ie	1 rw "Interrupt enable";
+	hr	1 rw "HBA reset";
+    };
+    
+    // 3.1.3
+    register is rwc addr(b,0x08) "Interrupt status" type(uint32);
+    
+    // 3.1.4
+    register pi ro addr(b,0x0c) "Ports implemented" type(uint32);
+    
+    // 3.1.5 
+    register vs ro addr(b,0x10) "AHCI version" {
+	major	16 "Major version";
+	minor	16 "Minor version";
+    };
+    
+    // 3.1.6
+    register ccc_ctl rw addr(b,0x14) "Command completion coalescing control" {
+	tv	16 "Timeout value";
+	cc	8 "Command completions";
+	intr	5 ro "Interrupt";
+	_	2 rsvd;
+	en	1 "Enable";
+    };
+    
+    // 3.1.7
+    register ccc_ports rw addr(b,0x18) "Command completions coalescing ports"
+	type(uint32);
+
+    // 3.1.8 
+    register em_loc ro addr(b,0x1c) "Enclosure management location" {
+	ofst	16 "Offset";
+	sz	16 "Bufer size";
+    };
+    
+    // 3.1.9
+    register em_ctl addr(b,0x20) "Enclosure management control" {
+	_	4 rsvd;
+	pm	1 ro "Port multiplier support";
+	alhd	1 ro "Activity LED hardware driven";
+	xmt	1 ro "Transmit only";
+	smb	1 ro "Single message buffer";
+	_	4 rsvd;
+	sgpio	1 ro "SGPIO enclosure management messages";
+	ses2	1 ro "SES-2 enclosure management messages";
+	safte	1 ro "SAF-TE enclosure management messages";
+	led	1 ro "LED message types";
+	_	6 rsvd;
+	rst	1 rw "Reset";
+	tm	1 rw "Transmit message";
+	_	7 rsvd;
+	mr	1 rw1c "Message received";
+    };
+
+    // 3.1.10 
+    register cap2 ro addr(b,0x24) "HBA capabilities extended" {
+	_	29 rsvd;
+	apst	1 "Automatic partial to slumber transitions";
+	nvmp	1 "NVMHCI present";
+	boh	1 "BIOS/OS handoff";
+    };
+    
+    // 3.1.11
+    register bohc addr(b,0x28) "BIOS/OS handoff control and status" {
+	_	27 rsvd;
+	bb	1 rw "BIOS busy";
+	ooc	1 rw1c "OS ownership change";
+	sooe	1 rw "SMI on OS ownership change enable";
+	oos	1 rw "OS owned semaphore";
+	bos	1 rw "BIOS owned semaphore";
+    };
+};
+
+    
+	    
+
+    
+    
+	

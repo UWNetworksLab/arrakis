@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2014, University of Washington.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich. 
+ * Attn: Systems Group.
+ */
+
+device vtd_iotlb msbfirst ( addr base ) "VT-d IOTLB Registers" { 
+       register iva_reg addr(base, 0x000) "Invalidate Address Register" {
+           addr	52 wo	"Address";
+	   _	5  mbz;	
+	   ih	1  wo	"Invalidation Hint";
+	   am	6  wo	"Address Mask";
+	};
+
+	constants iirg_ "IOTLB Invalidation Request Granularity" {
+            rsvd_ir = 0b00 "Reserved";
+            gir     = 0b01 "Global Invalidation request";
+            domir   = 0b10 "Domain-selective invalidation request";
+            pir     = 0b11 "Page-selective-within-domain invalidation request";
+        };
+
+        constants iaig_ "IOTLB Actual Request Granularity" {
+            rsvd_ip = 0b00 "Reserved";
+            gip     = 0b01 "Global Invalidation performed";
+            domip   = 0b10 "Domain-selective invalidation performed";
+            devip   = 0b11 "Device-selective invalidation performed";
+        };
+
+	register iotlb_reg addr(base, 0x008) "IOTLB Invalidate Register" {
+	    ivt	 1  rw	   	     "Invalidate IOTLB";
+	    _	 1  mbz;	
+	    iirg 2  rw	 type(iirg_) "IOTLB Invalidation Request Granularity";
+	    _	 1  mbz;
+	    iaig 2  ro	 type(iaig_) "IOTLB Actual Invalidation Granularity";
+	    _	 7  mbz;
+	    dr	 1  rw		     "Drain Reads";
+	    dw	 1  rw	 	     "Drain Writes";
+	    did	 16 rw	 	     "Domain-ID";
+	    _	 32 mbz;
+	};
+};

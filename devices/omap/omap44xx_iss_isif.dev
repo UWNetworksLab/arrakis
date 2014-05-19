@@ -1,0 +1,1204 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_isif.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_isif msbfirst ( addr base ) "" {
+    
+
+    constants dwen_status width(1) "" {
+        DWEN_0 = 0 "Disable";
+        DWEN_1 = 1 "Enable";
+    };
+    
+    register isif_syncen addr(base, 0x0) "" {
+        _ 16 mbz;
+        _ 14 mbz;
+        dwen 1 rw type(dwen_status) "Controls the storage of image sensor RAW data in memory. This bit is loaded with the timing of the internal VD signal: it becomes active starting at the lead of the VD signal that comes after 1 is written in this bit.";
+        syen 1 rw type(dwen_status) "Controls ON/OFF of VD/HD output. Internal timing generator becomes active and VD/HD output starts when 1 is written in this bit. In case of input, VD/HD loading begins.";
+    };
+
+    constants mdfs_status width(1) "" {
+        MDFS_1_r = 1 "Even field";
+        MDFS_0_r = 0 "Odd field";
+    };
+
+    constants inpmod_status width(2) "" {
+        INPMOD_0 = 0 "RAW data";
+        INPMOD_1 = 1 "YCbCr 16bit";
+        INPMOD_3 = 3 "Reserved";
+        INPMOD_2 = 2 "YCbCr 8bit";
+    };
+
+    constants ovf_status width(1) "" {
+        OVF_0 = 0 "No overflow pending (r) No action (w)";
+        OVF_1 = 1 "Overflow pending (r) Clear overflow (w)";
+    };
+
+    constants ccdw_status width(3) "" {
+        CCDW_6 = 6 "Reserved";
+        CCDW_1 = 1 "1-bit right shift out[15:0] = 00000 &amp; data[11:1]";
+        CCDW_7 = 7 "Reserved";
+        CCDW_0 = 0 "No shift out[15:0] = 0000 &amp; data[11:0]";
+        CCDW_2 = 2 "2-bit right shift out[15:0] = 000000 &amp; data[11:2]";
+        CCDW_4 = 4 "4-bit right shift out[15:0] = 00000000 &amp; data[11:4]";
+        CCDW_5 = 5 "Reserved";
+        CCDW_3 = 3 "3-bit right shift out[15:0] = 0000000 &amp; data[11:3]";
+    };
+
+    constants ccdmd_status width(1) "" {
+        CCDMD_0 = 0 "Progressive image sensor";
+        CCDMD_1 = 1 "Interlaced image sensor";
+    };
+
+    constants dpol_status width(1) "" {
+        DPOL_0 = 0 "No change";
+        DPOL_1 = 1 "One's complement";
+    };
+
+    constants swen_status width(1) "" {
+        SWEN_0 = 0 "WEN not used";
+        SWEN_1 = 1 "Use external WEN";
+    };
+
+    constants fipol_status width(1) "" {
+        FIPOL_0 = 0 "Positive";
+        FIPOL_1 = 1 "Negative";
+    };
+
+    constants fidd_status width(1) "" {
+        FIDD_0 = 0 "Input";
+        FIDD_1 = 1 "Output";
+    };
+    
+    register isif_modeset addr(base, 0x4) "" {
+        _ 16 mbz;
+        mdfs 1 ro type(mdfs_status) "Field Status This bit indicates the status of the current FLD signal when the ISIF module is in interlaced mode.";
+        hlpf 1 rw type(dwen_status) "Low pass filter enable. When this bit is enabled, a 3-tap (1/4 + 1/2 Z + 1/4 Z) filtering process is performed on the sensor data.";
+        inpmod 2 rw type(inpmod_status) "Data input mode:";
+        ovf 1 rw type(ovf_status) "ISIF module write port overflow status bit If the write port of the ISIF module overflows when writing data to SDRAM, this bit will toggle.";
+        ccdw 3 rw type(ccdw_status) "This bit enables to shift right (divide) the up-to-12-bit RAW data value when writing out to SDRAM. The effect is that the dynamic of the output signal is decreased. The ISIF_MODESET.CCDW, ISIF_HSIZE.ADCR, ISIF_HSIZE.HSIZE, ISIF_CCDCFG.BSWD, ISIF_CCDCFG.MSBINV, ISIF_CCDCFG.SDRPACK bit fields control how pixel data are stored to SDRAM.";
+        ccdmd 1 rw type(ccdmd_status) "Field mode: This bit selects the type of image sensor: interlaced or progressive";
+        dpol 1 rw type(dpol_status) "Image sensor input data polarity";
+        swen 1 rw type(swen_status) "External WEN selection In case this bit and SYNCEN.DWEN are set to 1, the external WEN signal is used to store image sensor data to memory.";
+        fipol 1 rw type(fipol_status) "FLD Signal Polarity";
+        hdpol 1 rw type(fipol_status) "HD Sync Signal Polarity";
+        vdpol 1 rw type(fipol_status) "VD Sync Signal Polarity";
+        fidd 1 rw type(fidd_status) "FLD Signal Direction. There must be at least three clock cycles between the time this bit is modified and the HD/VD pulse for the start of frame comes.";
+        hdvdd 1 rw type(fidd_status) "VD,HD Sync Signal Direction. There must be at least three clock cycles between the time this bit is modified and the HD/VD pulse for the start of frame comes.";
+    };
+    
+    register isif_hdw addr(base, 0x8) "" {
+        _ 16 mbz;
+        _ 4 mbz;
+        hdw 12 rw "HD width: Sets width of HD. HD width = HDW + 1 clock";
+    };
+    
+    register isif_vdw addr(base, 0xC) "" {
+        _ 16 mbz;
+        _ 4 mbz;
+        vdw 12 rw "VD width : Sets width of VD. VD width = VDW + 1 line";
+    };
+    
+    register isif_ppln addr(base, 0x10) "" {
+        _ 16 mbz;
+        ppln 16 rw "Pixels per line Number of pixel clock periods in one line HD period = PPLN+1 pixel clocks. PPLN is not used when HD and VD are inputs, that is, when VDHDOUT in MODESET is cleared to 0. *This bit field is latched by VD.";
+    };
+    
+    register isif_lpfr addr(base, 0x14) "Line per Frame/Field" {
+        _ 16 mbz;
+        lpfr 16 rw "Half lines per filed or frame Sets number of half lines per frame or field. VD period = (LPFR+1)/2 lines. LPFR is not used when HD and are inputs, that is, when VDHDOUT in MODESET is cleared to 0. *This bit field is latched by VD.";
+    };
+    
+    register isif_sph addr(base, 0x18) "Start Pixel Horizontal" {
+        _ 16 mbz;
+        _ 1 mbz;
+        sph 15 rw "The first pixel in a line to be stored to memory.";
+    };
+    
+    register isif_lnh addr(base, 0x1C) "" {
+        _ 16 mbz;
+        _ 1 mbz;
+        lnh 15 rw "Number of pixels in an line to be stored to memory. Number of pixels = LNH + 1.";
+    };
+    
+    register isif_slv0 addr(base, 0x20) "SDRAM output vertical field 0 start line control" {
+        _ 17 mbz;
+        slv0 15 rw "Start Line, Vertical (Field 0)Sets line at which data output to SDRAM will begin, measured from the start of VD *This bit field is latched by VD. .";
+    };
+    
+    register isif_slv1 addr(base, 0x24) "SDRAM output vertical field 1 start line control" {
+        _ 17 mbz;
+        slv1 15 rw "Start Line, Vertical (Field 1)Sets line at which data output to SDRAM will begin, measured from the start of VD *This bit field is latched by VD. .";
+    };
+    
+    register isif_lnv addr(base, 0x28) "" {
+        _ 16 mbz;
+        _ 1 mbz;
+        lnv 15 rw "The number of lines to be stored to memory. Number of lines = LNV + 1";
+    };
+
+    constants clho_status width(8) "" {
+        CLHO_0 = 0 "Pixel invalid";
+        CLHO_1 = 1 "Pixel valid";
+    };
+    
+    register isif_culh addr(base, 0x2C) "" {
+        _ 16 mbz;
+        clho 8 rw type(clho_status) "Culling Pattern in ODD Line: Sets culling pattern when data is loaded into memory (odd lines). Example: 0xAA: 1 / 2 horizontal direction culling. LSB becomes left side on screen.";
+        clhe 8 rw type(clho_status) "Culling Pattern in Even Line: Sets culling pattern when data is loaded into memory (even lines).";
+    };
+    
+    register isif_culv addr(base, 0x30) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        culv 8 rw type(clho_status) "Culling Pattern in Vertical Line Example: 0x88: 1/4 vertical direction culling. LSB becomes top side on screen.";
+    };
+
+    constants adcr_status width(1) "" {
+        ADCR_0 = 0 "Address increment.";
+        ADCR_1 = 1 "Address decrement.";
+    };
+    
+    register isif_hsize addr(base, 0x34) "SDRAM output control register" {
+        _ 16 mbz;
+        _ 3 mbz;
+        adcr 1 rw type(adcr_status) "SDRAM address decrement. By setting this bit, memory address in a line is automatically decreased so that a line can be Horizontally flipped in memory. The ISIF_MODESET.CCDW, ISIF_HSIZE.ADCR, ISIF_HSIZE.HSIZE, ISIF_CCDCFG.BSWD, ISIF_CCDCFG.MSBINV, ISIF_CCDCFG.SDRPACK bit fields control how pixel data are stored to SDRAM.";
+        hsize 12 rw "Memory address offset between the lines. Specify the offset in 32-byte units.";
+    };
+
+    constants fiinv_status width(1) "" {
+        FIINV_0 = 0 "No change.";
+        FIINV_1 = 1 "Inverse FID";
+    };
+
+    constants fofst_status width(2) "" {
+        FOFST_0 = 0 "+1 line";
+        FOFST_1 = 1 "+2 lines";
+        FOFST_3 = 3 "+4 lines";
+        FOFST_2 = 2 "+3 lines";
+    };
+
+    constants lofstee_status width(3) "" {
+        LOFSTEE_0 = 0 "+1 line";
+        LOFSTEE_1 = 1 "+2 lines";
+        LOFSTEE_2 = 2 "+3 lines";
+        LOFSTEE_3 = 3 "+4 lines";
+        LOFSTEE_4 = 4 "- 1 line";
+        LOFSTEE_5 = 5 "- 2 lines";
+        LOFSTEE_6 = 6 "- 3 lines";
+        LOFSTEE_7 = 7 "- 4 lines";
+    };
+    
+    register isif_sdofst addr(base, 0x38) "SDRAM output control register" {
+        _ 17 mbz;
+        fiinv 1 rw type(fiinv_status) "FID polarity: This bit inverse a FID polarity.";
+        fofst 2 rw type(fofst_status) "Field line offset value in odd (FID = 1) field";
+        lofstee 3 rw type(lofstee_status) "Field line offset value in even line, even field";
+        lofstoe 3 rw type(lofstee_status) "Field line offset value in odd line, even field";
+        lofsteo 3 rw type(lofstee_status) "Field line offset value in even line, odd field";
+        lofstoo 3 rw type(lofstee_status) "Field line offset value in odd line, odd field";
+    };
+    
+    register isif_cadu addr(base, 0x3C) "SDRAM output control register" {
+        _ 16 mbz;
+        _ 5 mbz;
+        cadu 11 rw "Memory Address (Upper 11-bits): Specifies the memory destination address. The actual address is the value set here multiplied by 32bytes.";
+    };
+    
+    register isif_cadl addr(base, 0x40) "SDRAM output control register" {
+        _ 16 mbz;
+        cadl 16 rw "Memory Address (Lower 16-bits): Specifies the memory destination address. The actual address is the value set here multiplied by 32bytes.";
+    };
+
+    constants corrsft_status width(3) "" {
+        CORRSFT_6 = 6 "6-bit left shift";
+        CORRSFT_1 = 1 "1-bit left shift";
+        CORRSFT_7 = 7 "Reserved";
+        CORRSFT_0 = 0 "No shift";
+        CORRSFT_2 = 2 "2-bit left shift";
+        CORRSFT_4 = 4 "4-bit left shift";
+        CORRSFT_5 = 5 "5-bit left shift";
+        CORRSFT_3 = 3 "3-bit left shift";
+    };
+
+    constants linmd_status width(1) "" {
+        LINMD_0 = 0 "Uniform sampling";
+        LINMD_1 = 1 "Non-uniform sampling";
+    };
+    
+    register isif_lincfg0 addr(base, 0x44) "INPUT LINEARIZATION CTRL REGISTER" {
+        _ 16 mbz;
+        _ 9 mbz;
+        corrsft 3 rw type(corrsft_status) "Shift up value for the correction value (S10).";
+        _ 2 mbz;
+        linmd 1 rw type(linmd_status) "Linearization Mode:";
+        linen 1 rw type(dwen_status) "Linearization Enable:";
+    };
+    
+    register isif_lincfg1 addr(base, 0x48) "INPUT LINEARIZATION CTRL REGISTER" {
+        _ 16 mbz;
+        _ 5 mbz;
+        lutscl 11 rw "Scale factor (U11Q10) for LUT input. Range: 0 - 1+1023/1024 It is applied to the Input Data before looking up the correction factor. The scale factor is only applied to the table input. It is not applied when using the input value to compute the output.";
+    };
+
+    constants cp0_f1_status width(2) "" {
+        CP0_F1_0 = 0 "R / Ye";
+        CP0_F1_1 = 1 "Gr / Cy";
+        CP0_F1_3 = 3 "B / Mg";
+        CP0_F1_2 = 2 "Gb / G";
+    };
+    
+    register isif_ccolp addr(base, 0x4C) "" {
+        _ 16 mbz;
+        cp0_f1 2 rw type(cp0_f1_status) "Specifies color pattern for pixel position 0 (Field 1) Pixel position 0 corresponds to pixel count=0 at even line in case of CFAP= 0, and to pixel count=0 in case of CFAP= 1.";
+        cp1_f1 2 rw type(cp0_f1_status) "Specifies color pattern for pixel position 1 (Field 1) Pixel position 1 corresponds to pixel count=1 at even line in case of CFAP= 0, and to pixel count=1 in case of CFAP= 1.";
+        cp2_f1 2 rw type(cp0_f1_status) "Specifies color pattern for pixel position 2 (Field 1) Pixel position 2 corresponds to pixel count=0 at odd line in case of CFAP= 0, and to pixel count=2 in case of CFAP= 1.";
+        cp3_f1 2 rw type(cp0_f1_status) "Specifies color pattern for pixel position 3 (Field 1) Pixel position 3 corresponds to pixel count=1 at odd line in case of CFAP= 0. Not applicable for CFAP= 1.";
+        cp0_f0 2 rw type(cp0_f1_status) "Specifies color pattern for pixel position 0 (Field 0) Pixel position 0 corresponds to pixel count=0 at even line in case of CFAP= 0, and to pixel count=0 in case of CFAP= 1.";
+        cp1_f0 2 rw type(cp0_f1_status) "Specifies color pattern for pixel position 1 (Field 0) Pixel position 1 corresponds to pixel count=1 at even line in case of CFAP= 0, and to pixel count=1 in case of CFAP= 1.";
+        cp2_f0 2 rw type(cp0_f1_status) "Specifies color pattern for pixel position 2 (Field 0) Pixel position 2 corresponds to pixel count=0 at odd line in case of CFAP= 0, and to pixel count=2 in case of CFAP= 1.";
+        cp3_f0 2 rw type(cp0_f1_status) "Specifies color pattern for pixel position 3 (Field 0) Pixel position 3 corresponds to pixel count=1 at odd line in case of CFAP= 0. Not applicable for CFAP= 1.";
+    };
+    
+    register isif_crgain addr(base, 0x50) "" {
+        _ 16 mbz;
+        _ 4 mbz;
+        cgr 12 rw "R/Ye gain: Performs gain adjustment on image sensor data. U12Q9. Range: 0 - 7+511/512";
+    };
+    
+    register isif_cgrgain addr(base, 0x54) "" {
+        _ 16 mbz;
+        _ 4 mbz;
+        cggr 12 rw "Gr/Cy gain: Performs gain adjustment on image sensor data. U12Q9. Range: 0 - 7+511/512";
+    };
+    
+    register isif_cgbgain addr(base, 0x58) "" {
+        _ 16 mbz;
+        _ 4 mbz;
+        cggb 12 rw "Gb/Cy gain: Performs gain adjustment on image sensor data. U12Q9. Range: 0 - 7+511/512";
+    };
+    
+    register isif_cbgain addr(base, 0x5C) "" {
+        _ 16 mbz;
+        _ 4 mbz;
+        cgb 12 rw "B/Mg gain: Performs gain adjustment on image sensor data. U12Q9. Range: 0 - 7+511/512";
+    };
+    
+    register isif_cofsta addr(base, 0x60) "" {
+        _ 16 mbz;
+        _ 4 mbz;
+        coft 12 rw "Image sensor offset: Performs offset value adjustment on image sensor data (0~4095).";
+    };
+    
+    register isif_vdint0 addr(base, 0x70) "" {
+        _ 16 mbz;
+        _ 1 mbz;
+        cvd0 15 rw "VD0 Interrupt timing in a field (line number).";
+    };
+    
+    register isif_vdint1 addr(base, 0x74) "" {
+        _ 16 mbz;
+        _ 1 mbz;
+        cvd1 15 rw "VD1 Interrupt timing in a field (line number).";
+    };
+    
+    register isif_vdint2 addr(base, 0x78) "" {
+        _ 16 mbz;
+        _ 1 mbz;
+        cvd2 15 rw "VD2 Interrupt timing in a field (line number).";
+    };
+
+    constants dpcmpre_status width(1) "" {
+        DPCMPRE_0 = 0 "Predictor 1";
+        DPCMPRE_1 = 1 "Predictor 2";
+    };
+    
+    register isif_misc addr(base, 0x7C) "" {
+        _ 16 mbz;
+        _ 2 mbz;
+        dpcmpre 1 rw type(dpcmpre_status) "Selects Predictor for DPCM Encoder (12-8)";
+        dpcmen 1 rw type(dwen_status) "Enables DPCM Encoding (12-8)";
+        _ 11 mbz;
+        _ 1 mbz;
+    };
+
+    constants cfap_status width(1) "" {
+        CFAP_0 = 0 "Mosaic color pattern. It should look like this. G R G R G R G R G R . . . B G B G B G B G B G . . . G R G R G R G R G R . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .";
+        CFAP_1 = 1 "Stripe color pattern. It should look like this. R G B R G B R G B . . . R G B R G B R G B . . . R G B R G B R G B . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .";
+    };
+
+    constants gwdi_status width(4) "" {
+        GWDI_6 = 6 "bit 9";
+        GWDI_1 = 1 "bit 14";
+        GWDI_10 = 10 "Reserved";
+        GWDI_7 = 7 "bit 8";
+        GWDI_13 = 13 "Reserved";
+        GWDI_0 = 0 "bit 15";
+        GWDI_2 = 2 "bit 13";
+        GWDI_8 = 8 "bit 7";
+        GWDI_9 = 9 "Reserved";
+        GWDI_11 = 11 "Reserved";
+        GWDI_4 = 4 "bit 11";
+        GWDI_5 = 5 "bit 10";
+        GWDI_15 = 15 "Reserved";
+        GWDI_12 = 12 "Reserved";
+        GWDI_3 = 3 "bit 12";
+        GWDI_14 = 14 "Reserved";
+    };
+    
+    register isif_cgammawd addr(base, 0x80) "" {
+        _ 16 mbz;
+        _ 1 mbz;
+        wben2 1 rw type(dwen_status) "White Balance Enable for H3A";
+        wben1 1 rw type(dwen_status) "White Balance Enable for IPIPE";
+        wben0 1 rw type(dwen_status) "White Balance Enable for memory capture";
+        _ 1 mbz;
+        ofsten2 1 rw type(dwen_status) "Offset control Enable for H3A";
+        ofsten1 1 rw type(dwen_status) "Offset control Enable for IPIPE";
+        ofsten0 1 rw type(dwen_status) "Offset control Enable for SDRAM capture";
+        _ 2 mbz;
+        cfap 1 rw type(cfap_status) "Selects CFA pattern";
+        gwdi 4 rw type(gwdi_status) "Selects MSB position of Input Data";
+        ccdtbl 1 rw type(dwen_status) "On/Off control of A-law table for SDRAM capture";
+    };
+    
+    register isif_rec656if addr(base, 0x84) "INPUT CONFIG REGISTER" {
+        _ 16 mbz;
+        _ 14 mbz;
+        r656on 1 rw type(dwen_status) "CCIR Rec.656 interface mode";
+        eccfvh 1 rw type(dwen_status) "Error correction of FVH code";
+    };
+
+    constants vldc_status width(1) "" {
+        VLDC_0 = 0 "Enable";
+        VLDC_1 = 1 "Disable";
+    };
+
+    constants bswd_status width(1) "" {
+        BSWD_0 = 0 "Disable";
+        BSWD_1 = 1 "Enable (swap)";
+    };
+
+    constants y8pos_status width(1) "" {
+        Y8POS_0 = 0 "even pixel";
+        Y8POS_1 = 1 "odd pixel";
+    };
+
+    constants trgsel_status width(1) "" {
+        TRGSEL_0 = 0 "DWEN register";
+        TRGSEL_1 = 1 "FID input port";
+    };
+
+    constants wenlog_status width(1) "" {
+        WENLOG_0 = 0 "internal valid signal and WEN signal is ANDed logically.";
+        WENLOG_1 = 1 "internal valid signal and WEN signal is ORed logically.";
+    };
+
+    constants fidmd_status width(2) "" {
+        FIDMD_0 = 0 "latch the FID at the VSYNC timing";
+        FIDMD_1 = 1 "no latch the FID";
+        FIDMD_3 = 3 "Reserved";
+        FIDMD_2 = 2 "Reserved";
+    };
+
+    constants bt656_status width(1) "" {
+        BT656_0 = 0 "8 bits";
+        BT656_1 = 1 "10 bits";
+    };
+
+    constants ycinswp_status width(1) "" {
+        YCINSWP_0 = 0 "YIN7-0 = Y signal / CIN7-0 = C signal";
+        YCINSWP_1 = 1 "YIN7-0 = C signal / CIN7-0 = Y signal";
+    };
+
+    constants sdrpack_status width(2) "" {
+        SDRPACK_0 = 0 "16 bits / pixel";
+        SDRPACK_1 = 1 "12 bits / pixel";
+        SDRPACK_3 = 3 "Reserved";
+        SDRPACK_2 = 2 "8 bits / pixel";
+    };
+    
+    register isif_ccdcfg addr(base, 0x88) "" {
+        _ 16 mbz;
+        vldc 1 rw type(vldc_status) "On/off control of CPU registers resynchronize function by VSYNC. All the others are shadowed registers, where register values are updated at V-sync timing by default. If VDLC=1, ISIF register values are updated immediately after register write just like non-shadowed registers.";
+        _ 1 mbz;
+        msbinvi 1 rw type(dwen_status) "MSB inverse of CIN port when the data are captured to SDRAM. The ISIF_MODESET.CCDW, ISIF_HSIZE.ADCR, ISIF_HSIZE.HSIZE, ISIF_CCDCFG.BSWD, ISIF_CCDCFG.MSBINV, ISIF_CCDCFG.SDRPACK bit fields control how pixel data are stored to SDRAM.";
+        bswd 1 rw type(bswd_status) "On/off control of Byte SWAP function when SDRAM capturing. The ISIF_MODESET.CCDW, ISIF_HSIZE.ADCR, ISIF_HSIZE.HSIZE, ISIF_CCDCFG.BSWD, ISIF_CCDCFG.MSBINV, ISIF_CCDCFG.SDRPACK bit fields control how pixel data are stored to SDRAM.";
+        y8pos 1 rw type(y8pos_status) "Selects Y signal position when in 8bit input mode";
+        extrg 1 rw "Setting 1 to this register, the SDRAM address is initialized at the rising edge of FID input signal or DWEN register.";
+        trgsel 1 rw type(trgsel_status) "Select trigger source signal of SDRAM address initializing in case EXTRG=1.";
+        wenlog 1 rw type(wenlog_status) "Specifies the CCD valid area.";
+        fidmd 2 rw type(fidmd_status) "Specifies FID detection mode";
+        bt656 1 rw type(bt656_status) "Selects bit width of CCIR656. This bit applies only ifISIF_REC656IF.R656ON = 1.";
+        ycinswp 1 rw type(ycinswp_status) "The ISIF module has a 16-bit interface. When 16-bit YUV data are input, the luma data (YIN7-0) are expected to be on the 8 MS bits and the chroma (CIN7-0) data are expected to be on the LS bits. This bit enables to swap the 8 MS bits with the 8 LS bits of the interface in case the luma and chroma do not come in the correct order. See the top-level ISIF block diagram.";
+        _ 1 mbz;
+        _ 1 mbz;
+        sdrpack 2 rw type(sdrpack_status) "This bit field selects how the data are stored to SDRAM. There can be 8, 12 or 16 bits per pixel. The ISIF_MODESET.CCDW, ISIF_HSIZE.ADCR, ISIF_HSIZE.HSIZE, ISIF_CCDCFG.BSWD, ISIF_CCDCFG.MSBINV, ISIF_CCDCFG.SDRPACK bit fields control how pixel data are stored to SDRAM.";
+    };
+
+    constants vdfcuda_status width(1) "" {
+        VDFCUDA_0 = 0 "The whole line is corrected.";
+        VDFCUDA_1 = 1 "Pixels upper than the defect are not corrected.";
+    };
+
+    constants vdfcsl_status width(2) "" {
+        VDFCSL_0 = 0 "Defect level subtraction. Just fed through if data are saturating.";
+        VDFCSL_1 = 1 "Defect level subtraction. Horizontal interpolation ((i-2)+(i+2))/2 if data are saturating.";
+        VDFCSL_3 = 3 "Reserved";
+        VDFCSL_2 = 2 "Horizontal interpolation ((i-2)+(i+2))/2.";
+    };
+    
+    register isif_dfcctl addr(base, 0x8C) "VERTICAL LINE DEFCT CTRL REGISTER" {
+        _ 16 mbz;
+        _ 5 mbz;
+        vdflsft 3 rw "Vertical line Defect level shift value Defect Level (value to be subtracted from the data) is 8bit width, but can be up-shifted up to 6bits by VDFLSFT. Left shift value = VDFLSFT (Range: 0-6) Setting 7 to VDFLSFT is not allowed.";
+        vdfcuda 1 rw type(vdfcuda_status) "Vertical line Defect Correction upper pixels disable.";
+        vdfcsl 2 rw type(vdfcsl_status) "Vertical line Defect Correction mode select.";
+        vdfcen 1 rw type(dwen_status) "Vertical line Defect Correction enable. This bit field is latched by VD.";
+        _ 4 mbz;
+    };
+    
+    register isif_vdfsatlv addr(base, 0x90) "VERTICAL LINE DEFCT CTRL REGISTER" {
+        _ 16 mbz;
+        _ 4 mbz;
+        vdfslv 12 rw "Vertical line Defect Correction saturation level. VDFSLV is U12 (Range: 0 - 4,095).";
+    };
+
+    constants dfcmarst_status width(1) "" {
+        DFCMARST_0 = 0 "Increment the memory address";
+        DFCMARST_1 = 1 "Clear the memory address to offset 0";
+    };
+    
+    register isif_dfcmemctl addr(base, 0x94) "VERTICAL LINE DEFCT CTRL REGISTER" {
+        _ 16 mbz;
+        _ 11 mbz;
+        dfcmclr 1 rw "Defect correction. Memory clear. Writing 1 to this bit clears the memory contents to all zero. It will be automatically cleared to `0` when the memory clear is completed.";
+        _ 1 mbz;
+        dfcmarst 1 rw type(dfcmarst_status) "Defect correction. Memory address reset. Setting DFCMWR or DFCMRD with LSCMARST set starts memory access to address offset 0. DFCMARST is automatically cleared if data transfer completes. Setting DFCMWR or DFCMRD with LSCMARST cleared starts memory access to the next address.";
+        dfcmrd 1 rw "Defect correction. Memory read [for debug purpose] Writing 1 to this bit starts reading from the memory. It will be automatically cleared when the data transfer is completed, and the data can be read from DFCMEM4-0.";
+        dfcmwr 1 rw "Defect correction. Memory write Writing 1 to this bit starts writing to the memory. It will be automatically cleared when the data transfer is completed. DFCMEM4-0 should be set prior to the memory access.";
+    };
+    
+    register isif_dfcmem0 addr(base, 0x98) "Defect correction memory" {
+        _ 16 mbz;
+        _ 3 mbz;
+        dfcmem0 13 rw "Defect correction memory 0 Sets V position of the defects.";
+    };
+    
+    register isif_dfcmem1 addr(base, 0x9C) "Defect correction memory" {
+        _ 16 mbz;
+        _ 3 mbz;
+        dfcmem1 13 rw "Defect correction memory 1 Sets H position of the defects.";
+    };
+    
+    register isif_dfcmem2 addr(base, 0xA0) "Defect correction memory" {
+        _ 16 mbz;
+        _ 8 mbz;
+        dfcmem2 8 rw "Defect correction Memory 2 Set SUB1: Defect level of the Vertical line defect position (V = Vdefect). DFCMEM2 can be up shifted according to VDFLSFT, and subtracted from the data for Vertical line defect correction.";
+    };
+    
+    register isif_dfcmem3 addr(base, 0xA4) "Defect correction memory" {
+        _ 16 mbz;
+        _ 8 mbz;
+        dfcmem3 8 rw "&amp;lt;Defect correction&amp;gt; Memory 3 Set SUB2: Defect level of the pixels upper than the Vertical line defect (V &amp;lt; Vdefect). DFCMEM3 can be up shifted according to VDFLSFT, and subtracted from the data for Vertical line defect correction.";
+    };
+    
+    register isif_dfcmem4 addr(base, 0xA8) "Defect correction memory" {
+        _ 16 mbz;
+        _ 8 mbz;
+        dfcmem4 8 rw "Memory 4 Set SUB3: Defect level of the pixels lower than the Vertical line defect (V &amp;gt; Vdefect). DFCMEM4 can be up shifted according to VDFLSFT, and subtracted from the data for Vertical line defect correction.";
+    };
+    
+    register isif_clampcfg addr(base, 0xAC) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        _ 11 mbz;
+        clmd 1 rw type(vdfcsl_status) "Black clamp mode Clamp value can be calculated regardless of the color or can be calculated separately for each 4 colors.";
+        _ 1 mbz;
+        clhmd 2 rw type(vdfcsl_status) "Horizontal Clamp mode";
+        clen 1 rw type(dwen_status) "Black Clamp Enable Enables clamp value to be subtracted from Image data.";
+    };
+    
+    register isif_cldcofst addr(base, 0xB0) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        _ 3 mbz;
+        cldc 13 rw "DC offset for black clamp This value is added to the incoming pixels regardless whether optical black clamp is enabled (ISIF_CLAMPCFG.CLEN). This value is in S13Q0 format.";
+    };
+    
+    register isif_clsv addr(base, 0xB4) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        _ 3 mbz;
+        clsv 13 rw "Black Clamp Start position (V). Sets the line number where clamp value subtraction starts. Range: 0 - 8191";
+    };
+
+    constants clhwn_status width(2) "" {
+        CLHWN_0 = 0 "Window is 2 pixels tall (N=1)";
+        CLHWN_1 = 1 "Window is 4 pixels tall (N=2)";
+        CLHWN_3 = 3 "Window is 16 pixels tall (N=4)";
+        CLHWN_2 = 2 "Window is 8 pixels tall (N=3)";
+    };
+
+    constants clhwm_status width(2) "" {
+        CLHWM_0 = 0 "Window is 32 pixels wide (M=5)";
+        CLHWM_1 = 1 "Window is 64 pixels wide (M=6)";
+        CLHWM_3 = 3 "Window is 256 pixels wide (M=8)";
+        CLHWM_2 = 2 "Window is 128 pixels wide (M=7)";
+    };
+
+    constants clhlmt_status width(1) "" {
+        CLHLMT_0 = 0 "Limitation disabled";
+        CLHLMT_1 = 1 "Limitation enabled";
+    };
+
+    constants clhwbs_status width(1) "" {
+        CLHWBS_0 = 0 "The most left window";
+        CLHWBS_1 = 1 "The most right window";
+    };
+    
+    register isif_clhwin0 addr(base, 0xB8) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        _ 2 mbz;
+        clhwn 2 rw type(clhwn_status) "Horizontal Black clamp - Vertical dimension of a Window (2).";
+        _ 2 mbz;
+        clhwm 2 rw type(clhwm_status) "Horizontal Black clamp - Horizontal dimension of a Window (2).";
+        _ 1 mbz;
+        clhlmt 1 rw type(clhlmt_status) "Horizontal Black clamp - Pixel value limitation for the Horizontal clamp value calculation. If this bit is set, the maximum pixel value to be used for the clamp value calculation would be limited to 1023. By setting this bit, the pixel value greater than 1023 will be replaced by the last pixel value which was equal to or less than 1023. In case ISIF_CLAMPCFG.CLMD=1 (4-color mode), the pixel value greater than 1023 will be replaced by the last pixel value of the same color which was equal to or less than 1023.";
+        clhwbs 1 rw type(clhwbs_status) "Horizontal Black clamp - Base Window select";
+        clhwc 5 rw "Horizontal Black clamp - Window count per color Window count = CLHWC+1 Range: 1 - 32";
+    };
+    
+    register isif_clhwin1 addr(base, 0xBC) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        _ 3 mbz;
+        clhsh 13 rw "Horizontal black clamp. Window Start position (H). Range: 0 - 8191";
+    };
+    
+    register isif_clhwin2 addr(base, 0xC0) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        _ 3 mbz;
+        clhsv 13 rw "Horizontal black clamp. Window Start position (V). Range: 0 - 8191";
+    };
+    
+    register isif_clvrv addr(base, 0xC4) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        _ 4 mbz;
+        clvrv 12 rw "Vertical black clamp reset value. (U12) Range: 0 to 4095";
+    };
+
+    constants clvrvsl_status width(2) "" {
+        CLVRVSL_0 = 0 "The base value calculated for Horizontal direction";
+        CLVRVSL_1 = 1 "Value set via the configuration register";
+        CLVRVSL_3 = 3 "Reserved";
+        CLVRVSL_2 = 2 "No update (same as the previous image)";
+    };
+
+    constants clvobh_status width(3) "" {
+        CLVOBH_6 = 6 "Reserved";
+        CLVOBH_1 = 1 "4 pixels wide (L=2)";
+        CLVOBH_7 = 7 "Reserved";
+        CLVOBH_0 = 0 "2 pixels wide (L=1)";
+        CLVOBH_2 = 2 "8 pixels wide (L=3)";
+        CLVOBH_4 = 4 "32 pixels wide (L=5)";
+        CLVOBH_5 = 5 "64 pixels wide (L=6)";
+        CLVOBH_3 = 3 "16 pixels wide (L=4)";
+    };
+    
+    register isif_clvwin0 addr(base, 0xC8) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        clvcoef 8 rw "Vertical Black clamp - Line average coefficient (k). Set a coefficient which is applied to the line average for clamp value calculation. (1-k) is applied to the clamp value of the previous line. Value in the U8Q8 format, the range is 0 to 255/256.";
+        _ 2 mbz;
+        clvrvsl 2 rw type(clvrvsl_status) "Vertical Black clamp - reset value selection Select the reset value for the clamp value of the previous line";
+        _ 1 mbz;
+        clvobh 3 rw type(clvobh_status) "Vertical Black clamp - Optical Black H valid (2).";
+    };
+    
+    register isif_clvwin1 addr(base, 0xCC) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        _ 3 mbz;
+        clvsh 13 rw "Vertical black clamp. Window Start position (H). Range: 0 - 8191";
+    };
+    
+    register isif_clvwin2 addr(base, 0xD0) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        _ 3 mbz;
+        clvsv 13 rw "Vertical black clamp. Window Start position (V). Range: 0 - 8191";
+    };
+    
+    register isif_clvwin3 addr(base, 0xD4) "BLACK CLAMP CTRL REGISTER" {
+        _ 16 mbz;
+        _ 3 mbz;
+        clvobv 13 rw "Vertical black clamp. Optical black V valid (V). Range: 0 - 8191";
+    };
+    
+    register isif_lschofst addr(base, 0xD8) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        _ 2 mbz;
+        hofst 14 rw "H direction Data offset for Lens Shading Correction. Range: 0-16,383 Not valid if the Formatter is enabled.";
+    };
+    
+    register isif_lscvofst addr(base, 0xDC) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        _ 2 mbz;
+        vofst 14 rw "V direction Data offset for Lens Shading Correction. Range: 0-16,383";
+    };
+    
+    register isif_lschval addr(base, 0xE0) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        _ 2 mbz;
+        hval 14 rw "Number of valid pixels in H direction. HVAL is for LSC. Number of valid pixels = HVAL+ 1";
+    };
+    
+    register isif_lscvval addr(base, 0xE4) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        _ 2 mbz;
+        vval 14 rw "Number of valid lines in V direction. VVAL is for LSC. Number of valid lines = VVAL+ 1";
+    };
+
+    constants gain_mode_m_status width(3) "" {
+        GAIN_MODE_M_6 = 6 "Paxel is 64 pixels tall (M=64)";
+        GAIN_MODE_M_1 = 1 "Reserved";
+        GAIN_MODE_M_7 = 7 "Paxel is 128 pixels tall (M=128)";
+        GAIN_MODE_M_0 = 0 "Reserved";
+        GAIN_MODE_M_2 = 2 "Reserved";
+        GAIN_MODE_M_4 = 4 "Paxel is 16 pixels tall (M=16)";
+        GAIN_MODE_M_5 = 5 "Paxel is 32 pixels tall (M=32)";
+        GAIN_MODE_M_3 = 3 "Paxel is 8 pixels tall (M=8)";
+    };
+
+    constants gain_mode_n_status width(3) "" {
+        GAIN_MODE_N_6 = 6 "Paxel is 64 pixels tall (N=64)";
+        GAIN_MODE_N_1 = 1 "Reserved";
+        GAIN_MODE_N_7 = 7 "Paxel is 128 pixels tall (N=128)";
+        GAIN_MODE_N_0 = 0 "Reserved";
+        GAIN_MODE_N_2 = 2 "Reserved";
+        GAIN_MODE_N_4 = 4 "Paxel is 16 pixels tall (N=16)";
+        GAIN_MODE_N_5 = 5 "Paxel is 32 pixels tall (N=32)";
+        GAIN_MODE_N_3 = 3 "Paxel is 8 pixels tall (N=8)";
+    };
+
+    constants busy_status width(1) "" {
+        BUSY_1_r = 1 "Busy";
+        BUSY_0_r = 0 "Idle";
+    };
+
+    constants gain_format_status width(3) "" {
+        GAIN_FORMAT_6 = 6 "Coded as 3-bit integer, 5-bit fraction Range from 0 to 7+31/32";
+        GAIN_FORMAT_1 = 1 "Coded as 8-bit fraction + 1.0 of base Range from 1 to 1+255/256";
+        GAIN_FORMAT_7 = 7 "Coded as 3-bit integer, 5-bit fraction + 1.0 Range from 1 to 8+31/32";
+        GAIN_FORMAT_0 = 0 "Coded as 8-bit fraction Range from 0 to 255/256";
+        GAIN_FORMAT_2 = 2 "Coded as 1-bit integer, 7-bit fraction Range from 0 to 1+127/128";
+        GAIN_FORMAT_4 = 4 "Coded as 2-bit integer, 6-bit fraction Range from 0 to 3+63/64";
+        GAIN_FORMAT_5 = 5 "Coded as 2-bit integer, 6-bit fraction + 1.0 Range from 1 to 4+63/64";
+        GAIN_FORMAT_3 = 3 "Coded as 1-bit integer, 7-bit fraction + 1.0 Range from 1 to 2+127/128";
+    };
+
+    constants enable_status width(1) "" {
+        ENABLE_0 = 0 "Disables the module at the end of the current frame.";
+        ENABLE_1 = 1 "Enables the module.";
+    };
+    
+    register isif_2dlsccfg addr(base, 0xE8) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        _ 1 mbz;
+        gain_mode_m 3 rw type(gain_mode_m_status) "Define the horizontal dimension of a paxel. Possible values are listed below.";
+        _ 1 mbz;
+        gain_mode_n 3 rw type(gain_mode_n_status) "Define the vertical dimension of a paxel. Possible values are listed below.";
+        busy 1 ro type(busy_status) "Busy bit";
+        _ 3 mbz;
+        gain_format 3 rw type(gain_format_status) "Sets gain table format";
+        enable 1 rw type(enable_status) "Enables/disables LSC";
+    };
+
+    constants ofstsft_status width(3) "" {
+        OFSTSFT_6 = 6 "Reserved";
+        OFSTSFT_1 = 1 "1bit left shift";
+        OFSTSFT_7 = 7 "Reserved";
+        OFSTSFT_0 = 0 "No shift";
+        OFSTSFT_2 = 2 "2bits left shift";
+        OFSTSFT_4 = 4 "4bits left shift";
+        OFSTSFT_5 = 5 "5bits left shift";
+        OFSTSFT_3 = 3 "3bits left shift";
+    };
+    
+    register isif_2dlscofst addr(base, 0xEC) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        ofstsf 8 rw "Scaling factor for Offsets (U8Q7) Range: 0 to 1+127/128";
+        _ 1 mbz;
+        ofstsft 3 rw type(ofstsft_status) "Shift up value for Offsets (S8Q0)";
+        _ 3 mbz;
+        ofsten 1 rw type(dwen_status) "Enables/disables Offset control in LSC";
+    };
+    
+    register isif_2dlscini addr(base, 0xF0) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        _ 1 mbz;
+        y 7 rw "Initial Y Y position, in pixels, of the first active pixel in reference to the first active paxel. Must be an even number.";
+        _ 1 mbz;
+        x 7 rw "Initial X X position, in pixels, of the first active pixel in reference to the first active paxel. Must be an even number.";
+    };
+    
+    register isif_2dlscgrbu addr(base, 0xF4) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        base31_16 16 rw "Gain Table address base (Upper 16-bits) Table address in bytes. Table is 32-bit aligned so this register must be a multiple of 4. This bit field sets the address of the gain table in memory.";
+    };
+    
+    register isif_2dlscgrbl addr(base, 0xF8) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        base15_0 16 rw "Gain Table address base (Lower 16-bits) Table address in bytes. Table is 32-bit aligned so this register must be a multiple of 4. This bit field sets the address of the gain table in memory.";
+    };
+    
+    register isif_2dlscgrof addr(base, 0xFC) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        offset 16 rw "Gain Table offset Defines the length, in bytes, of one row of the table. Table is 32-bit aligned, so this value must be a multiple of 4. Note that the row in memory could be longer than what LSC uses.";
+    };
+    
+    register isif_2dlscorbu addr(base, 0x100) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        base 16 rw "Offset Table address base (Upper 16-bits) Table address in bytes. Table is 32-bit aligned so this register must be a multiple of 4. This bit field sets the address of the gain table in memory.";
+    };
+    
+    register isif_2dlscorbl addr(base, 0x104) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        base 16 rw "Offset Table address base (Lower 16-bits) Table address in bytes. Table is 32-bit aligned so this register must be a multiple of 4. This bit field sets the address of the gain table in memory.";
+    };
+    
+    register isif_2dlscorof addr(base, 0x108) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        offset 16 rw "Offset Table offset Defines the length, in bytes, of one row of the table. Table is 32-bit aligned, so this value must be a multiple of 4. Note that the row in memory could be longer than what LSC uses.";
+    };
+
+    constants sof_status width(1) "" {
+        SOF_0 = 0 "Interrupt is masked";
+        SOF_1 = 1 "Interrupt is enabled";
+    };
+    
+    register isif_2dlscirqen addr(base, 0x10C) "" {
+        _ 16 mbz;
+        _ 12 mbz;
+        sof 1 rw type(sof_status) "Interrupt status for LSC SOF Indicates the start of the LSC valid region. LSC configuration registers can be updated after LSC SOF for the next frame.";
+        prefetch_completed 1 rw type(sof_status) "Interrupt enable for Prefetch Complete Indicates current state of the prefetch buffer. Could be used to start sending the data once the buffer is full to minimize the risk of an underflow. This event is triggered when the buffer contains 3 full paxel rows.";
+        prefetch_error 1 rw type(sof_status) "Interrupt enable for Prefetch Error The prefetch error indicates when the gain table was read to slowly from SDRAM. When this event is pending the module goes into transparent mode (output=input). Normal operation can be resumed at the start of the next frame after 1) clearing this event 2) disabling the LSC module 3) enabling it";
+        done 1 rw type(sof_status) "Interrupt enable for LSC Done The event is triggered when the internal state of LSC toggles from BUSY to IDLE.";
+    };
+    
+    register isif_2dlscirqst addr(base, 0x110) "2D Lens Shading Correction Register" {
+        _ 16 mbz;
+        _ 12 mbz;
+        sof 1 rw type(clvrvsl_status) "Interrupt status for LSC SOF Indicates the start of the LSC valid region. LSC configuration registers can be updated after LSC SOF for the next frame.";
+        prefetch_completed 1 rw type(clvrvsl_status) "Interrupt status for Prefetch Complete Indicates current state of the prefetch buffer. Could be used to start sending the data once the buffer is full to minimize the risk of an underflow. This event is triggered when the buffer contains 3 full paxel rows. It could be used to minimize buffer underflow risks.";
+        prefetch_error 1 rw type(clvrvsl_status) "Interrupt status for Prefetch Error The prefetch error indicates when the gain table was read to slowly from SDRAM. When this event is pending the module goes into transparent mode (output=input). Normal operation can be resumed at the start of the next frame after 1) clearing this event 2) disabling the LSC module 3) enabling it";
+        done 1 rw type(clvrvsl_status) "Interrupt status for LSC Done The event is triggered when the internal state of LSC toggles from BUSY to IDLE.";
+    };
+
+    constants lnum_status width(2) "" {
+        LNUM_0 = 0 "1 output line";
+        LNUM_1 = 1 "1 input line -&gt; 2 output lines (FMTCBL=0) 2 input lines -&gt; 1 output line (FMTCBL=1)";
+        LNUM_3 = 3 "1 input line -&gt; 4 output lines (FMTCBL=0) 4 input lines -&gt; 1 output line (FMTCBL=1)";
+        LNUM_2 = 2 "1 input line -&gt; 3 output lines (FMTCBL=0) 3 input lines -&gt; 1 output line (FMTCBL=1)";
+    };
+
+    constants lnalt_status width(1) "" {
+        LNALT_0 = 0 "Normal mode";
+        LNALT_1 = 1 "Line alternative mode";
+    };
+    
+    register isif_fmtcfg addr(base, 0x114) "Input Data Formatter Register" {
+        _ 20 mbz;
+        fmtainc 4 rw "Address increment Address increment = (FMTAINC + 1) Range (1-16) *This bit is latched by VD.";
+        _ 2 mbz;
+        lnum 2 rw type(lnum_status) "Split/Combine number of lines *This bit is latched by VD.";
+        _ 1 mbz;
+        lnalt 1 rw type(lnalt_status) "Line alternating *This bit is latched by VD.";
+        fmtcbl 1 rw type(clvrvsl_status) "Combine Input lines *This bit is latched by VD.";
+        fmten 1 rw type(dwen_status) "CCD Formatter enable *This bit is latched by VD.";
+    };
+    
+    register isif_fmtplen addr(base, 0x118) "Input Data Formatter Register" {
+        _ 17 mbz;
+        fmtplen3 3 rw "Number of program entries for SET3 Number of entries = (FMTPLEN3 + 1) Range: 1-8 Valid only if FMTCBL is set *This bit is latched by VD.";
+        _ 1 mbz;
+        fmtplen2 3 rw "Number of program entries for SET2 Number of entries = (FMTPLEN2 + 1) Range: 1-8 Valid only if FMTCBL is set *This bit is latched by VD.";
+        fmtplen1 4 rw "Number of program entries for SET1 Number of entries = (FMTPLEN1 + 1) Range: 1-16 (FMTCBL = 0) 1-8 (FMTCBL = 1) Setting a value greater than 7 to FMTPLEN1 is not allowed if FMTCBL is set *This bit is latched by VD.";
+        fmtplen0 4 rw "Number of program entries for SET0 Number of entries = (PLEN0 + 1) Range: 1-16 (FMTCBL = 0) 1-8 (FMTCBL = 1) Setting a value greater than 7 to FMTPLEN1 is not allowed if FMTCBL is set *This bit is latched by VD.";
+    };
+    
+    register isif_fmtsph addr(base, 0x11C) "Input Data Formatter Register" {
+        _ 19 mbz;
+        fmtsph 13 rw "The first pixel in a line fed into the formatter";
+    };
+    
+    register isif_fmtlnh addr(base, 0x120) "Input Data Formatter Register" {
+        _ 19 mbz;
+        fmtlnh 13 rw "Number of pixels in a line fed to the formatter. Number of pixels = FMTLNH + 1";
+    };
+    
+    register isif_fmtlsv addr(base, 0x124) "Input Data Formatter Register" {
+        _ 19 mbz;
+        fmtslv 13 rw "Start line vertical";
+    };
+    
+    register isif_fmtlnv addr(base, 0x128) "Input Data Formatter Register" {
+        _ 17 mbz;
+        fmtlnv 15 rw "Number of lines in vertical Number of lines = FMTLNV + 1";
+    };
+    
+    register isif_fmtrlen addr(base, 0x12C) "Input Data Formatter Register" {
+        _ 19 mbz;
+        fmtrlen 13 rw "Number of pixels in an output line Maximum value = 4480";
+    };
+    
+    register isif_fmthcnt addr(base, 0x130) "Input Data Formatter Register" {
+        _ 19 mbz;
+        fmthcnt 13 rw "HD interval for output lines Set all 0 to this register if combining multiple lines into a single line";
+    };
+
+    constants line_status width(2) "" {
+        LINE_0 = 0 "1st line";
+        LINE_1 = 1 "2nd line";
+        LINE_3 = 3 "4th line";
+        LINE_2 = 2 "3rd line";
+    };
+    
+    register isif_fmtaptr0 addr(base, 0x134) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 0 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr1 addr(base, 0x138) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 1 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr2 addr(base, 0x13C) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 2 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr3 addr(base, 0x140) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 3 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr4 addr(base, 0x144) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 4 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr5 addr(base, 0x148) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 5 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr6 addr(base, 0x14C) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 6 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr7 addr(base, 0x150) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 7 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr8 addr(base, 0x154) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 8 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr9 addr(base, 0x158) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 9 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr10 addr(base, 0x15C) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 10 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr11 addr(base, 0x160) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 11 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr12 addr(base, 0x164) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 12 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr13 addr(base, 0x168) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 13 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr14 addr(base, 0x16C) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 14 This address can not exceed FMTRLEN - 1";
+    };
+    
+    register isif_fmtaptr15 addr(base, 0x170) "Input Data Formatter Register" {
+        _ 17 mbz;
+        line 2 rw type(line_status) "The output line the address belongs to Valid only if FMTCBL is cleared";
+        init 13 rw "Initial address value for address pointer 15 This address can not exceed FMTRLEN - 1";
+    };
+
+    constants pgm15en_status width(1) "" {
+        PGM15EN_0 = 0 "Skip this pixel";
+        PGM15EN_1 = 1 "This pixel is valid";
+    };
+    
+    register isif_fmtpgmvf0 addr(base, 0x174) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm15en 1 rw type(pgm15en_status) "Program 15 Valid Flag";
+        pgm14en 1 rw type(pgm15en_status) "Program 14 Valid Flag";
+        pgm13en 1 rw type(pgm15en_status) "Program 13 Valid Flag";
+        pgm12en 1 rw type(pgm15en_status) "Program 12 Valid Flag";
+        pgm11en 1 rw type(pgm15en_status) "Program 11 Valid Flag";
+        pgm10en 1 rw type(pgm15en_status) "Program 10 Valid Flag";
+        pgm09en 1 rw type(pgm15en_status) "Program 9 Valid Flag";
+        pgm08en 1 rw type(pgm15en_status) "Program 8 Valid Flag";
+        pgm07en 1 rw type(pgm15en_status) "Program 7 Valid Flag";
+        pgm06en 1 rw type(pgm15en_status) "Program 6 Valid Flag";
+        pgm05en 1 rw type(pgm15en_status) "Program 5 Valid Flag";
+        pgm04en 1 rw type(pgm15en_status) "Program 4 Valid Flag";
+        pgm03en 1 rw type(pgm15en_status) "Program 3 Valid Flag";
+        pgm02en 1 rw type(pgm15en_status) "Program 2 Valid Flag";
+        pgm01en 1 rw type(pgm15en_status) "Program 1 Valid Flag";
+        pgm00en 1 rw type(pgm15en_status) "Program 0 Valid Flag";
+    };
+    
+    register isif_fmtpgmvf1 addr(base, 0x178) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm31en 1 rw type(pgm15en_status) "Program 31 Valid Flag";
+        pgm30en 1 rw type(pgm15en_status) "Program 30 Valid Flag";
+        pgm29en 1 rw type(pgm15en_status) "Program 29 Valid Flag";
+        pgm28en 1 rw type(pgm15en_status) "Program 28 Valid Flag";
+        pgm27en 1 rw type(pgm15en_status) "Program 27 Valid Flag";
+        pgm26en 1 rw type(pgm15en_status) "Program 26 Valid Flag";
+        pgm25en 1 rw type(pgm15en_status) "Program 25 Valid Flag";
+        pgm24en 1 rw type(pgm15en_status) "Program 24 Valid Flag";
+        pgm23en 1 rw type(pgm15en_status) "Program 23 Valid Flag";
+        pgm22en 1 rw type(pgm15en_status) "Program 22 Valid Flag";
+        pgm21en 1 rw type(pgm15en_status) "Program 21 Valid Flag";
+        pgm20en 1 rw type(pgm15en_status) "Program 20 Valid Flag";
+        pgm19en 1 rw type(pgm15en_status) "Program 19 Valid Flag";
+        pgm18en 1 rw type(pgm15en_status) "Program 18 Valid Flag";
+        pgm17en 1 rw type(pgm15en_status) "Program 17 Valid Flag";
+        pgm16en 1 rw type(pgm15en_status) "Program 16 Valid Flag";
+    };
+
+    constants pgm15updt_status width(1) "" {
+        PGM15UPDT_0 = 0 "APTR* + N (Auto increment)";
+        PGM15UPDT_1 = 1 "APTR* - N (Auto decrement)";
+    };
+    
+    register isif_fmtpgmapu0 addr(base, 0x17C) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm15updt 1 rw type(pgm15updt_status) "Program 15 Address Pointer Update";
+        pgm14updt 1 rw type(pgm15updt_status) "Program 14 Address Pointer Update";
+        pgm13updt 1 rw type(pgm15updt_status) "Program 13 Address Pointer Update";
+        pgm12updt 1 rw type(pgm15updt_status) "Program 12 Address Pointer Update";
+        pgm11updt 1 rw type(pgm15updt_status) "Program 11 Address Pointer Update";
+        pgm10updt 1 rw type(pgm15updt_status) "Program 10 Address Pointer Update";
+        pgm9updt 1 rw type(pgm15updt_status) "Program 9 Address Pointer Update";
+        pgm8updt 1 rw type(pgm15updt_status) "Program 8 Address Pointer Update";
+        pgm7updt 1 rw type(pgm15updt_status) "Program 7 Address Pointer Update";
+        pgm6updt 1 rw type(pgm15updt_status) "Program 6 Address Pointer Update";
+        pgm5updt 1 rw type(pgm15updt_status) "Program 5 Address Pointer Update";
+        pgm4updt 1 rw type(pgm15updt_status) "Program 4 Address Pointer Update";
+        pgm3updt 1 rw type(pgm15updt_status) "Program 3 Address Pointer Update";
+        pgm2updt 1 rw type(pgm15updt_status) "Program 2 Address Pointer Update";
+        pgm1updt 1 rw type(pgm15updt_status) "Program 1 Address Pointer Update";
+        pgm0updt 1 rw type(pgm15updt_status) "Program 0 Address Pointer Update";
+    };
+    
+    register isif_fmtpgmapu1 addr(base, 0x180) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm31updt 1 rw type(pgm15updt_status) "Program 31 Address Pointer Update";
+        pgm30updt 1 rw type(pgm15updt_status) "Program 30 Address Pointer Update";
+        pgm29updt 1 rw type(pgm15updt_status) "Program 29 Address Pointer Update";
+        pgm28updt 1 rw type(pgm15updt_status) "Program 28 Address Pointer Update";
+        pgm27updt 1 rw type(pgm15updt_status) "Program 27 Address Pointer Update";
+        pgm26updt 1 rw type(pgm15updt_status) "Program 26 Address Pointer Update";
+        pgm25updt 1 rw type(pgm15updt_status) "Program 25 Address Pointer Update";
+        pgm24updt 1 rw type(pgm15updt_status) "Program 24 Address Pointer Update";
+        pgm23updt 1 rw type(pgm15updt_status) "Program 23 Address Pointer Update";
+        pgm22updt 1 rw type(pgm15updt_status) "Program 22 Address Pointer Update";
+        pgm21updt 1 rw type(pgm15updt_status) "Program 21 Address Pointer Update";
+        pgm20updt 1 rw type(pgm15updt_status) "Program 20 Address Pointer Update";
+        pgm19updt 1 rw type(pgm15updt_status) "Program 19 Address Pointer Update";
+        pgm18updt 1 rw type(pgm15updt_status) "Program 18 Address Pointer Update";
+        pgm17updt 1 rw type(pgm15updt_status) "Program 17 Address Pointer Update";
+        pgm16updt 1 rw type(pgm15updt_status) "Program 16 Address Pointer Update";
+    };
+    
+    register isif_fmtpgmaps0 addr(base, 0x184) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm3aptr 4 rw "Program 3 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm2aptr 4 rw "Program 2 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm1aptr 4 rw "Program 1 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm0aptr 4 rw "Program 0 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+    };
+    
+    register isif_fmtpgmaps1 addr(base, 0x188) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm7aptr 4 rw "Program 7 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm6aptr 4 rw "Program 6 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm5aptr 4 rw "Program 5 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm4aptr 4 rw "Program 0 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+    };
+    
+    register isif_fmtpgmaps2 addr(base, 0x18C) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm11aptr 4 rw "Program 11 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm10aptr 4 rw "Program 10 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm9aptr 4 rw "Program 9 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm8aptr 4 rw "Program 8 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+    };
+    
+    register isif_fmtpgmaps3 addr(base, 0x190) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm15aptr 4 rw "Program 15 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm14aptr 4 rw "Program 14 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm13aptr 4 rw "Program 13 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm12aptr 4 rw "Program 12 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+    };
+    
+    register isif_fmtpgmaps4 addr(base, 0x194) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm19aptr 4 rw "Program 19 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm18aptr 4 rw "Program 18 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm17aptr 4 rw "Program 17 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm16aptr 4 rw "Program 16 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+    };
+    
+    register isif_fmtpgmaps5 addr(base, 0x198) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm23aptr 4 rw "Program 23 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm22aptr 4 rw "Program 22 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm21aptr 4 rw "Program 21 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm20aptr 4 rw "Program 20 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+    };
+    
+    register isif_fmtpgmaps6 addr(base, 0x19C) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm27aptr 4 rw "Program 27 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm26aptr 4 rw "Program 26 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm25aptr 4 rw "Program 25 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm24aptr 4 rw "Program 24 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+    };
+    
+    register isif_fmtpgmaps7 addr(base, 0x1A0) "Input Data Formatter Register" {
+        _ 16 mbz;
+        pgm31aptr 4 rw "Program 31 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm30aptr 4 rw "Program 30 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm29aptr 4 rw "Program 29 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+        pgm28aptr 4 rw "Program 28 Address Pointer Select n: APTRn n:0-15 (APTR0 - APR15)";
+    };
+    
+    register isif_cscctl addr(base, 0x1A4) "Color Space Converter Register" {
+        _ 16 mbz;
+        _ 15 mbz;
+        cscen 1 rw type(dwen_status) "Controls ON/OFF of Color Space converter.";
+    };
+    
+    register isif_cscm0 addr(base, 0x1A8) "Color Space Converter Register" {
+        _ 16 mbz;
+        cscm01 8 rw "Color Space convert coefficient value M01: This value is signed 8-bit with the 5-bits decimal.";
+        cscm00 8 rw "Color Space convert coefficient value M00: This value is signed 8-bit with the 5-bits decimal.";
+    };
+    
+    register isif_cscm1 addr(base, 0x1AC) "Color Space Converter Register" {
+        _ 16 mbz;
+        cscm03 8 rw "Color Space convert coefficient value M03: This value is signed 8-bit with the 5-bits decimal.";
+        cscm02 8 rw "Color Space convert coefficient value M02: This value is signed 8-bit with the 5-bits decimal.";
+    };
+    
+    register isif_cscm2 addr(base, 0x1B0) "Color Space Converter Register" {
+        _ 16 mbz;
+        cscm11 8 rw "Color Space convert coefficient value M11: This value is signed 8-bit with the 5-bits decimal.";
+        cscm10 8 rw "Color Space convert coefficient value M10: This value is signed 8-bit with the 5-bits decimal.";
+    };
+    
+    register isif_cscm3 addr(base, 0x1B4) "Color Space Converter Register" {
+        _ 16 mbz;
+        cscm13 8 rw "Color Space convert coefficient value M13: This value is signed 8-bit with the 5-bits decimal.";
+        cscm12 8 rw "Color Space convert coefficient value M12: This value is signed 8-bit with the 5-bits decimal.";
+    };
+    
+    register isif_cscm4 addr(base, 0x1B8) "Color Space Converter Register" {
+        _ 16 mbz;
+        cscm21 8 rw "Color Space convert coefficient value M21: This value is signed 8-bit with the 5-bits decimal.";
+        cscm20 8 rw "Color Space convert coefficient value M20: This value is signed 8-bit with the 5-bits decimal.";
+    };
+    
+    register isif_cscm5 addr(base, 0x1BC) "Color Space Converter Register" {
+        _ 16 mbz;
+        cscm23 8 rw "Color Space convert coefficient value M23: This value is signed 8-bit with the 5-bits decimal.";
+        cscm22 8 rw "Color Space convert coefficient value M22: This value is signed 8-bit with the 5-bits decimal.";
+    };
+    
+    register isif_cscm6 addr(base, 0x1C0) "Color Space Converter Register" {
+        _ 16 mbz;
+        cscm31 8 rw "Color Space convert coefficient value M31: This value is signed 8-bit with the 5-bits decimal.";
+        cscm30 8 rw "Color Space convert coefficient value M30: This value is signed 8-bit with the 5-bits decimal.";
+    };
+    
+    register isif_cscm7 addr(base, 0x1C4) "Color Space Converter Register" {
+        _ 16 mbz;
+        cscm33 8 rw "Color Space convert coefficient value M33: This value is signed 8-bit with the 5-bits decimal.";
+        cscm32 8 rw "Color Space convert coefficient value M32: This value is signed 8-bit with the 5-bits decimal.";
+    };
+
+    constants clken1_status width(1) "" {
+        CLKEN1_0 = 0 "normal mode";
+        CLKEN1_1 = 1 "force isif_clken1 to be active";
+    };
+
+    constants clken2_status width(1) "" {
+        CLKEN2_0 = 0 "normal mode";
+        CLKEN2_1 = 1 "force isif_clken2 to be active";
+    };
+    
+    register isif_clkctl addr(base, 0x1F8) "" {
+        _ 16 mbz;
+        _ 14 mbz;
+        clken1 1 rw type(clken1_status) "Forces isif_clken1 to be active. (Test mode)";
+        clken2 1 rw type(clken2_status) "Forces isif_clken2 to be active. (Test mode)";
+    };
+};

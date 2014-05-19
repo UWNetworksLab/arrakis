@@ -1,0 +1,148 @@
+@inproceedings{mmcs-barrelfish,
+	author = {Schapbach, Adrian   and Peter, Simon   and Baumann, Andrew   and Roscoe, Timothy   and Barham, Paul   and Harris, Tim   and Isaacs, Rebecca  },
+	booktitle = {Proceedings of the Workshop on Managed Many-Core Systems},
+	citeulike-article-id = {3416014},
+	keywords = {multi-core, os, project-master-thesis},
+	month = {June},
+	posted-at = {2008-10-15 22:55:03},
+	priority = {0},
+	title = {Embracing diversity in the Barrelfish manycore operating system},
+	year = {2008}
+}
+
+@incollection{leroy-frontend,
+	abstract = {This paper presents the formal verification of a compiler front-end that translates a subset of the C language into the Cminor intermediate language. The semantics of the source and target languages as well as the translation between them have been written in the specification language of the Coq proof assistant. The proof of observational semantic equivalence between the source and generated code has been machine-checked using Coq. An executable compiler was obtained by automatic extraction of executable Caml code from the Coq specification of the translator, combined with a certified compiler back-end generating PowerPC assembly code from Cminor, described in previous work.},
+	author = {Blazy, Sandrine   and Dargaye, Zaynah   and Leroy, Xavier  },
+	citeulike-article-id = {3338183},
+	doi = {10.1007/11813040\_31},
+	journal = {FM 2006: Formal Methods},
+	keywords = {certification, compiler, coq, formal-proof},
+	pages = {460--475},
+	posted-at = {2008-09-25 21:31:23},
+	priority = {0},
+	title = {Formal Verification of a C Compiler Front-End},
+	url = {http://dx.doi.org/10.1007/11813040\_31},
+	year = {2006}
+}
+
+@article{leroy-backend,
+	address = {New York, NY, USA},
+	author = {Leroy, Xavier  },
+	citeulike-article-id = {2967319},
+	doi = {10.1145/1111320.1111042},
+	issn = {0362-1340},
+	journal = {SIGPLAN Not.},
+	keywords = {compiler, coq-programming, software-verification},
+	month = {January},
+	number = {1},
+	pages = {42--54},
+	posted-at = {2008-07-06 14:47:57},
+	priority = {0},
+	publisher = {ACM},
+	title = {Formal certification of a compiler back-end or: programming a compiler with a proof assistant},
+	url = {http://dx.doi.org/10.1145/1111320.1111042},
+	volume = {41},
+	year = {2006}
+}
+
+@phdthesis{swierstra-phd,
+	author = {Swierstra, Wouter  },
+	citeulike-article-id = {4220206},
+	keywords = {effects, functional-programming, hoare-type-theory, language-agda, language-haskell, specification, types},
+	month = {November},
+	posted-at = {2009-03-25 17:32:07},
+	priority = {0},
+	title = {A Functional Specification of Effects},
+	year = {2008}
+}
+
+@inproceedings{swierstra-beast,
+	abstract = {It can be very difficult to debug impure code, let alone prove its correctness. To address these problems, we provide a functional specification of three central components of Peyton Jones's awkward squad: teletype IO, mutable state, and concurrency. By constructing an internal model of such concepts within our programming language, we can test, debug, and reason about programs that perform IO as if they were pure. In particular, we demonstrate how our specifications may be used in tandem with QuickCheck to automatically test complex pointer algorithms and concurrent programs.},
+	address = {New York, NY, USA},
+	author = {Swierstra, Wouter   and Altenkirch, Thorsten  },
+	booktitle = {Haskell '07: Proceedings of the ACM SIGPLAN workshop on Haskell workshop},
+	citeulike-article-id = {3360998},
+	doi = {10.1145/1291201.1291206},
+	isbn = {978-1-59593-674-5},
+	keywords = {formal-proof, functional-programming, language-haskell, monads, pure},
+	location = {Freiburg, Germany},
+	pages = {25--36},
+	posted-at = {2008-10-01 00:16:24},
+	priority = {0},
+	publisher = {ACM},
+	title = {Beauty in the beast},
+	url = {http://dx.doi.org/10.1145/1291201.1291206},
+	year = {2007}
+}
+
+@article{swierstra-expression,
+	abstract = {This paper describes a technique for assembling both data types and functions from isolated individual components. We also explore how the same technology can be used to combine free monads and, as a result, structure Haskell's monolithic IO monad.},
+	author = {Swierstra, Wouter  },
+	citeulike-article-id = {2742096},
+	journal = {Journal of Functional Programming},
+	keywords = {expression-problem, functional-programming, language-haskell, monads},
+	number = {-1},
+	pages = {1--14},
+	posted-at = {2008-05-13 09:00:51},
+	priority = {0},
+	title = {Data types \`{a} la carte},
+	url = {http://journals.cambridge.org/action/displayAbstract?fromPage=online\&aid=1813324},
+	volume = {Forthcoming},
+	year = {2008}
+}
+
+@incollection{hughes-pprinter,
+	abstract = {Layouts We'll begin by looking for an abstract model of a pretty-printer's output --- that is, prettily indented text. We could say that the output is just a string, but a string has so little structure that we can derive no intuition from it. Let us say instead, that a layout is a sequence of indented lines, which we can model as type Layout = [(Int; String)] + Notice that we shall allow indentations to be negative: later on this will contribute to a nicer algebra, just as integers have a...},
+	author = {Hughes, John  },
+	booktitle = {Advanced Functional Programming},
+	citeulike-article-id = {828959},
+	editor = {Jeuring, J.  and Meijer, E. },
+	keywords = {combinator, functional-programming, language-haskell},
+	posted-at = {2007-11-23 04:14:01},
+	priority = {2},
+	publisher = {Springer Verlag},
+	title = {The {D}esign of a {P}retty-printing {L}ibrary},
+	url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.38.8777},
+	volume = {925},
+	year = {1995}
+}
+
+@article{wadler-pprinter,
+	abstract = {John Hughes has made pretty printers one of the prime demonstrations of using combinators to develop a library, and algebra to implement it. This note presents a new design for pretty printers which improves on Hughes's classic design. The new design is based on a single concatenation operator which is associative and has a left and right unit. Hughes's design requires two separate operators for concatenation, where horizontal concatenation has a right unit but no left unit, and vertical...},
+	author = {Wadler, Philip  },
+	citeulike-article-id = {828960},
+	journal = {Journal of Functional Programming},
+	keywords = {combinator, functional-programming, language-haskell, lecture-cs-252r},
+	posted-at = {2008-08-23 07:28:25},
+	priority = {0},
+	title = {A prettier printer},
+	url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.635},
+	year = {1999}
+}
+
+@Misc{kmett-free-monad,
+  author =       {Kmett, Edward},
+  title =        {Monads for Free},
+  year =         {2008},
+  url =          {http://comonad.com/reader/2008/monads-for-free/},
+}
+
+@Misc{hurricane-names,
+  author =       {National Hurricane Center},
+  title =        {Retired Hurricane Names Since 1954},
+  url =          {http://www.nhc.noaa.gov/retirednames.shtml},
+}
+
+@Misc{ramsey-hoopl,
+  author =       {Ramsey, Norman and Dias, John and Peyton Jones, Simon },
+  title =        {Hoopl: Dataflow Optimization Made Simple},
+  year =         {2009},
+  url =          {http://research.microsoft.com/en-us/um/people/simonpj/papers/c--/dfopt.pdf},
+}
+
+@article{necula-tvi,
+    author = {Necula, George C.},
+    title = {Translation validation for an optimizing compiler},
+    volume = {35},
+    year = {2000}
+}

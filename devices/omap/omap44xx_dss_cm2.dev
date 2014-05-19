@@ -1,0 +1,110 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_dss_cm2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_dss_cm2 msbfirst ( addr base ) "" {
+    
+
+    constants clkactivity_hdmi_phy_48m_fclk_status width(1) "" {
+        CLKACTIVITY_HDMI_PHY_48M_FCLK_0_r = 0 "Corresponding clock is definitely gated";
+        CLKACTIVITY_HDMI_PHY_48M_FCLK_1_r = 1 "Corresponding clock is running or gating/ungating transition is ongoing";
+    };
+
+    constants clktrctrl_status width(2) "" {
+        CLKTRCTRL_0 = 0 "NO_SLEEP: Sleep transition cannot be initiated. Wakeup transition may however occur.";
+        CLKTRCTRL_1 = 1 "SW_SLEEP: Start a software forced sleep transition on the domain.";
+        CLKTRCTRL_2 = 2 "SW_WKUP: Start a software forced wake-up transition on the domain.";
+        CLKTRCTRL_3 = 3 "HW_AUTO: Automatic transition is enabled. Sleep and wakeup transition are based upon hardware conditions.";
+    };
+    
+    register cm_dss_clkstctrl addr(base, 0x0) "This register enables the DSS domain power state transition. It controls the hardware supervised domain power state transition between ON-ACTIVE and ON-INACTIVE states. It also holds 1 status bit per clock input of the domain." {
+        _ 20 mbz;
+        clkactivity_hdmi_phy_48m_fclk 1 ro type(clkactivity_hdmi_phy_48m_fclk_status) "This field indicates the state of the HDMI_PHY_48MHz_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_dss_alwon_sys_clk 1 ro type(clkactivity_hdmi_phy_48m_fclk_status) "This field indicates the state of the DSS_ALWON_SYS_CLK clock in the domain. [warm reset insensitive]";
+        clkactivity_dss_fclk 1 ro type(clkactivity_hdmi_phy_48m_fclk_status) "This field indicates the state of the DSS_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_dss_l3_iclk 1 ro type(clkactivity_hdmi_phy_48m_fclk_status) "This field indicates the state of the DSS_L3_ICLK (and DSS_L4_ICLK) clock in the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the clock state transition of the DSS clock domain.";
+    };
+
+    constants l3_2_statdep_status width(1) "" {
+        L3_2_STATDEP_0 = 0 "Dependency is disabled";
+        L3_2_STATDEP_1 = 1 "Dependency is enabled";
+    };
+    
+    register cm_dss_staticdep addr(base, 0x4) "This register controls the static domain depedencies from DSS domain towards 'target' domains. It is relevant only for domain having system initiator(s)." {
+        _ 25 mbz;
+        l3_2_statdep 1 rw type(l3_2_statdep_status) "Static dependency towards L3_2 clock domain";
+        l3_1_statdep 1 ro type(l3_2_statdep_status) "Static dependency towards L3_1 clock domain";
+        memif_statdep 1 rw type(l3_2_statdep_status) "Static dependency towards MEMIF clock domain";
+        _ 1 mbz;
+        ivahd_statdep 1 rw type(l3_2_statdep_status) "Static dependency towards IVAHD clock domain";
+        _ 2 mbz;
+    };
+    
+    register cm_dss_dynamicdep addr(base, 0x8) "This register controls the dynamic domain depedencies from DSS domain towards 'target' domains. It is relevant only for domain having INTRCONN master port(s)." {
+        _ 26 mbz;
+        l3_1_dyndep 1 ro type(l3_2_statdep_status) "Dynamic dependency towards L3_1 domain";
+        _ 5 mbz;
+    };
+
+    constants stbyst_status width(1) "" {
+        STBYST_0_r = 0 "Module is functional (not in standby)";
+        STBYST_1_r = 1 "Module is in standby";
+    };
+
+    constants idlest_status width(2) "" {
+        IDLEST_0_r = 0 "Module is fully functional, including INTRCONN";
+        IDLEST_1_r = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_2_r = 2 "Module is in idle mode (only INTRCONN part). It is functional if using separate functional clock";
+        IDLEST_3_r = 3 "Module is disabled and cannot be accessed";
+    };
+
+    constants optfclken_tv_fclk_status width(1) "" {
+        OPTFCLKEN_TV_FCLK_0 = 0 "Optional functional clock is disabled";
+        OPTFCLKEN_TV_FCLK_1 = 1 "Optional functional clock is enabled";
+    };
+
+    constants modulemode_status width(2) "" {
+        MODULEMODE_0 = 0 "Module is disable by software. Any INTRCONN access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1_r = 1 "Reserved";
+        MODULEMODE_2 = 2 "Module is explicitly enabled. Interface clock (if not used for functions) may be gated according to the clock domain state. Functional clocks are guarantied to stay present. As long as in this configuration, power domain sleep transition cannot happen.";
+        MODULEMODE_3_r = 3 "Reserved";
+    };
+    
+    register cm_dss_dss_clkctrl addr(base, 0x20) "This register manages the DSS clocks." {
+        _ 13 mbz;
+        stbyst 1 ro type(stbyst_status) "Module standby status. [warm reset insensitive]";
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 4 mbz;
+        optfclken_tv_fclk 1 rw type(optfclken_tv_fclk_status) "Optional functional clock control.";
+        optfclken_sys_clk 1 rw type(optfclken_tv_fclk_status) "Optional functional clock control.";
+        optfclken_48mhz_clk 1 rw type(optfclken_tv_fclk_status) "Optional functional clock control.";
+        optfclken_dssclk 1 rw type(optfclken_tv_fclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+};

@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface monitor_mem "Inter-monitor memory allocation" {
+    /* Struct to marshal caps between cores */
+    typedef struct {
+        uint64 w0;
+        uint64 w1;
+        uint64 w2;
+        uint64 w3;
+    } caprep;
+
+    rpc alloc(in uint8 size_bits, in genpaddr minbase, in genpaddr maxlimit,
+              out errval err, out caprep caprep);
+};

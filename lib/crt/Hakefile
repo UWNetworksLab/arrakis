@@ -1,0 +1,32 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2011, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for lib/crt
+-- 
+--------------------------------------------------------------------------
+
+-- Description of crt*.o files generated:
+-- crt0.o: startup for all C/C++ programs
+-- crtbegin.o .ctors section header (for C++ ABI compatibility)
+-- crtend.o .ctors section footer (for C++ ABI compatibility)
+
+[(
+let 
+    opts = (options arch) { 
+             extraDependencies = [ Dep BuildTree arch "/include/asmoffsets.h" ],
+             extraDefines = [ "-Wno-array-bounds" ]
+           }
+    adir = "arch" ./. archFamily arch
+in
+    Rules [assembleSFile opts (adir  ./. "crt0.S"),
+           copy opts (adir ./. "crt0.o") "/lib/crt0.o",
+           compileCFile opts ("crtbegin.c"),
+           copy opts "crtbegin.o" "/lib/crtbegin.o",
+           compileCFile opts ("crtend.c"),
+           copy opts "crtend.o" "/lib/crtend.o" ]
+) | arch <- allArchitectures ]

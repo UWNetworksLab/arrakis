@@ -1,0 +1,15 @@
+if Config.libc == "newlib" then [ build library {
+  target = "misc",
+  cFiles = [
+          "__dprintf.c",
+          "unctrl.c",
+          "ffs.c",
+          "init.c",
+          "fini.c"
+        ],
+  addCFlags = Config.newlibAddCFlags,
+  omitCFlags = [ "-Wmissing-prototypes",
+                 "-Wmissing-declarations",
+                 "-Wimplicit-function-declaration",
+                 "-Werror" ]
+} ] else []

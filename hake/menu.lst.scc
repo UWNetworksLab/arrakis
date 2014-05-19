@@ -1,0 +1,41 @@
+timeout 0
+
+# spawnd is used to control which cpus are booted
+#
+# "spawnd boot" will use the skb and pci to figure out and
+#  boot all cores in the machine
+#
+# "spawnd boot bootscc=1-6" will not use the skb and
+# boot the list of cores passed as argument.
+# The hardware id of the cores to boot should be specified.
+# This list may not include the bsp core id.
+
+title	Barrelfish
+root	(nd)
+kernel	/scc/sbin/cpu loglevel=4
+module	/scc/sbin/cpu
+module	/scc/sbin/init
+
+# Domains spawned by init
+module	/scc/sbin/mem_serv
+module	/scc/sbin/monitor
+
+module	/scc/sbin/ramfsd boot
+module  /scc/sbin/skb boot
+module  /scc/sbin/spawnd boot bootscc=1-47
+module  /scc/sbin/startd boot
+# modules needed to start the networking
+# module  /scc/sbin/eMAC core=0
+# module  /scc/sbin/NGD_MNG core=0 cardname=eMAC2_0
+# module  /scc/sbin/netd core=0 cardname=eMAC2_0
+# module  /scc/sbin/eMAC core=1
+# module  /scc/sbin/NGD_MNG core=2 cardname=eMAC2_1
+# module  /scc/sbin/netd core=1 cardname=eMAC2_1
+
+# RCK memory map
+# 624MB private RAM
+mmap	map	0x0		0x27000000	1
+# 1GB shared RAM (over all MCs) in the middle of address space
+mmap    map     0x80000000      0x40000000      1
+# 16MB more private RAM (bootup jump is in here, too)
+mmap	map	0xff000000	0x1000000	1

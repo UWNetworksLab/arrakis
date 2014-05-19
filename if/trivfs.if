@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2010, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface trivfs "Trivial file system interface" {
+    typedef uint32 fh; // file handle type
+    typedef uint32 fsize; // file size type (4G ought to be enough ...!)
+    typedef uint32 offset; // offset type
+    typedef uint32 bulkid; // bulk-transfer buffer ID
+
+    // initialise shared memory used for bulk data transfer
+    rpc bulk_init(in cap frame, out errval err);
+
+    // get the file handle of the root directory
+    rpc getroot(out fh rootfh);
+
+    // read the name/type/size of the i'th entry in the given directory
+    // (yes, there's no protection against concurrent addition/deletion)
+    rpc readdir(in fh dir, in uint32 idx,
+                out errval err, out string name, out bool isdir, out fsize size);
+
+    // look for a named entry in the given directory, return the fh if found
+    rpc lookup(in fh dir, in string name,
+               out errval err, out fh fh, out bool isdir);
+
+    // return the type/size of the given fh
+    rpc getattr(in fh fh,
+                out errval err, out bool isdir, out fsize size);
+
+    // read/write: fairly straightforward
+    rpc read(in fh file, in offset offset, in fsize maxlen,
+             out errval err, out uint8 data[retlen]);
+    rpc write(in fh file, in offset offset, in uint8 data[len],
+              out errval err);
+
+    // read/write using bulk data
+    rpc read_bulk(in fh file, in offset offset, in fsize maxlen, in bulkid bulkid,
+                  out errval err, out fsize retlen);
+    rpc write_bulk(in fh file, in offset offset, in fsize len, in bulkid bulkid,
+                   out errval err);
+
+    // truncate (or extend with zero bytes)
+    rpc truncate(in fh file, in fsize newsize,
+                 out errval err);
+
+    // create a new file in the given directory, fail if it already exists
+    rpc create(in fh dir, in string name,
+               out errval err, out fh fh);
+
+    // create a new subdirectory in the given directory
+    rpc mkdir(in fh dir, in string name,
+              out errval err, out fh fh);
+
+    // delete a file or directory
+    rpc delete(in fh fh, out errval err);
+};

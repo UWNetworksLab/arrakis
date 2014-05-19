@@ -1,0 +1,95 @@
+/*
+ * Copyright (c) 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ac97_ext_codec.dev
+ *
+ * DESCRIPTION: AC'97 Extended Codec Register Set
+ * 
+ * Numbers in comments refer to the Intel Audio Codec '97 specification, 
+ * revision 2.3 revision 1.0, April, 2002
+ */
+
+device ac97_ext_codec msbfirst ( io base ) "AC97 Extended Codec" {
+
+  // 5.9.1
+  register classrev ro io( base, 0x60 ) "Codec class/rev" {
+    rv		8 "Revision ID";
+    cl		5 "Codec compatibility class";
+    _		3 rsvd;
+  };
+  register pcisvid ro io( base, 0x62 ) "PCI SVID" type(uint16);
+  register pcisid ro io( base, 0x64 ) "PCI SID" type(uint16);
+
+  // 5.9.2
+  constants fncode "Function code" {
+    dac1	= 0 "DAC 1 (master out)";
+    dac2	= 1 "DAC 2 (aux out)";
+    dac3	= 2 "DAC 3 (C/LFE)";
+    spdif	= 3 "S/PDIF out";
+    phone	= 4 "Phone in";
+    mic1	= 5 "Mic 1 (mic select=0)";
+    mic2	= 6 "Mic 2 (mic select=1)";
+    line	= 7 "Line in";
+    cd		= 8 "CD in";
+    video	= 9 "Video in";
+    aux		= 10 "Aux in";
+    mono	= 11 "Mono out";
+  };
+  register fnsel io( base, 0x66 ) "Function select" {
+    tr		1 "Tip or ring select";
+    fc		4 type(fncode) "Function code";
+    _		11 rsvd;
+  };
+  register fninf io( base, 0x68 ) "Function information" {
+    fip		1 "Function information present";
+    _		3 rsvd;
+    iv		1 "Information valid";
+    dl		5 "Buffer delays in 20.84us units";
+    inv		1 "Inversion";
+    g		5 "Gain or attenuation";
+  };
+  constants jackloc "Connector/jack location" {
+    rear	= 0 "Rear I/O panel";
+    front	= 1 "Front panel";
+    mother	= 2 "Motherboard";
+    dock	= 3 "Dock/External";
+    none	= 7 "No connection";
+  };
+  
+  register sensedet io( base, 0x6a ) "Sense details" {
+    sr		6 ro "Sense result";
+    or		2 rw "Sense result order bits";
+    // XXX These have complicated meanings not specified here (yet)
+    s		5 ro "Sensed bits";
+    st		3 rw type(jackloc) "Connector/jack location";
+  };
+  
+  // 5.9.3
+  constants slot "Slot mapping descriptor" {
+    s0		= 0 "None/not implemented";
+    s34		= 3 "Slot 3/4 (3 for mono)";
+    s69		= 6 "Slot 6/9 (6 for mono)";
+    s7		= 7 "Slot 7,8 (7 for mono)";
+    sa		= 10 "Slot 10/11 (10 for mono)";
+  };
+  register dacslot io ( base, 0x6c ) "DAC slot mapping" {
+    _		4;
+    cld		4 type(slot) "DAC 3 (center/LFE)";
+    sd		4 type(slot) "DAC 2 (surround)";
+    fd		4 type(slot) "DAC 1 (front/headphone)";
+  };
+  register adcslot io ( base, 0x6e ) "ADC slot mapping" {
+    mv		1 "Mapping valid";
+    _		7;
+    ima		4 type(slot) "Independent mic";
+    lia		4 type(slot) "Line in";
+  };
+};
+
+	

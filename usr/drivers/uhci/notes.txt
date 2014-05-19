@@ -1,0 +1,39 @@
+
+Each device driver is a process. 
+
+Main:
+
+The main function connects to PCI, and calls "pci_register_driver_irq"
+to look for a device to drive.   Arguments to this function include
+the IRQ handler, and the initialization function to call.
+
+Initialization function:
+
+Called with: 
+ - struct device_mem *bar_info
+ - int nr_allocated_bars
+
+struct device_mem is defined in <pci/mem.h>, and contains a large
+number of fields:
+
+struct device_mem {
+    uint8_t type; // 0 = memory BAR, 1 = IO BAR
+    void *vaddr;  // assigned by the device driver when calling map_device()
+    genpaddr_t paddr; // physical base address of device
+    struct capref *phys_cap; // array of phys caps (only if type == 0 and in PCI server)
+    struct capref *frame_cap; // array of frame caps
+    struct capref io_cap; // IO cap (only valid if type == 1)
+    uint8_t bits;    // size of a single cap in bits
+    size_t bytes;    // size of entire region in bytes
+    uint32_t nr_caps;// number of caps used to map region, length of cap arrays
+    /* NB: it should be the case that bytes = (1 << bits) * nr_caps */
+    struct memobj *memobj;   // valid after map_device()
+    struct vregion *vregion; // valid after map_device()
+};
+
+Take local copies of these, as they will be deleted when the init
+function returns. 
+
+For each bar in main memory, call "map_device".
+
+

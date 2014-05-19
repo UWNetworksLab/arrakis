@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2012, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+interface terminal_config "Terminal Configuration Interface" {
+    alias option uint32;
+
+    /**
+     * \brief Configure terminal device.
+     *
+     * \param opt Configuration option.
+     * \param argument Optional argument. Interpretation depends on opt.
+     */
+    message configuration(option opt, string argument);
+
+    /**
+     * \brief Signals that a client wants to teardown a connection.
+     *
+     * Flounder does not yet support proper teardown of connections. This
+     * message emulates this by informing the server, that the client wants to
+     * teardown a connection.
+     */
+    message disconnect();
+};

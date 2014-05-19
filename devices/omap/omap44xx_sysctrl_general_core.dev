@@ -1,0 +1,1618 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_sysctrl_general_core.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_sysctrl_general_core msbfirst ( addr base ) "" {
+    
+    
+    register control_gen_core_revision ro addr(base, 0x0) "Control module instance revision identifier" type(uint32);
+    
+    register control_gen_core_hwinfo ro addr(base, 0x4) "Information about the IP module hardware configuration" type(uint32);
+
+    constants ip_sysconfig_idlemode_status width(2) "" {
+        IP_SYSCONFIG_IDLEMODE_0 = 0 "Clock is manually gated";
+        IP_SYSCONFIG_IDLEMODE_1 = 1 "Clock is manually enabled";
+    };
+    
+    register control_gen_core_sysconfig addr(base, 0x10) "Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        ip_sysconfig_idlemode 2 rw type(ip_sysconfig_idlemode_status) "Select the local clock-gating strategy0x2,0x3: Clock is automatically gated when there is no access to the Control Module through L4-interconnect .";
+        _ 2 mbz;
+    };
+    
+    register control_std_fuse_die_id_0 ro addr(base, 0x200) "Die ID Register - Part 0. Access conditions. Read: unrestricted" type(uint32);
+    
+    register control_id_code addr(base, 0x204) "ID_CODE Key Register Access conditions. Read: unrestricted" {
+        version 4 ro "Revision number";
+        ramp_system 16 ro "Ramp system number";
+        ti_idm 11 ro "Manufacturer identity(TI)";
+        _ 1 ro "Always set to 1";
+    };
+    
+    register control_std_fuse_die_id_1 ro addr(base, 0x208) "Die ID Register - Part 1. Access conditions. Read: unrestricted" type(uint32);
+    
+    register control_std_fuse_die_id_2 ro addr(base, 0x20C) "Die ID Register - Part 2. Access conditions. Read: unrestricted" type(uint32);
+    
+    register control_std_fuse_die_id_3 ro addr(base, 0x210) "Die ID Register - Part 3. Access conditions. Read: unrestricted" type(uint32);
+    
+    register control_std_fuse_prod_id_0 addr(base, 0x214) "Prod ID Register - Part 0. This register shows the device type. Access conditions. Read: unrestricted" {
+        _ 24 rsvd;
+        device_type 8 ro "Define the device type 0xF0 = GP device Other values = Reserved";
+    };
+    
+    register control_std_fuse_prod_id_1 addr(base, 0x218) "Prod ID Register - Part 1.This register shows the device type. Access conditions. Read: unrestricted" {
+        _ 14 rsvd;
+        silicon_type 2 ro "Define the silicon performance type";
+        _ 16 rsvd;
+    };
+    
+    register control_std_fuse_usb_conf addr(base, 0x21C) "Standard Fuse conf [31:0]. Register shows part of the chip standard eFuse configuration. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        usb_prod_id 16 ro "USB Product Identification";
+        usb_vendor_id 16 ro "USB Vendor Identification";
+    };
+
+    constants std_fuse_face_detect_disable_status width(1) "" {
+        STD_FUSE_FACE_DETECT_DISABLE_0_r = 0 "Enables face detect";
+        STD_FUSE_FACE_DETECT_DISABLE_1_r = 1 "Disables face detect";
+    };
+
+    constants std_fuse_crypto_disable_status width(1) "" {
+        STD_FUSE_CRYPTO_DISABLE_0_r = 0 "Enables cryptrographic modules";
+        STD_FUSE_CRYPTO_DISABLE_1_r = 1 "Disables cryptrographic modules";
+    };
+
+    constants std_fuse_modem3g_disable_status width(1) "" {
+        STD_FUSE_MODEM3G_DISABLE_0_r = 0 "Enables 3G modem";
+        STD_FUSE_MODEM3G_DISABLE_1_r = 1 "Disables 3G modem";
+    };
+
+    constants std_fuse_ch_speedup_disable_status width(1) "" {
+        STD_FUSE_CH_SPEEDUP_DISABLE_0_r = 0 "Enables CH and speedup";
+        STD_FUSE_CH_SPEEDUP_DISABLE_1_r = 1 "Disables CH and speedup";
+    };
+
+    constants std_fuse_rom_hide_status width(1) "" {
+        STD_FUSE_ROM_HIDE_0_r = 0 "BOOT ROM space is 128KB.";
+        STD_FUSE_ROM_HIDE_1_r = 1 "BOOT ROM upper 4-KB region becomes reserved.";
+    };
+
+    constants std_fuse_dpll_clk_trimming_disable_status width(1) "" {
+        STD_FUSE_DPLL_CLK_TRIMMING_DISABLE_0_r = 0 "Enables DPLL trimming";
+        STD_FUSE_DPLL_CLK_TRIMMING_DISABLE_1_r = 1 "Disables DPLL trimming";
+    };
+
+    constants std_fuse_dss_venc_mvenab_status width(1) "" {
+        STD_FUSE_DSS_VENC_MVENAB_0_r = 0 "Disables DSS_VENC_MVENAB";
+        STD_FUSE_DSS_VENC_MVENAB_1_r = 1 "Enables DSS_VENC_MVENAB";
+    };
+
+    constants std_fuse_iss_efuse4_en_status width(1) "" {
+        STD_FUSE_ISS_EFUSE4_EN_0_r = 0 "Disables ISS EFUSE4";
+        STD_FUSE_ISS_EFUSE4_EN_1_r = 1 "Enables ISS EFUSE4";
+    };
+
+    constants std_fuse_iss_efuse3_en_status width(1) "" {
+        STD_FUSE_ISS_EFUSE3_EN_0_r = 0 "Disables ISS EFUSE3";
+        STD_FUSE_ISS_EFUSE3_EN_1_r = 1 "Enables ISS EFUSE3";
+    };
+
+    constants std_fuse_iss_efuse2_en_status width(1) "" {
+        STD_FUSE_ISS_EFUSE2_EN_0_r = 0 "Disables ISS EFUSE2";
+        STD_FUSE_ISS_EFUSE2_EN_1_r = 1 "Enables ISS EFUSE2";
+    };
+
+    constants std_fuse_iss_efuse1_en_status width(1) "" {
+        STD_FUSE_ISS_EFUSE1_EN_0_r = 0 "Disables ISS EFUSE1";
+        STD_FUSE_ISS_EFUSE1_EN_1_r = 1 "Enables ISS EFUSE1";
+    };
+
+    constants std_fuse_sgx540_3d_disable_status width(1) "" {
+        STD_FUSE_SGX540_3D_DISABLE_0_r = 0 "Enables SGX";
+        STD_FUSE_SGX540_3D_DISABLE_1_r = 1 "Disables SGX";
+    };
+
+    constants std_fuse_cortexa9_mpu_disable_status width(1) "" {
+        STD_FUSE_CORTEXA9_MPU_DISABLE_0_r = 0 "Boot SMP mode";
+        STD_FUSE_CORTEXA9_MPU_DISABLE_1_r = 1 "Boot IP mode";
+    };
+    
+    register control_std_fuse_conf addr(base, 0x220) "Standard fuse configuration register. The register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read only" {
+        _ 15 mbz;
+        std_fuse_face_detect_disable 1 ro type(std_fuse_face_detect_disable_status) "Disables face detect";
+        std_fuse_crypto_disable 1 ro type(std_fuse_crypto_disable_status) "Disables cryptographic modules";
+        std_fuse_modem3g_disable 1 ro type(std_fuse_modem3g_disable_status) "Disables the 3G modem";
+        std_fuse_ch_speedup_disable 1 ro type(std_fuse_ch_speedup_disable_status) "ROM code settings for configuration header block and speedup block. Only software access (no hardware access).";
+        std_fuse_rom_hide 1 ro type(std_fuse_rom_hide_status) "MPU BOOT ROM space (4-KB ROM code protection)";
+        std_fuse_dpll_clk_trimming_disable 1 ro type(std_fuse_dpll_clk_trimming_disable_status) "Controls DPLLs";
+        _ 1 rsvd;
+        std_fuse_dss_venc_mvenab 1 ro type(std_fuse_dss_venc_mvenab_status) "Enables implementation-specific features. Controls DSS_VENC_MVENAB.";
+        std_fuse_iss_efuse4_en 1 ro type(std_fuse_iss_efuse4_en_status) "Enables implementation-specific features. Controls ISS.EFUSE4_EN. Sets to 0.";
+        std_fuse_iss_efuse3_en 1 ro type(std_fuse_iss_efuse3_en_status) "Enables implementation specific features. Controls ISS.EFUSE3_EN. Sets to 0.";
+        std_fuse_iss_efuse2_en 1 ro type(std_fuse_iss_efuse2_en_status) "Enables implementation-specific features. Controls ISS.EFUSE2_EN. Sets to 0.";
+        std_fuse_iss_efuse1_en 1 ro type(std_fuse_iss_efuse1_en_status) "Enables implementation-specific features. Controls ISS.EFUSE1_EN. Sets to 1.";
+        std_fuse_sgx540_3d_clock_source 1 ro "Force 3D graphic engine clock source";
+        std_fuse_sgx540_3d_disable 1 ro type(std_fuse_sgx540_3d_disable_status) "Disable the 3D Gx engine (SGX540)";
+        std_fuse_cortexa9_mpu_disable 1 ro type(std_fuse_cortexa9_mpu_disable_status) "Configures Cortex-A9 MPU boot mode. It disables one Cortex-A9 core.";
+        bsc_access_protect 1 ro "Reserved for bsc_access protect";
+        cust_ieee1500_disable 1 ro "Customer eFuse control/IEEE1500 access path disable";
+    };
+    
+    register control_std_fuse_opp_vdd_wkup ro addr(base, 0x228) "Standard Fuse OPP VDD_WKUP [31:0]. Register shows part of the chip standard eFuse configuration. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_std_fuse_opp_vdd_iva_0 addr(base, 0x22C) "Standard Fuse OPP VDD_IVA_0. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        vdd_iva_opp100_senn_rec 8 ro "Voltage domain VDD_IVA OPP100 [7:0] from Standard Fuse";
+        vdd_iva_opp50_senp_gain 4 ro "Voltage domain VDD_IVA OPP50 [23:20] from Standard Fuse";
+        vdd_iva_opp50_senn_gain 4 ro "Voltage domain VDD_IVA OPP50 [19:16] from Standard Fuse";
+        vdd_iva_opp50_senp_rec 8 ro "Voltage domain VDD_IVA OPP50 [15:8] from Standard Fuse";
+        vdd_iva_opp50_senn_rec 8 ro "Voltage domain VDD_IVA OPP50 [7:0] from Standard Fuse";
+    };
+    
+    register control_std_fuse_opp_vdd_iva_1 addr(base, 0x230) "Standard Fuse OPP VDD_IVA_1. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        vdd_iva_opp_turbo_senp_rec 8 ro "Voltage domain VDD_IVA OPP_TURBO [15:8] from Standard Fuse";
+        vdd_iva_opp_turbo_senn_rec 8 ro "Voltage domain VDD_IVA OPP_TURBO [7:0] from Standard Fuse";
+        vdd_iva_opp100_senp_gain 4 ro "Voltage domain VDD_IVA OPP100 [23:20] from Standard Fuse";
+        vdd_iva_opp100_senn_gain 4 ro "Voltage domain VDD_IVA OPP100 [19:16] from Standard Fuse";
+        vdd_iva_opp100_senp_rec 8 ro "Voltage domain VDD_IVA OPP100 [15:8] from Standard Fuse";
+    };
+    
+    register control_std_fuse_opp_vdd_iva_2 addr(base, 0x234) "Standard Fuse OPP VDD_IVA_2. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        vdd_iva_opp_nitro_senp_gain 4 ro "Voltage domain VDD_IVA OPP_NITRO[23:20] from Standard Fuse";
+        vdd_iva_opp_nitro_senn_gain 4 ro "Voltage domain VDD_IVA OPP_NITRO[19:16] from Standard Fuse";
+        vdd_iva_opp_nitro_senp_rec 8 ro "Voltage domain VDD_IVA OPP_NITRO[15:8] from Standard Fuse";
+        vdd_iva_opp_nitro_senn_rec 8 ro "Voltage domain VDD_IVA OPP_NITRO[7:0] from Standard Fuse";
+        vdd_iva_opp_turbo_senp_gain 4 ro "Voltage domain VDD_IVA OPP_TURBO[23:20] from Standard Fuse";
+        vdd_iva_opp_turbo_senn_gain 4 ro "Voltage domain VDD_IVA OPP_TURBO[19:16] from Standard Fuse";
+    };
+    
+    register control_std_fuse_opp_vdd_iva_3 addr(base, 0x238) "Standard Fuse OPP VDD_IVA_3. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 4 mbz;
+        vdd_iva_sr_senn 2 ro "VDD_IVA SmartReflex from Standard Fuse";
+        vdd_iva_sr_senp 2 ro "VDD_IVA SmartReflex from Standard Fuse";
+        vdd_iva_opp_ntsb_senp_gain 4 ro "Voltage domain VDD_IVA OPP_NTSB[23:20] from Standard Fuse";
+        vdd_iva_opp_ntsb_senn_gain 4 ro "Voltage domain VDD_IVA OPP_NTSB[19:16] from Standard Fuse";
+        vdd_iva_opp_ntsb_senp_rec 8 ro "Voltage domain VDD_IVA OPP_NTSB[15:8] from Standard Fuse";
+        vdd_iva_opp_ntsb_senn_rec 8 ro "Voltage domain VDD_IVA OPP_NTSB[7:0] from Standard Fuse";
+    };
+    
+    register control_std_fuse_opp_vdd_mpu_0 addr(base, 0x240) "Standard Fuse OPP VDD_MPU_0. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        vdd_mpu_opp100_senn_rec 8 ro "Voltage domain VDD_MPU OPP100[7:0] from Standard Fuse";
+        vdd_mpu_opp50_senp_gain 4 ro "Voltage domain VDD_MPU OPP50[23:20] from Standard Fuse";
+        vdd_mpu_opp50_senn_gain 4 ro "Voltage domain VDD_MPU OPP50[19:16] from Standard Fuse";
+        vdd_mpu_opp50_senp_rec 8 ro "Voltage domain VDD_MPU OPP50[15:8] from Standard Fuse";
+        vdd_mpu_opp50_senn_rec 8 ro "Voltage domain VDD_MPU OPP50[7:0] from Standard Fuse";
+    };
+    
+    register control_std_fuse_opp_vdd_mpu_1 addr(base, 0x244) "Standard Fuse OPP VDD_MPU_1. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        vdd_mpu_opp_turbo_senp_rec 8 ro "Voltage domain VDD_MPU OPP_TURBO[15:8] from Standard Fuse";
+        vdd_mpu_opp_turbo_senn_rec 8 ro "Voltage domain VDD_MPU OPP_TURBO[7:0] from Standard Fuse";
+        vdd_mpu_opp100_senp_gain 4 ro "Voltage domain VDD_MPU OPP100[23:20] from Standard Fuse";
+        vdd_mpu_opp100_senn_gain 4 ro "Voltage domain VDD_MPU OPP100[19:16] from Standard Fuse";
+        vdd_mpu_opp100_senp_rec 8 ro "Voltage domain VDD_MPU OPP100[15:8] from Standard Fuse";
+    };
+    
+    register control_std_fuse_opp_vdd_mpu_2 addr(base, 0x248) "Standard Fuse OPP VDD_MPU_2. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        vdd_mpu_opp_nitro_senp_gain 4 ro "Voltage domain VDD_MPU OPP_NITRO[23:20] from Standard Fuse";
+        vdd_mpu_opp_nitro_senn_gain 4 ro "Voltage domain VDD_MPU OPP_NITRO[19:16] from Standard Fuse";
+        vdd_mpu_opp_nitro_senp_rec 8 ro "Voltage domain VDD_MPU OPP_NITRO[15:8] from Standard Fuse";
+        vdd_mpu_opp_nitro_senn_rec 8 ro "Voltage domain VDD_MPU OPP_NITRO[7:0] from Standard Fuse";
+        vdd_mpu_opp_turbo_senp_gain 4 ro "Voltage domain VDD_MPU OPP_TURBO[23:20] from Standard Fuse";
+        vdd_mpu_opp_turbo_senn_gain 4 ro "Voltage domain VDD_MPU OPP_TURBO[19:16] from Standard Fuse";
+    };
+    
+    register control_std_fuse_opp_vdd_mpu_3 addr(base, 0x24C) "Standard Fuse OPP VDD_MPU_3. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 4 mbz;
+        vdd_mpu_sr_senn 2 ro "VDD_MPU SmartReflex from Standard Fuse";
+        vdd_mpu_sr_senp 2 ro "VDD_MPU SmartReflex from Standard Fuse";
+        vdd_mpu_opp_ntsb_senp_gain 4 ro "Voltage domain VDD_MPU OPP_NTSB[23:20] from Standard Fuse";
+        vdd_mpu_opp_ntsb_senn_gain 4 ro "Voltage domain VDD_MPU OPP_NTSB[19:16] from Standard Fuse";
+        vdd_mpu_opp_ntsb_senp_rec 8 ro "Voltage domain VDD_MPU OPP_NTSB[15:8] from Standard Fuse";
+        vdd_mpu_opp_ntsb_senn_rec 8 ro "Voltage domain VDD_MPU OPP_NTSB[7:0] from Standard Fuse";
+    };
+    
+    register control_std_fuse_opp_vdd_core_0 addr(base, 0x254) "Standard Fuse OPP VDD_CORE_0. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        vdd_core_opp100_senn_rec 8 ro "Voltage domain VDD_CORE OPP100[7:0] from Standard Fuse";
+        vdd_core_opp50_senp_gain 4 ro "Voltage domain VDD_CORE OPP50 23:20] from Standard Fuse";
+        vdd_core_opp50_senn_gain 4 ro "Voltage domain VDD_CORE OPP50[19:16] from Standard Fuse";
+        vdd_core_opp50_senp_rec 8 ro "Voltage domain VDD_CORE OPP50[15:8] from Standard Fuse";
+        vdd_core_opp50_senn_rec 8 ro "Voltage domain VDD_CORE OPP50[7:0] from Standard Fuse";
+    };
+    
+    register control_std_fuse_opp_vdd_core_1 addr(base, 0x258) "Standard Fuse OPP VDD_CORE_1. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        vdd_core_opp119_senp_rec 8 ro "Voltage domain VDD_CORE OPP119[15:8] from Standard Fuse (overdrive mode)";
+        vdd_core_opp119_senn_rec 8 ro "Voltage domain VDD_CORE OPP119[7:0] from Standard Fuse (overdrive mode)";
+        vdd_core_opp100_senp_gain 4 ro "Voltage domain VDD_CORE OPP100[23:20] from Standard Fuse";
+        vdd_core_opp100_senn_gain 4 ro "Voltage domain VDD_CORE OPP100[19:16] from Standard Fuse";
+        vdd_core_opp100_senp_rec 8 ro "Voltage domain VDD_CORE OPP100[15:8] from Standard Fuse";
+    };
+    
+    register control_std_fuse_opp_vdd_core_2 addr(base, 0x25C) "Standard Fuse OPP VDD_CORE_2. Register shows part of the chip eFuse configuration on the L4 interface. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 20 mbz;
+        vdd_core_sr_senn 2 ro "VDD_CORE SmartReflex from Standard Fuse";
+        vdd_core_sr_senp 2 ro "VDD_CORE SmartReflex from Standard Fuse";
+        vdd_core_opp119_senp_gain 4 ro "Voltage domain VDD_CORE OPP119[23:20] from Standard Fuse (overdrive mode)";
+        vdd_core_opp119_senn_gain 4 ro "Voltage domain VDD_CORE OPP119[19:16] from Standard Fuse (overdrive mode)";
+    };
+    
+    register control_std_fuse_opp_bgap ro addr(base, 0x260) "Standard Fuse OPP BGAP. Register shows part of the chip standard eFuse configuration. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_std_fuse_opp_dpll_0 ro addr(base, 0x264) "Standard Fuse OPP DPLL. Register shows part of the chip standard eFuse configuration. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+
+    constants iva_rbb_turbo_status width(1) "" {
+        IVA_RBB_TURBO_0 = 0 "IVA ABB Set2 voltage is NOT trimmed";
+        IVA_RBB_TURBO_1 = 1 "IVA ABB Set2 voltage is trimmed";
+    };
+
+    constants mpu_rbb_turbo_status width(1) "" {
+        MPU_RBB_TURBO_0 = 0 "MPU ABB Set2 voltage is NOT trimmed.";
+        MPU_RBB_TURBO_1 = 1 "MPU ABB Set2 voltage is trimmed.";
+    };
+
+    constants mpu_dpll_trim_freq_status width(2) "" {
+        MPU_DPLL_TRIM_FREQ_0 = 0 "2 GHz";
+        MPU_DPLL_TRIM_FREQ_1 = 1 "2.4 GHz";
+        MPU_DPLL_TRIM_FREQ_2 = 2 "Reserved";
+        MPU_DPLL_TRIM_FREQ_3 = 3 "3 GHz";
+    };
+    
+    register control_std_fuse_opp_dpll_1 addr(base, 0x268) "Standard Fuse OPP DPLL. Register shows part of the chip standard eFuse configuration. Reading at the address of one of these registers provides a direct view into a part of the eFuse chain. Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 10 mbz;
+        iva_rbb_turbo 1 ro type(iva_rbb_turbo_status) "If trimmed, ABB (Adaptive Body Bias) Set2 mode can be enabled at OPP TURBO on IVA";
+        mpu_rbb_turbo 1 ro type(mpu_rbb_turbo_status) "If trimmed, ABB Set2 mode can be enabled at OPP TURBO on MPU.";
+        mpu_dpll_trim_freq 2 ro type(mpu_dpll_trim_freq_status) "Lock frequency at which the MPU DPLL is trimmed. The DPLL can be locked at any valid frequencies up to this value.";
+        _ 18 mbz;
+    };
+
+    constants sysctrl_general_conf_status width(2) "" {
+        SYSCTRL_GENERAL_CONF_1_r = 1 "SMP configuration";
+    };
+
+    constants device_type_status width(3) "" {
+        DEVICE_TYPE_3_r = 3 "General Purpose (GP)";
+    };
+    
+    register control_status addr(base, 0x2C4) "Control Module Status Register Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 19 mbz;
+        sysctrl_general_conf 2 ro type(sysctrl_general_conf_status) "Sysctrl_General_ IP configuration";
+        device_type 3 ro type(device_type_status) "Device type captured at reset time Device type value sampled at power-on reset.";
+        sys_boot 8 ro "Sys.Boot pins state captured at reset time Sys.Boot pin values sampled at power-on reset";
+    };
+
+    constants c2c_init_fw_error_status width(1) "" {
+        C2C_INIT_FW_ERROR_0 = 0 "No error from firewall";
+        C2C_INIT_FW_ERROR_1 = 1 "Error from firewall";
+    };
+    
+    register control_sec_err_status_func addr(base, 0x2D0) "Firewall Error Status functional Register Access conditions. Read Only" {
+        _ 11 mbz;
+        c2c_init_fw_error 1 ro type(c2c_init_fw_error_status) "C2C init firewall. MID config: unused (reserved)";
+        l4_audiobe_fw_error 1 ro type(c2c_init_fw_error_status) "L4 AudioBE firewall";
+        debugss_fw_error 1 ro type(c2c_init_fw_error_status) "DebugSS firewall";
+        l4_config_fw_error 1 ro type(c2c_init_fw_error_status) "L4 Config firewall";
+        l4_periph_fw_error 1 ro type(c2c_init_fw_error_status) "L4 PER firewall";
+        iss_fw_error 1 ro type(c2c_init_fw_error_status) "ISS firewall";
+        dss_fw_error 1 ro type(c2c_init_fw_error_status) "DSS firewall";
+        sgx_fw_error 1 ro type(c2c_init_fw_error_status) "SGX firewall";
+        c2c_fw_error 1 ro type(c2c_init_fw_error_status) "C2C firewall. MID config: unused (reserved).";
+        _ 5 mbz;
+        sl2_fw_error 1 ro type(c2c_init_fw_error_status) "SL2 firewall";
+        dual_cortex_m3_fw_error 1 ro type(c2c_init_fw_error_status) "Dual Cortex M3 firewall";
+        ivahd_fw_error 1 ro type(c2c_init_fw_error_status) "IVAHD firewall";
+        emif_fw_error 1 ro type(c2c_init_fw_error_status) "EMIF firewall";
+        gpmc_fw_error 1 ro type(c2c_init_fw_error_status) "GPMC firewall";
+        l3ram_fw_error 1 ro type(c2c_init_fw_error_status) "L3RAM firewall";
+        _ 1 mbz;
+    };
+    
+    register control_sec_err_status_debug addr(base, 0x2D4) "Error Status debug Register. Read All / Write All. Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 11 mbz;
+        c2c_init_dbgfw_error 1 rw type(c2c_init_fw_error_status) "C2C init debug firewall. MID config: unused (reserved)";
+        l4_audiobe_dbgfw_error 1 rw type(c2c_init_fw_error_status) "L4 AudioBE debug firewall";
+        debugss_dbgfw_error 1 rw type(c2c_init_fw_error_status) "DebugSS debug firewall";
+        l4_config_dbgfw_error 1 rw type(c2c_init_fw_error_status) "L4 Config debug firewall";
+        l4_periph_dbgfw_error 1 rw type(c2c_init_fw_error_status) "L4 PER debug firewall";
+        iss_dbgfw_error 1 rw type(c2c_init_fw_error_status) "ISS debug firewall";
+        dss_dbgfw_error 1 rw type(c2c_init_fw_error_status) "DSS debug firewall";
+        sgx_dbgfw_error 1 rw type(c2c_init_fw_error_status) "SGX debug firewall";
+        c2c_dbgfw_error 1 rw type(c2c_init_fw_error_status) "C2C debug firewall. MID config: unused (reserved).";
+        _ 5 mbz;
+        sl2_dbgfw_error 1 rw type(c2c_init_fw_error_status) "SL2 debug firewall";
+        dual_cortex_m3_dbgfw_error 1 rw type(c2c_init_fw_error_status) "Dual Cortex M3 debug firewall";
+        ivahd_dbgfw_error 1 rw type(c2c_init_fw_error_status) "IVAHD debug firewall";
+        emif_dbgfw_error 1 rw type(c2c_init_fw_error_status) "EMIF debug firewall";
+        gpmc_dbgfw_error 1 rw type(c2c_init_fw_error_status) "GPMC debug firewall";
+        l3ram_dbgfw_error 1 rw type(c2c_init_fw_error_status) "L3RAM debug firewall";
+        _ 1 mbz;
+    };
+
+    constants usbphy_pd_status width(1) "" {
+        USBPHY_PD_0 = 0 "Normal operation";
+        USBPHY_PD_1 = 1 "Power down the USB PHY";
+    };
+    
+    register control_dev_conf addr(base, 0x300) "Device configuration register. Access conditions. Read: unrestricted, Write: unrestricted" {
+        dev_conf 31 rw "Spare bits for device configuration.";
+        usbphy_pd 1 rw type(usbphy_pd_status) "Power down entire USB phy (data, common module and UTMI). controls USB2PHYCORE.PD pin.";
+    };
+    
+    register control_dsp_bootaddr addr(base, 0x304) "DSP boot loader physical address Access conditions. Read: unrestricted, Write: unrestricted" {
+        dsp_boot_load_addr 22 rw "DSP boot loader physical address This index addresses a 4kbytes page";
+        _ 10 mbz;
+    };
+
+    constants ldovbbiva_rbb_mux_ctrl_status width(1) "" {
+        LDOVBBIVA_RBB_MUX_CTRL_0 = 0 "EFUSE value is used";
+        LDOVBBIVA_RBB_MUX_CTRL_1 = 1 "Override value is used";
+    };
+    
+    register control_ldovbb_iva_voltage_ctrl addr(base, 0x314) "IVA Voltage Body Bias LDO control register Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 5 mbz;
+        ldovbbiva_rbb_mux_ctrl 1 rw type(ldovbbiva_rbb_mux_ctrl_status) "Override control of EFUSE Adaptive Body Bias set2 voltage value";
+        ldovbbiva_rbb_vset_in 5 ro "EFUSE Adaptive Body Bias set2 voltage value";
+        ldovbbiva_rbb_vset_out 5 rw "Override value for Adaptive Body Bias set2 voltage";
+        _ 5 mbz;
+        ldovbbiva_fbb_mux_ctrl 1 rw type(ldovbbiva_rbb_mux_ctrl_status) "Override control of EFUSE Adaptive Body Bias Set1 voltage value";
+        ldovbbiva_fbb_vset_in 5 ro "EFUSE Adaptive Body Bias Set1 voltage value";
+        ldovbbiva_fbb_vset_out 5 rw "Override value for Adaptive Body Bias Set1 voltage";
+    };
+    
+    register control_ldovbb_mpu_voltage_ctrl addr(base, 0x318) "MPU Voltage Body Bias LDO control register Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 5 mbz;
+        ldovbbmpu_rbb_mux_ctrl 1 rw type(ldovbbiva_rbb_mux_ctrl_status) "Override control of EFUSE Adaptive Body Bias Set2 voltage value";
+        ldovbbmpu_rbb_vset_in 5 ro "EFUSE Adaptive Body Bias Set2 voltage value";
+        ldovbbmpu_rbb_vset_out 5 rw "Override value for Adaptive Body Bias Set2 voltage";
+        _ 5 mbz;
+        ldovbbmpu_fbb_mux_ctrl 1 rw type(ldovbbiva_rbb_mux_ctrl_status) "Override control of EFUSE Adaptive Body Bias Set1 voltage value";
+        ldovbbmpu_fbb_vset_in 5 ro "EFUSE Adaptive Body Bias Set1 voltage value";
+        ldovbbmpu_fbb_vset_out 5 rw "Override value for Adaptive Body Bias Set1 voltage";
+    };
+
+    constants ldosramiva_retmode_mux_ctrl_status width(1) "" {
+        LDOSRAMIVA_RETMODE_MUX_CTRL_0 = 0 "efuse value is used";
+        LDOSRAMIVA_RETMODE_MUX_CTRL_1 = 1 "override value is used";
+    };
+    
+    register control_ldosram_iva_voltage_ctrl addr(base, 0x320) "IVA SRAM LDO control register Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 5 mbz;
+        ldosramiva_retmode_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Override control of EFUSE Retention Mode Voltage value";
+        ldosramiva_retmode_vset_in 5 ro "EFUSE Retention Mode Voltage value (vset[9:5])";
+        ldosramiva_retmode_vset_out 5 rw "Override value for Retention Mode Voltage";
+        _ 5 mbz;
+        ldosramiva_actmode_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Override control of EFUSE Active Mode Voltage value";
+        ldosramiva_actmode_vset_in 5 ro "EFUSE Active Mode Voltage value (vset[4:0])";
+        ldosramiva_actmode_vset_out 5 rw "Override value for Active Mode Voltage value";
+    };
+    
+    register control_ldosram_mpu_voltage_ctrl addr(base, 0x324) "MPU SRAM LDO control register Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 5 mbz;
+        ldosrammpu_retmode_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Override control of EFUSE Retention Mode Voltage value";
+        ldosrammpu_retmode_vset_in 5 ro "EFUSE Retention Mode Voltage value (vset[9:5])";
+        ldosrammpu_retmode_vset_out 5 rw "Override value for Retention Mode Voltage";
+        _ 5 mbz;
+        ldosrammpu_actmode_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Override control of EFUSE Active Mode Voltage value";
+        ldosrammpu_actmode_vset_in 5 ro "EFUSE Active Mode Voltage value (vset[4:0])";
+        ldosrammpu_actmode_vset_out 5 rw "Override value for Active Mode Voltage value";
+    };
+    
+    register control_ldosram_core_voltage_ctrl addr(base, 0x328) "Core SRAM LDO control register Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 5 mbz;
+        ldosramcore_retmode_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Override control of EFUSE Retention Mode Voltage value";
+        ldosramcore_retmode_vset_in 5 ro "EFUSE Retention Mode Voltage value (vset[9:5])";
+        ldosramcore_retmode_vset_out 5 rw "Override value for Retention Mode Voltage";
+        _ 5 mbz;
+        ldosramcore_actmode_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Override control of EFUSE Active Mode Voltage value";
+        ldosramcore_actmode_vset_in 5 ro "EFUSE Active Mode Voltage value (vset[4:0])";
+        ldosramcore_actmode_vset_out 5 rw "Override value for Active Mode Voltage value";
+    };
+
+    constants bgap_tempsoff_status width(1) "" {
+        BGAP_TEMPSOFF_0 = 0 "Temperature sensor and thermal shutdown is active";
+        BGAP_TEMPSOFF_1 = 1 "Temperature sensor and thermal shutdown set in OFF mode";
+    };
+    
+    register control_temp_sensor addr(base, 0x32C) "Control VBGAPTS temperature sensor and thermal comparator shutdown register Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 18 mbz;
+        bgap_tempsoff 1 rw type(bgap_tempsoff_status) "Temperature sensor and thermal shutdown mode.";
+        _ 1 mbz;
+        bgap_temp_sensor_soc 1 rw "ADC Start of Conversion. A transition to high starts a new ADC conversion cycle";
+        bgap_temp_sensor_eocz 1 ro "ADC End of Conversion. Active low, when CTRL_ TEMP(5:0) is valid.";
+        bgap_temp_sensor_dtemp 10 ro "Temperature data from the ADC. Valid if EOCZ is low.";
+    };
+    
+    register control_dpll_nwell_trim_0 addr(base, 0x330) "Dpll trim (SW override) - Part 0 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 2 mbz;
+        dpll_abe_nwell_trim_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Software override selection over efuse values.";
+        dpll_abe_nwell_trim 5 rw "Software override value.";
+        dpll_per_nwell_trim_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Software override selection over efuse values.";
+        dpll_per_nwell_trim 5 rw "Software override value.";
+        dpll_core_nwell_trim_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Software override selection over efuse values.";
+        dpll_core_nwell_trim 5 rw "Software override value.";
+        dpll_iva_nwell_trim_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Software override selection over efuse values.";
+        dpll_iva_nwell_trim 5 rw "Software override value.";
+        dpll_mpu_nwell_trim_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Software override selection over efuse values.";
+        dpll_mpu_nwell_trim 5 rw "Software override value.";
+    };
+    
+    register control_dpll_nwell_trim_1 addr(base, 0x334) "Dpll trim (SW override) - Part 1 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 2 mbz;
+        _ 6 mbz;
+        dpll_usb_nwell_trim_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Software override selection over efuse values.";
+        dpll_usb_nwell_trim 5 rw "Software override value.";
+        _ 6 mbz;
+        dpll_dsi2_nwell_trim_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Software override selection over efuse values.";
+        dpll_dsi2_nwell_trim 5 rw "Software override value.";
+        dpll_dsi1_nwell_trim_mux_ctrl 1 rw type(ldosramiva_retmode_mux_ctrl_status) "Software override selection over efuse values.";
+        dpll_dsi1_nwell_trim 5 rw "Software override value.";
+    };
+
+    constants dischrgvbus_status width(1) "" {
+        DISCHRGVBUS_0_r = 0 "OTG transceiver does not discharge VBUS";
+        DISCHRGVBUS_1_r = 1 "OTG transceiver discharges VBUS";
+    };
+
+    constants chrgvbus_status width(1) "" {
+        CHRGVBUS_0_r = 0 "OTG transceiver does not charge VBUS";
+        CHRGVBUS_1_r = 1 "OTG transceiver charges VBUS";
+    };
+
+    constants drvvbus_status width(1) "" {
+        DRVVBUS_0_r = 0 "OTG transceiver does not drive VBUS";
+        DRVVBUS_1_r = 1 "OTG transceiver drives VBUS";
+    };
+
+    constants idpullup_status width(1) "" {
+        IDPULLUP_0_r = 0 "OTG transceiver does not apply a pullup to ID";
+        IDPULLUP_1_r = 1 "OTG transceiver applies a pullup to ID";
+    };
+
+    constants iddig_status width(1) "" {
+        IDDIG_0 = 0 "ID pin is grounded";
+        IDDIG_1 = 1 "ID pin is high-impedance";
+    };
+
+    constants sessend_status width(1) "" {
+        SESSEND_0 = 0 "VBUS voltage is above VB_SESS_END";
+        SESSEND_1 = 1 "VBUS voltage is below VB_SESS_END";
+    };
+
+    constants bvalid_status width(1) "" {
+        BVALID_0 = 0 "VBUS voltage is below VB_SESS_VLD";
+        BVALID_1 = 1 "VBUS voltage is above VB_SESS_VLD";
+    };
+
+    constants avalid_status width(1) "" {
+        AVALID_0 = 0 "VBUS voltage is below VA_SESS_VLD";
+        AVALID_1 = 1 "VBUS voltage is above VA_SESS_VLD";
+    };
+    
+    register control_usbotghs_control addr(base, 0x33C) "USBOTGHS software control Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 23 mbz;
+        dischrgvbus 1 ro type(dischrgvbus_status) "USBOTGHS value for signal dischrgvbus (OTG_PD_VBUS ). controls discharging of VBUS for completing SRP.";
+        chrgvbus 1 ro type(chrgvbus_status) "USBOTGHS value for signal chrgvbus (OTG_PU_VBUS). controls charging of VBUS for initiating SRP.";
+        drvvbus 1 ro type(drvvbus_status) "USBOTGHS value for signal drvvbus (OTG_DRV_VBUS). controls the driving of 5V power on VBUS.";
+        idpullup 1 ro type(idpullup_status) "USBOTGHS value for signal Idpullup (OTG_PU_ID). Enables sampling of the ID pin of the USB connector.";
+        iddig 1 rw type(iddig_status) "Sets the USBOTGHS signal iddig (ID). Indicates the value of the ID pin of the USB connector.";
+        sessend 1 rw type(sessend_status) "Sets the USBOTGHS signal sessend (BSESSEND). Indicates if VBUS is below the B-Device session end threshold. The threshold Vth is between 0.2V and 0.8V.";
+        vbusvalid 1 rw "Sets the USBOTGHS signal vbusvalid (VBUSVLD). Indicates if VBUS is above the threshold for normal operation. The threshold Vth is between 4.4V and 4.75V.";
+        bvalid 1 rw type(bvalid_status) "Sets the USBOTGHS signal bvalid (BSESSVLD). Signal is currently unconnected (reserved for future use).";
+        avalid 1 rw type(avalid_status) "Sets the USBOTGHS signal avalid (ASESSVLD). Indicates if VBUS is above the A-Device session valid threshold. The threshold Vth is between 0.8V and 2.0V.";
+    };
+
+    constants dss_mux6_select_status width(1) "" {
+        DSS_MUX6_SELECT_0 = 0 "enables DSS_CLK as functional clock input for the DSI2 PHY bypass clock";
+        DSS_MUX6_SELECT_1 = 1 "enables PLL1_CLK4 as functional clock input for the DSI2 PHY bypass clock";
+    };
+    
+    register control_dss_control addr(base, 0x340) "DSS software control Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        dss_mux6_select 1 rw type(dss_mux6_select_status) "Mux6 select value for DSS.";
+    };
+    
+    register control_cortex_m3_mmuaddrtransltr addr(base, 0x348) "CORTEX_M3 reg Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 12 mbz;
+        cortex_m3_mmuaddrtransltr 20 rw "Used to save the mmu address boot";
+    };
+    
+    register control_cortex_m3_mmuaddrlogictr addr(base, 0x34C) "Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 12 mbz;
+        cortex_m3_mmuaddrlogictr 20 rw "";
+    };
+
+    constants hwobs_clkdiv_sel_2_status width(5) "" {
+        HWOBS_CLKDIV_SEL_2_1 = 1 "output is not divided";
+        HWOBS_CLKDIV_SEL_2_2 = 2 "output is divided by 2";
+        HWOBS_CLKDIV_SEL_2_4 = 4 "output is divided by 4";
+        HWOBS_CLKDIV_SEL_2_8 = 8 "output is divided by 8";
+        HWOBS_CLKDIV_SEL_2_16 = 16 "output is divided by 16";
+    };
+
+    constants hwobs_all_zero_mode_status width(1) "" {
+        HWOBS_ALL_ZERO_MODE_0 = 0 "Hardware observability ports are not gated";
+        HWOBS_ALL_ZERO_MODE_1 = 1 "Hardware observability ports are all set to 0";
+    };
+    
+    register control_hwobs_control addr(base, 0x350) "Hardware observability control. This register enables or disables hardware observability outputs (to save power primarily) Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 13 mbz;
+        hwobs_clkdiv_sel_2 5 rw type(hwobs_clkdiv_sel_2_status) "Clock divider selection on po_hwobs(2).";
+        hwobs_clkdiv_sel_1 5 rw type(hwobs_clkdiv_sel_2_status) "Clock divider selection on po_hwobs(1).";
+        _ 1 mbz;
+        hwobs_clkdiv_sel 5 rw type(hwobs_clkdiv_sel_2_status) "Clock divider selection on po_hwobs(0).";
+        hwobs_all_zero_mode 1 rw type(hwobs_all_zero_mode_status) "Used to gate observable signals. When set all outputs are set to zero (can be used to check the path from hardware observability to external pads).";
+        hwobs_all_one_mode 1 rw type(hwobs_all_zero_mode_status) "Used to gate observable signals. When set all outputs are set to one (can be used to check the path from hardware observability to external pads).";
+        hwobs_macro_enable 1 rw type(hwobs_all_zero_mode_status) "Used to gate observable signals coming from macros using the 32-bit HWOBS bus definition. When deasserted all outputs of the HWOBS busdef are set to zero.";
+    };
+    
+    register control_emif1_offset addr(base, 0x360) "emif1 offset Access conditions. Read: unrestricted, Write: unrestricted" {
+        emif1_dll_offset_3 8 rw "8-bit signed offset value (-128 ... +127) for EMIF1 DLL Slave3 delay correction.";
+        emif1_dll_offset_2 8 rw "8-bit signed offset value (-128 ... +127) for EMIF1 DLL Slave2 delay correction.";
+        emif1_dll_offset_1 8 rw "8-bit signed offset value (-128 ... +127) for EMIF1 DLL Slave1 delay correction.";
+        emif1_dll_offset_0 8 rw "8-bit signed offset value (-128 ... +127) for EMIF1 DLL Slave0 delay correction.";
+    };
+    
+    register control_emif2_offset addr(base, 0x364) "emif2 offset Access conditions. Read: unrestricted, Write: unrestricted" {
+        emif2_dll_offset_3 8 rw "8-bit signed offset value (-128 ... +127) for EMIF2 DLL Slave3 delay correction.";
+        emif2_dll_offset_2 8 rw "8-bit signed offset value (-128 ... +127) for EMIF2 DLL Slave2 delay correction.";
+        emif2_dll_offset_1 8 rw "8-bit signed offset value (-128 ... +127) for EMIF2 DLL Slave1 delay correction.";
+        emif2_dll_offset_0 8 rw "8-bit signed offset value (-128 ... +127) for EMIF2 DLL Slave0 delay correction.";
+    };
+    
+    register control_emif1_master_code_0 addr(base, 0x368) "emif1 master code Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 6 mbz;
+        emif1_master_code_1 10 ro "EMIF1 DLL Master1 code";
+        _ 6 mbz;
+        emif1_master_code_0 10 ro "EMIF1 DLL Master0 code";
+    };
+    
+    register control_emif1_master_code_1 addr(base, 0x36C) "Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 6 mbz;
+        emif1_master_code_3 10 ro "EMIF1 DLL Master3 code";
+        _ 6 mbz;
+        emif1_master_code_2 10 ro "EMIF1 DLL Master2 code";
+    };
+    
+    register control_emif2_master_code_0 addr(base, 0x370) "emif2 master code Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 6 mbz;
+        emif2_master_code_1 10 ro "EMIF2 DLL Master1 code";
+        _ 6 mbz;
+        emif2_master_code_0 10 ro "EMIF2 DLL Master0 code";
+    };
+    
+    register control_emif2_master_code_1 addr(base, 0x374) "Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 6 mbz;
+        emif2_master_code_3 10 ro "EMIF2 DLL Master3 code";
+        _ 6 mbz;
+        emif2_master_code_2 10 ro "EMIF2 DLL Master2 code";
+    };
+
+    constants single_mode_status width(1) "" {
+        SINGLE_MODE_0 = 0 "Single mode selected";
+        SINGLE_MODE_1 = 1 "Continuous mode selected";
+    };
+
+    constants mask_hot_status width(1) "" {
+        MASK_HOT_0 = 0 "hot event is masked";
+        MASK_HOT_1 = 1 "hot event is enabled";
+    };
+
+    constants mask_cold_status width(1) "" {
+        MASK_COLD_0 = 0 "cold event is masked";
+        MASK_COLD_1 = 1 "cold event is enabled";
+    };
+    
+    register control_bandgap_ctrl addr(base, 0x378) "bandgap control Access conditions. Read: unrestricted, Write: unrestricted" {
+        single_mode 1 rw type(single_mode_status) "Toggles between single mode or continuous mode (repeated single mode)";
+        _ 29 mbz;
+        mask_hot 1 rw type(mask_hot_status) "Mask for hot events";
+        mask_cold 1 rw type(mask_cold_status) "Mask for cold events";
+    };
+    
+    register control_bandgap_counter addr(base, 0x37C) "bandgap counter Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 8 mbz;
+        counter 24 rw "Counter for continous mode";
+    };
+    
+    register control_bandgap_threshold addr(base, 0x380) "bandgap threshold Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 6 mbz;
+        t_hot 10 rw "Threshold for hot temperature";
+        _ 6 mbz;
+        t_cold 10 rw "Threshold for cold temperature";
+    };
+    
+    register control_tshut_threshold addr(base, 0x384) "bandgap tshut threshold Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 6 mbz;
+        tshut_hot 10 rw "Tshut Threshold for hot temperature. Code value must not exceed the device junction (hottest spot) maximal-allowed temperature minus the device temperature sensor offset estimated at current conditions. For more information, see , .";
+        _ 6 mbz;
+        tshut_cold 10 rw "Tshut Threshold for cold temperature";
+    };
+    
+    register control_bandgap_status addr(base, 0x388) "bandgap status Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        clean_stop 1 ro "Show when clean stop";
+        bgap_alert 1 ro "Show when hot or cold event";
+        hot_flag 1 ro "Show when hot event";
+        cold_flag 1 ro "Show when cold event";
+    };
+    
+    register control_forcewrnp addr(base, 0x3C0) "Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mpuforcewrnp 1 rw "0x0: Non-posted write attribute is defined by Cortex-A9 CPU 0x1: Forces only non-posted write commands from MPUSS to the L3 interconnect";
+    };
+
+    constants ocpreg_spare3_status width(1) "" {
+        OCPREG_SPARE3_0 = 0 "Normal mode selected";
+        OCPREG_SPARE3_1 = 1 "Power-down mode selected";
+    };
+
+    constants ocpreg_spare2_status width(1) "" {
+        OCPREG_SPARE2_0 = 0 "Vref-based receiver is selected.";
+        OCPREG_SPARE2_1 = 1 "LVCMOS buffer is selected.";
+    };
+
+    constants ocpreg_spare1_status width(1) "" {
+        OCPREG_SPARE1_0 = 0 "Normal mode is selected.";
+        OCPREG_SPARE1_1 = 1 "Power-down mode is selected.";
+    };
+
+    constants ocpreg_spare0_status width(1) "" {
+        OCPREG_SPARE0_0 = 0 "Vref based receiver is selected.";
+        OCPREG_SPARE0_1 = 1 "LVCMOS buffer is selected.";
+    };
+    
+    register control_gen_core_ocpreg_spare addr(base, 0x3FC) "The lower 4-bits of this register are assigned to control PWRDN mode globally, and the LVCMOS buffers enable control of the EMIF1 and EMIF2 PHYs. Read: Unrestricted; Write: Unrestricted" {
+        ocpreg_spare 28 ro "Reserved";
+        ocpreg_spare3 1 rw type(ocpreg_spare3_status) "LPDDR22 DQ I/O receivers power-down mode control";
+        ocpreg_spare2 1 rw type(ocpreg_spare2_status) "LPDDR22 DQ / CA I/Os receiver type selection control. Selects between a Vref-based receiver (a true differential comparator) mode and LVCMOS buffer mode. When LVCMOS buffer is enabled, Vref based receiver is disabled and vice versa.";
+        ocpreg_spare1 1 rw type(ocpreg_spare1_status) "LPDDR21 DQ I/O receivers power-down mode control";
+        ocpreg_spare0 1 rw type(ocpreg_spare0_status) "LPDDR21 DQ / CA I/Os receiver type selection control. Selects between a Vref-based receiver (a true differential comparator) mode and LVCMOS buffer mode. When LVCMOS buffer is enabled, Vref based receiver is disabled and vice versa.";
+    };
+    
+    register control_debobs_final_mux_sel rw addr(base, 0x400) "Final mux select signal. It selects between core and wkup signal (controls external observability logic). Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_debobs_mmr_mpu addr(base, 0x408) "Dual Cortex-A9 register to control hardware observability muxing inside dual Cortex-A9 (controls external observability logic)." {
+        _ 28 mbz;
+        select 4 rw "Control external observability logic";
+    };
+
+    constants mult_status width(7) "" {
+        MULT_0 = 0 "hwobs_sdma_dma_req_0";
+        MULT_1 = 1 "hwobs_sdma_dma_req_1";
+        MULT_2 = 2 "hwobs_sdma_dma_req_2";
+        MULT_3 = 3 "hwobs_sdma_dma_req_3";
+        MULT_4 = 4 "hwobs_sdma_dma_req_4";
+        MULT_5 = 5 "hwobs_sdma_dma_req_5";
+        MULT_6 = 6 "hwobs_sdma_dma_req_6";
+        MULT_7 = 7 "hwobs_sdma_dma_req_7";
+        MULT_8 = 8 "hwobs_sdma_dma_req_8";
+        MULT_9 = 9 "hwobs_sdma_dma_req_9";
+        MULT_10 = 10 "hwobs_sdma_dma_req_10";
+        MULT_11 = 11 "hwobs_sdma_dma_req_11";
+        MULT_12 = 12 "hwobs_sdma_dma_req_12";
+        MULT_13 = 13 "hwobs_sdma_dma_req_13";
+        MULT_14 = 14 "hwobs_sdma_dma_req_14";
+        MULT_15 = 15 "hwobs_sdma_dma_req_15";
+        MULT_16 = 16 "hwobs_sdma_dma_req_16";
+        MULT_17 = 17 "hwobs_sdma_dma_req_17";
+        MULT_18 = 18 "hwobs_sdma_dma_req_18";
+        MULT_19 = 19 "hwobs_sdma_dma_req_19";
+        MULT_20 = 20 "hwobs_sdma_dma_req_20";
+        MULT_21 = 21 "hwobs_sdma_dma_req_21";
+        MULT_22 = 22 "hwobs_sdma_dma_req_22";
+        MULT_23 = 23 "hwobs_sdma_dma_req_23";
+        MULT_24 = 24 "hwobs_sdma_dma_req_24";
+        MULT_25 = 25 "hwobs_sdma_dma_req_25";
+        MULT_26 = 26 "hwobs_sdma_dma_req_26";
+        MULT_27 = 27 "hwobs_sdma_dma_req_27";
+        MULT_28 = 28 "hwobs_sdma_dma_req_28";
+        MULT_29 = 29 "hwobs_sdma_dma_req_29";
+        MULT_30 = 30 "hwobs_sdma_dma_req_30";
+        MULT_31 = 31 "hwobs_sdma_dma_req_31";
+        MULT_32 = 32 "hwobs_sdma_dma_req_32";
+        MULT_33 = 33 "hwobs_sdma_dma_req_33";
+        MULT_34 = 34 "hwobs_sdma_dma_req_34";
+        MULT_35 = 35 "hwobs_sdma_dma_req_35";
+        MULT_36 = 36 "hwobs_sdma_dma_req_36";
+        MULT_37 = 37 "hwobs_sdma_dma_req_37";
+        MULT_38 = 38 "hwobs_sdma_dma_req_38";
+        MULT_39 = 39 "hwobs_sdma_dma_req_39";
+        MULT_40 = 40 "hwobs_sdma_dma_req_40";
+        MULT_41 = 41 "hwobs_sdma_dma_req_41";
+        MULT_42 = 42 "hwobs_sdma_dma_req_42";
+        MULT_43 = 43 "hwobs_sdma_dma_req_43";
+        MULT_44 = 44 "hwobs_sdma_dma_req_44";
+        MULT_45 = 45 "hwobs_sdma_dma_req_45";
+        MULT_46 = 46 "hwobs_sdma_dma_req_46";
+        MULT_47 = 47 "hwobs_sdma_dma_req_47";
+        MULT_48 = 48 "hwobs_sdma_dma_req_48";
+        MULT_49 = 49 "hwobs_sdma_dma_req_49";
+        MULT_50 = 50 "hwobs_sdma_dma_req_50";
+        MULT_51 = 51 "hwobs_sdma_dma_req_51";
+        MULT_52 = 52 "hwobs_sdma_dma_req_52";
+        MULT_53 = 53 "hwobs_sdma_dma_req_53";
+        MULT_54 = 54 "hwobs_sdma_dma_req_54";
+        MULT_55 = 55 "hwobs_sdma_dma_req_55";
+        MULT_56 = 56 "hwobs_sdma_dma_req_56";
+        MULT_57 = 57 "hwobs_sdma_dma_req_57";
+        MULT_58 = 58 "hwobs_sdma_dma_req_58";
+        MULT_59 = 59 "hwobs_sdma_dma_req_59";
+        MULT_60 = 60 "hwobs_sdma_dma_req_60";
+        MULT_61 = 61 "hwobs_sdma_dma_req_61";
+        MULT_62 = 62 "hwobs_sdma_dma_req_62";
+        MULT_63 = 63 "hwobs_sdma_dma_req_63";
+        MULT_64 = 64 "hwobs_sdma_dma_req_64";
+        MULT_65 = 65 "hwobs_sdma_dma_req_65";
+        MULT_66 = 66 "hwobs_sdma_dma_req_66";
+        MULT_67 = 67 "hwobs_sdma_dma_req_67";
+        MULT_68 = 68 "hwobs_sdma_dma_req_68";
+        MULT_69 = 69 "hwobs_sdma_dma_req_69";
+        MULT_70 = 70 "hwobs_sdma_dma_req_70";
+        MULT_71 = 71 "hwobs_sdma_dma_req_71";
+        MULT_72 = 72 "hwobs_sdma_dma_req_72";
+        MULT_73 = 73 "hwobs_sdma_dma_req_73";
+        MULT_74 = 74 "hwobs_sdma_dma_req_74";
+        MULT_75 = 75 "hwobs_sdma_dma_req_75";
+        MULT_76 = 76 "hwobs_sdma_dma_req_76";
+        MULT_77 = 77 "hwobs_sdma_dma_req_77";
+        MULT_78 = 78 "hwobs_sdma_dma_req_78";
+        MULT_79 = 79 "hwobs_sdma_dma_req_79";
+        MULT_80 = 80 "hwobs_sdma_dma_req_80";
+        MULT_81 = 81 "hwobs_sdma_dma_req_81";
+        MULT_82 = 82 "hwobs_sdma_dma_req_82";
+        MULT_83 = 83 "hwobs_sdma_dma_req_83";
+        MULT_84 = 84 "hwobs_sdma_dma_req_84";
+        MULT_85 = 85 "hwobs_sdma_dma_req_85";
+        MULT_86 = 86 "hwobs_sdma_dma_req_86";
+        MULT_87 = 87 "hwobs_sdma_dma_req_87";
+        MULT_88 = 88 "hwobs_sdma_dma_req_88";
+        MULT_89 = 89 "hwobs_sdma_dma_req_89";
+        MULT_90 = 90 "hwobs_sdma_dma_req_90";
+        MULT_91 = 91 "hwobs_sdma_dma_req_91";
+        MULT_92 = 92 "hwobs_sdma_dma_req_92";
+        MULT_93 = 93 "hwobs_sdma_dma_req_93";
+        MULT_94 = 94 "hwobs_sdma_dma_req_94";
+        MULT_95 = 95 "hwobs_sdma_dma_req_95";
+        MULT_96 = 96 "hwobs_sdma_dma_req_96";
+        MULT_97 = 97 "hwobs_sdma_dma_req_97";
+        MULT_98 = 98 "hwobs_sdma_dma_req_98";
+        MULT_99 = 99 "hwobs_sdma_dma_req_99";
+        MULT_100 = 100 "hwobs_sdma_dma_req_100";
+        MULT_101 = 101 "hwobs_sdma_dma_req_101";
+        MULT_102 = 102 "hwobs_sdma_dma_req_102";
+        MULT_103 = 103 "hwobs_sdma_dma_req_103";
+        MULT_104 = 104 "hwobs_sdma_dma_req_104";
+        MULT_105 = 105 "hwobs_sdma_dma_req_105";
+        MULT_106 = 106 "hwobs_sdma_dma_req_106";
+        MULT_107 = 107 "hwobs_sdma_dma_req_107";
+        MULT_108 = 108 "hwobs_sdma_dma_req_108";
+        MULT_109 = 109 "hwobs_sdma_dma_req_109";
+        MULT_110 = 110 "hwobs_sdma_dma_req_110";
+        MULT_111 = 111 "hwobs_sdma_dma_req_111";
+        MULT_112 = 112 "hwobs_sdma_dma_req_112";
+        MULT_113 = 113 "hwobs_sdma_dma_req_113";
+        MULT_114 = 114 "hwobs_sdma_dma_req_114";
+        MULT_115 = 115 "hwobs_sdma_dma_req_115";
+        MULT_116 = 116 "hwobs_sdma_dma_req_116";
+        MULT_117 = 117 "hwobs_sdma_dma_req_117";
+        MULT_118 = 118 "hwobs_sdma_dma_req_118";
+        MULT_119 = 119 "hwobs_sdma_dma_req_119";
+        MULT_120 = 120 "hwobs_sdma_dma_req_120";
+        MULT_121 = 121 "hwobs_sdma_dma_req_121";
+        MULT_122 = 122 "hwobs_sdma_dma_req_122";
+        MULT_123 = 123 "hwobs_sdma_dma_req_123";
+        MULT_124 = 124 "hwobs_sdma_dma_req_124";
+        MULT_125 = 125 "hwobs_sdma_dma_req_125";
+        MULT_126 = 126 "hwobs_sdma_dma_req_126";
+    };
+    
+    register control_conf_sdma_req_sel0 addr(base, 0x42C) "System DMA requests view channel 0 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 25 mbz;
+        mult 7 rw type(mult_status) "Select one of the following signals:";
+    };
+    
+    register control_conf_sdma_req_sel1 addr(base, 0x430) "System DMA requests view channel 1 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 25 mbz;
+        mult 7 rw type(mult_status) "Select one of the following signals:";
+    };
+    
+    register control_conf_sdma_req_sel2 addr(base, 0x434) "System DMA requests view channel 2 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 25 mbz;
+        mult 7 rw type(mult_status) "Select one of the following signals:";
+    };
+    
+    register control_conf_sdma_req_sel3 addr(base, 0x438) "System DMA requests view channel 3 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 25 mbz;
+        mult 7 rw type(mult_status) "Select one of the following signals:";
+    };
+
+    constants mult_status1 width(3) "" {
+        MULT_0_4 = 0 "hwobs_coredpll_clkout";
+        MULT_1_4 = 1 "hwobs_abedpll_clkout";
+        MULT_2_4 = 2 "hwobs_perdpll_clkout";
+        MULT_3_4 = 3 "hwobs_dsi1dpll_clkout";
+        MULT_4_4 = 4 "hwobs_dsi2dpll_clkout";
+        MULT_5_4 = 5 "reserved";
+        MULT_6_4 = 6 "hwobs_usbdpll_clkout";
+        MULT_7_4 = 7 "reserved";
+    };
+    
+    register control_conf_clk_sel0 addr(base, 0x440) "clk view channel 0 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 29 mbz;
+        mult 3 rw type(mult_status1) "Select one of the following signals:";
+    };
+    
+    register control_conf_clk_sel1 addr(base, 0x444) "clk view channel 1 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 29 mbz;
+        mult 3 rw type(mult_status1) "Select one of the following signals:";
+    };
+    
+    register control_conf_clk_sel2 addr(base, 0x448) "clk view channel 2 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 29 mbz;
+        mult 3 rw type(mult_status1) "Select one of the following signals:";
+    };
+
+    constants mult_status2 width(3) "" {
+        MULT_0_7 = 0 "hwobs_coredpll_freqlock";
+        MULT_1_7 = 1 "hwobs_abedpll_freqlock";
+        MULT_2_7 = 2 "hwobs_perdpll_freqlock";
+        MULT_3_7 = 3 "hwobs_dsi1dpll_freqlock";
+        MULT_4_7 = 4 "hwobs_dsi2dpll_freqlock";
+        MULT_5_7 = 5 "reserved";
+        MULT_6_7 = 6 "hwobs_usbdpll_freqlock";
+        MULT_7_7 = 7 "reserved";
+    };
+    
+    register control_conf_dpll_freqlock_sel addr(base, 0x44C) "dpll_freqlock view Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 29 mbz;
+        mult 3 rw type(mult_status2) "Select one of the following signals:";
+    };
+
+    constants mult_status3 width(3) "" {
+        MULT_0_8 = 0 "hwobs_coredpll_tinitz";
+    };
+    
+    register control_conf_dpll_tinitz_sel addr(base, 0x450) "dpll_tinitz view Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 29 mbz;
+        mult 3 rw type(mult_status3) "Select one of the following signals:";
+    };
+
+    constants mult_status4 width(3) "" {
+        MULT_0_9 = 0 "hwobs_coredpll_phaselock";
+        MULT_1_8 = 1 "hwobs_abedpll_phaselock";
+        MULT_2_8 = 2 "hwobs_perdpll_phaselock";
+        MULT_3_8 = 3 "hwobs_dsi1dpll_phaselock";
+        MULT_4_8 = 4 "hwobs_dsi2dpll_phaselock";
+        MULT_5_8 = 5 "reserved";
+        MULT_6_8 = 6 "hwobs_usbdpll_phaselock";
+        MULT_7_8 = 7 "reserved";
+    };
+    
+    register control_conf_dpll_phaselock_sel addr(base, 0x454) "dpll_phaselock view Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 29 mbz;
+        mult 3 rw type(mult_status4) "Select one of the following signals:";
+    };
+
+    constants mult_status5 width(3) "" {
+        MULT_0_10 = 0 "hwobs_coredpll_tenable";
+        MULT_1_9 = 1 "hwobs_abedpll_tenable";
+        MULT_2_9 = 2 "hwobs_perdpll_tenable";
+        MULT_3_9 = 3 "hwobs_dsi1dpll_tenable";
+        MULT_4_9 = 4 "hwobs_dsi2dpll_tenable";
+        MULT_5_9 = 5 "reserved";
+        MULT_6_9 = 6 "hwobs_usbdpll_tenable";
+        MULT_7_9 = 7 "reserved";
+    };
+    
+    register control_conf_dpll_tenable_sel addr(base, 0x45C) "dpll_tenable view Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 29 mbz;
+        mult 3 rw type(mult_status5) "Select one of the following signals:";
+    };
+
+    constants mult_status6 width(3) "" {
+        MULT_0_11 = 0 "hwobs_coredpll_tenablediv";
+        MULT_1_10 = 1 "hwobs_abedpll_tenablediv";
+        MULT_2_10 = 2 "hwobs_perdpll_tenablediv";
+        MULT_3_10 = 3 "hwobs_dsi1dpll_tenablediv";
+        MULT_4_10 = 4 "hwobs_dsi2dpll_tenablediv";
+        MULT_5_10 = 5 "reserved";
+        MULT_6_10 = 6 "hwobs_usbdpll_tenablediv";
+        MULT_7_10 = 7 "reserved";
+    };
+    
+    register control_conf_dpll_tenablediv_sel addr(base, 0x460) "dpll_tenablediv view Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 29 mbz;
+        mult 3 rw type(mult_status6) "Select one of the following signals:";
+    };
+
+    constants mult_status7 width(3) "" {
+        MULT_0_12 = 0 "hwobs_coredpll_bypassack";
+        MULT_1_11 = 1 "hwobs_abedpll_bypassack";
+        MULT_2_11 = 2 "hwobs_perdpll_bypassack";
+        MULT_3_11 = 3 "hwobs_dsi1dpll_bypassack";
+        MULT_4_11 = 4 "hwobs_dsi2dpll_bypassack";
+        MULT_5_11 = 5 "reserved";
+        MULT_6_11 = 6 "hwobs_usbdpll_bypassack";
+        MULT_7_11 = 7 "reserved";
+    };
+    
+    register control_conf_dpll_bypassack_sel addr(base, 0x464) "dpll_bypassack view Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 29 mbz;
+        mult 3 rw type(mult_status7) "Select one of the following signals:";
+    };
+
+    constants mult_status8 width(3) "" {
+        MULT_0_13 = 0 "hwobs_coredpll_idle";
+        MULT_1_12 = 1 "hwobs_abedpll_idle";
+        MULT_2_12 = 2 "hwobs_perdpll_idle";
+        MULT_3_12 = 3 "hwobs_dsi1dpll_idle";
+        MULT_4_12 = 4 "hwobs_dsi2dpll_idle";
+        MULT_5_12 = 5 "reserved";
+        MULT_6_12 = 6 "hwobs_usbdpll_idle";
+        MULT_7_12 = 7 "reserved";
+    };
+    
+    register control_conf_dpll_idle_sel addr(base, 0x468) "dpll_idle view Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 29 mbz;
+        mult 3 rw type(mult_status8) "Select one of the following signals:";
+    };
+
+    constants mode_status width(4) "" {
+        MODE_0 = 0 "hwobs_int_mpu_0";
+        MODE_1 = 1 "clk_view_0";
+        MODE_2 = 2 "reserved";
+        MODE_3 = 3 "reserved";
+        MODE_4 = 4 "hwobs_int_dspss_1";
+        MODE_5 = 5 "hwobs_int_cm2_0";
+        MODE_6 = 6 "hwobs_int_ivahd_0";
+        MODE_7 = 7 "reserved";
+        MODE_8 = 8 "hwobs_int_abe_0";
+        MODE_9 = 9 "hwobs_int_dspss_0";
+        MODE_10 = 10 "reserved";
+        MODE_11 = 11 "reserved";
+        MODE_12 = 12 "hwobs_int_dspss_2";
+    };
+    
+    register control_core_conf_debug_sel_tst_0 addr(base, 0x480) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status) "Select one of the following signals:";
+    };
+
+    constants mode_status1 width(4) "" {
+        MODE_0_1 = 0 "hwobs_int_mpu_1";
+        MODE_1_1 = 1 "clk_view_1";
+        MODE_2_1 = 2 "reserved";
+        MODE_3_1 = 3 "reserved";
+        MODE_4_1 = 4 "reserved";
+        MODE_5_1 = 5 "hwobs_int_cm2_1";
+        MODE_6_1 = 6 "hwobs_int_ivahd_1";
+        MODE_7_1 = 7 "reserved";
+        MODE_8_1 = 8 "hwobs_int_abe_1";
+        MODE_9_1 = 9 "hwobs_int_dspss_1";
+        MODE_10_1 = 10 "reserved";
+        MODE_11_1 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_1 addr(base, 0x484) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status1) "Select one of the following signals:";
+    };
+
+    constants mode_status2 width(4) "" {
+        MODE_0_2 = 0 "hwobs_int_mpu_2";
+        MODE_1_2 = 1 "clk_view_2";
+        MODE_2_2 = 2 "reserved";
+        MODE_3_2 = 3 "reserved";
+        MODE_4_2 = 4 "reserved";
+        MODE_5_2 = 5 "hwobs_int_cm2_2";
+        MODE_6_2 = 6 "hwobs_int_ivahd_2";
+        MODE_7_2 = 7 "reserved";
+        MODE_8_2 = 8 "hwobs_int_abe_2";
+        MODE_9_2 = 9 "hwobs_int_dspss_2";
+        MODE_10_2 = 10 "reserved";
+        MODE_11_2 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_2 addr(base, 0x488) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status2) "Select one of the following signals:";
+    };
+
+    constants mode_status3 width(4) "" {
+        MODE_0_3 = 0 "hwobs_int_mpu_3";
+        MODE_1_3 = 1 "dpll_freqlock";
+        MODE_2_3 = 2 "reserved";
+        MODE_3_3 = 3 "reserved";
+        MODE_4_3 = 4 "reserved";
+        MODE_5_3 = 5 "hwobs_int_cm2_3";
+        MODE_6_3 = 6 "hwobs_int_ivahd_3";
+        MODE_7_3 = 7 "reserved";
+        MODE_8_3 = 8 "hwobs_int_abe_3";
+        MODE_9_3 = 9 "hwobs_int_dspss_3";
+        MODE_10_3 = 10 "reserved";
+        MODE_11_3 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_3 addr(base, 0x48C) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status3) "Select one of the following signals:";
+    };
+
+    constants mode_status4 width(4) "" {
+        MODE_0_4 = 0 "hwobs_int_mpu_4";
+        MODE_1_4 = 1 "dpll_tinitz";
+        MODE_2_4 = 2 "reserved";
+        MODE_3_4 = 3 "reserved";
+        MODE_4_4 = 4 "reserved";
+        MODE_5_4 = 5 "hwobs_int_cm2_4";
+        MODE_6_4 = 6 "hwobs_int_ivahd_4";
+        MODE_7_4 = 7 "reserved";
+        MODE_8_4 = 8 "hwobs_int_abe_4";
+        MODE_9_4 = 9 "hwobs_int_dspss_4";
+        MODE_10_4 = 10 "reserved";
+        MODE_11_4 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_4 addr(base, 0x490) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status4) "Select one of the following signals:";
+    };
+
+    constants mode_status5 width(4) "" {
+        MODE_0_5 = 0 "hwobs_int_mpu_5";
+        MODE_1_5 = 1 "dpll_phaselock";
+        MODE_2_5 = 2 "reserved";
+        MODE_3_5 = 3 "reserved";
+        MODE_4_5 = 4 "reserved";
+        MODE_5_5 = 5 "hwobs_int_cm2_5";
+        MODE_6_5 = 6 "hwobs_int_ivahd_5";
+        MODE_7_5 = 7 "reserved";
+        MODE_8_5 = 8 "hwobs_int_abe_5";
+        MODE_9_5 = 9 "hwobs_int_dspss_5";
+        MODE_10_5 = 10 "reserved";
+        MODE_11_5 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_5 addr(base, 0x494) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status5) "Select one of the following signals:";
+    };
+
+    constants mode_status6 width(4) "" {
+        MODE_0_6 = 0 "hwobs_int_mpu_6";
+        MODE_1_6 = 1 "reserved";
+        MODE_2_6 = 2 "reserved";
+        MODE_3_6 = 3 "reserved";
+        MODE_4_6 = 4 "reserved";
+        MODE_5_6 = 5 "hwobs_int_cm2_6";
+        MODE_6_6 = 6 "hwobs_int_ivahd_6";
+        MODE_7_6 = 7 "reserved";
+        MODE_8_6 = 8 "hwobs_int_abe_6";
+        MODE_9_6 = 9 "hwobs_int_dspss_6";
+        MODE_10_6 = 10 "reserved";
+        MODE_11_6 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_6 addr(base, 0x498) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status6) "Select one of the following signals:";
+    };
+
+    constants mode_status7 width(4) "" {
+        MODE_0_7 = 0 "hwobs_int_mpu_7";
+        MODE_1_7 = 1 "dpll_tenable";
+        MODE_2_7 = 2 "sdma_req_view_0";
+        MODE_3_7 = 3 "reserved";
+        MODE_4_7 = 4 "reserved";
+        MODE_5_7 = 5 "hwobs_int_cm2_7";
+        MODE_6_7 = 6 "hwobs_int_ivahd_7";
+        MODE_7_7 = 7 "reserved";
+        MODE_8_7 = 8 "hwobs_int_abe_7";
+        MODE_9_7 = 9 "hwobs_int_dspss_7";
+        MODE_10_7 = 10 "reserved";
+        MODE_11_7 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_7 addr(base, 0x49C) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status7) "Select one of the following signals:";
+    };
+
+    constants mode_status8 width(4) "" {
+        MODE_0_8 = 0 "hwobs_int_mpu_8";
+        MODE_1_8 = 1 "dpll_tenablediv";
+        MODE_2_8 = 2 "sdma_req_view_1";
+        MODE_3_8 = 3 "reserved";
+        MODE_4_8 = 4 "reserved";
+        MODE_5_8 = 5 "hwobs_int_cm2_8";
+        MODE_6_8 = 6 "hwobs_int_ivahd_8";
+        MODE_7_8 = 7 "reserved";
+        MODE_8_8 = 8 "hwobs_int_abe_8";
+        MODE_9_8 = 9 "hwobs_int_dspss_8";
+        MODE_10_8 = 10 "reserved";
+        MODE_11_8 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_8 addr(base, 0x4A0) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status8) "Select one of the following signals:";
+    };
+
+    constants mode_status9 width(4) "" {
+        MODE_0_9 = 0 "hwobs_int_mpu_9";
+        MODE_1_9 = 1 "dpll_bypassack";
+        MODE_2_9 = 2 "sdma_req_view_2";
+        MODE_3_9 = 3 "reserved";
+        MODE_4_9 = 4 "reserved";
+        MODE_5_9 = 5 "hwobs_int_cm2_9";
+        MODE_6_9 = 6 "hwobs_int_ivahd_9";
+        MODE_7_9 = 7 "reserved";
+        MODE_8_9 = 8 "hwobs_int_abe_9";
+        MODE_9_9 = 9 "hwobs_int_dspss_9";
+        MODE_10_9 = 10 "reserved";
+        MODE_11_9 = 11 "hwobs_dssvenctvdetgp";
+    };
+    
+    register control_core_conf_debug_sel_tst_9 addr(base, 0x4A4) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status9) "Select one of the following signals:";
+    };
+
+    constants mode_status10 width(4) "" {
+        MODE_0_10 = 0 "hwobs_int_mpu_10";
+        MODE_1_10 = 1 "dpll_idle";
+        MODE_2_10 = 2 "sdma_req_view_3";
+        MODE_3_10 = 3 "reserved";
+        MODE_4_10 = 4 "reserved";
+        MODE_5_10 = 5 "hwobs_int_cm2_10";
+        MODE_6_10 = 6 "hwobs_int_ivahd_10";
+        MODE_7_10 = 7 "reserved";
+        MODE_8_10 = 8 "hwobs_int_abe_10";
+        MODE_9_10 = 9 "hwobs_int_dspss_10";
+        MODE_10_10 = 10 "reserved";
+        MODE_11_10 = 11 "hwobs_dssdacpwrdndaczcvbs_y";
+    };
+    
+    register control_core_conf_debug_sel_tst_10 addr(base, 0x4A8) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status10) "Select one of the following signals:";
+    };
+
+    constants mode_status11 width(4) "" {
+        MODE_0_11 = 0 "hwobs_int_mpu_11";
+        MODE_1_11 = 1 "hwobs_hsusbotg_sofpulse";
+        MODE_2_11 = 2 "sdma_req_view_all";
+        MODE_3_11 = 3 "reserved";
+        MODE_4_11 = 4 "reserved";
+        MODE_5_11 = 5 "hwobs_int_cm2_11";
+        MODE_6_11 = 6 "hwobs_int_ivahd_11";
+        MODE_7_11 = 7 "reserved";
+        MODE_8_11 = 8 "hwobs_int_abe_11";
+        MODE_9_11 = 9 "hwobs_int_dspss_11";
+        MODE_10_11 = 10 "reserved";
+        MODE_11_11 = 11 "hwobs_dssdacpwrdndaczchroma";
+    };
+    
+    register control_core_conf_debug_sel_tst_11 addr(base, 0x4AC) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status11) "Select one of the following signals:";
+    };
+
+    constants mode_status12 width(4) "" {
+        MODE_0_12 = 0 "hwobs_int_mpu_12";
+        MODE_1_12 = 1 "reserved";
+        MODE_2_12 = 2 "hwobs_coredivider_clkout3";
+        MODE_3_12 = 3 "reserved";
+        MODE_4_12 = 4 "reserved";
+        MODE_5_12 = 5 "hwobs_int_cm2_12";
+        MODE_6_12 = 6 "hwobs_int_ivahd_12";
+        MODE_7_12 = 7 "reserved";
+        MODE_8_12 = 8 "hwobs_int_abe_12";
+        MODE_9_12 = 9 "hwobs_int_dspss_12";
+        MODE_10_12 = 10 "reserved";
+        MODE_11_12 = 11 "hwobs_dssdacpwrdndaccvbs";
+    };
+    
+    register control_core_conf_debug_sel_tst_12 addr(base, 0x4B0) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status12) "Select one of the following signals:";
+    };
+
+    constants mode_status13 width(4) "" {
+        MODE_0_13 = 0 "hwobs_int_mpu_13";
+        MODE_1_13 = 1 "reserved";
+        MODE_2_13 = 2 "hwobs_perdivider_clkout4";
+        MODE_3_13 = 3 "reserved";
+        MODE_4_13 = 4 "reserved";
+        MODE_5_13 = 5 "hwobs_int_cm2_13";
+        MODE_6_13 = 6 "hwobs_int_ivahd_13";
+        MODE_7_13 = 7 "reserved";
+        MODE_8_13 = 8 "hwobs_int_abe_13";
+        MODE_9_13 = 9 "hwobs_int_dspss_13";
+        MODE_10_13 = 10 "reserved";
+        MODE_11_13 = 11 "hwobs_dssdacpwrdnbgz";
+    };
+    
+    register control_core_conf_debug_sel_tst_13 addr(base, 0x4B4) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status13) "Select one of the following signals:";
+    };
+
+    constants mode_status14 width(4) "" {
+        MODE_0_14 = 0 "hwobs_int_mpu_14";
+        MODE_1_14 = 1 "reserved";
+        MODE_2_14 = 2 "hwobs_pd_l4_per_per32k_gfclk";
+        MODE_3_14 = 3 "reserved";
+        MODE_4_14 = 4 "reserved";
+        MODE_5_14 = 5 "hwobs_int_cm2_14";
+        MODE_6_14 = 6 "hwobs_int_ivahd_14";
+        MODE_7_14 = 7 "reserved";
+        MODE_8_14 = 8 "hwobs_int_abe_14";
+        MODE_9_14 = 9 "hwobs_int_dspss_14";
+        MODE_10_14 = 10 "reserved";
+        MODE_11_14 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_14 addr(base, 0x4B8) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status14) "Select one of the following signals:";
+    };
+
+    constants mode_status15 width(4) "" {
+        MODE_0_15 = 0 "hwobs_int_mpu_15";
+        MODE_1_15 = 1 "reserved";
+        MODE_2_15 = 2 "0";
+        MODE_3_15 = 3 "reserved";
+        MODE_4_15 = 4 "reserved";
+        MODE_5_15 = 5 "hwobs_int_cm2_15";
+        MODE_6_15 = 6 "hwobs_int_ivahd_15";
+        MODE_7_15 = 7 "reserved";
+        MODE_8_15 = 8 "hwobs_int_abe_15";
+        MODE_9_15 = 9 "hwobs_int_dspss_15";
+        MODE_10_15 = 10 "reserved";
+        MODE_11_15 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_15 addr(base, 0x4BC) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status15) "Select one of the following signals:";
+    };
+
+    constants mode_status16 width(4) "" {
+        MODE_0_16 = 0 "hwobs_int_mpu_16";
+        MODE_1_16 = 1 "reserved";
+        MODE_2_16 = 2 "0";
+        MODE_3_16 = 3 "reserved";
+        MODE_4_16 = 4 "reserved";
+        MODE_5_16 = 5 "hwobs_int_cm2_16";
+        MODE_6_16 = 6 "hwobs_int_ivahd_16";
+        MODE_7_16 = 7 "reserved";
+        MODE_8_16 = 8 "hwobs_int_abe_16";
+        MODE_9_16 = 9 "hwobs_int_dspss_16";
+        MODE_10_16 = 10 "reserved";
+        MODE_11_16 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_16 addr(base, 0x4C0) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status16) "Select one of the following signals:";
+    };
+
+    constants mode_status17 width(4) "" {
+        MODE_0_17 = 0 "hwobs_int_mpu_17";
+        MODE_1_17 = 1 "reserved";
+        MODE_2_17 = 2 "0";
+        MODE_3_17 = 3 "reserved";
+        MODE_4_17 = 4 "reserved";
+        MODE_5_17 = 5 "hwobs_int_cm2_17";
+        MODE_6_17 = 6 "hwobs_int_ivahd_17";
+        MODE_7_17 = 7 "reserved";
+        MODE_8_17 = 8 "hwobs_int_abe_17";
+        MODE_9_17 = 9 "hwobs_int_dspss_17";
+        MODE_10_17 = 10 "reserved";
+        MODE_11_17 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_17 addr(base, 0x4C4) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status17) "Select one of the following signals:";
+    };
+
+    constants mode_status18 width(4) "" {
+        MODE_0_18 = 0 "hwobs_int_mpu_18";
+        MODE_1_18 = 1 "reserved";
+        MODE_2_18 = 2 "0";
+        MODE_3_18 = 3 "reserved";
+        MODE_4_18 = 4 "reserved";
+        MODE_5_18 = 5 "hwobs_int_cm2_18";
+        MODE_6_18 = 6 "hwobs_int_ivahd_18";
+        MODE_7_18 = 7 "reserved";
+        MODE_8_18 = 8 "hwobs_int_abe_18";
+        MODE_9_18 = 9 "hwobs_int_dspss_18";
+        MODE_10_18 = 10 "reserved";
+        MODE_11_18 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_18 addr(base, 0x4C8) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status18) "Select one of the following signals:";
+    };
+
+    constants mode_status19 width(4) "" {
+        MODE_0_19 = 0 "hwobs_int_mpu_19";
+        MODE_1_19 = 1 "reserved";
+        MODE_2_19 = 2 "0";
+        MODE_3_19 = 3 "reserved";
+        MODE_4_19 = 4 "reserved";
+        MODE_5_19 = 5 "hwobs_int_cm2_19";
+        MODE_6_19 = 6 "hwobs_int_ivahd_19";
+        MODE_7_19 = 7 "reserved";
+        MODE_8_19 = 8 "hwobs_int_abe_19";
+        MODE_9_19 = 9 "hwobs_int_dspss_19";
+        MODE_10_19 = 10 "reserved";
+        MODE_11_19 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_19 addr(base, 0x4CC) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status19) "Select one of the following signals:";
+    };
+
+    constants mode_status20 width(4) "" {
+        MODE_0_20 = 0 "hwobs_int_mpu_20";
+        MODE_1_20 = 1 "reserved";
+        MODE_2_20 = 2 "0";
+        MODE_3_20 = 3 "reserved";
+        MODE_4_20 = 4 "reserved";
+        MODE_5_20 = 5 "hwobs_int_cm2_20";
+        MODE_6_20 = 6 "hwobs_int_ivahd_20";
+        MODE_7_20 = 7 "reserved";
+        MODE_8_20 = 8 "hwobs_int_abe_20";
+        MODE_9_20 = 9 "hwobs_int_dspss_20";
+        MODE_10_20 = 10 "reserved";
+        MODE_11_20 = 11 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_20 addr(base, 0x4D0) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status20) "Select one of the following signals:";
+    };
+
+    constants mode_status21 width(4) "" {
+        MODE_0_21 = 0 "hwobs_int_mpu_21";
+        MODE_1_21 = 1 "reserved";
+        MODE_2_21 = 2 "0";
+        MODE_3_21 = 3 "reserved";
+        MODE_4_21 = 4 "reserved";
+        MODE_5_21 = 5 "hwobs_int_cm2_21";
+        MODE_6_21 = 6 "hwobs_int_ivahd_21";
+        MODE_7_21 = 7 "reserved";
+        MODE_8_21 = 8 "hwobs_int_abe_21";
+        MODE_9_21 = 9 "hwobs_int_dspss_21";
+        MODE_10_21 = 10 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_21 addr(base, 0x4D4) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status21) "Select one of the following signals:";
+    };
+
+    constants mode_status22 width(4) "" {
+        MODE_0_22 = 0 "hwobs_int_mpu_22";
+        MODE_1_22 = 1 "reserved";
+        MODE_2_22 = 2 "0";
+        MODE_3_22 = 3 "reserved";
+        MODE_4_22 = 4 "reserved";
+        MODE_5_22 = 5 "hwobs_int_cm2_22";
+        MODE_6_22 = 6 "hwobs_int_ivahd_22";
+        MODE_7_22 = 7 "reserved";
+        MODE_8_22 = 8 "hwobs_int_abe_22";
+        MODE_9_22 = 9 "hwobs_int_dspss_22";
+        MODE_10_22 = 10 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_22 addr(base, 0x4D8) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status22) "Select one of the following signals:";
+    };
+
+    constants mode_status23 width(4) "" {
+        MODE_0_23 = 0 "hwobs_int_mpu_23";
+        MODE_1_23 = 1 "reserved";
+        MODE_2_23 = 2 "0";
+        MODE_3_23 = 3 "reserved";
+        MODE_4_23 = 4 "reserved";
+        MODE_5_23 = 5 "hwobs_int_cm2_23";
+        MODE_6_23 = 6 "hwobs_int_ivahd_23";
+        MODE_7_23 = 7 "reserved";
+        MODE_8_23 = 8 "hwobs_int_abe_23";
+        MODE_9_23 = 9 "hwobs_int_dspss_23";
+        MODE_10_23 = 10 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_23 addr(base, 0x4DC) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status23) "Select one of the following signals:";
+    };
+
+    constants mode_status24 width(4) "" {
+        MODE_0_24 = 0 "hwobs_int_mpu_24";
+        MODE_1_24 = 1 "reserved";
+        MODE_2_24 = 2 "0";
+        MODE_3_24 = 3 "reserved";
+        MODE_4_24 = 4 "reserved";
+        MODE_5_24 = 5 "hwobs_int_cm2_24";
+        MODE_6_24 = 6 "hwobs_int_ivahd_24";
+        MODE_7_24 = 7 "reserved";
+        MODE_8_24 = 8 "hwobs_int_abe_24";
+        MODE_9_24 = 9 "hwobs_int_dspss_24";
+        MODE_10_24 = 10 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_24 addr(base, 0x4E0) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status24) "Select one of the following signals:";
+    };
+
+    constants mode_status25 width(4) "" {
+        MODE_0_25 = 0 "hwobs_int_mpu_25";
+        MODE_1_25 = 1 "reserved";
+        MODE_2_25 = 2 "0";
+        MODE_3_25 = 3 "reserved";
+        MODE_4_25 = 4 "reserved";
+        MODE_5_25 = 5 "hwobs_int_cm2_25";
+        MODE_6_25 = 6 "hwobs_int_ivahd_25";
+        MODE_7_25 = 7 "reserved";
+        MODE_8_25 = 8 "hwobs_int_abe_25";
+        MODE_9_25 = 9 "hwobs_int_dspss_25";
+        MODE_10_25 = 10 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_25 addr(base, 0x4E4) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status25) "Select one of the following signals:";
+    };
+
+    constants mode_status26 width(4) "" {
+        MODE_0_26 = 0 "hwobs_int_mpu_26";
+        MODE_1_26 = 1 "reserved";
+        MODE_2_26 = 2 "0";
+        MODE_3_26 = 3 "reserved";
+        MODE_4_26 = 4 "0";
+        MODE_5_26 = 5 "hwobs_int_cm2_26";
+        MODE_6_26 = 6 "hwobs_int_ivahd_26";
+        MODE_7_26 = 7 "reserved";
+        MODE_8_26 = 8 "hwobs_int_abe_26";
+        MODE_9_26 = 9 "hwobs_int_dspss_26";
+        MODE_10_26 = 10 "reserved";
+    };
+    
+    register control_core_conf_debug_sel_tst_26 addr(base, 0x4E8) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status26) "Select one of the following signals:";
+    };
+
+    constants mode_status27 width(4) "" {
+        MODE_0_27 = 0 "hwobs_int_mpu_27";
+        MODE_1_27 = 1 "reserved";
+        MODE_2_27 = 2 "0";
+        MODE_3_27 = 3 "reserved";
+        MODE_4_27 = 4 "0";
+        MODE_5_27 = 5 "hwobs_int_cm2_27";
+        MODE_6_27 = 6 "hwobs_int_ivahd_27";
+        MODE_7_27 = 7 "reserved";
+        MODE_8_27 = 8 "hwobs_int_abe_27";
+        MODE_9_27 = 9 "hwobs_int_dspss_27";
+        MODE_10_27 = 10 "reserved";
+        MODE_11_21 = 11 "0";
+        MODE_12_1 = 12 "sdma_req_view_0";
+    };
+    
+    register control_core_conf_debug_sel_tst_27 addr(base, 0x4EC) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status27) "Select one of the following signals:";
+    };
+
+    constants mode_status28 width(4) "" {
+        MODE_0_28 = 0 "hwobs_int_mpu_28";
+        MODE_1_28 = 1 "reserved";
+        MODE_2_28 = 2 "0";
+        MODE_3_28 = 3 "reserved";
+        MODE_4_28 = 4 "0";
+        MODE_5_28 = 5 "hwobs_int_cm2_28";
+        MODE_6_28 = 6 "hwobs_int_ivahd_28";
+        MODE_7_28 = 7 "reserved";
+        MODE_8_28 = 8 "hwobs_int_abe_28";
+        MODE_9_28 = 9 "hwobs_int_dspss_28";
+        MODE_10_28 = 10 "reserved";
+        MODE_11_22 = 11 "0";
+        MODE_12_2 = 12 "sdma_req_view_1";
+    };
+    
+    register control_core_conf_debug_sel_tst_28 addr(base, 0x4F0) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status28) "Select one of the following signals:";
+    };
+
+    constants mode_status29 width(4) "" {
+        MODE_0_29 = 0 "hwobs_int_mpu_29";
+        MODE_1_29 = 1 "reserved";
+        MODE_2_29 = 2 "0";
+        MODE_3_29 = 3 "reserved";
+        MODE_4_29 = 4 "0";
+        MODE_5_29 = 5 "hwobs_int_cm2_29";
+        MODE_6_29 = 6 "hwobs_int_ivahd_29";
+        MODE_7_29 = 7 "reserved";
+        MODE_8_29 = 8 "hwobs_int_abe_29";
+        MODE_9_29 = 9 "hwobs_int_dspss_29";
+        MODE_10_29 = 10 "reserved";
+        MODE_11_23 = 11 "0";
+        MODE_12_3 = 12 "sdma_req_view_2";
+    };
+    
+    register control_core_conf_debug_sel_tst_29 addr(base, 0x4F4) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status29) "Select one of the following signals:";
+    };
+
+    constants mode_status30 width(4) "" {
+        MODE_0_30 = 0 "hwobs_int_mpu_30";
+        MODE_1_30 = 1 "reserved";
+        MODE_2_30 = 2 "0";
+        MODE_3_30 = 3 "reserved";
+        MODE_4_30 = 4 "0";
+        MODE_5_30 = 5 "hwobs_int_cm2_30";
+        MODE_6_30 = 6 "hwobs_int_ivahd_30";
+        MODE_7_30 = 7 "reserved";
+        MODE_8_30 = 8 "hwobs_int_abe_30";
+        MODE_9_30 = 9 "hwobs_int_dspss_30";
+        MODE_10_30 = 10 "reserved";
+        MODE_11_24 = 11 "0";
+        MODE_12_4 = 12 "sdma_req_view_3";
+    };
+    
+    register control_core_conf_debug_sel_tst_30 addr(base, 0x4F8) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status30) "Select one of the following signals:";
+    };
+
+    constants mode_status31 width(4) "" {
+        MODE_0_31 = 0 "hwobs_int_mpu_31";
+        MODE_1_31 = 1 "reserved";
+        MODE_2_31 = 2 "0";
+        MODE_3_31 = 3 "reserved";
+        MODE_4_31 = 4 "0";
+        MODE_5_31 = 5 "hwobs_int_cm2_31";
+        MODE_6_31 = 6 "hwobs_int_ivahd_31";
+        MODE_7_31 = 7 "reserved";
+        MODE_8_31 = 8 "hwobs_int_abe_31";
+        MODE_9_31 = 9 "hwobs_int_dspss_31";
+        MODE_10_31 = 10 "reserved";
+        MODE_11_25 = 11 "0";
+        MODE_12_5 = 12 "sdma_req_view_all";
+    };
+    
+    register control_core_conf_debug_sel_tst_31 addr(base, 0x4FC) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        mode 4 rw type(mode_status31) "Select one of the following signals:";
+    };
+};

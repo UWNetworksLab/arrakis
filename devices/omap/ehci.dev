@@ -1,0 +1,469 @@
+/*
+ * Copyright (c) 2009, 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ehci.dev
+ *
+ * DESCRIPTION: Enhanced Host Controller Interface description
+ *
+ * Numbers in comments refer to the Intel Enhanced Host Controller
+ * Interface Specification for Universal Serial Bus, March 12, 2002,
+ * Revision: 1.0 
+ */
+
+device ehci msbfirst (addr cap, addr op) "EHCI USB Controller" {
+
+    /* 
+     * Section 2.2 
+     * Host controller capabilty registers 
+     */
+    
+    // 2.2.1 
+    // The correct value for 'op' is actually 'cap' plus this number. 
+    register caplength ro addr(cap, 0x00) "Capability Registers Length" 
+	type(uint8);
+
+    // 2.2.2
+    register hciversion ro addr(cap, 0x02) "Host Controller Interface Version Number" 
+	type(uint16);
+
+    // 2.2.3
+    register hcsparams ro addr(cap, 0x04) "Structural parameters" {
+	_        8;
+	dpn      4	"Debug port number";
+	_        3;
+	p_indicator  1      "Port indicator";
+	n_cc     4	"Number of campanion controller";
+	n_pcc    4      "Number of ports per companion controller";
+	prr      1      "Port routing rules";
+	_        2;
+	ppc      1      "Port power control";
+	n_ports  4      "Num. physical downstream ports on this controller";
+   }; 
+    
+    // 2.2.4
+    register hccparams ro addr(cap, 0x08) "Capability parameters" {
+	_        16;
+	eecp     8     "EHCI extended capabilities pointer"; 
+	ist      4     "Isochronous scheduling threshold";
+	_        1;
+	aspc     1     "Asynchronous sechedule park capability";
+	pflf     1     "Programmable frame list flag";
+	bit64ac    1     "Extended 64 bit addressing capability";
+    };
+    
+    // section 2.2.5 Companion port route descriptor 
+    register hcspportroute ro addr(cap, 0x0C) "Companion port route descr." {
+	attr    60	"Port array";
+	_	4;
+    };
+
+    /* 
+     * Section 2.3
+     * Host controller operational registers
+     */
+ 
+    constants itc_val "Interrupt threshold control" {
+	itc_val_rsvd  = 0x00  "Reserved";
+	uframe_1      = 0x01  "1 Micro frame";
+	uframes_2     = 0x02  "2 Micro frames";
+	uframes_4     = 0x04  "4 Micro frames";
+	uframes_8     = 0x08  "8 Micro frames (default, equates to 1 ms)";
+	uframes_16    = 0x10  "16 Micro frames (2 ms)";
+	uframes_32    = 0x20  "32 Micro frames (4 ms)";
+	uframes_64    = 0x40  "64 Micro frames (8 ms)";
+    };
+    
+    constants frame_val "Frame list size" {
+	elem_1024    = 0b00   "1024 Elements (4096 bytes, default)";
+	elem_512     = 0b01   "512 Elements (2048 bytes)";
+	elem_256     = 0b10   "256 Elements (1024 bytes)";
+	frame_rsvd   = 0b11   "Reserved";
+    };
+    
+    // 2.3.1
+    register usbcmd rw addr(op, 0x00) "USB command" {
+	_       8    mbz;
+	itc     8    type(itc_val) "Interrupt threshold control";
+	_       4    mbz;
+	aspme   1    rw		"Asynchronous schedule park mode enable";
+	_       1    mbz;
+	aspmc   2    rw		"Asynchronous schedule park mode count";
+	lhcr    1    rw		"Light host controller reset";
+	iaad    1    rw		"Interrupt on async advance doorbell";
+	ase     1    rw		"Asynchronous schedule enable";
+	pse     1    rw		"Periodic schedule enable";
+	fls     2    type(frame_val)  "Frame list size";
+	hcr     1    rw		"Host controller reset";
+	rs      1    rw		"Run stop for scheduling";
+    };
+
+    // 2.3.2
+    register usbsts rw addr(op, 0x04) "USB status" {
+	_        16   mbz;
+	ass      1    ro   "Asynchronous schedule status";
+	pss      1    ro   "Periodic schedule status";
+	rec      1    ro   "Reclamation";
+	hch      1    ro   "Host controller halted see Run/Stop";   
+	_        6    mbz;
+	iaa      1    rwc  "Interrupt on Async advance";
+	hse      1    rwc  "Host system error";
+	flr      1    rwc  "Frame list rollover";
+	pcd      1    rwc  "Port change detect";
+	usbei    1    rwc  "USB error interrupt";
+	usbi     1    rwc  "USB interrupt";
+    };
+
+    // 2.3.3
+    register usbintr rw addr(op, 0x08) "USB interrupt enable" {
+	_       26 mbz;
+	iaae   1  "Interrupt on async advance enable";
+	hsee   1  "Host system error enable";
+	flre   1  "Frame list rollover enable";
+	pcie   1  "Port change interrupt enable";
+	usbeie 1  "USB error interrupt enable";
+	usbie  1  "USB interrupt enable";
+    };
+
+    // 2.3.4
+    register frindex rw addr(op, 0x0C) "Frame index" {
+	_    18  mbz;
+	fi   14		"Frame index";
+    };
+
+    // 2.3.5 
+    // NOTE: Only enabled if 64 bit address capability is enabled 
+    register ctrldssegment rw addr(op, 0x10) "Control data structure segment" {
+	data 32 rw "MSB [63:32] bits of EHCI data strctures";
+    };
+
+    // 2.3.6 
+    register periodiclistbase rw addr(op, 0x14) "Periodic frame list base addr" {
+	addr   20   rw    "Base address (must be 4k aligned)";
+	_      12   mbz; 
+    };
+    
+    // 2.3.7
+    register asynclistaddr rw addr(op, 0x18) "Current async. list addr." {
+	lpl    27   rw   "Link pointer low";
+	_      5    mbz;
+    };
+    
+    // 2.3.8 
+    register configflag rw addr(op, 0x40) "Configure flag" {
+	_     31   mbz;
+	cf    1    rw   "Configure flag";
+    };
+    
+    // 2.3.9
+    constants test_mode_val "Test modes" {
+	disabled  =  0b0000   "Test mode not enabled";
+	test_j_st =  0b0001   "Test J_STATE";
+	test_k_st =  0b0010   "Test K_STATE";
+	se0_nak   =  0b0011   "Test SE0_NAK";
+	test_pack =  0b0100   "Test packet";
+	force_ena =  0b0101   "Force enable";
+    };
+    
+    constants indi_val "Port indicator values" {
+	off                = 0b00  "Port indicators are off";
+	amber              = 0b01  "Amber";
+	green              = 0b10  "Green";
+	indi_val_undef     = 0b11  "Undefined";
+    };     
+    
+    constants lstatus_val "USB line status" {
+	se0           =  0b00   "Not low speed device, perform EHCI reset";
+	j_state       =  0b10   "Not low speed device, perform EHCI reset";
+	k_state       =  0b01   "Low speed device, release ownership of port";
+	lstatus_undef =  0b11   "Not low speed device, perform EHCI reset"; 
+    };
+
+    regarray portsc rw addr(op, 0x44)[16] "Port status and control" {
+	_            9 mbz;
+	wkoc_e       1		"Wake on over-current enable";
+	wkdscnnt_e   1		"Wake on disconnect enable";
+	wkcnnt_e     1		"Wake on connect enable";
+	ptc          4 type(test_mode_val) "Port test control";
+	pic          2 type(indi_val)      "Port indicator control";
+	po           1		"Port owner";
+	pp           1		"Port power";
+	ls           2 type(lstatus_val)   "Line status value";
+	_            1 mbz;
+	pr           1		"Port reset";
+	sus          1		"Port suspend";
+	fpr          1		"Force port resume";
+	occ          1 rwc	"Over current change";
+	oca          1 ro	"Over current active";
+	pec          1 rwc	"Port enable/disbale change";
+	ped          1		"Port enabled/disabled";
+	csc          1 rwc	"Connect status change";
+	ccs          1 ro	"Current connect status";
+    };
+/*
+    //
+    // In-memory data structures
+    //
+
+    // 3.1
+    constants lptype width(2) "Link pointer type" {
+	lp_itd	= 0b00	"Isochronous transfer descriptor";
+	lp_qh	= 0b01	"Queue head";
+	lp_sitd = 0b10	"Split transaction isochronous trans. desc.";
+	lp_fstn = 0b11	"Frame span traversal node";
+    };
+
+    datatype lp msbfirst(32) "Link pointer" {
+	p	27		"Frame list link pointer";
+	_	2 mbz;
+	typ	2 type(lptype) "Pointer type";
+	t	1		"Pointer value invalid";
+    };
+
+    // 3.3
+    datatype itd msbfirst(32) "Isochronous transfer descriptor" {
+	next	32 type(lp)	"Next descriptor";
+	sc0	32 type(itsc)	"Transaction 0 Status/control";
+	sc1	32 type(itsc)	"Transaction 1 Status/control";
+	sc2	32 type(itsc)	"Transaction 2 Status/control";
+	sc3	32 type(itsc)	"Transaction 3 Status/control";
+	sc4	32 type(itsc)	"Transaction 4 Status/control";
+	sc5	32 type(itsc)	"Transaction 5 Status/control";
+	sc6	32 type(itsc)	"Transaction 6 Status/control";
+	sc7	32 type(itsc)	"Transaction 7 Status/control";
+	bp0	32 type(itbp0)	"Buffer pointer 0";
+	bp1	32 type(itbp1)	"Buffer pointer 1";
+	bp2 	32 type(itbp2)	"Buffer pointer 2";
+	bp3	32 type(itbp3)	"Buffer pointer 3";
+	bp4	32 type(itbp3)	"Buffer pointer 4";
+	bp5	32 type(itbp3)	"Buffer pointer 5";
+	bp6	32 type(itbp3)	"Buffer pointer 6";
+    };
+
+    // 3.3.2
+    datatype itsc msbfirst(32) "Isochronous transaction status/control" {
+	// Status
+	active	1		"Active";
+	dbe	1		"Data buffer error";
+	bd	1		"Babble detected";
+	xacterr	1		"Transaction error";
+	// Control
+	length	12		"Transaction length";
+	ioc	1		"Interrupt on complete";
+	pg	3		"Page select (0-6)";
+	offset	12		"Offset from state of buffer";
+    };
+
+    // 3.3.3
+    datatype itbp0 msbfirst(32) "iTD buffer pointer page 0" {
+	p	20		"Buffer pointer (4k aligned)";
+	epn	4		"Endpoint number";
+	_	1 mbz;
+	da	7		"Device address";
+    };
+    datatype itdp1 msbfirst(32) "iTD buffer pointer page 1" {
+	p	20		"Buffer pointer (4k aligned)";
+	dir	1		"In (1) or out (0) PID";
+	mps	11		"Maximum packet size";
+    };
+    datatype itdp2 msbfirst(32) "iTD buffer pointer page 2" {
+	p	20		"Buffer pointer (4k aligned)";
+	_	10 mbz;
+	multi	2		"Num. transactions/micro-frame + 1 (0=rsvd)";
+    };
+    datatype itdp3 msbfirst(32) "iTD buffer pointer page 3" {
+	p	20		"Buffer pointer (4k aligned)";
+	_	12 mbz;
+    };
+
+    // 3.4
+    datatype sitd msbfirst(32) "Split isochronous transfer descriptor" {
+	next	32 type(lp)	"Next descriptor";
+	cap	32 type(sitcap)	"Endpoint capabilities/characteristics";
+	msc	32 type(sitmsc)	"Micro-frame schedule control";
+	tsc	32 type(sittsc)	"Transfer status and control";
+	bpl0	32 type(sitbpl0) "Buffer page pointer 0";
+	bpl1	32 type(sitbpl1) "Buffer page pointer 1";
+	bp	32 type(sitblp) "Back link";
+    };
+
+    // 3.4.2
+    datatype sitcap msbfirst(32) "siTD endpoint capabilities/characteristics" {
+	dir	1		"In (1) or out (0) PID";
+	port	7		"Port number";
+	_	1 mbz;
+	hub	7		"Hub address";
+	_	4 mbz;
+	epn	4		"Endpoint number";
+	_	1 mbz;
+	da	7		"Device address";
+    };
+    datatype sitmsc msbfirst(32) "siTD micro-frame schedule control" {
+	_	16 mbz;
+	scm	8		"Split completion mask";
+	ssm	8		"Split start mask";
+    };
+
+    // 3.4.3 
+    datatype sittsc msbfirst(32) "siTD transfer status and control" {
+	ioc	1		"Interrupt on complete";
+	p	1		"Page select";
+	_	4 mbz;
+	total	10		"Total bytes to transfer";
+	cpm	8		"Microframe complete-split progress mask";
+	active	1		"Status active";
+	err	1		"ERR response rcvd from transaction translator";
+	dbe	1		"Data buffer error";
+	babble	1		"Babble detected";
+	xacterr	1		"Transaction error";
+	mmf	1		"Missed micro-frame";
+	sts	1		"Split transaction state";
+	_	1 mbz;
+    };
+
+    // 3.4.4 
+    constants xpos width(2) "Transaction position" {
+	tp_all	= 0b00		"Entire payload";
+	tp_begin = 0b01		"First data payload";
+	tp_mid	= 0b10		"Middle payload";
+	tp_end = 0b11		"Final payload";
+    };
+    datatype sitbpl0 msbfirst(32) "siTD buffer page pointer list page 0" {
+	p	20		"Buffer pointer (4k aligned)";
+	offset	12		"Current offset";
+    };
+    datatype sitbpl1 msbfirst(32) "siTD buffer page pointer list page 1" {
+	p	20		"Buffer pointer (4k aligned)";
+	_	7 mbz;
+	tp	2 type(xpos)	"Transaction position";
+	tc	3		"Transaction count";
+    };
+
+    // 3.4.5
+    datatype sitblp msbfirst(32) "siTD back link pointer" {
+	bp	27		"Back pointer";
+	_	4 mbz;
+	t	1		"Terminate (0 -> bp is valid)";
+    };
+
+    // 3.5
+    datatype qtd msbfirst(32) "Queue element transfer descriptor" {
+	next	32 type(lp)	"Next element";
+	altnext	32 type(lp)	"Alternate next pointer";
+	token	32 type(qttok)  "Token";
+	bp0	32 type(qtbp0)  "Buffer pointer 0";
+	bp1	32 type(qtbp1)  "Buffer pointer 1";
+	bp2	32 type(qtbp1)  "Buffer pointer 2";
+	bp3	32 type(qtbp1)  "Buffer pointer 3";
+	bp4	32 type(qtbp1)  "Buffer pointer 4";
+    };
+
+    // 3.5.3
+    constants pid "PID token encoding" {
+	pid_out		= 0b00	"Generates OUT token (E1H)";
+	pid_in		= 0b01	"Generates IN token (69H)";
+	pid_setup	= 0b10  "Generates SETUP token (2DH)";
+	pid_rsvd	= 0b11	"Reserved";
+    };
+    
+    datatype qttok msbfirst(32) "qTD Token" {
+	toggle	1		"Data toggle";
+	tbt	15		"Total bytes to transfer";
+	ioc	1		"Interrupt on complete";
+	cp	3		"Current page";
+	cerr	2		"Error counter";
+	pidc	2 type(pid)	"PID code token";
+	active	1		"Status active";
+	halted	1		"Serious error at endpoint";
+	dbe	1		"Data buffer error";
+	babble	1		"Babble detected";
+	xacterr	1		"Transaction error";
+	mmf	1		"Missed micro-frame";
+	sts	1		"Split transaction state";
+	ping	1		"Ping state";
+    };
+
+    // 3.5.4
+    datatype qtbp0 msbfirst(32) "Queue element buffer pointer page 0" {
+	p	20		"Buffer pointer (4k aligned)";
+	offset	12		"Current offset";
+    };
+    datatype qtbp1 msbfirst(32) "Queue element buffer pointer page 1" {
+	p	20		"Buffer pointer (4k aligned)";
+	_	12 mbz;
+    };
+
+    // 3.6
+    datatype qh msbfirst(32) "Queue head" {
+	hlp	32 type(lp)	"Horizontal link pointer";
+	cap1	32 type(qhcap1) "Endpoint capabilities/characteristics 1";
+	cap2	32 type(qhcap2) "Endpoint capabilities/characteristics 2";
+	current	32 type(lp)	"Current element";
+	next	32 type(lp)	"Next element";
+	altnext	32 type(qhlp)	"Alternate next pointer";
+	token	32 type(qttok)  "Token";
+	bp0	32 type(qtbp0)  "Buffer pointer 0";
+	bp1	32 type(qhbp1)  "Buffer pointer 1";
+	bp2	32 type(qhbp2)  "Buffer pointer 2";
+	bp3	32 type(qtbp1)  "Buffer pointer 3";
+	bp4	32 type(qtbp1)  "Buffer pointer 4";
+    };	
+
+    // 3.6.2 
+    constants speed width(2) "Endpoint speed" {
+	fullspeed	= 0b00 "Full-speed (12Mbs)";
+	lowspeed	= 0b01 "Low-speed (1.5Mbs)";
+	highspeed	= 0b10 "High-speed (480 Mb/s)";
+    };
+
+    datatype qhcap1 msbfirst(32) "Endpoint capabilities: queue head word 1"{
+	rl	4		"NAK count reload";
+	c	1		"Control endpoint flag";
+	mpl	11		"Maximum packet length";
+	h	1		"Head of reclamation list flag";
+	dtc	1		"Data toggle control";
+	eps	2 type(speed)	"Endpoint speed";
+	epn	4		"Endpoint number";
+	i	1		"Inactivate on next transaction";
+	da	7		"Device address";
+    };
+
+    datatype qhcap2 msbfirst(32) "Endpoint capabilities: queue head word 2"{
+	mult	2		"High-bandwidth pipe multiplier";
+	port	7		"Port number";
+	hub	7		"Hub address";
+	scm	8		"Split completion mask";
+	ism	8		"Interrupt schedule mask";
+    };
+
+    // 3.6.3 
+    datatype qhlpa msbfirst(32) "Alternate queue head link pointer" {
+	p	27		"Frame list link pointer";
+	nakcnt	4		"NACK counter";
+	t	1		"Pointer value invalid";
+    };
+
+    datatype qhbp1 msbfirst(32) "Queue head buffer pointer page 1" {
+	p	20		"Buffer pointer (4k aligned)";
+	_	4 mbz;
+	cpm	8		"Split-transaction complete-split progress";
+    };
+
+    datatype qhbp2 msbfirst(32) "Queue head buffer pointer page 2" {
+	p	20		"Buffer pointer (4k aligned)";
+	sb	7		"S-bytes";
+	ft	5		"Split-transaction frame tag";
+    };
+
+    // 3.7
+    datatype fstm msbfirst(32) "Periodic Frame Span Traversal Node" {
+	normal	32 type(lp)	"Normal path link pointer"; 
+	back	32 type(lp)	"Back path link pointer";
+    };*/
+};
+

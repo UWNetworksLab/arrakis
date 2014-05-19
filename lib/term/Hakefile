@@ -1,0 +1,38 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2012, 2013, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+-- Attn: Systems Group.
+--
+-- Hakefile for lib/term
+--
+--------------------------------------------------------------------------
+
+[
+    build library { target = "term_server",
+                    cFiles = [ "server/server.c" ],
+                    flounderBindings = [ "terminal",
+                                         "terminal_config",
+                                         "terminal_session" ],
+                    flounderDefs = [ "monitor" ]
+                  },
+
+    build library { target = "term_client",
+                    cFiles = [ "client/client.c",
+                               "client/client_blocking.c",
+                               "client/default_filters.c",
+                               "client/default_triggers.c",
+                               "client/filter.c",
+                               "client/session.c",
+                               "client/trigger.c" ],
+                    addIncludes = [ "client/" ],
+                    flounderBindings = [ "terminal",
+                                         "terminal_config",
+                                         "terminal_session" ],
+                    flounderExtraBindings = [ ( "octopus", [ "rpcclient" ] ) ],
+                    flounderDefs = [ "monitor", "octopus" ]
+                  }
+]

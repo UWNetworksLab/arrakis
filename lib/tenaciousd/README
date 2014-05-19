@@ -1,0 +1,5 @@
+Building on Linux
+=================
+Create a new directory and put symlinks to build.sh and Makefile in there.
+
+Execute build.sh to build the library for Linux.

@@ -1,0 +1,974 @@
+/*
+ * Copyright (c) 2009, 2010, 2011, 2012, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+// Kernel/syscall errors
+errors kernel SYS_ERR_ {
+    default success OK          "Success",
+
+    // generic errors during system call handling
+    failure ILLEGAL_SYSCALL     "Illegal system call number",
+    failure INVARGS_SYSCALL     "Invalid system call arguments",
+    failure CALLER_ENABLED      "Invalid system call while enabled",
+    failure CALLER_DISABLED     "Invalid system call while disabled",
+    failure ILLEGAL_INVOCATION  "Illegal capability invocation",
+    failure INVALID_USER_BUFFER "Invalid user space buffer",
+
+    // LMP errors
+    failure LMP_NO_TARGET       "There is no target dispatcher for this endpoint",
+    failure LMP_TARGET_DISABLED "Target of LMP is disabled",
+    failure LMP_BUF_OVERFLOW    "The endpoint buffer is full",
+    failure LMP_EP_STATE_INVALID "Target has corrupt/invalid state in its endpoint structure",
+    failure LMP_CAPTRANSFER_SRC_LOOKUP          "Error looking up source for cap transfer",
+    failure LMP_CAPTRANSFER_DST_CNODE_LOOKUP    "Error looking up destination CNode for cap transfer",
+    failure LMP_CAPTRANSFER_DST_CNODE_INVALID   "Destination CNode cap not of type CNode for cap transfer",
+    failure LMP_CAPTRANSFER_DST_SLOT_OCCUPIED   "Destination slot is occupied for cap transfer",
+    failure LRPC_SLOT_INVALID   "Invalid slot specified for LRPC",
+    failure LRPC_NOT_ENDPOINT   "Slot specified for LRPC does not contain an endpoint cap",
+    failure INVALID_EPLEN       "Endpoint buffer has invalid length",
+
+    // XXX: this should go away -AB
+    failure IDC_MSG_BOUNDS      "Attempted to retrieve a word beyond the size of an LMP message structure",
+
+    // Generic CSpace lookup errors
+    failure CNODE_TYPE          "Encountered non-CNode capability when resolving slot",
+    failure CNODE_RIGHTS        "Insufficient rights on CNode",
+    failure DEPTH_EXCEEDED      "Exceeded depth limit of CSpace",
+    failure GUARD_MISMATCH      "Guard does not match",
+    failure CAP_NOT_FOUND       "Capability not found (empty slot encountered)",
+    failure IDENTIFY_LOOKUP     "Error while looking up cap to identify",
+
+    // Generic capability manipulation errors
+    failure SLOT_IN_USE         "Destination capability slots occupied",
+    failure SLOT_LOOKUP_FAIL    "Failure during slot lookup",
+    failure GUARD_SIZE_OVERFLOW "Specified guard size exceeds CSpace depth",
+    failure INVALID_SOURCE_TYPE "Invalid source capability type",
+    failure ILLEGAL_DEST_TYPE   "Illegal destination capability type",
+    failure SOURCE_CAP_LOOKUP   "Error looking up source capability",
+    failure DEST_CNODE_LOOKUP   "Error looking up destination CNode",
+    failure DEST_CNODE_INVALID  "Destination CNode cap is not of type CNode",
+    failure ROOT_CAP_LOOKUP     "Error looking up root capability",
+    failure DEST_TYPE_INVALID   "Destination capability is of invalid type",
+    failure INVALID_RETYPE      "Invalid source/destination type pair for retyping",
+    failure REVOKE_FIRST        "Capability already has descendants or siblings",
+    failure INVALID_SIZE_BITS   "Invalid size for new objects",
+    failure SLOTS_INVALID       "Destination capability slots exceed capacity of CNode",
+    failure SLOTS_IN_USE        "One or more destination capability slots occupied",
+    failure RETYPE_CREATE       "Error while creating new capabilities in retype",
+    failure NO_LOCAL_COPIES     "No copies of specified capability in local MDB",
+    failure RETRY_THROUGH_MONITOR "There is a remote copy of the capability, monitor must be involved to perform a cross core agreement protocol",
+    failure TYPE_NOT_CREATABLE  "Specified capability type is not creatable at runtime. Consider retyping it from another capability.",
+
+    // errors specific to page mapping
+    failure VNODE_SLOT_INVALID      "Destination slot exceeds size of page table",
+    failure WRONG_MAPPING           "Wrong source/destination mapping type",
+    failure FRAME_OFFSET_INVALID    "Specified offset exceeds size of frame",
+    failure VNODE_SLOT_RESERVED     "Destination slot is reserved",
+    failure VNODE_SLOT_INUSE        "Destination slot in use: unmap first",
+    failure VNODE_TYPE              "Encountered non-VNode capability when manipulating page tables",
+    failure VNODE_LOOKUP_NEXT       "Could not find next level page table",
+    failure VNODE_NOT_INSTALLED     "VNode not in rooted page table tree",
+    failure VM_ALREADY_MAPPED       "This cap copy is already mapped",
+    failure VM_MAP_SIZE             "Mapping size too large",
+    failure VM_MAP_OFFSET           "Mapping offset too large",
+    failure VM_RETRY_SINGLE         "Mapping overlaps multiple leaf page tables, retry",
+
+    // errors related to IRQ table
+    failure IRQ_LOOKUP          "Specified capability was not found while inserting in IRQ table",
+    failure IRQ_NOT_ENDPOINT    "Specified capability is not an endpoint cap",
+    failure IRQ_NO_LISTENER     "No listener on specified endpoint cap", // ??
+    failure IRQ_INVALID         "Invalid interrupt number",
+
+    // IO capability
+    failure IO_PORT_INVALID     "IO port out of range",
+
+    // Dispatcher setup and spawn core invocations
+    failure DISP_CSPACE_ROOT    "Error setting CSpace root on dispatcher",
+    failure DISP_CSPACE_INVALID "Invalid capability type given for CSpace root on dispatcher",
+    failure DISP_VSPACE_ROOT    "Error setting VSpace root on dispatcher",
+    failure DISP_VSPACE_INVALID "Invalid capability type given for VSpace root on dispatcher",
+    failure DISP_FRAME          "Error setting dispatcher frame",
+    failure DISP_FRAME_INVALID  "Invalid capability type given for dispatcher frame",
+    failure DISP_NOT_RUNNABLE   "Cannot run dispatcher; it is not completely setup",
+    failure DISP_CAP_LOOKUP     "Error looking up dispatcher cap",
+    failure DISP_CAP_INVALID    "Invalid type capability given for dispatcher cap",
+    failure KERNEL_MEM_LOOKUP   "Error looking up capability for kernel memory",
+    failure KERNEL_MEM_INVALID  "Invalid capability type passed for kernel memory",
+    failure CORE_NOT_FOUND      "Unable to boot core: core ID does not exist",
+    failure INVALID_YIELD_TARGET "Target capability for directed yield is invalid",
+    failure DISP_OCAP_LOOKUP    "Error looking up other dispatcher cap",
+
+    // VMKit specific errors
+    failure VMKIT_UNAVAIL               "Virtualization extensions are unavailable",
+    failure VMKIT_VMCB                  "Error setting VMCB for dispatcher",
+    failure VMKIT_VMCB_INVALID         	"Invalid frame capability passed for VMCB",
+    failure VMKIT_CTRL                  "Error setting control area for dispatcher",
+    failure VMKIT_CTRL_INVALID          "Invalid frame capability passed for control structure",
+    failure VMKIT_ENDPOINT              "Error setting monitor endpoint for dispatcher",
+    failure VMKIT_ENDPOINT_INVALID      "Invalid monitor endpoint capability passed",
+
+    // Serial port errors
+    failure SERIAL_PORT_INVALID         "Invalid serial port",
+    failure SERIAL_PORT_UNAVAILABLE     "Serial port unavailable",
+
+    // Performance monitoring errors
+    failure PERFMON_NOT_AVAILABLE	"Performance monitoring feature unavailable",
+
+    // Time synchronization errors
+    failure SYNC_MISS			"Missed synchronization phase",
+
+    // SCC driver errors
+    failure CROSS_MC			"Frame crosses memory controllers",
+
+    // ID capability
+    failure ID_SPACE_EXHAUSTED  "ID space exhausted",
+
+    // I2C driver
+    // XXX: should not be in kernel
+    failure I2C_UNINITIALIZED           "Trying to use uninitialized i2c controller",
+    failure I2C_ZERO_LENGTH_MSG         "Zero byte transfers not allowed",
+    failure I2C_WAIT_FOR_BUS            "Wait for bus free timed out",
+    failure I2C_FAILURE                 "I2C subsystem failure",
+
+};
+
+// errors generated by libcaps
+errors libcaps CAPS_ERR_ {
+    // general errors
+    failure INVALID_ARGS        "Invalid arguments",
+
+    // mdb operation errors
+    failure MDB_DUPLICATE_ENTRY "Inserted entry already present",
+    failure MDB_ENTRY_NOTFOUND  "Removed entry not found",
+
+    // search errors
+    failure CAP_NOT_FOUND       "Did not find a matching capability",
+};
+
+// errors generated by libbarrelfish code
+errors libbarrelfish LIB_ERR_ {
+    // generic errors
+    failure WHILE_DELETING      "Error while deleting capability",
+    failure WHILE_FREEING_SLOT  "Error while freeing capability slot",
+    failure MALLOC_FAIL         "Malloc returned NULL",
+    failure SLAB_ALLOC_FAIL     "slab_alloc() returned NULL",
+    failure SLAB_REFILL         "Refilling slab allocator failed",
+    failure NOT_IMPLEMENTED     "functionality not implemented yet",
+    failure SHOULD_NOT_GET_HERE "Should not get here",
+    failure NOT_CNODE           "Function invoked on a capref, that does not represent a CNode",
+
+    // nested errors in specific functions
+    failure FRAME_ALLOC         "Failure in frame_alloc()",
+    failure FRAME_CREATE        "Failure in frame_create()",
+    failure FRAME_CREATE_MS_CONSTRAINTS "frame_create() failed due to constraints to mem_serv in ram_alloc",
+    failure VNODE_CREATE        "Failure in vnode_create()",
+    failure CNODE_CREATE        "Failure in cnode_create()",
+    failure CNODE_CREATE_FROM_MEM "Failure in cnode_create_from_mem()",
+    failure RAM_ALLOC           "Failure in ram_alloc()",
+    failure RAM_ALLOC_WRONG_SIZE "Wrong size of memory requested in ram alloc",
+    failure RAM_ALLOC_MS_CONSTRAINTS "Ram alloc failed due to constraints to mem_serv",
+    failure CAP_MINT            "Failure in cap_mint()",
+    failure CAP_COPY            "Failure in cap_copy()",
+    failure CAP_RETYPE          "Failure in cap_retype()",
+    failure DEVFRAME_TYPE       "Failure in devframe_type()",
+    failure CAP_DELETE          "Failure in cap_delete()",
+    failure CAP_DESTROY         "Failure in cap_destroy()",
+    failure CAP_INVOKE          "Failure in cap_invoke()",
+    failure ENDPOINT_CREATE     "Failure in endpoint_create()",
+    failure FRAME_IDENTIFY      "Failure in frame_identify",
+    failure VNODE_MAP           "Failure in vnode_map()",
+    failure VNODE_UNMAP         "Failure in vnode_unmap()",
+    failure IDC_ENDPOINT_ALLOC  "Failure in idc_endpoint_alloc()",
+
+    failure SLOT_ALLOC_INIT     "Failure in slot_alloc_init()",
+    failure SLOT_ALLOC_NO_SPACE    "Slot allocator is out of space",
+    failure SLOT_ALLOC_WRONG_CNODE "The slot to free does not belong in this cnode",
+    failure SINGLE_SLOT_ALLOC_INIT_RAW "Failure in single_slot_alloc_init_raw()",
+    failure SINGLE_SLOT_ALLOC_INIT "Failure in single_slot_alloc_init()",
+    failure MULTI_SLOT_ALLOC_INIT  "Failure in multi_slot_alloc_init()",
+    failure MULTI_SLOT_ALLOC_INIT_RAW  "Failure in multi_slot_alloc_init_raw()",
+    failure SINGLE_SLOT_ALLOC      "Failure in single_slot_alloc()",
+    failure SLOT_ALLOC             "Failure in slot_alloc()",
+    failure SLOT_FREE              "Failure in slot_free()",
+    failure SLOT_UNALLOCATED       "slot_free() was called on an unallocated slot",
+
+    // vspace
+    failure VSPACE_CURRENT_INIT "Failure in vspace_current_init()",
+    failure VSPACE_INIT         "Failure in vspace_init()",
+    failure VSPACE_LAYOUT_INIT  "Failure in vspace_layout_init()",
+    failure VSPACE_DESTROY      "Failure in vspace_destroy()",
+    failure VSPACE_REGION_OVERLAP "Overlap with existing region in vspace_add_region()",
+    failure VSPACE_ADD_REGION   "Failure in vspace_add_region()",
+    failure VSPACE_REMOVE_REGION  "Failure in vspace_remove_region()",
+    failure VSPACE_PAGEFAULT_HANDER "Failure in vspace_pagefault_handler()",
+    failure VSPACE_VREGION_NOT_FOUND "The vregion to remove not found in the vspace list",
+    failure VSPACE_PAGEFAULT_ADDR_NOT_FOUND "The faulting address not found in the page fault handler",
+
+    failure VSPACE_PINNED_INIT  "Failure in vspace_pinned_init()",
+    failure VSPACE_PINNED_ALLOC "Failure in vspace_pinned_alloc()",
+    failure VSPACE_PINNED_INVALID_TYPE "Wrong type of slab requested",
+
+    failure VREGION_MAP         "Failure in vregion_map()",
+    failure VREGION_MAP_FIXED   "Failure in vregion_map_fixed()",
+    failure VREGION_NOT_FOUND   "vregion not found in the vspace list",
+    failure VREGION_DESTROY     "Failure in vregion_destroy()",
+    failure VREGION_PAGEFAULT_HANDLER "Failure in vregion_pagefault_handler()",
+    failure VREGION_BAD_ALIGNMENT "Unaligned address passed to vregion_map_fixed",
+
+    failure MEMOBJ_CREATE_ANON  "Failure in memobj_create_anon()",
+    failure MEMOBJ_CREATE_ONE_FRAME "Failure in memobj_create_one_frame()",
+    failure MEMOBJ_CREATE_ONE_FRAME_ONE_MAP "Failure in memobj_create_one_frame_one_map()",
+    failure MEMOBJ_CREATE_PINNED "Failure in memobj_create_pinned()",
+    failure MEMOBJ_CREATE_VFS   "Failure in memobj_create_vfs()",
+    failure MEMOBJ_MAP_REGION   "Failure in memobj_map_region()",
+    failure MEMOBJ_UNMAP_REGION "Failure in memobj_unmap_region()",
+    failure MEMOBJ_PIN_REGION   "Failure in memobj_pin_region()",
+    failure MEMOBJ_UNPIN_REGION "Failure in memobj_unpin_region()",
+    failure MEMOBJ_FILL         "Failure in memobj_fill()",
+    failure MEMOBJ_PAGEFAULT_HANDLER "Failure in memobj_pagefault_handler()",
+    failure MEMOBJ_PAGER_FREE   "Failure in memobj_pager_free()",
+    failure MEMOBJ_WRONG_OFFSET "Wrong offset passed",
+    failure MEMOBJ_FRAME_ALLOC  "Failure the frame alloc function pointer",
+    failure MEMOBJ_VREGION_ALREADY_MAPPED "Pinned memobj only supports one vregion",
+    failure MEMOBJ_UNFILL_TOO_HIGH_OFFSET "The offset given to unfill is too large",
+    failure MEMOBJ_PROTECT      "Failure in memobj protect call",
+    failure MEMOBJ_DUPLICATE_FILL "The offset given to fill is already backed",
+
+    failure PMAP_INIT         "Failure in pmap_init()",
+    failure PMAP_CURRENT_INIT "Failure in pmap_current_init()",
+    failure PMAP_DETERMINE_ADDR "Failure in pmap_determine_addr()",
+    failure PMAP_DO_MAP       "Failure in pmap_do_map()",
+    failure PMAP_MAP          "Failure in pmap_map()",
+    failure PMAP_DO_SINGLE_MAP "Failure in pmap_do_single_map()",
+    failure PMAP_UNMAP        "Failure in pmap_unmap()",
+    failure PMAP_DO_SINGLE_UNMAP "Failure in pmap_do_single_unmap()",
+    failure PMAP_MODIFY_FLAGS "Failure in pmap_modify_flags()",
+    failure PMAP_GET_PTABLE   "Failure in get_mapping()",
+    failure PMAP_ALLOC_VNODE  "Failure in alloc_vnode()",
+    failure PMAP_ADDR_NOT_FREE "The requested address range is not free",
+    failure PMAP_FIND_VNODE   "vnode not found",
+    failure PMAP_EXISTING_MAPPING "Cannot replace existing mapping, unmap first",
+
+    failure OUT_OF_VIRTUAL_ADDR  "Out of virtual address",
+
+    failure SERIALISE_BUFOVERFLOW "Buffer overflow while serialising",
+
+    failure VSPACE_MAP        "Failure in vspace_map() wrapper function",
+
+    failure VSPACE_MMU_AWARE_INIT  "Failure in vspace_mmu_aware_init() function",
+    failure VSPACE_MMU_AWARE_MAP   "Failure in vspace_mmu_aware_map() function",
+    failure VSPACE_MMU_AWARE_NO_SPACE "Out of space in vspace_mmu_aware_map() function",
+
+    // Performance counters
+    failure INVOKE_PERFMON_SETUP    "Error in invoke perfmon setup",
+    failure INVOKE_PERFMON_WRITE    "Error in invoke perfmon write",
+
+    // CORESET
+    failure CORESET_NEW             "Failure in coreset_new()",
+    failure CORESET_GET_NEXT_DONE   "No more elements left in coreset_get_next()",
+
+    // IDC (and LMP/UMP channels)
+    failure NO_LMP_MSG          "No LMP message available",
+    failure LMP_RECV_BUF_OVERFLOW "LMP message in endpoint is longer than user-provided buffer",
+    failure NO_UMP_MSG          "No UMP message available",
+    failure UMP_CHAN_FULL       "Cannot send UMP: channel is full",
+    failure LMP_BUFLEN_INVALID  "Cannot create LMP endpoint, invalid buffer length",
+    failure NO_ENDPOINT_SPACE   "Cannot allocate LMP endpoint, out of space in dispatcher frame",
+    failure UMP_BUFSIZE_INVALID "Size of UMP buffer is invalid (must be multiple of message size)",
+    failure UMP_BUFADDR_INVALID "Address of UMP buffer is invalid (must be cache-aligned)",
+    failure UMP_FRAME_OVERFLOW  "Provided frame is too small for requested UMP channel sizes",
+    failure LMP_ENDPOINT_REGISTER "Failure in lmp_endpoint_register()",
+    failure CHAN_REGISTER_SEND  "Failure in *_chan_register_send()",
+    failure CHAN_DEREGISTER_SEND "Failure in *_chan_deregister_send()",
+    failure CHAN_REGISTER_RECV  "Failure in *_chan_register_recv()",
+    failure CHAN_DEREGISTER_RECV "Failure in *_chan_deregister_recv()",
+    failure LMP_CHAN_INIT       "Failure in lmp_chan_init()",
+    failure UMP_CHAN_INIT       "Failure in ump_chan_init()",
+    failure LMP_CHAN_RECV       "Failure in lmp_chan_recv()",
+    failure UMP_CHAN_RECV       "Failure in ump_chan_recv()",
+    failure LMP_CHAN_SEND       "Failure in lmp_chan_send()",
+    failure LMP_CHAN_BIND       "Failure in lmp_chan_bind()",
+    failure UMP_CHAN_BIND       "Failure in ump_chan_bind()",
+    failure LMP_CHAN_ACCEPT     "Failure in lmp_chan_accept()",
+    failure UMP_CHAN_ACCEPT     "Failure in ump_chan_accept()",
+    failure LMP_ALLOC_RECV_SLOT "Failure in lmp_chan_alloc_recv_slot()",
+    failure LMP_NOT_CONNECTED   "Channel is disconnected",
+    failure MSGBUF_OVERFLOW     "Attempted to demarshall beyond bounds of message buffer",
+    failure MSGBUF_CANNOT_GROW  "Failed to grow message buffer while marshalling",
+    failure RCK_NOTIFY          "Failure in rck_notify()",
+    failure IPI_NOTIFY          "Failure in ipi_notify()",
+
+    // IDC binding/export and Monitor client interface
+    failure MONITOR_CLIENT_BIND "Error in monitor_client_lmp_bind()",
+    failure MONITOR_CLIENT_ACCEPT "Error in monitor_client_lmp_accept()",
+    failure NAMESERVICE_NOT_BOUND "Name service client is not bound",
+    failure NAMESERVICE_UNKNOWN_NAME "Lookup failed: unknown name",
+    failure NAMESERVICE_INVALID_NAME "Invalid record retrieved (no iref attribute)",
+    failure BIND_LMP_REQ        "Failure sending bind_lmp_request to monitor",
+    failure BIND_UMP_REQ        "Failure sending bind_ump_request to monitor",
+    failure BIND_LMP_REPLY      "Failure sending bind_lmp_reply to monitor",
+    failure BIND_UMP_REPLY      "Failure sending bind_ump_reply to monitor",
+    failure NO_LMP_BIND_HANDLER "LMP connection handler not registered for this service",
+    failure NO_UMP_BIND_HANDLER "UMP connection handler not registered for this service",
+    failure MONITOR_CAP_SEND    "Failed sending capability via monitor",
+    failure MONITOR_RPC_BIND    "Error in monitor_rpc_init()",
+
+    // multihop
+    failure BIND_MULTIHOP_REQ   "Failed sending bind_multihop_request to monitor",
+    failure NO_MULTIHOP_BIND_HANDLER "MULTIHOP connection handler not registered for this service",
+    failure BIND_MULTIHOP_SAME_CORE "Cannot create a multihop channel to service on the same core",
+
+    // Bulk transfer
+    failure BULK_UNKNOWN_ID	"Unknown bulk transfer block ID",
+
+    // Domain
+    failure NO_SPANNED_DISP       "There is no spanned dispatcher on the given core",
+    failure SEND_RUN_FUNC_REQUEST "Failure in trying to send run_func_request",
+    failure SEND_CAP_REQUEST	  "Failure in trying to send capability",
+    failure CAP_COPY_FAIL	  "cap_copy failed",
+    failure CAP_DELETE_FAIL	  "cap_delete failed",
+
+    // Initialisation
+    failure RAM_ALLOC_SET          "Failure in ram_alloc_set()",
+    failure MORECORE_INIT          "Failure in morecore_init()",
+    failure MONITOR_CLIENT_INIT    "Failure in monitor_client_init",
+    failure MONITOR_CLIENT_CONNECT "Failure in monitor_client_connect",
+    failure TERMINAL_INIT          "Failure in terminal_init()",
+    failure DOMAIN_INIT            "Failure in domain_init()",
+    failure GET_MON_BLOCKING_IREF  "Error while retrieving monitor's blocking channel service IREF from monitor",
+    failure GET_MEM_IREF           "Failure sending memory iref request",
+    failure GET_NAME_IREF          "Error while retrieving name service IREF from monitor",
+    failure GET_RAMFS_IREF         "Error while retrieving ramfsd service IREF from monitor",
+    failure NAMESERVICE_CLIENT_INIT "Failure initialising nameservice client",
+
+    // Threads package
+    failure THREAD_CREATE       "A version of thread create failed",
+    failure THREAD_JOIN		"Joining more than once not allowed",
+    failure THREAD_JOIN_DETACHED	"Tried to join with a detached thread",
+    failure THREAD_DETACHED	"Thread is already detached",
+
+    // Waitset/event code
+    failure CHAN_ALREADY_REGISTERED "Attempt to register for an event on a channel which is already registered",
+    failure CHAN_NOT_REGISTERED    "Channel is not registered with a waitset",
+    failure WAITSET_IN_USE         "Waitset has pending events or blocked threads",
+    failure WAITSET_CHAN_CANCEL    "Error in waitset_chan_cancel()",
+    failure NO_EVENT               "Nothing pending in check_for_event()",
+    failure EVENT_DISPATCH         "Error in event_dispatch()",
+    failure EVENT_ALREADY_RUN      "Error in event_queue_cancel(): event has already been run",
+    failure EVENT_QUEUE_EMPTY      "Error in event_queue_trigger(): queue is empty",
+
+    // LDT management on x86
+    failure SEGBASE_OVER_4G_LIMIT  "Segment base address is above 32-bit boundary",
+    failure LDT_FULL               "LDT is out of space",
+    failure LDT_SELECTOR_INVALID   "Segment selector is invalid for LDT",
+};
+
+// errors in Flounder-generated bindings
+errors flounder FLOUNDER_ERR_ {
+    failure INVALID_STATE       "Invalid/corrupt state in binding structure",
+    failure TX_BUSY             "Cannot queue message for transmit: queue is full",
+    failure RX_EMPTY_MSG        "Incoming message invalid: empty payload",
+    failure RX_INVALID_MSGNUM   "Incoming message invalid: unknown message code",
+    failure RX_INVALID_LENGTH   "Incoming message has invalid length",
+    failure BUF_RECV_MORE       "(internal) incomplete buffer received; call again for more",
+    failure BUF_SEND_MORE       "(internal) incomplete buffer sent; call again to send more",
+    failure GENERIC_BIND_NO_MORE_DRIVERS "Generic bind() call failed after trying all enabled interconnect drivers",
+    failure CHANGE_WAITSET      "Error in change_waitset() call",
+    failure CHANGE_MONITOR_WAITSET "Error changing waitset on underlying monitor binding",
+    failure UMP_ALLOC_NOTIFY    "Error while allocating notify cap/state for UMP",
+    failure UMP_STORE_NOTIFY    "Error while storing notify cap for UMP",
+
+    failure BIND                  "Error in flounder generated bind call",
+
+    // XXX: errors from old flounder stubs, to be removed
+    failure CREATE_MSG          "Flounder marshalling code failed: create_msg() returned NULL", // FIXME
+    failure MARSHALLING         "Error while marshalling",
+    failure DEMARSHALLING       "Error while demarshalling",
+    failure RPC_MISMATCH        "RPC response not matching the call",
+
+};
+
+// errors generated by chips name service
+errors chips CHIPS_ERR_ {
+    failure GET_SERVICE_REFERENCE "Error getting service reference from name service",
+    failure GET_SERVICE_IREF      "Error getting IREF from name service",
+    failure UNKNOWN_NAME          "Lookup failed: unknown name",
+    failure EXISTS		  "Entry already exists",
+    failure GET_CAP		  "Error getting a capability from store",
+    failure PUT_CAP		  "Error putting a capability to store",
+    failure REMOVE_CAP            "Error removing a capability from store",
+    failure OUT_OF_SEMAPHORES	  "Out of semaphores",
+};
+
+// errors generated by bcast library
+errors bcast BCAST_ERR_ {
+    failure SEND      "Failure in bcast_send function",
+    failure SEND_SSF  "Failure in trying to send ssf msg",
+};
+
+// errors generated in the monitor-client protocol
+errors mon_client MON_CLIENT_ERR_ {
+    failure SPAN_DOMAIN_REQUEST   "Error sending span_domain_request msg",
+    failure URPC_BLOCK            "Error sending urpc_block msg",
+};
+
+// errors generated by the Monitor
+errors monitor MON_ERR_ {
+    failure IDC_BIND_NOT_SAME_CORE "Cannot perform IDC bind call: IREF is on another core",
+    failure INVALID_CORE_ID     "Core ID is invalid (out of range)",
+    failure INVALID_IREF        "Invalid IREF for bind call",
+    failure IREF_ALLOC          "Cannot allocate IREF, table full",
+    failure SPAN_STATE_ALLOC    "Failed to allocate span state",
+    failure SEND_REMOTE_MSG     "Sending message to remote core failed",
+    failure INVALID_MON_ID      "Monitor ID in message is invalid",
+    failure NO_MONITOR_FOR_CORE "No monitor loaded on this core ID",
+    failure CAP_IDENTIFY        "Error in cap_identify",
+    failure CAP_CREATE          "Failure creating new capability",
+    failure CAP_REMOTE          "Failure in remote cap operation",
+    failure RCAP_DB_NOT_FOUND   "Cannot find cap in remote cap db",
+    failure RCAP_DB_LOCK        "Error gaining lock in remote cap db",
+    failure RCAP_DB_UNLOCK      "Error unlocking cap in remote cap db",
+    failure RCAP_DB_ADD         "Error adding cap to remote cap db",
+    failure SAME_CORE           "Cannot perform operation on same core as caller",
+    failure REMOTE_CAP_NEED_REVOKE  "Cap has descendants on another core, cannot be retyped",
+    failure REMOTE_CAP_RETRY    "Remote Cap operation failed but retry",
+    failure SPAWN_CORE          "Failure spawning a new core",
+    failure SPAWN_DOMAIN        "Failure in trying to spawn a domain",
+    failure INTERN_NEW_MONITOR  "Error in intern_new_monitor()",
+    failure CAP_SEND            "Permanent error sending cap for URPC channel",
+    failure CAP_SEND_TRANSIENT  "Transient error sending cap for URPC channel",
+    failure ROUTE_SET           "Sending route set msg failed",
+    failure SPAN_DOMAIN         "span_domain failed",
+    failure MAP_URPC_CHAN       "failure while mapping in URPC channel state",
+    failure RAM_ALLOC_ERR       "failure in ram_alloc, err failed",
+    failure RAM_ALLOC_RETERR    "failure in ram_alloc, reterr failed",
+    failure MULTICAST_PAGE_MAP  "Could not map the multicast page in monitor",
+    failure WRONG_CAP_TYPE      "Cap of not expected type",
+    failure INTERN_SET          "Failure in intern_set",
+    failure ROUTE_RESET         "Failure in sending route reset msg",
+    failure MAP_MULTIBOOT       "Failure in trying to map multiboot image",
+    failure UNICAST_SET         "Failure in unicast_set()",
+    failure MULTICAST_SET       "Failure in multicast_set()",
+    failure BCAST_INIT          "Failure in bcast_init()",
+    failure BCAST_CONNECT       "Failure in bcast_connect()",
+    failure CCAST_INIT          "Failure in ccast_init()",
+    failure CCAST_CONNECT       "Failure in ccast_connect()",
+    failure UNICAST_CONNECT     "Failure in connecting unicast path",
+    failure MULTICAST_CONNECT   "Failure in connecting multicast path",
+    failure UNICAST_INIT        "Failure in initing unicast path",
+    failure MULTICAST_INIT      "Failure in initing multicast path",
+    failure SPAWN_XCORE_MONITOR "Failure in spawn_xcore_monitor()",
+    failure INCOMPLETE_ROUTE    "(Portion of) routing table not present",
+
+    // Resource controller
+    failure RSRC_ALLOC		"Out of resource domains",
+    failure RSRC_MEMBER_LIMIT	"Reached member limit of resource domain",
+    failure RSRC_ILL_MANIFEST	"Illegal manifest",
+    failure RSRC_NOT_FOUND	"Resource domain not found on this core",
+};
+
+// errors related to the routing library
+errors routing ROUTE_ERR_ {
+    // These are for the old routing library, remove them when old lib is removed
+    failure NEW_ROUTE           "Failure in creating a new route",
+    failure EXPORT              "Failure in exporting new route",
+    failure LOOKUP              "Failure in looking up new route",
+    failure BIND                "Failure in binding with route",
+    failure CORE_NOT_FOUND      "Core not found in unicast send",
+    failure SET_EXPECTED        "Failure in using the set expected function",
+    failure SEND                "Failure in using the send function",
+    failure NO_SLOTS            "Convergecast route ran out of slots to hold records",
+
+    // These are for the new routing library
+    failure WRONG_GROUP_ID      "Group id not found",
+    failure CALL_INIT           "Call route_init before using this",
+    failure CREATE_GROUP_RPC    "Error in using the create_group rpc",
+    failure SET_GROUP_RPC       "Error in using the set_group rpc",
+    failure GET_GROUP_RPC       "Error in using the get_group rpc",
+    failure ALLOC_NID_RPC       "Error in using the alloc_nid rpc",
+};
+
+// errors related to spawn code
+errors spawn SPAWN_ERR_ {
+    failure LOAD                "Failure while loading",
+    failure SPAN                "Failure while spanning",
+    failure RUN                 "Failure while making dispatcher runnable",
+    failure VSPACE_MAP          "Nested failure in spawn_vspace_map",
+    failure GET_CMDLINE_ARGS    "Failure in get_cmdline_args",
+    failure SETUP_ENV           "Failure in spawn_setup_env",
+    failure UNKNOWN_TARGET_ARCH	"Unknown target architecture type",
+    failure UNSUPPORTED_TARGET_ARCH	 "Unsupported target architecture type",
+
+    failure SETUP_CSPACE	"Failure in spawn_setup_cspace",
+    failure DETERMINE_CPUTYPE	"Failure in spawn_determine_cputype",
+    failure VSPACE_INIT 	"Failure in spawn_vspace_init",
+    failure SETUP_DISPATCHER 	"Failure in spawn_setup_dispatcher",
+    failure ELF_MAP     	"Failure in spawn_elf_map",
+
+    failure SET_CAPS     	"Failure in set_special_caps",
+    failure MONITOR_CLIENT     	"Failure in monitor_client_setup",
+    failure FREE         	"Failure in spawn_free",
+
+    // spawn_cspace
+    failure CREATE_ROOTCN       "Failure creating root CNode",
+    failure CREATE_TASKCN       "Failure creating task CNode",
+    failure MINT_TASKCN         "Failure minting task CNode into root CNode",
+    failure CREATE_PAGECN       "Failure creating page CNode",
+    failure CREATE_VNODE        "Failure creating top-level VNode",
+    failure COPY_VNODE          "Failure copying top-level VNode from existing domain",
+    failure CREATE_DISPATCHER   "Failure creating DCB",
+    failure CREATE_DISPATCHER_FRAME "Failure creating dispatcher frame",
+    failure CREATE_SELFEP       "Failure creating endpoint to self",
+    failure CREATE_ARGSPG       "Failure creating page for arguments",
+    failure CREATE_FDSPG        "Failure creating page for file descriptors",
+    failure COPY_FDCAP          "Failure copying frame cap for file descriptors",
+    failure MINT_ROOTCN         "Failure minting root CNode into task CNode",
+    failure CREATE_SLOTALLOC_CNODE "Failure creating slot_alloc cnode",
+
+    // setup_vspace
+    failure MAP_DISPATCHER_TO_NEW "Failure mapping dispatcher frame to new domain",
+    failure MAP_DISPATCHER_TO_SELF "Failure mapping dispatcher frame to parent",
+    failure MAP_ARGSPG_TO_NEW   "Failure mapping arguments page to new domain",
+    failure MAP_ARGSPG_TO_SELF  "Failure mapping arguments page to parent",
+    failure MAP_FDSPG_TO_NEW   "Failure mapping file descriptors page to new domain",
+    failure MAP_FDSPG_TO_SELF  "Failure mapping file descriptors page to parent",
+
+    failure FILL_SMALLCN        "Failure filling smallcn of new domain",
+    failure MAP_BOOTINFO        "Failure mapping bootinfo to new domain",
+    failure FIND_MODULE         "Didn't find module to be spawned",
+    failure MAP_MODULE          "Failed mapping in module",
+    failure CREATE_SEGCN        "Failed to create segment CNode",
+    failure CREATE_SMALLCN      "Failed to create small RAM caps CNode",
+
+    // setup env
+    failure ARGSPG_OVERFLOW     "Overflow in arguments page: too many arguments or environment variables",
+    failure SERIALISE_VSPACE    "Error in serialising vspace data",
+
+    // setup inherited caps
+    failure SETUP_INHERITED_CAPS "Failure setup inherited caps",
+
+    // setup argument caps
+    failure SETUP_ARGCN          "Failure setup CNode containing caps passed as arguments",
+    failure COPY_ARGCN           "Error copying CNode containing caps passed as arguments",
+
+    // setup file descriptors
+    failure SETUP_FDCAP         "Failure setting up frame for copying file descriptors",
+    failure FDSPG_OVERFLOW     "Overflow in file descriptors page: too many file descriptors",
+
+    // setup session id cap
+    failure SETUP_SIDCAP        "Failure setting up session capability",
+    failure COPY_SIDCAP         "Failure copying session id capability",
+
+    // spawn_free
+    failure DELETE_ROOTCN       "Failure deleting root CNode cap in parent",
+    failure FREE_ROOTCN         "Failure freeing slot for root CNode cap in parent",
+    failure DELETE_TASKCN       "Failure deleting task CNode cap in parent",
+    failure FREE_TASKCN         "Failure freeing slot for task CNode cap in parent",
+
+    failure COPY_PACN           "Error copying phys addr CNode cap",
+    failure COPY_MODULECN       "Error copying module CNode cap",
+    failure COPY_IRQ_CAP        "Error copying IRQ cap",
+    failure COPY_IO_CAP         "Error copying IO cap",
+    failure COPY_PERF_MON	"Error copying performance monitoring cap",
+
+    // make_runnable
+    failure DISPATCHER_SETUP	"Dispatcher setup",
+
+    // domain management
+    failure DOMAIN_ALLOCATE	"No more domain descriptors",
+    failure DOMAIN_NOTFOUND	"Domain not found",
+    failure DOMAIN_RUNNING	"Domain is running",
+};
+
+// errors from ELF library
+errors libelf ELF_ERR_ {
+    failure FILESZ              "Invalid file size",
+    failure HEADER              "Incompatible ELF header",
+    failure PROGHDR             "Failed program header sanity checks",
+    failure ALLOCATE            "Nested failure in allocator function",
+    failure NOT_PAGE_ALIGNED    "Unaligned load address specified in ELF header",
+};
+
+// errors from memory management library
+errors libmm MM_ERR_ {
+    failure FIND_NODE           "Failure in find_node()",
+    failure CHUNK_NODE          "Failure in chunk_node()",
+    failure SLOT_MM_ALLOC       "Nested failure in slot allocator calling mm_alloc",
+    failure SLOT_NOSLOTS        "Slot allocator has run out of slots",
+    failure SLOT_ALLOC_INIT     "Failure initialising slot allocator",
+    failure MM_INIT             "Failure in mm_init()",
+    failure MM_ADD              "Failure in mm_add()",
+    failure MM_FREE             "Failure in mm_free()",
+    failure NEW_NODE            "Failed allocating new node from slot allocator",
+    failure OUT_OF_BOUNDS       "Given memory base address / size exceeds bounds of allocator",
+    failure ALREADY_PRESENT     "Node already present in add_node()",
+    failure ALREADY_ALLOCATED   "Requested node already allocated in find_node()",
+    failure NOT_FOUND           "No matching node found",
+    failure MISSING_CAPS        "Region exists in allocator, but intermediate caps are missing",
+    failure CHUNK_SLOT_ALLOC    "Failure allocating slots for chunking",
+    failure RESIZE_NODE         "Nested failure in resize_node()",
+    failure REALLOC_RANGE       "Nested failure in realloc_range()",
+};
+
+// errors in init
+errors init INIT_ERR_ {
+    failure SPAWN_MEM_SERV      "Failed to spawn mem_serv",
+    failure INIT_MEM_SERV       "Failed to initialise mem_serv",
+    failure SPAWN_MONITOR       "Failed to spawn monitor",
+    failure INIT_MONITOR        "Failed to init monitor",
+    failure COPY_EP_TO_MEM_SERV "Failed copying EP to mem_serv",
+    failure COPY_EP_TO_MONITOR  "Failed copying EP to monitor",
+    failure SETUP_MONITOR_CHAN  "Failed setting up channel to monitor",
+    failure SETUP_MEM_SERV_CHAN "Failed setting up channel to mem_serv",
+    failure RUN_MONITOR         "Failed to make monitor runnable",
+    failure RUN_MEM_SERV        "Failed to make mem_serv runnable",
+    failure FREE_MONITOR        "Failed to free spawn caps from monitor",
+    failure FREE_MEM_SERV       "Failed to free spawn caps from mem_serv",
+    failure COPY_SUPERCN_CAP    "Failed to copy superCN cap to mem_serv",
+    failure MAP_BOOTINFO        "Failed to map bootinfo to child",
+    failure COPY_KERNEL_CAP     "Failed to copy kernel cap to monitor",
+    failure COPY_PERF_MON       "Failed to copy performance monitoring cap to monitor",
+    failure COPY_MODULECN_CAP   "Failed to copy module CNode cap to monitor",
+    failure COPY_PACN_CAP       "Failed to copy phys addr CNode cap to monitor",
+    failure COPY_IRQ_CAP        "Failed to copy IRQ cap to monitor",
+    failure COPY_IO_CAP         "Failed to copy IO cap to monitor",
+    failure COPY_UMP_CAP        "Failed to copy UMP cap to monitor",
+    failure NO_MATCHING_RAM_CAP "No suitably-sized RAM cap found when initialising local memory allocator",
+};
+
+//errors in continuation management
+errors filter CONT_ERR_ {
+    failure NO_MORE_SLOTS        "No free slots available",
+};
+
+
+
+//errors in ethersrv
+errors ethersrv ETHERSRV_ERR_ {
+    failure TOO_MANY_BUFFERS    "ethersrv failed to allocate a new buffer descriptor in register_buffer",
+    failure TOO_MANY_VNICS      "MAX_VNICS reached, can't create more VNICS",
+    failure BUFFER_NOT_FOUND    "ethersrv did not find the buff given filter reg",
+    failure NOT_ENOUGH_MEM      "not enough internal memory with driver",
+    failure CANT_TRANSMIT       "Cant transmit the packet",
+    failure INVALID_STATE       "VNIC is in invalid state for current operation",
+    failure FRAME_CAP_MAP       "Cant map the frame cap in address space",
+};
+
+
+//errors in port management
+errors filter PORT_ERR_ {
+    failure NOT_ENOUGH_MEMORY   "Not enough memory for internals of port mng",
+    failure NO_MORE_PORT        "No free port available",
+    failure IN_USE              "Requested port is already in use",
+    failure REDIRECT            "Requested port cannot be redirected",
+    failure NOT_FOUND            "Could not find requested port to close",
+};
+
+
+
+
+//errors in Filter management
+errors filter FILTER_ERR_ {
+    failure NOT_ENOUGH_MEMORY   "Not enough memory to register filters",
+    failure BUFF_NOT_FOUND      "Buffer given for filter reg. not found on driver",
+    failure FILTER_BUSY         "Filter memory is busy in another operation.Try Again",
+    failure NO_NETD_MEM         "Netd memory for filter is not registered",
+    failure FILTER_NOT_FOUND    "requested filter for de/re-registration not found",
+    failure BUFFER_NOT_FOUND    "requested filter for re-registration not found",
+
+};
+
+// errors generated in the terminal library
+errors term TERM_ERR_ {
+    failure TERMINAL_IN_USE             "Can not associate session with terminal, the terminal is already in use",
+    failure NOT_PART_OF_SESSION         "Domain is not part of a session",
+    failure EXPORT_SESSION_INTERFACE    "Failed to export terminal session interface",
+    failure REGISTER_SESSION_INTERFACE  "Failed to register terminal session interface at nameservice",
+    failure EXPORT_OUT_INTERFACE        "Failed to export terminal interface for outgoing characters",
+    failure EXPORT_IN_INTERFACE         "Failed to export terminal interface for incoming characters",
+    failure EXPORT_CONF_INTERFACE       "Failed to export terminal configuration interface for configuration messages",
+    failure ASSOCIATE_WITH_TERM_REPLY   "Failed to send session_associate_with_terminal_reply",
+    failure RECV_CHARS                  "Received characters at outgoing characters interface",
+    failure SEND_CHARS                  "Could not send characters to client",
+    failure RECV_CONFIGURATION          "Received a configuration message a the client",
+    failure FILTER_NOT_FOUND            "Could not find filter specified for removal",
+    failure TRIGGER_NOT_FOUND           "Could not find trigger specified for removal",
+    failure LOOKUP_SESSION_RECORD       "Error looking up session record at octopus",
+    failure PARSE_SESSION_RECORD        "Error parsing session record",
+    failure BIND_IN_INTERFACE           "Failed to bind to terminal interface for incoming characters",
+    failure BIND_OUT_INTERFACE          "Failed to bind to terminal interface for outgoing characters",
+    failure BIND_CONF_INTERFACE         "Failed to bind to terminal configuration interface",
+    failure IO                          "Terminal I/O error",
+    failure TX_BUSY                     "Failed to send message, terminal client is busy",
+    failure UNKNOWN_CONFIG_OPT          "Unknown configuration option",
+    failure CHANGE_WAITSET              "Failed to change the waitset",
+};
+
+// errors generated by libangler
+errors angler ANGLER_ERR_ {
+    failure LOOKUP_TERMINAL         "Error looking up iref of terminal session interface at nameservice",
+    failure CREATE_SESSIONID        "Error creating ID capability used to represent session",
+    failure BIND_TERMINAL           "Error binding to terminal session interface",
+    failure INIT_RPCCLIENT          "Error initializing rpc client for terminal session interface",
+    failure ASSOCIATE_WITH_TERMINAL "Error associating session with terminal",
+    failure STORE_SESSION_STATE     "Error storing session state at ocotpus",
+};
+
+// errors in trace
+errors trace TRACE_ERR_ {
+    failure NO_BUFFER           "Trace buffer does not exist",
+    failure MAP_BUF             "Failed to map trace buffer",
+    failure CREATE_CAP          "Failed to create trace buffer cap",
+    failure CAP_COPY            "Failed to copy trace buffer cap",
+    failure KERNEL_INVOKE       "Failed to set up tracing in kernel",
+};
+
+errors driverkit DRIVERKIT_ {
+    failure NO_CAP_FOUND       "No capability to map this address range.",
+};
+
+// errors in PCI/device handling
+errors pci PCI_ERR_ {
+    failure IOAPIC_INIT         "Failed in ioapic_init()",
+    failure MINT_IOCAP          "Failed to mint IO cap",
+    failure ROUTING_IRQ         "Failed while routing interrupt",
+    failure IRQTABLE_SET        "Failed to set handler on local IRQ table",
+    failure UNKNOWN_GSI         "Unknown global system interrupt number",
+    failure INVALID_VECTOR      "Invalid interrupt vector",
+    failure DEVICE_INIT         "Could not initialize device",
+    failure MEM_ALLOC           "Could not allocate memory",
+    failure WRONG_INDEX         "Invalid index for requested cap",
+    failure MSIX_NOTSUP         "MSI-X is not sypported by the device",
+    failure MSIX_BADVECTOR      "Invalid index for MSI-X vector",
+    failure MSIX_DISABLED       "MSI-X is not enabled for this device",
+};
+
+// errors in ACPI
+errors acpi ACPI_ERR_ {
+    failure NO_MCFG_TABLE       "No MCFG Table found.",
+    failure INVALID_PATH_NAME   "Invalid ACPI path name.",
+    failure GET_RESOURCES       "Failed to execute _CRT method.",
+    failure SET_IRQ             "Failed to set IRQ for device.",
+    failure NO_MADT_TABLE       "No APIC found in ACPI.",
+};
+
+errors vtd VTD_ERR_ {
+    failure INVALID_CAP     "Cap is not for a x86-64 PML4 VNode",
+    failure DOM_NOT_FOUND   "Domain for cap was not found",
+    failure DEV_NOT_FOUND   "Device does not belong to the domain",
+    failure DEV_USED        "The device is currently used by another domain",
+    failure FULL            "No more domains can be created",
+    failure NO_UNITS	    "Hardware doesn't contain any VT-d hardware units",
+};
+
+// errors in the SKB
+errors skb SKB_ERR_ {
+    failure CONVERSION_ERROR    "Conversion (parsing) of the result failed.",
+    failure EXECUTION           "The SKB returned an error Check error code.",
+    failure EVALUATE            "Failure in skb_evalute()",
+    failure RUN                 "Failure in running rpc: run",
+    failure GOAL_FAILURE        "Posted goal could not be satisfied.",
+    failure UNEXPECTED_OUTPUT   "Query produced output but none was expected.",
+    success IO_OUTPUT           "Read I/O Output from SKB.",
+};
+
+// errors in a file system implementation
+errors fs FS_ERR_ {
+    failure INVALID_FH          "The given file handle is invalid or has expired",
+    failure NOTDIR              "The given file handle is not a directory",
+    failure NOTFILE             "The given file handle is not a file",
+    failure INDEX_BOUNDS        "The given directory index is out of bounds",
+    failure NOTFOUND            "The given name does not exist",
+    failure EXISTS              "The given name already exists",
+    failure NOTEMPTY            "The given directory is not empty",
+
+    failure BULK_NOT_INIT       "The bulk transfer mode has not been initialised",
+    failure BULK_ALREADY_INIT   "The bulk_init() call may only be made once per connection",
+};
+
+// errors in the vfs library
+errors vfs VFS_ERR_ {
+    success EOF                 "End of file",
+    failure BAD_MOUNTPOINT      "The mountpoint is invalid",
+    failure MOUNTPOINT_IN_USE   "The given mountpoint is already in use",
+    failure BAD_URI             "The URI given to mount is invalid",
+    failure UNKNOWN_FILESYSTEM  "The filesystem type in the URI is unknown",
+    failure MOUNTPOINT_NOTFOUND "The given mountpoint doesn't exist",
+    failure NOT_SUPPORTED       "The file type does not support this operation",
+
+    failure IN_OPEN             "Nested error in vfs_open()",
+    failure IN_STAT             "Nested error in vfs_stat()",
+    failure IN_READ             "Nested error in vfs_read()",
+
+    failure BCACHE_LIMIT	"Number of buffer cache connections exceeded",
+};
+
+// NFS client errors
+// FIXME: someone could copy in the real error strings...
+errors nfs NFS_ERR_ {
+    /* transport error */
+    failure TRANSPORT "Unknown error in underlying NFS RPC transport.",
+
+    /* mount errors */
+    failure MNT_PERM "Not owner",
+    failure MNT_NOENT "No such file or directory",
+    failure MNT_IO "I/O error",
+    failure MNT_ACCES "Permission denied",
+    failure MNT_NOTDIR "Not a directory",
+    failure MNT_INVAL "Invalid argument",
+    failure MNT_NAMETOOLONG "Filename too long",
+    failure MNT_NOTSUPP "Operation not supported",
+    failure MNT_SERVERFAULT "A failure on the server",
+
+    /* NFSv3 errors */
+    failure PERM "NFS error (PERM). See RFC1813.",
+    failure NOENT "NFS error (NOENT). See RFC1813.",
+    failure IO "NFS error (IO). See RFC1813.",
+    failure NXIO "NFS error (NXIO). See RFC1813.",
+    failure ACCES "NFS error (ACCES). See RFC1813.",
+    failure EXIST "NFS error (EXIST). See RFC1813.",
+    failure XDEV "NFS error (XDEV). See RFC1813.",
+    failure NODEV "NFS error (NODEV). See RFC1813.",
+    failure NOTDIR "NFS error (NOTDIR). See RFC1813.",
+    failure ISDIR "NFS error (ISDIR). See RFC1813.",
+    failure INVAL "NFS error (INVAL). See RFC1813.",
+    failure FBIG "NFS error (FBIG). See RFC1813.",
+    failure NOSPC "NFS error (NOSPC). See RFC1813.",
+    failure ROFS "NFS error (ROFS). See RFC1813.",
+    failure MLINK "NFS error (MLINK). See RFC1813.",
+    failure NAMETOOLONG "NFS error (NAMETOOLONG). See RFC1813.",
+    failure NOTEMPTY "NFS error (NOTEMPTY). See RFC1813.",
+    failure DQUOT "NFS error (DQUOT). See RFC1813.",
+    failure STALE "NFS error (STALE). See RFC1813.",
+    failure REMOTE "NFS error (REMOTE). See RFC1813.",
+    failure BADHANDLE "NFS error (BADHANDLE). See RFC1813.",
+    failure NOT_SYNC "NFS error (NOT_SYNC). See RFC1813.",
+    failure BAD_COOKIE "NFS error (BAD_COOKIE). See RFC1813.",
+    failure NOTSUPP "NFS error (NOTSUPP). See RFC1813.",
+    failure TOOSMALL "NFS error (TOOSMALL). See RFC1813.",
+    failure SERVERFAULT "NFS error (SERVERFAULT). See RFC1813.",
+    failure BADTYPE "NFS error (BADTYPE). See RFC1813.",
+    failure JUKEBOX "NFS error (JUKEBOX). See RFC1813.",
+};
+
+// LWIP errors
+errors lwip LWIP_ERR_ {
+    failure MEM          "Out of memory error.",
+    failure BUF          "Buffer error.",
+    failure TIMEOUT      "Timeout.",
+    failure RTE          "Routing problem.",
+    failure ABRT         "Connection aborted.",
+    failure RST          "Connection reset.",
+    failure CLSD         "Connection closed.",
+    failure CONN         "Not connected.",
+    failure VAL          "Illegal value.",
+    failure ARG          "Illegal argument.",
+    failure USE          "Address in use.",
+    failure IF           "Low-level netif error",
+    failure ISCONN       "Already connected.",
+    failure INPROGRESS   "Operation in progress",
+    failure TXFULL       "TX capacity is full, try again later",
+};
+
+// DIST library errors
+errors dist DIST_ERR_ {
+     failure NS_REG	 "Name service register failed.",
+     failure NS_LOOKUP	 "Name service lookup failed.",
+};
+
+// octopus library errors
+errors octopus  OCT_ERR_ {
+    failure NO_RECORD           "No record exists matching the specified query.",
+    failure NO_RECORD_NAME      "Your query needs to specify a designated record name (no regex/variable allowed).",
+    failure CONSTRAINT_MISMATCH "The constraints you specified on set do not match the record in the database.",
+    failure QUERY_SIZE          "Query is too big. Try to increase MAX_QUERY_LENGTH.",
+    failure INVALID_FORMAT      "The read format you have specified is not valid.",
+    failure UNKNOWN_ATTRIBUTE   "An attribute in your format was not found in the record.",
+    failure UNSUPPORTED_BINDING "This binding is unsupported by the underlying implementation.",
+    failure PARSER_FAIL         "Record parser encountered syntax error.",
+    failure ENGINE_FAIL         "Database error during query execution.",
+    failure NO_SUBSCRIPTION     "No subscription found matching the query.",
+    failure NO_SUBSCRIBERS      "No subscription found matching the query.",
+    failure MAX_SUBSCRIPTIONS   "Failed to register subscription. Try to increase MAX_SUBSCRIPTIONS.",
+    failure INVALID_ID          "Invalid Trigger ID.",
+    failure CAP_NAME_UNKNOWN    "Capability storage: Unknown name.",
+    failure CAP_OVERWRITE       "Capability storage: Cap already exists.",
+    failure IDCAP_INVOKE        "Error invoking ID capability.",
+};
+
+// kaluga library errors
+errors kaluga  KALUGA_ERR_ {
+    failure PARSE_MODULES          "Cannot parse menu.lst.",
+    failure MODULE_NOT_FOUND       "Boot module not found.",
+    failure DRIVER_ALREADY_STARTED "Driver for this type of device is already running.",
+    failure DRIVER_NOT_AUTO        "Driver not declared as auto in menu.lst.",
+};
+
+// errors generated by THC
+errors thc THC_ {
+    failure CANCELED            "Operation canceled",
+};
+
+// errors generated by memory server
+errors ms MS_ERR_ {
+    failure SKB			"Invalid data from SKB",
+    failure INIT_PEERS		"Could not initialise peer data structures",
+};
+
+// errors generated by startd
+errors startd STARTD_ERR_ {
+    failure BOOTMODULES		"Invalid bootmodules file",
+};
+
+errors lox LOX_ERR_ {
+    failure INIT_LOCKS		"Failure initialising locks",
+    failure NO_LOCKS		"No more locks available",
+};
+
+// errors generated by VBE framebuffer driver
+errors vbe VBE_ERR_ {
+    failure MODE_NOT_FOUND      "Unknown/unsupported video mode requested",
+    failure BIOS_CALL_FAILED    "Unknown error returned from VBE BIOS call",
+};
+
+// errors generated by ahcid and libahci
+errors ahcid AHCI_ERR_ {
+    failure PORT_INVALID        "Provided port id is not valid",
+    failure PORT_BUSY           "Port has been opened elsewhere",
+    failure PORT_MISMATCH       "Port is not opened by client",
+    failure NO_FREE_PRD         "No free PRD left for user data",
+    failure ILLEGAL_ARGUMENT    "Illegal argument in call",
+};
+
+errors sata SATA_ERR_ {
+    failure INVALID_TYPE        "Unknown FIS type or invalid/unimplemented field for type",
+};
+
+errors mmchs MMC_ERR_ {
+    failure TRANSFER                "Error during card read/write operation.",
+    FAILURE READ_READY              "Card not ready for reading.",
+    FAILURE WRITE_READY             "Card not ready for writing.",
+};
+
+// errors generated by FAT
+errors fat FAT_ERR_ {
+    failure BAD_FS              "Filesystem does not look like FAT, or is an unsupported kind of FAT",
+};
+
+// errors generated by VFS's fs cache library
+errors cache FS_CACHE_ {
+    failure FULL                "Cache is full",
+    failure NOTPRESENT          "Requested key is not in cache",
+    failure CONFLICT            "Cache already contains an item with the requested key",
+};
+
+// common/generic errors
+errors common ERR_ {
+    failure NOTIMP              "Not implemented",
+};

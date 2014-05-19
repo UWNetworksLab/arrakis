@@ -1,0 +1,48 @@
+ 0. get list of available core IDs
+ 1. find list of core IDs which are closest to device add(bus, dev, fun)
+    -> that means that the HT-network has to be represented. With this information
+       we can ask this kind of information
+ 2. find memory region closest to core ID
+    -> this can also be queried if we have the whole connection between cores
+       memory and rootcomplexes represented
+ 3. find core ID list which share same L2/L3 cache
+    -> till now it looks like the only way to know that is from data sheets.
+ 4. find core IDs which do _not_ share caches
+ 5. find core IDs which are not on the same CPU
+ 6. find two cores on two different CPUs (because memory bandwidth might be better)
+ 7. find memory link id for given core id.
+ 8. find cores which do not share a memory link (for memory intensive apps)
+ 9. find light loaded core
+10. get depth of caches
+11. get cache line size for L1/L2/L3 cache (if available)
+12. get cost (cycles) to access memory word at the given address from the given core
+    (helps to decide how expensive migrating page would be)
+13. get the load of the given core ID
+    -> it might not be very helpful to store this information in the SKB. Maybe
+       the better approach is to pass the current loads of the cores as input values
+       whenever an optimization calculation should be performed.
+       Maybe only a longer-term load (like 1min-load) would be helpful to
+       store to the SKB.
+14. get number of HT hops between two core IDs
+    -> can easily be done by looking at the interconnect representation.
+       The representation should include the weird routing of the machine,
+       so that the SKB's answer is accurate.
+15. get distance (cycles?) for passing over one hop
+16. get best memory location for URPC buffer (closest to receiver apparently. How
+    do we know that??)
+17. how to construct best group of cores so that we can send IPIs the best way
+    possible (in case they are needed). That might also change during time.
+    Maybe not all cores need to be able to receive IPIs all the time.
+    Using the logical APIC group addressing, cores can join or leave and we have
+    to decide when to join and when to leave.
+18. Find CoreIDs with different local memory regions
+
+
+combined queries:
+
+18. find the lightest loaded core which is closest to a given pci device
+    -> for example if we want to spawn a new driver, we could get the list
+       of cores which are closest to the device and then (if we have more then
+       one result, because a cpu has more then one core), we can pick the
+       one with the smallest load of them
+

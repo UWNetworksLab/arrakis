@@ -1,0 +1,89 @@
+
+Interface name: foo
+Method: bar( uint64_t par1, string par2 );
+
+
+// Enumeration for procedure numbers
+typedef enum foo_procnums_t { 
+	foo_bar_procnum,
+};
+
+// Structure to hold all the arguments of a message
+// We need these to keep them around while we unmarshal or marshal
+// them if they don't fit into a single underlying message
+//
+typedef struct foo_bar_args_t { 
+	...
+		};
+
+// Type of a given method call
+typedef errval_t (foo_bar_method_t)(foo_binding_t *binding, uint64_t par1, const char *par2 )
+
+// Union holding all args
+union foo_arg_union {
+    struct foo_bar_args bar_args;
+    <other method args>
+		};
+
+// The binding structure, for both sides.
+typedef struct foo_binding_t { 
+	foo_bar_method_t bar;
+	<other methods>
+	...;
+	// Continuation information for fragmented messages
+	int		_tx_current_arg; // Arg we are currently marshalling
+	int		_tx_arg_progress; // How far through it?
+	union { 
+	      	struct foo_bar_args bar_args;
+		<other method args>
+		} _tx_args;
+	foo_bar_method_t _bar_handler;
+	<other methods>
+	...;
+	idc_error_t	_error;  // Points to user code
+	idc_register_fn _register;
+	idc_control_fn  _control;
+	idc_malloc_fn   _malloc;
+	idc_free_fn	_free;
+	// Continuation information for fragmented messages
+	int		_rx_current_arg; // Arg we are currently unmarshalling
+	int		_rx_arg_progress; // How far through it?
+	union { 
+	      	struct foo_bar_args_t bar_args;
+		<other method args>
+		} _rx_args;
+			
+};
+
+// Callbacks for export completion, and incoming bind request.
+typedef void (foo_export_cl *)( void *st, iref_t i, error_t e )
+typedef int (foo_connect_cl *)( void *st, foo_binding_t *b,
+	    		    	ipc_flags_t f )
+
+
+// Export function itself.
+int foo_export( foo_export_cl ec, foo_connect_cl cc );
+
+
+// Callbacks for completed bind request
+typedef void (foo_bind_cl *)( foo_binding_t *binding, error_t e );
+
+// Bind functions. 
+int foo_bind( iref_t i, foo_bind_cl bc );
+int foo_bind_ump( iref_t i, foo_bind_cl bc );
+int foo_bind_lmp( iref_t i, foo_bind_cl bc );
+
+// Static proxy method to send a message of a given type
+static foo_bar_method_t foo_ump_send_fn;
+
+// Static proxy function to continue sending a message of a given
+// type; only needed if the message might not fit into a single transport
+// frame. 
+static foo_ump_send_continuation_t foo_bar_send_continuation;
+
+// Function called when something might be arriving
+static foo_ump_recv_fn(foo_binding_t *binding);
+
+// Function called to dispatch a function
+static foo_ump_bar_recv(foo_binding_t *binding);
+static foo_ump_bar_recv_continuation(foo_binding_t *binding);

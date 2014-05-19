@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * arm_icp_pit.dev
+ *
+ * DESCRIPTION: Timers for for integrator/cp
+ *
+ * This is derived from:
+ *
+ * Integrator/CP User Guide
+ * (DUI0159B_integratorcp_1_0_ug.pdf)
+ *
+ */
+
+device arm_icp_pit msbfirst ( addr base ) "ARM Integrator timer"
+{
+  constants scale "Timer scaling factors" {
+    none   = 0b00 "none";
+    div16  = 0b01 "divide by 16";
+    div256 = 0b10 "divide by 256";
+  };
+
+  constants mode "Timer Mode" {
+    free   = 0b0 "Counts once and then wraps to 0xffff";
+    reload = 0b1 "Reloads from load register at end of each count"; 
+  };
+
+  register LOAD         addr(base, 0x00) "Load value for timer" {
+     value     32 rw;
+  };
+
+  register CURRENT      addr(base, 0x04) "Current value for timer" {
+     value     32 ro;
+  };
+
+  register CONTROL      addr(base, 0x08) "Control register" {
+     _         24;
+     enable     1   rw;
+     mode       1   rw type(mode);
+     int_enable 1   rw;
+     _          1;
+     prescale   2   rw type(scale);
+     timer32    1   rw "Timer 32-bit (otherwise 16-bit)";
+     oneshot    1   rw "Stop rather than wrap.";
+  };
+
+  register INTCLR       addr(base, 0x0c) "Interrupt clear" {
+     value     32   wo;
+  };
+
+  register RIS          addr(base, 0x10) "Raw interrupt status" {
+     _         31;
+     status     1   ro   "Raw status";
+  };
+
+  register MIS          addr(base, 0x14) "Masked interrupt status" {
+     _         31;
+     status     1   ro  "Masked status";
+  };
+
+  register BGLOAD       addr(base, 0x18) "Background load value for timer" {
+     value     32   rw  "Reload value for periodic timer, does not affect CURRENT";
+  };
+};
+

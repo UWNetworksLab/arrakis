@@ -1,0 +1,195 @@
+/*
+ * Copyright (c) 2014, University of Washington.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich. 
+ * Attn: Systems Group.
+ */
+
+device vtd msbfirst ( addr base ) "VT-d" {
+	//////////////////////////// Translation Structure Formats ////////////////////////////
+
+	datatype root_entry "Root Entry" {
+	    _	64 mbz;
+	    ctp	52	"Context-table Pointer";
+	    _	11 mbz;
+	    p	1	"Present";
+	};
+
+	constants translation_type "Translation Type for requests-without-PASID" {
+	    hmd = 0b00 "Host mode with Device-TLBs disabled";
+	    hme = 0b01 "Host mode with Device-TLBs enabled";
+	    ptm = 0b10 "Pass-through mode";
+	    //0b011: reserved
+	};
+	
+	constants addr_width "Address Width" {
+	    agaw30 = 0b000 "30-bit AGAW (2-level page table)";
+	    agaw39 = 0b001 "39-bit AGAW (3-level page table)";
+	    agaw48 = 0b010 "48-bit AGAW (4-level page table)";
+	    agaw57 = 0b011 "57-bit AGAW (5-level page table)";
+	    agaw64 = 0b100 "64-bit AGAW (6-level page table)";
+	     // 0b101-0b111 are reserved
+	};
+	
+	// Context-entries have the same DID iff their SLPTPTR values are the same.
+	datatype context_entry "Context Entry" {
+	    _	    40 mbz;
+	    did	    16			     "Domain Identifier";
+	    _	    1 mbz;
+	    _	    4;
+	    aw	    3 type(addr_width)       "Address Width";
+	    slptptr 52			     "Second Level Page Translation Pointer";
+	    _	    8 mbz;
+	    t	    2 type(translation_type) "Translation Type";
+	    fpd	    1			     "Fault Processing Disable";
+	    p	    1			     "Present";
+	};
+
+	//////////////////////////// Remapping Registers ////////////////////////////
+
+	register VER addr(base, 0x000) "Version Register" {
+	    _	24 mbz;
+	    max	4  ro   "Major Version number";
+	    min	4  ro	"Minor Version number";
+	};
+
+
+	constants numdom "Number of domains supported" {
+	    nd4  = 0b000 "Hardware supports 4-bit (16 domains)";
+	    nd6  = 0b001 "Hardware supports 6-bit (64 domains)"; 
+	    nd8  = 0b010 "Hardware supports 8-bit (256 domains)";
+	    nd10 = 0b011 "Hardware supports 10-bit (1024 domains)";
+	    nd12 = 0b100 "Hardware supports 12-bit (4096 domains)";
+            nd14 = 0b101 "Hardware supports 14-bit (16384 domains)";
+	    nd16 = 0b110 "Hardware supports 16-bit (65536 domains)";
+	    // 0b111 reserved
+	};
+
+	register CAP addr(base, 0x008) "Capability Register" {
+	    _	    7  		    mbz;
+	    fl1gp   1		    ro   "First Level 1-GByte Page Support";
+	    drd	    1  	    	    ro   "Read Draining";
+	    dwd	    1  	    	    ro   "Write Draining";
+	    mamv    6  	    	    ro   "Maximum Address Mask Value";
+	    nfr	    8  	    	    ro   "Number of Fault-recording Registers";
+	    psi	    1  	    	    ro   "Page Selective Invalidation";
+	    _	    1  	    	    mbz;
+            _       2		    mbz  "Second Level Large Page Support - Reserved";
+            sllps30 1  	    	    ro   "Second Level Large Page Support - 1GB page size (30-bit offset to page frame)";
+	    sllps21 1  	    	    ro   "Second Level Large Page Support - 2MB page size (21-bit offset to page frame)";
+	    fro	    10 	    	    ro   "Fault-recording Register offset";
+	    _	    1  	            rsvd;
+	    zlr	    1		    ro   "Zero Length Read";
+	    mgaw    6  	    	    ro   "Maximum Guest Address Width";
+	    _	    3  	    	    mbz;
+            _       2		    mbz  "Supported Adjusted Guest Address Widths - reserved";
+	    sagaw48 1  	    	    ro   "Supported Adjusted Guest Address Widths - 48-bit AGAW (4-level page-table)";
+       	    sagaw39 1  	    	    ro   "Supported Adjusted Guest Address Widths - 39-bit AGAW (3-level page-table)";
+       	    _       1  	    	    mbz  "Supported Adjusted Guest Address Widths - reserved";
+	    cm	    1  	    	    ro   "Caching Mode";
+	    phmr    1  		    ro   "Protected High-Memory Region";
+	    plmr    1  	    	    ro   "Protected Low-Memory Region";
+	    rwbf    1  	    	    ro   "Required Write-Buffer Flushing";
+	    afl	    1  	    	    ro   "Advanced Fault Logging";
+	    nd	    3  ro type(numdom)    "Number of domains supported";
+	};	
+
+	register ECAP addr(base, 0x010) "Extended Capability Register" {
+	    _     24 mbz;
+	    pss   5  ro	   "PASID Size Supported";
+	    eafs  1  ro	   "Extended Accessed Flag Support";
+	    nwfs  1  ro	   "No Write Flag Support";
+	    pot   1  ro	   "PASID-Only Translations";
+	    srs   1  ro	   "Supervisor Request Support";
+	    ers   1  ro	   "Execute Request Support";
+	    prs   1  ro	   "Page Request Support";
+	    pasid 1  ro	   "Process Address Space ID Support";
+	    dis   1  ro	   "Deferred Invalidate Support";
+	    nest  1  ro	   "Nested Translation Support";
+	    mts   1  ro	   "Memory Type Support";
+	    ecs   1  ro	   "Extended Context Support";
+	    mhmv  4  ro    "Maximum Handle Mask Value";
+	    _     2  mbz;
+	    iro   10 ro	   "IOTLB Register Offset";
+	    sc    1  ro	   "Snoop Control";
+	    pt    1  ro	   "Pass Through";
+	    _     1  rsvd;
+	    eim   1  ro    "Extended Interrupt Mode";
+	    ir    1  ro    "Interrupt Remapping support";
+	    dt    1  ro    "Device-TLB support";
+	    qis   1  ro    "Queued Invalidation support";
+	    pwc   1  ro	   "Page-walk Coherency";
+	};
+
+	register GCMD addr(base, 0x018) "Global Command Register" {
+	    te	  1  wo	  "Translation Enable";
+	    srtp  1  wo	  "Set Root Table Pointer";
+	    sfl	  1  wo	  "Set Fault Log";
+	    eafl  1  wo	  "Enable Advanced Fault Logging";
+	    wbf	  1  wo	  "Write Buffer Flush";
+	    qie	  1  wo	  "Queued Invalidation Enable";
+	    ire	  1  wo   "Interrupt Remapping Enable";
+	    sirtp 1  wo	  "Set Interrupt Remap Table Pointer";
+	    cfi	  1  wo	  "Compatibility Format Interrupt";
+	    _	  23 mbz;
+	};
+
+	register GSTS addr(base, 0x01C) "Global Status Register" {
+	    tes	  1  ro	  "Translation Enable Status";
+	    rtps  1  ro	  "Root Table Pointer Status";
+	    fls	  1  ro	  "Fault Log Status";
+	    afls  1  ro	  "Advanced Fault Logging Status";
+	    wbfs  1  ro	  "Write Buffer Flash Status";
+	    qies  1  ro	  "Queued Invalidation Enable Status";
+	    ires  1  ro   "Interrupt Remapping Enable Status";
+	    irtps 1  ro	  "Interrupt Remaping Table Pointer Status";
+	    cfis  1  ro	  "Compatibility Format Interrupt Status";
+	    _	  23 mbz;
+	};
+	
+        constants rtt_ "Root Table Type" {
+	    rt  = 0x0 "Root Table"; 
+	    ert = 0x1 "Extended Root Table";
+	};
+
+	register RTADDR addr(base, 0x020) "Root Table Address Register" {
+	    rta	52 rw	"Root Table Address";
+	    rtt	1  rw	"Root Table Type";
+	    _	11 mbz;
+		
+	};
+
+        constants cirg_ "Context Invalidation Request Granularity" {
+	    rsvd_ir = 0b00 "Reserved";
+	    gir     = 0b01 "Global Invalidation request";
+	    domir   = 0b10 "Domain-selective invalidation request";
+	    devir   = 0b11 "Device-selective invalidation request";
+	};
+
+	constants caig_ "Context Actual Request Granularity" {
+	    rsvd_ip = 0b00 "Reserved";
+	    gip     = 0b01 "Global Invalidation performed";
+	    domip   = 0b10 "Domain-selective invalidation performed";
+	    devip   = 0b11 "Device-selective invalidation performed";
+	};
+
+	constants functmask "Function Mask" {
+	    nomask  = 0b00 "No bits in the SID field masked";
+	    mask2   = 0b01 "Mask bit 2 in the SID field";
+	    mask12  = 0b10 "Mask bits 2:1 in the SID field";
+	    mask012 = 0b11 "Mask bits 2:0 in the SID field";
+	};
+
+	register CCMD addr(base, 0x028) "Context Command Register" {
+	    icc	 1	 	     rw	  "Invalidate Context-Cache";
+	    cirg 2   rw type(cirg_)       "Context Invalidation Request Granularity";
+	    caig 2   ro type(caig_)       "Context Actual Invalidation Granularity";
+	    _	 25		     mbz;
+	    fm	 2   wo type(functmask)   "Function Mask";
+	    sid	 16		     wo	  "Source-ID";
+	    did  16		     rw	  "Domain-ID";
+	};
+};

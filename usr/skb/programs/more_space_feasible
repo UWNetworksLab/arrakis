@@ -1,0 +1,200 @@
+#!/bin/bash
+
+PAPERPATH=~/hg/papers/asplos11/barrelfish/plots
+
+# we use more and more devices and bridge to check how well the algorithms
+# allocate resources and how long they need
+
+#ALGORITHMS="bridge_page.pl bridge_postorder.pl bridge_postorder_sorted.pl bridge_postorder_sorted_sum.pl bridge_postorder_sorted_ascending.pl bridge_postorder_sorted_sum_ascending.pl"
+#ALGONAMES[0]="CLP"
+#ALGONAMES[1]="postorder"
+#ALGONAMES[2]="postorder_sorted"
+#ALGONAMES[3]="postorder_sum"
+#ALGONAMES[4]="postorder_asc"
+#ALGONAMES[5]="postorder_asc_sum"
+
+#ALGORITHMS="bridge_page.pl bridge_postorder_sorted.pl bridge_postorder_sorted_sum.pl"
+#ALGONAMES[0]="CLP"
+#ALGONAMES[1]="postorder_sorted"
+#ALGONAMES[2]="postorder_sorted_sum"
+
+ALGORITHMS="bridge_page.pl bridge_postorder_sorted_ascending.pl"
+ALGONAMES[0]="CLP"
+ALGONAMES[1]="postorder_sorted_ascending"
+
+################################################################################
+# TEST 1: sample test devices and test bridges
+################################################################################
+
+# the file from which devices should be added
+DEVICEFILE="testdevices.txt"
+
+# the the line number in testdevices.txt just before the first device() fact
+# starts
+OFFSET=189
+
+# how many devices do we want to have at the end to compute the assignment?
+#MAXDEVICES=47
+MAXDEVICES=41
+################################################################################
+
+
+################################################################################
+# TEST 2: devices from gruyere
+################################################################################
+
+# the file from which devices should be added
+#DEVICEFILE="testdevices2.txt"
+
+# the the line number in testdevices.txt just before the first device() fact
+# starts
+#OFFSET=46
+
+# how many devices do we want to have at the end to compute the assignment?
+#MAXDEVICES=64
+################################################################################
+
+
+
+
+
+
+
+OUTFILE="space_consumption.dat"
+GNUPLOTFILE="space_consumption.gnuplot"
+PNGOUTPUT="space_consumption.eps"
+BAUMFILE="tmp.baum.dat";
+
+
+echo "" > $BAUMFILE
+echo "" > $OUTFILE
+echo -n "minrealbase_1    maxrealbase_2    realres_3    devicesum_4    paddingoverhead_5    " >> $OUTFILE
+echo -n "rootminmem_6    rootmaxmem_7    rootsize_8 rootminoverflow_9    rootlimitoverflow_10    " >> $OUTFILE
+echo -n "rootbasedifference_11    rootlimitdifference_12    fillrate_13    fillpercent_14    " >> $OUTFILE
+echo -n "consumptionrate_15    consumptionpercent_16    new_bridge_added_17" >> $OUTFILE
+echo "" >> $OUTFILE
+
+
+# allgemeine einstellungen
+echo "clear" > $GNUPLOTFILE
+echo "reset" >> $GNUPLOTFILE
+#echo "set terminal postscript eps enhanced dashed color" >> $GNUPLOTFILE
+echo "set terminal postscript eps enhanced dashed" >> $GNUPLOTFILE
+echo "set output \"$PNGOUTPUT\"" >> $GNUPLOTFILE
+
+# SPACE CONSUMPTION
+echo "set boxwidth 0.1" >> $GNUPLOTFILE
+echo "set key bottom right" >> $GNUPLOTFILE
+echo "set xlabel \"Fillrate (device sum / max available size) [%]\"" >> $GNUPLOTFILE
+echo "set ylabel \"Physical address size required [bytes]\"" >> $GNUPLOTFILE
+echo -n "plot [0:100] \"$OUTFILE\" index 0 using 14:8 title \"Root size (max)\" with lines,  " >> $GNUPLOTFILE;
+echo -n " \"$OUTFILE\" index 0 using 14:4 title \"DeviceSum\" with lines," >> $GNUPLOTFILE;
+echo -n " \"$OUTFILE\" index 0 using 14:(\$17==1?\$8:0) notitle with boxes" >> $GNUPLOTFILE;
+#echo -n " \"$OUTFILE\" index 0 using 14:(\$17==1?\$8:0) title \"Added Bridge\" with boxes" >> $GNUPLOTFILE;
+treedata="";
+
+
+padding_overhead="";
+
+algoindex=0;
+for i in $ALGORITHMS; do
+    echo "# $i" >> $OUTFILE
+    count=0;
+    while [ $count -lt  $MAXDEVICES ]; do
+        echo $count;
+        count=$[$count+1];
+        echo $i;
+        head -$[$count+$OFFSET] $DEVICEFILE > tmp.devices.dat;
+        ./mach $i tmp.devices.dat > tmp.out.dat;
+
+        egrep Abort tmp.out.dat;
+        if [ 0 -eq $? ]; then
+            echo "ECLIPSE-Fehler";
+            echo "Algorithm: $i, count: $count";
+            exit 1;
+        fi
+
+        egrep No tmp.out.dat;
+        if [ 0 -eq $? ]; then
+            echo "ECLIPSE did not find a solution";
+            echo "Algorithm: $i, count: $count";
+            exit 1;
+        fi
+##        sed -r -e '/res\(.*\)./!d' tmp.out.dat
+#        sed -r -e '/^res.*/!d' -e 's/res[\t]//' tmp.out.dat >> $OUTFILE
+        zahlen=$(sed -r -e '/^res.*/!d' -e 's/res[\t]//' -e 's/\n//g' tmp.out.dat)
+        bridge=$(tail -1 tmp.devices.dat | egrep bridge);
+        if [ 0 -eq $? ]; then
+            b=1;
+        else
+            b=0;
+        fi
+        echo "$zahlen    $b" >> $OUTFILE
+    done
+    echo "" >> $OUTFILE;
+    echo "" >> $OUTFILE;
+    echo "# $i" >> $BAUMFILE
+    sed -r -e '/^treedata/!d' -e 's/treedata[\t]//' -e 's/base/\nbase/g' tmp.out.dat >> $BAUMFILE
+    echo "" >> $BAUMFILE;
+    echo "" >> $BAUMFILE;
+#    nama=$(echo $i|sed -r -e 's/_/\\_/g');
+    nama=$(echo ${ALGONAMES[$algoindex]}|sed -r -e 's/_/\\_/g');
+    echo -n ", \"$OUTFILE\" index $algoindex using 14:3 title '$nama' with linespoints" >> $GNUPLOTFILE;
+    paddingoverhead="$paddingoverhead,\"$OUTFILE\" index $algoindex using 14:5 title '$nama' with linespoints";
+#    echo "paddingoverhead: $paddingoverhead";
+    
+    algoindex=$[$algoindex+1];
+done
+
+echo "" >> $OUTFILE
+echo "" >> $OUTFILE
+cat $BAUMFILE >> $OUTFILE
+
+echo "" >> $GNUPLOTFILE
+echo "" >> $GNUPLOTFILE
+
+
+baumindex=$[$algoindex];
+
+
+# PADDING OVERHEAD
+echo "set output \"padding_overhead.eps\"" >> $GNUPLOTFILE
+echo "set key top left" >> $GNUPLOTFILE
+echo "set xlabel \"Fillrate (device sum / max available size) [%]\"" >> $GNUPLOTFILE
+echo "set ylabel \"Padding overhead [bytes]\"" >> $GNUPLOTFILE
+# arrows for bridges missing
+paddingoutput=$(echo $paddingoverhead|sed -r -e 's/,(.*)/\1/');
+echo "plot [0:100] $paddingoutput" >> $GNUPLOTFILE
+
+#with bridgebox, but bad scaling...
+#echo -n "plot [0:100] " >> $GNUPLOTFILE
+#echo -n " \"$OUTFILE\" index 0 using 14:(\$17==1?\$8:0) notitle with boxes" >> $GNUPLOTFILE;
+#echo -n "$paddingoverhead" >> $GNUPLOTFILE;
+
+echo "" >> $GNUPLOTFILE
+echo "" >> $GNUPLOTFILE
+
+
+# BAUM
+
+echo "set key top right" >> $GNUPLOTFILE
+echo "set xlabel \"Address [bytes]\"" >> $GNUPLOTFILE
+echo "set ylabel \"Bus Nr\"" >> $GNUPLOTFILE
+
+for i in $ALGORITHMS; do
+    echo "# $i" >> $GNUPLOTFILE
+    echo "set output \"tree_$i.eps\"" >> $GNUPLOTFILE;
+    echo -n "plot " >> $GNUPLOTFILE
+    echo -n "\"./space_consumption.dat\" index $algoindex using 4:(\$6==1?\$3:1/0):yticlabels(7) title \"Bridge\" with linespoints, " >> $GNUPLOTFILE
+    echo  "\"./space_consumption.dat\" index $algoindex using 4:(\$6==0?\$3:1/0):yticlabels(7) title \"Device\" with linespoints" >> $GNUPLOTFILE
+
+    algoindex=$[$algoindex+1];
+done
+
+
+#echo ";" >> $GNUPLOTFILE
+gnuplot $GNUPLOTFILE
+cp *.eps  $PAPERPATH
+cp *.dat  $PAPERPATH
+echo "fertig."
+

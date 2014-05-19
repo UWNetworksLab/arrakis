@@ -1,0 +1,15 @@
+digraph {
+	rankdir=RL;
+
+	running_e [label="running\nenabled"];
+	running_d [label="running\ndisabled"];
+	notrunning_e [label="notrunning\nenabled"];
+	notrunning_d [style="bold", label="notrunning\ndisabled"];
+
+	running_e -> notrunning_e [label="enabled_save_area"];
+	running_e -> running_d [fontname="Times-Italic", style="dashed", label="enabled_save_area"];
+	running_d -> running_e [fontname="Times-Italic", style="dashed", label="enabled_save_area"];
+	running_d -> notrunning_d [label="disabled_save_area"];
+	notrunning_d -> running_d;
+	notrunning_e -> running_d;
+};

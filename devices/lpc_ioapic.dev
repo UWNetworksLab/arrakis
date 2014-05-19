@@ -1,0 +1,102 @@
+/*
+ * Copyright (c) 2007, 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * lpc_ioapic.dev
+ *
+ * DESCRIPTION: Definition of the LPC (low pin count, or legacy PC)
+ *              bridge function of a typical Intel IHC (Southbridge).
+ * 
+ * This is derived from the "Intel 631xESB/632xESB IO/Controller Hub
+ * Datasheet", chapter 21, "LPC Interface Bridge Registers (D31:F0)". 
+ */
+
+device lpc_ioapic lsbfirst (addr base) "LPC IHC I/O APIC function" {
+  //
+  // Advanced Programmable Interrupt Controller registers: section 21.5
+  //
+
+    space ioapic(index) stepwise(4) "I/O APIC register space";
+
+  constants delivery_mode "Delivery Mode" {
+    fixed   = 0b000	  "Fixed";
+    lowest  = 0b001	  "Lowest Priority";
+    smi	    = 0b010	  "SMI (System Management Interrupt)";
+    nmi	    = 0b100	  "NMI (Non-maskable Interrupt)";
+    init    = 0b101	  "INIT";
+    extint  = 0b111	  "ExtINT";
+  };
+
+  constants dest_mode "Destination Mode" {
+    physical	      = 0b0	   "Physical";
+    logical	      = 0b1	   "Logical";
+  };
+
+  constants delivery_status "Delivery Status" {
+    idle    = 0b0	    "Idle";
+    pending = 0b1	    "Pending";
+  };
+
+  constants polarity "Interrupt Input Pin Polarity" {
+    active_high	     = 0b0	"Active high";
+    active_low	     = 0b1	"Active low";
+  };
+
+  constants trigger_mode "Trigger Mode" {
+    edge    = 0b0	 "Edge Triggered";
+    level   = 0b1	 "Level Triggered";
+  };
+
+  register ind rw addr(base, 0x0) "Index" type(uint32);
+  register wdw rw addr(base, 0x10) "Window" type(uint32);
+
+  register eoir wo addr(base, 0x40) "EOI" {
+    rec	   8	"Redirection Entry Clear";
+    _	   24	mbz;
+  };
+
+  register id rw ioapic(0x0) "Identification" {
+    _	   15;
+    spb	   1	"Scratchpad bit";
+    _	   8;
+    id     4	"APIC ID";
+    _	   4;
+  };
+
+  register ver ro ioapic(0x1) "Version" {
+    ver	   8   	"Version";
+    _	   7;
+    prq	   1	"Pin assertion register non-support";
+    mre	   8	"Maximum redirection entries";
+    _	   8;
+  };
+
+  register arb ro ioapic(0x2) "Arbitration" {
+      _      24;
+      id     4   "IOAPIC Arbitration ID";
+      _	     4;
+  };
+
+
+  regtype redir_tbl "Redirection Table" {
+    vector 		 8	"Vector";
+    mode   		 3	type(delivery_mode) "Delivery mode";
+    destmode		 1	type(dest_mode) "Destination mode";
+    status 		 1	ro type(delivery_status) "Delivery status";
+    polarity		 1	type(polarity) "Interrupt input pin polarity";
+    rirr		 1	ro "Remote IRR";
+    trigger		 1	type(trigger_mode) "Trigger mode";
+    mask		 1	"Mask";
+    _			 31;
+    edid   		 8	ro "Extended destination ID";
+    dest   		 8	"Destination";
+  };
+
+  // XXX: Support up to 24 redirection table entries.
+  regarray redirtbl rw ioapic(0x10)[24] type(redir_tbl);
+};

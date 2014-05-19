@@ -1,0 +1,88 @@
+/*
+ * Copyright (c) 2007, 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * lpc_timer.dev
+ *
+ * DESCRIPTION: Legacy timer registers on the LPC (low pin count, or
+ *              legacy PC) bridge function of a typical Intel IHC
+ *              (Southbridge).    
+ * 
+ * This is derived from the "Intel 631xESB/632xESB IO/Controller Hub
+ * Datasheet", chapter 21, "LPC Interface Bridge Registers (D31:F0)".
+ */
+
+device lpc_timer (io base) "LPC Timer" {
+  //
+  // Section 21.3: Timer I/O registers
+  //
+
+  constants cnt_mode "Counter mode" {
+    oseoc  = 0b000 "Out signal on end of count (mode 0)";
+    hr1s   = 0b001 "Hardware retriggerable one-shot (mode 1)";
+    rtgen  = 0b010 "Rate generator (mode 2)";
+    rtgen_ = 0b110 "Rate generator (mode 2)";
+    sqwav  = 0b011 "Square wave output (mode 3)";
+    sqwav_ = 0b111 "Square wave output (mode 3)";
+    swstr  = 0b100 "Software triggered strobe (mode 4)";
+    hwstr  = 0b101 "Hardware triggered strobe (mode 5)";
+  };
+
+  constants timer_rwsel "Read/write select" {
+    clc   = 0b00 "Counter latch cmd";
+    lsb   = 0b01 "R/w least sig. byte";
+    msb   = 0b10 "R/w most sig. byte";
+    lmsb  = 0b11 "R/w lsb then msb";
+  };
+
+  constants timer_cntsel "Counter select" {
+    c0    = 0b00 "Counter 0";
+    c1    = 0b01 "Counter 1";
+    c2    = 0b10 "Counter 2";
+    rb    = 0b11 "Read back cmd";
+  };
+
+  register tcw wo io( base, 0x3 ) "Timer Control Word" {
+    bcd         1 "Binary coded decimal select";
+    mode        3 type(cnt_mode) "Counter mode";
+    rwsel       2 type(timer_rwsel) "Read/write select";
+    select      2 type(timer_cntsel) "Counter select";
+  };
+
+  register rdbk_cmd wo also io( base, 0x3 ) "Read back command" {
+    _           1 mbz;
+    c0          1 "Counter 0 select";
+    c1          1 "Counter 1 select";
+    c2          1 "Counter 2 select";
+    stat        1 "Latch status of selected counters";
+    count       1 "Latch count of selected counters";
+    _           2 mb1;
+  };
+
+  register ltch_cmd wo also io( base, 0x3 ) "Counter latch command" {
+    _           6 mbz;
+    select      2 type(timer_cntsel) "Counter select";
+  };
+
+  regtype sbyte_fmt "Interval timer status byte format" {
+    bcd         1 "Binary coded decimal select";
+    mode        3 type(cnt_mode) "Counter mode";
+    rwsel       2 type(timer_rwsel) "Read/write select";
+    cnt_stat    1 "Count register status";
+    cnt_out     1 "Counter OUT pin status";
+  };
+  register sbyte_fmt0 ro io( base, 0x0 ) "Int. timer 0 status format" type(sbyte_fmt);
+
+  register sbyte_fmt1 ro io( base, 0x1 ) "Int. timer 1 status format" type(sbyte_fmt);
+  register sbyte_fmt2 ro io( base, 0x2 ) "Int. timer 2 status format" type(sbyte_fmt);
+
+  register cntacc0 rw also io( base, 0x0 ) "Counter 0 access" type(uint8);
+  register cntacc1 rw also io( base, 0x1 ) "Counter 1 access" type(uint8);
+  register cntacc2 rw also io( base, 0x2 ) "Counter 2 access" type(uint8);
+
+};

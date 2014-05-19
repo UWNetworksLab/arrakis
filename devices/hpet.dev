@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) 2007, 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * hpet.dev
+ *
+ * DESCRIPTION: Intel 631xESB/632xESB I/O Controller Hub --
+ *              High-Precision Event Timer Registers
+ *
+ * This is derived from the "Intel 631xESB/632xESB IO/Controller Hub
+ * Datasheet", chapter 26, "High-Precision Event Timer Registers".
+ * See also, Intel's "IA-PC HPET (High Precision Event Timers)
+ * Specification", Revision 1.0a, October 2004. 
+ */
+
+device HPET lsbfirst ( addr base ) "High-Precision Event Timer" {
+    // 26.1.1
+    register gcap_id ro addr(base, 0x0) "General Capabilities and Identification" {
+	rev_id	   	      8	   "Revision Identification";
+	num_tim_cap	      5	   "Number of Timers";
+	count_size_cap	      1	   "Counter Size";
+	_		      1	   mbz;
+	leg_rt_cap	      1	   "Legacy Replacement Rout Capable";
+	vendor_id_cap	      16   "Vendor ID";
+	counter_clk_per_cap   32   "Main Counter Tick Period";
+    };
+    
+    // 26.1.2
+    register gen_conf rw addr(base, 0x10) "General Configuration" {
+	enable_cnf  1	       "Overall Enable";
+	leg_rt_cnf  1	       "Legacy Replacement Rout";
+	_	    62	       mbz;
+    };
+
+    // 26.1.3
+    register gintr_sta rw addr(base, 0x20) "General Interrupt Status" {
+	t00_int_sts  1		"Timer 0 interrupt active";
+	t01_int_sts  1		"Timer 1 interrupt active";
+	t02_int_sts  1		"Timer 2 interrupt active";
+	_	     61		mbz;
+    };
+
+    // 26.1.4
+    register main_cnt rw addr(base, 0xf0) "Main Counter Value" type(uint64);
+    
+    // 26.1.5
+    regtype tim_conf "Timer Configuration and Capabilities" {
+	_	       		     1      mbz;
+	timer_int_type_cnf	     1	    "Timer Interrupt Type";
+	timer_int_enb_cnf	     1	    "Timer Interrupt Enable";
+	timer_type_cnf		     1	    "Timer Type";
+	timer_per_int_cap	     1	    "Periodic Interrupt Capable";
+	timer_size_cap		     1	    "Timer Size";
+	timer_val_set_cnf	     1	    "Timer Value Set";
+	_			     1	    mbz;
+	timer_32mode_cnf	     1	    "Timer 32-bit mode";
+	timer_int_rout_cnf	     5	    "Interrupt Rout";
+	_			     29	    mbz;
+	timer2_int11_rout_cap	     1	    "Timer 2 IRQ 11 Rout Capability";
+	_			     8	    mbz;
+	timer_int_rout_cap	     4	    "Timer Interrupt Rout Capability";
+	_			     8	    mbz;
+    };
+    
+    register tim1_conf rw addr(base, 0x100) "Timer 0 Configuration and Capabilities" type(tim_conf);
+    register tim1_comp rw addr(base, 0x108) "Timer 0 Comparator Value" type(uint64);
+    
+    register tim2_conf rw addr(base, 0x120) "Timer 1 Configuration and Capabilities" type(tim_conf);
+    register tim2_comp rw addr(base, 0x128) "Timer 1 Comparator Value" type(uint64);
+    
+    register tim3_conf rw addr(base, 0x140) "Timer 2 Configuration and Capabilities" type(tim_conf);
+    register tim3_comp rw addr(base, 0x148) "Timer 2 Comparator Value" type(uint64);
+};

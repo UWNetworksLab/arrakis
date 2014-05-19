@@ -1,0 +1,91 @@
+##########################################################################
+Copyright (c) 2013-2014, University of Washington.
+All rights reserved.
+
+This file is distributed under the terms in the attached LICENSE file.
+If you do not find this file, copies can be found by writing to:
+ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+##########################################################################
+
+Arrakis README Supplement
+--------------------------------
+
+This version of Arrakis is a fork of Barrelfish release
+2014-03-11. Arrakis contains many additions and fixes to the vanilla
+Barrelfish tree, notably:
+
+ * Boot directly via QEMU Multiboot support, instead of GRUB
+ * Arrakis domains: These run in guest ring 0, hardware-virtualized
+ * Parallel hake
+ * SR-IOV support
+ * Fixes to PCI bus enumeration
+ * Can use BIOS preset values to configure PCI (like Linux)
+ * Driver for 82599 virtual function
+ * More POSIX support, in particular pthreads, epoll, and sockets
+ * Intel performance monitoring counters support
+ * Arranet, the Arrakis network stack
+ * Support for advanced 82599 features, like weighted round-robin
+   scheduling and rate limiting
+ * TenaciousD, a persistent data structure library
+ * libstorage, a storage HAL
+ * Intel MegaRAID device driver
+ * Intel VT-d (IOMMU) driver
+
+Arrakis likely also contains bugs not present in Barrelfish. In some
+cases, there is likely to be some debug code left in this release,
+which might impact your experience. Don't despair! Just comment out
+suspicious-looking code and see if it makes Arrakis work for
+you. Unfortunately, we do not have the man or machine power to test
+Arrakis as extensively as the Barrelfish releases.
+
+We make an effort to back-port our changes to Barrelfish periodically,
+by which time they will have stabilized and tested on the broad range
+of machines that Barrelfish is usually expected to run on.
+
+.. _Arrakis: http://arrakis.cs.washington.edu/
+
+Supported PC hardware
+--------------------------------
+
+Arrakis has been tested on the following PC hardware:
+
+ * Dell PowerEdge R520 servers in x86-64 mode. Our server consists of
+   a 6-core Intel Xeon E5-2430 (Sandy Bridge) system at 2.2 GHz clock
+   frequency with 4GB of RAM. The tested peripherals are:
+
+   - Intel X520 dual-port 10Gb Ethernet adapter
+   - Intel MegaRAID RS3DC040 RAID controller
+
+Building
+--------------------------------
+
+The build process (including required tools) is unchanged from
+Barrelfish. Please refer to the README file for instructions.
+
+Installing and Booting
+--------------------------------
+
+Installation and booting is also unchanged from Barrelfish and
+explained in the README file.
+
+A number of commandline options to system daemons and device drivers
+have been added:
+
+ * pci now supports an "skb_bridge_program=" option, to set which SKB
+   program to use to configure PCI bridges. "bridge_bios" will use the
+   BIOS preset values and might be preferable on some systems.
+
+ * pci now supports the "numvfs=" option to set the number of virtual
+   functions to configure (for every device that supports them).
+
+ * VT-d related commandline options have been added and are explained
+   in usr/acpi/README_VTD.
+
+ * The 82599 physical function driver supports a range of options to
+   configure advanced NIC features. "tx_rate[x]=y" is used to limit
+   the transmit rate of virtual function x to y
+   Mbps. credit_refill[x]=y" is used to set the number of credits for
+   weighted round-robin scheduling of queue x to y.
+
+ * The 82599 virtual function driver accepts an option "vf=x" to
+   configure the virtual function number to use.

@@ -1,0 +1,909 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_hsusbhost.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_hsusbhost msbfirst ( addr base ) "" {
+    
+    
+    register uhh_revision ro addr(base, 0x0) "USB high-speed host (UHH) revision identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+    
+    register uhh_hwinfo addr(base, 0x4) "Information on host hardware configuration" {
+        _ 22 mbz;
+        sar_cntx_size 10 ro "Save-and-restore context size, in 32-bit words; that is, number of 32-bit registers with significant context information, mapped from offset 0x100 upward.";
+    };
+
+    constants standbymode_status width(2) "" {
+        STANDBYMODE_0 = 0 "Force-standby mode. Mstandby asserted unconditionally. Asynchronous (master) wake-up disabled.";
+        STANDBYMODE_1 = 1 "No-standby mode. Mstandby never asserted. Asynchronous (master) wakeup disabled.";
+        STANDBYMODE_2 = 2 "Smart-standby mode. Mstandby asserted when initiator activity stops. Asynchronous (master) wake-up disabled.";
+        STANDBYMODE_3 = 3 "Reserved";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-Idle mode. Sidleack asserted after Idlereq assertion. Asynchronous (slave) wake-up disabled.";
+        IDLEMODE_1 = 1 "No-idle mode. Sidleack never asserted. Asynchronous (slave) wakeup disabled.";
+        IDLEMODE_2 = 2 "Smart-idle mode. Sidleack asserted upon Idlereq assertion, after target activity is over. Asynchronous (slave) wake-up disabled.";
+        IDLEMODE_3 = 3 "Smart-idle wake-up mode. Like smart mode with asynchronous (slave) wakeup enabled.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "No reset pending";
+        SOFTRESET_1 = 1 "Starts softreset sequence / Reset is pending.";
+    };
+    
+    register uhh_sysconfig addr(base, 0x10) "OCP standard system configuration register" {
+        _ 26 mbz;
+        standbymode 2 rw type(standbymode_status) "Mstandby/Mwait/[Mwakeup] initiator power-management interface configuration";
+        idlemode 2 rw type(idlemode_status) "Sidlereq/Sidleack(1:0)/[Swakeup] target power management interface configuration.";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Module software reset";
+    };
+
+    constants ehci_resetdone_status width(1) "" {
+        EHCI_RESETDONE_0_r = 0 "Under reset";
+        EHCI_RESETDONE_1_r = 1 "Out of reset";
+    };
+    
+    register uhh_sysstatus addr(base, 0x14) "Module-specific system status" {
+        _ 29 mbz;
+        ehci_resetdone 1 ro type(ehci_resetdone_status) "Indicates when the EHCI HS host is out of reset";
+        ohci_resetdone 1 ro type(ehci_resetdone_status) "Indicates when the OHCI FS/LS host is out of reset";
+        _ 1 mbz;
+    };
+
+    constants p2_mode_status width(2) "" {
+        P2_MODE_0 = 0 "To external ULPI PHY, HS only";
+        P2_MODE_1 = 1 "To UTMI PHY (or ULPI TLL), FS/LS capable";
+        P2_MODE_2 = 2 "Forbidden";
+        P2_MODE_3 = 3 "To HSIC digital front-end (DFE), HS only";
+    };
+
+    constants p2_connect_status_status width(1) "" {
+        P2_CONNECT_STATUS_0_r = 0 "Disconnected";
+        P2_CONNECT_STATUS_1_r = 1 "Peripheral connected and active on port";
+    };
+
+    constants ena_incr_align_status width(1) "" {
+        ENA_INCR_ALIGN_0 = 0 "Disable burst type";
+        ENA_INCR_ALIGN_1 = 1 "Enable burst type";
+    };
+
+    constants autoppd_on_overcur_en_status width(1) "" {
+        AUTOPPD_ON_OVERCUR_EN_0 = 0 "Port remains on upon overcurrent.";
+        AUTOPPD_ON_OVERCUR_EN_1 = 1 "Port is powered down automatically upon overcurrent.";
+    };
+    
+    register uhh_hostconfig addr(base, 0x40) "Static configuration of the USB HS host" {
+        app_start_clk 1 rw "When the OHCI clocks are suspended, the system must assert this signal to start the clocks (12 and 48 MHz).This must be deasserted after the clocks are started and before the host is suspended again. . (Host is suspended means HCFS = SUSPEND or all the OHCI ports are suspended.) .";
+        _ 11 mbz;
+        p2_mode 2 rw type(p2_mode_status) "Port 2 interface configuration. Each bit corresponds to an internal 'strap' signal, and output: Bit 0 = ulpi_bypass Bit 1 = hsic_en";
+        p1_mode 2 rw type(p2_mode_status) "Port 1 interface configuration. Each bit corresponds to an internal 'strap' signal, and output: Bit 0 = ulpi_bypass Bit 1 = hsic_en";
+        _ 6 mbz;
+        p2_connect_status 1 ro type(p2_connect_status_status) "Connection status for port 2";
+        p1_connect_status 1 ro type(p2_connect_status_status) "Connection status for port 1";
+        _ 2 mbz;
+        ena_incr_align 1 rw type(ena_incr_align_status) "Force alignment of bursts to the respective burst-size boundaries";
+        ena_incr16 1 rw type(ena_incr_align_status) "Control the use of INCR16-type bursts (in AHB sense)";
+        ena_incr8 1 rw type(ena_incr_align_status) "Control the use of INCR8-type bursts (in AHB sense)";
+        ena_incr4 1 rw type(ena_incr_align_status) "Control the use of INCR4-type bursts (in AHB sense)";
+        autoppd_on_overcur_en 1 rw type(autoppd_on_overcur_en_status) "Configure reaction upon port overcurrent condition. This function is not supported at the device level.";
+        _ 1 mbz;
+    };
+
+    constants ohci_ccs_2_status width(1) "" {
+        OHCI_CCS_2_0_r = 0 "No peripheral connected";
+        OHCI_CCS_2_1_r = 1 "Peripheral connected";
+    };
+
+    constants ohci_globalsuspend_status width(1) "" {
+        OHCI_GLOBALSUSPEND_0_r = 0 "Host is not suspended.";
+        OHCI_GLOBALSUSPEND_1_r = 1 "Host is suspended.";
+    };
+
+    constants ehci_simulation_mode_status width(1) "" {
+        EHCI_SIMULATION_MODE_0 = 0 "Functional mode";
+        EHCI_SIMULATION_MODE_1 = 1 "PHY set to nondriving";
+    };
+    
+    register uhh_debug_csr addr(base, 0x44) "Debug control and status for the EHCI, OHCI hosts" {
+        _ 13 mbz;
+        ohci_ccs_2 1 ro type(ohci_ccs_2_status) "Current connect status of port 2";
+        ohci_ccs_1 1 ro type(ohci_ccs_2_status) "Current connect status of port 1";
+        ohci_globalsuspend 1 ro type(ohci_globalsuspend_status) "OHCI global suspend status, asserted 5 ms after the suspend order.";
+        _ 8 mbz;
+        ochi_cntsel 1 rw type(standbymode_status) "Selection of a shorter '1 ms' counter in OHCI host, to speed up long USB phases such as reset, resume, etc. (used only for simulation)";
+        ehci_simulation_mode 1 rw type(ehci_simulation_mode_status) "Sets the PHY to nondriving mode (used only for simulation)";
+        ehci_fladj 6 rw "EHCI host frame length adjust. Modify only when EHCI Bit FieldUSBSTS.HCHalted = 1 Field value + 59,488 = 60,000 by default = Number of 60-MHz UTMI/ULPI clock cycles per 1 ms USB frame = Number of 480-MHz HS bits per 125 us HS USB microframe";
+    };
+    
+    register uhh_sar_cntx_i_0 rw addr(base, 0x100) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_1 rw addr(base, 0x104) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_2 rw addr(base, 0x108) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_3 rw addr(base, 0x10C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_4 rw addr(base, 0x110) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_5 rw addr(base, 0x114) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_6 rw addr(base, 0x118) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_7 rw addr(base, 0x11C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_8 rw addr(base, 0x120) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_9 rw addr(base, 0x124) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_10 rw addr(base, 0x128) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_11 rw addr(base, 0x12C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_12 rw addr(base, 0x130) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_13 rw addr(base, 0x134) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_14 rw addr(base, 0x138) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_15 rw addr(base, 0x13C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_16 rw addr(base, 0x140) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_17 rw addr(base, 0x144) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_18 rw addr(base, 0x148) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_19 rw addr(base, 0x14C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_20 rw addr(base, 0x150) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_21 rw addr(base, 0x154) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_22 rw addr(base, 0x158) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_23 rw addr(base, 0x15C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_24 rw addr(base, 0x160) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_25 rw addr(base, 0x164) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_26 rw addr(base, 0x168) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_27 rw addr(base, 0x16C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_28 rw addr(base, 0x170) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_29 rw addr(base, 0x174) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_30 rw addr(base, 0x178) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_31 rw addr(base, 0x17C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_32 rw addr(base, 0x180) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_33 rw addr(base, 0x184) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_34 rw addr(base, 0x188) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_35 rw addr(base, 0x18C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_36 rw addr(base, 0x190) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_37 rw addr(base, 0x194) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_38 rw addr(base, 0x198) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_39 rw addr(base, 0x19C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_40 rw addr(base, 0x1A0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_41 rw addr(base, 0x1A4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_42 rw addr(base, 0x1A8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_43 rw addr(base, 0x1AC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_44 rw addr(base, 0x1B0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_45 rw addr(base, 0x1B4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_46 rw addr(base, 0x1B8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_47 rw addr(base, 0x1BC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_48 rw addr(base, 0x1C0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_49 rw addr(base, 0x1C4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_50 rw addr(base, 0x1C8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_51 rw addr(base, 0x1CC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_52 rw addr(base, 0x1D0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_53 rw addr(base, 0x1D4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_54 rw addr(base, 0x1D8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_55 rw addr(base, 0x1DC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_56 rw addr(base, 0x1E0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_57 rw addr(base, 0x1E4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_58 rw addr(base, 0x1E8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_59 rw addr(base, 0x1EC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_60 rw addr(base, 0x1F0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_61 rw addr(base, 0x1F4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_62 rw addr(base, 0x1F8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_63 rw addr(base, 0x1FC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_64 rw addr(base, 0x200) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_65 rw addr(base, 0x204) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_66 rw addr(base, 0x208) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_67 rw addr(base, 0x20C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_68 rw addr(base, 0x210) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_69 rw addr(base, 0x214) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_70 rw addr(base, 0x218) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_71 rw addr(base, 0x21C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_72 rw addr(base, 0x220) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_73 rw addr(base, 0x224) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_74 rw addr(base, 0x228) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_75 rw addr(base, 0x22C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_76 rw addr(base, 0x230) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_77 rw addr(base, 0x234) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_78 rw addr(base, 0x238) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_79 rw addr(base, 0x23C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_80 rw addr(base, 0x240) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_81 rw addr(base, 0x244) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_82 rw addr(base, 0x248) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_83 rw addr(base, 0x24C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_84 rw addr(base, 0x250) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_85 rw addr(base, 0x254) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_86 rw addr(base, 0x258) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_87 rw addr(base, 0x25C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_88 rw addr(base, 0x260) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_89 rw addr(base, 0x264) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_90 rw addr(base, 0x268) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_91 rw addr(base, 0x26C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_92 rw addr(base, 0x270) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_93 rw addr(base, 0x274) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_94 rw addr(base, 0x278) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_95 rw addr(base, 0x27C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_96 rw addr(base, 0x280) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_97 rw addr(base, 0x284) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_98 rw addr(base, 0x288) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_99 rw addr(base, 0x28C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_100 rw addr(base, 0x290) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_101 rw addr(base, 0x294) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_102 rw addr(base, 0x298) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_103 rw addr(base, 0x29C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_104 rw addr(base, 0x2A0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_105 rw addr(base, 0x2A4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_106 rw addr(base, 0x2A8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_107 rw addr(base, 0x2AC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_108 rw addr(base, 0x2B0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_109 rw addr(base, 0x2B4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_110 rw addr(base, 0x2B8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_111 rw addr(base, 0x2BC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_112 rw addr(base, 0x2C0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_113 rw addr(base, 0x2C4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_114 rw addr(base, 0x2C8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_115 rw addr(base, 0x2CC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_116 rw addr(base, 0x2D0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_117 rw addr(base, 0x2D4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_118 rw addr(base, 0x2D8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_119 rw addr(base, 0x2DC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_120 rw addr(base, 0x2E0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_121 rw addr(base, 0x2E4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_122 rw addr(base, 0x2E8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_123 rw addr(base, 0x2EC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_124 rw addr(base, 0x2F0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_125 rw addr(base, 0x2F4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_126 rw addr(base, 0x2F8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_127 rw addr(base, 0x2FC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_128 rw addr(base, 0x300) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_129 rw addr(base, 0x304) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_130 rw addr(base, 0x308) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_131 rw addr(base, 0x30C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_132 rw addr(base, 0x310) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_133 rw addr(base, 0x314) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_134 rw addr(base, 0x318) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_135 rw addr(base, 0x31C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_136 rw addr(base, 0x320) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_137 rw addr(base, 0x324) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_138 rw addr(base, 0x328) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_139 rw addr(base, 0x32C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_140 rw addr(base, 0x330) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_141 rw addr(base, 0x334) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_142 rw addr(base, 0x338) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_143 rw addr(base, 0x33C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_144 rw addr(base, 0x340) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_145 rw addr(base, 0x344) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_146 rw addr(base, 0x348) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_147 rw addr(base, 0x34C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_148 rw addr(base, 0x350) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_149 rw addr(base, 0x354) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_150 rw addr(base, 0x358) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_151 rw addr(base, 0x35C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_152 rw addr(base, 0x360) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_153 rw addr(base, 0x364) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_154 rw addr(base, 0x368) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_155 rw addr(base, 0x36C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_156 rw addr(base, 0x370) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_157 rw addr(base, 0x374) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_158 rw addr(base, 0x378) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_159 rw addr(base, 0x37C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_160 rw addr(base, 0x380) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_161 rw addr(base, 0x384) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_162 rw addr(base, 0x388) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_163 rw addr(base, 0x38C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_164 rw addr(base, 0x390) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_165 rw addr(base, 0x394) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_166 rw addr(base, 0x398) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_167 rw addr(base, 0x39C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_168 rw addr(base, 0x3A0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_169 rw addr(base, 0x3A4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_170 rw addr(base, 0x3A8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_171 rw addr(base, 0x3AC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_172 rw addr(base, 0x3B0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_173 rw addr(base, 0x3B4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_174 rw addr(base, 0x3B8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_175 rw addr(base, 0x3BC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_176 rw addr(base, 0x3C0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_177 rw addr(base, 0x3C4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_178 rw addr(base, 0x3C8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_179 rw addr(base, 0x3CC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_180 rw addr(base, 0x3D0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_181 rw addr(base, 0x3D4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_182 rw addr(base, 0x3D8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_183 rw addr(base, 0x3DC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_184 rw addr(base, 0x3E0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_185 rw addr(base, 0x3E4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_186 rw addr(base, 0x3E8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_187 rw addr(base, 0x3EC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_188 rw addr(base, 0x3F0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_189 rw addr(base, 0x3F4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_190 rw addr(base, 0x3F8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_191 rw addr(base, 0x3FC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_192 rw addr(base, 0x400) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_193 rw addr(base, 0x404) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_194 rw addr(base, 0x408) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_195 rw addr(base, 0x40C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_196 rw addr(base, 0x410) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_197 rw addr(base, 0x414) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_198 rw addr(base, 0x418) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_199 rw addr(base, 0x41C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_200 rw addr(base, 0x420) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_201 rw addr(base, 0x424) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_202 rw addr(base, 0x428) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_203 rw addr(base, 0x42C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_204 rw addr(base, 0x430) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_205 rw addr(base, 0x434) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_206 rw addr(base, 0x438) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_207 rw addr(base, 0x43C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_208 rw addr(base, 0x440) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_209 rw addr(base, 0x444) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_210 rw addr(base, 0x448) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_211 rw addr(base, 0x44C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_212 rw addr(base, 0x450) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_213 rw addr(base, 0x454) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_214 rw addr(base, 0x458) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_215 rw addr(base, 0x45C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_216 rw addr(base, 0x460) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_217 rw addr(base, 0x464) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_218 rw addr(base, 0x468) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_219 rw addr(base, 0x46C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_220 rw addr(base, 0x470) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_221 rw addr(base, 0x474) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_222 rw addr(base, 0x478) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_223 rw addr(base, 0x47C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_224 rw addr(base, 0x480) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_225 rw addr(base, 0x484) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_226 rw addr(base, 0x488) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_227 rw addr(base, 0x48C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_228 rw addr(base, 0x490) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_229 rw addr(base, 0x494) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_230 rw addr(base, 0x498) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_231 rw addr(base, 0x49C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_232 rw addr(base, 0x4A0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_233 rw addr(base, 0x4A4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_234 rw addr(base, 0x4A8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_235 rw addr(base, 0x4AC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_236 rw addr(base, 0x4B0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_237 rw addr(base, 0x4B4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_238 rw addr(base, 0x4B8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_239 rw addr(base, 0x4BC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_240 rw addr(base, 0x4C0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_241 rw addr(base, 0x4C4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_242 rw addr(base, 0x4C8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_243 rw addr(base, 0x4CC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_244 rw addr(base, 0x4D0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_245 rw addr(base, 0x4D4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_246 rw addr(base, 0x4D8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_247 rw addr(base, 0x4DC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_248 rw addr(base, 0x4E0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_249 rw addr(base, 0x4E4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_250 rw addr(base, 0x4E8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_251 rw addr(base, 0x4EC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_252 rw addr(base, 0x4F0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_253 rw addr(base, 0x4F4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_254 rw addr(base, 0x4F8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_255 rw addr(base, 0x4FC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_256 rw addr(base, 0x500) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_257 rw addr(base, 0x504) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_258 rw addr(base, 0x508) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_259 rw addr(base, 0x50C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_260 rw addr(base, 0x510) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_261 rw addr(base, 0x514) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_262 rw addr(base, 0x518) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_263 rw addr(base, 0x51C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_264 rw addr(base, 0x520) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_265 rw addr(base, 0x524) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_266 rw addr(base, 0x528) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_267 rw addr(base, 0x52C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_268 rw addr(base, 0x530) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_269 rw addr(base, 0x534) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_270 rw addr(base, 0x538) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_271 rw addr(base, 0x53C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_272 rw addr(base, 0x540) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_273 rw addr(base, 0x544) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_274 rw addr(base, 0x548) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_275 rw addr(base, 0x54C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_276 rw addr(base, 0x550) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_277 rw addr(base, 0x554) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_278 rw addr(base, 0x558) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_279 rw addr(base, 0x55C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_280 rw addr(base, 0x560) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_281 rw addr(base, 0x564) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_282 rw addr(base, 0x568) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_283 rw addr(base, 0x56C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_284 rw addr(base, 0x570) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_285 rw addr(base, 0x574) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_286 rw addr(base, 0x578) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_287 rw addr(base, 0x57C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_288 rw addr(base, 0x580) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_289 rw addr(base, 0x584) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_290 rw addr(base, 0x588) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_291 rw addr(base, 0x58C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_292 rw addr(base, 0x590) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_293 rw addr(base, 0x594) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_294 rw addr(base, 0x598) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_295 rw addr(base, 0x59C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_296 rw addr(base, 0x5A0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_297 rw addr(base, 0x5A4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_298 rw addr(base, 0x5A8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_299 rw addr(base, 0x5AC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_300 rw addr(base, 0x5B0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_301 rw addr(base, 0x5B4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_302 rw addr(base, 0x5B8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_303 rw addr(base, 0x5BC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_304 rw addr(base, 0x5C0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_305 rw addr(base, 0x5C4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_306 rw addr(base, 0x5C8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_307 rw addr(base, 0x5CC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_308 rw addr(base, 0x5D0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_309 rw addr(base, 0x5D4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_310 rw addr(base, 0x5D8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_311 rw addr(base, 0x5DC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_312 rw addr(base, 0x5E0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_313 rw addr(base, 0x5E4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_314 rw addr(base, 0x5E8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_315 rw addr(base, 0x5EC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_316 rw addr(base, 0x5F0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_317 rw addr(base, 0x5F4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_318 rw addr(base, 0x5F8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_319 rw addr(base, 0x5FC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_320 rw addr(base, 0x600) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_321 rw addr(base, 0x604) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_322 rw addr(base, 0x608) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_323 rw addr(base, 0x60C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_324 rw addr(base, 0x610) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_325 rw addr(base, 0x614) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_326 rw addr(base, 0x618) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_327 rw addr(base, 0x61C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_328 rw addr(base, 0x620) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_329 rw addr(base, 0x624) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_330 rw addr(base, 0x628) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_331 rw addr(base, 0x62C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_332 rw addr(base, 0x630) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_333 rw addr(base, 0x634) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_334 rw addr(base, 0x638) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_335 rw addr(base, 0x63C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_336 rw addr(base, 0x640) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_337 rw addr(base, 0x644) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_338 rw addr(base, 0x648) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_339 rw addr(base, 0x64C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_340 rw addr(base, 0x650) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_341 rw addr(base, 0x654) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_342 rw addr(base, 0x658) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_343 rw addr(base, 0x65C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_344 rw addr(base, 0x660) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_345 rw addr(base, 0x664) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_346 rw addr(base, 0x668) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_347 rw addr(base, 0x66C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_348 rw addr(base, 0x670) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_349 rw addr(base, 0x674) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_350 rw addr(base, 0x678) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_351 rw addr(base, 0x67C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_352 rw addr(base, 0x680) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_353 rw addr(base, 0x684) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_354 rw addr(base, 0x688) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_355 rw addr(base, 0x68C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_356 rw addr(base, 0x690) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_357 rw addr(base, 0x694) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_358 rw addr(base, 0x698) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_359 rw addr(base, 0x69C) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_360 rw addr(base, 0x6A0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_361 rw addr(base, 0x6A4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_362 rw addr(base, 0x6A8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_363 rw addr(base, 0x6AC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_364 rw addr(base, 0x6B0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_365 rw addr(base, 0x6B4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_366 rw addr(base, 0x6B8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_367 rw addr(base, 0x6BC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_368 rw addr(base, 0x6C0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_369 rw addr(base, 0x6C4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_370 rw addr(base, 0x6C8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_371 rw addr(base, 0x6CC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_372 rw addr(base, 0x6D0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_373 rw addr(base, 0x6D4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_374 rw addr(base, 0x6D8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_375 rw addr(base, 0x6DC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_376 rw addr(base, 0x6E0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_377 rw addr(base, 0x6E4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_378 rw addr(base, 0x6E8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_379 rw addr(base, 0x6EC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_380 rw addr(base, 0x6F0) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_381 rw addr(base, 0x6F4) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_382 rw addr(base, 0x6F8) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register uhh_sar_cntx_i_383 rw addr(base, 0x6FC) "Save and restore context array. Array size is indicated in. When in SAR mode, read out to save and write to restore. Do not access when not in SAR mode." type(uint32);
+};

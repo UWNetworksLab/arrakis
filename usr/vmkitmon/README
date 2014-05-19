@@ -1,0 +1,64 @@
+VMKIT README
+============
+
+The monitor needs two files to run. A GRUB stage 2 image and a disk image with
+the guest installed. The disk image hast to be readable by GRUB, of course. The
+files are loaded via NFS and their location can be configured in vmkitmon.c.
+
+NOTE I: VMkit does only support a trivial BIOS disk. No real virtual disk
+controller is implemented. Therefore, the guest disk image has to be configured
+to load everything relevant into RAM before invoking the guest kernel.
+
+NOTE II: VMkit does not compile in cmake debug mode atm. The RBP register is
+accessed when saving and restoring the guest's state. The standard
+"RelWithDebInfo" works.
+
+
+GRUB
+====
+
+The GRUB stage 2 used is compiled with a compiled in menu list
+(--enable-preset-menu configure option) of:
+
+serial --unit=0 --speed=115200 --word=8 --parity=no --stop=1
+terminal --timeout=0 serial
+default 0
+timeout 0
+title Load config from (hd0,0)
+configfile (hd0,0)/boot/grub/menu.lst
+
+The terminal and serial part is important. Otherwise GRUB will try to access the
+video console which will result in unhandled BIOS calls.
+
+The menu list that I used (on sbrinz1 and sbrinz2) was:
+
+timeout 0
+title   Barrelfish
+root    (nd)
+kernel  /sandrinr/kernel loglevel=3 logmask=0
+module  /sandrinr/init
+module  /sandrinr/mem_serv
+module  /sandrinr/monitor bootcpus=0-1
+module  /sandrinr/chips
+module  /sandrinr/serial
+module  /sandrinr/lpc_timer
+module  /sandrinr/skb
+module  /sandrinr/pci
+module  /sandrinr/e1000n core=1
+module  /sandrinr/vmkitmon
+
+
+Linux
+=====
+
+Linux does not believe the memory map reported by VMkit (INT 15, AX 0xe820).
+It is pretty primitive and should possibly be altered to reflect something
+similar as reported by QEMU.
+As a workaround, the Linux kernel parameters "mem=2G memmap=640K@0 memmap=1999M@1M"
+can be used.
+
+The Linux kernel parameters used for the test system are:
+"edd=off noapic nolapic noirqbalance acpi=off pci=off noisapnp nousb
+mem=2G memmap=640K@0 memmap=1999M@1M console=ttyS0,115200 1"
+It is possible that not everything is necessary. I just put everything in there
+i found to disable unsupported core subsystems.

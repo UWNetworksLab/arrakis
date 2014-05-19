@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2011, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * lpc_kbd.dev
+ *
+ * DESCRIPTION: Legacy keyboard and mouse port
+ *
+ * This file does not fully describe the 8042, which is not supported
+ * on most PCs anymore.
+ *
+ * Ref: http://www.mcamafia.de/pdf/ibm_hitrc07.pdf
+ */
+
+device lpc_kbd msbfirst (io base) "LPC Keyboard" {
+    register input ro io(base, 0) "Input" type(uint8);
+    register status ro io(base, 4) "Status" {
+        perr    1 "Parity error";
+        timeout 1 "General timeout";
+        aobf    1 "Auxiliary device output buffer full";
+        is      1 "Inhibit switch";
+        cd      1 "Command/data";
+        sf      1 "System flag";
+        ibf     1 "Input buffer full";
+        obf     1 "Output buffer full";
+    };
+
+    register output wo also io(base, 0) "Output" type(uint8);
+
+    constants cmd "Command" {
+        /* XXX: I don't attempt to encode the silly read/write RAM commands,
+         * since they mix a bitfield and a constant in the same register.
+         */
+        rd_ccmd         = 0x20 "Read controller command byte";
+        wr_ccmd         = 0x60 "Write controller command byte";
+        aux_disable     = 0xa7 "Disable auxiliary device interface";
+        aux_enable      = 0xa8 "Enable auxiliary device interface";
+        kbd_disable     = 0xad "Disable keyboard interface";
+        kbd_enable      = 0xae "Enable keyboard interface";
+        read_input      = 0xc0 "Read input port";
+        poll_input_low  = 0xc1 "Poll input port low";
+        poll_input_high = 0xc2 "Poll input port high";
+        read_output     = 0xd0 "Read output port";
+        write_output    = 0xd1 "Write output port";
+        write_kbd_out   = 0xd2 "Write keyboard output buffer";
+        write_aux_out   = 0xd3 "Write auxiliary device output buffer";
+        write_aux       = 0xd4 "Write to auxiliary device";
+    };
+
+    // FIXME: why won't Mackerel allow this?
+    // register command wo also io(base, 4) "Command" type(command);
+    register command wo also io(base, 4) "Command" {
+        cmd     8 type(cmd) "Command";
+    };
+
+    /* This is the format of the "controller command" byte, which is data
+     * returned in response to an 0x20 command, and not to be confused with
+     * the command register, which is write-only.
+     */
+    regtype ccmd "Controller command byte" {
+        _       1;
+        kbd_xl  1 "Keyboard translate";
+        aux_dis 1 "Disable auxiliary device";
+        kbd_dis 1 "Disable keyboard";
+        _       1;
+        sysflg  1 "System flag";
+        aux_int 1 "Enable auxiliary interrupt";
+        kbd_int 1 "Enable keyboard interrupt";
+    };
+};

@@ -1,0 +1,27 @@
+if Config.libc == "newlib" then
+[ build library {
+  target = "newc",
+  addCFlags  = Config.newlibAddCFlags,
+  omitCFlags = [ "-Wmissing-prototypes",
+                 "-Wmissing-declarations",
+                 "-Wimplicit-function-declaration",
+                 "-Werror"],
+  addLibraries = [
+      "ctype"
+    , "search"
+    , "string"
+    , "argz"
+    , "stdlib"
+    , "stdio"
+--  , "signal"
+    , "time"
+    , "locale"
+    , "reent"
+    , "errno"
+    , "misc"
+    , "sys"
+    , "machine" -- put this last, so machine-specific symbols overwrite generic ones
+    ],
+  architectures = [arch]
+} | arch <- allArchitectures ]
+else []

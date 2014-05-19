@@ -1,0 +1,43 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/bench/flounder_stubs
+--
+--------------------------------------------------------------------------
+
+[
+  build application { target = "flounder_stubs_empty_bench",
+  		      cFiles = [ "empty.c" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] },
+
+  build application { target = "flounder_stubs_buffer_bench",
+  		      cFiles = [ "buffer.c" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] },
+
+  build application { target = "flounder_stubs_payload_bench",
+  		      cFiles = [ "payload.c" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] },
+                      
+  build application { target = "flounder_stubs_payload32_bench",
+  		      cFiles = [ "payload32.c" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] },
+
+  build application { target = "flounder_stubs_payload64_bench",
+  		      cFiles = [ "payload64.c" ],
+                      flounderBindings = [ "bench" ],
+                      addLibraries = ["bench"] }
+
+  -- build application { target = "flounder_stubs_payload_glue_bench",
+  --  		      cFiles = [ "payload_glue.c" ],
+  --		      flounderBindings = [ "glue_bench" ],
+  --                  addLibraries = ["bench"] }
+]

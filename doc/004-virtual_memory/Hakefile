@@ -1,0 +1,14 @@
+----------------------------------------------------------------------
+-- Copyright (c) 2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Universitaetstr. 6, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /doc/004-virtual_memory
+--
+----------------------------------------------------------------------
+
+[ buildTechNote "VirtualMemory.tex" "TN-004-VirtualMemory.pdf" False False [] ]
+

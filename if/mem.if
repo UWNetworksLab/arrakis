@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2011, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface mem "Memory allocation RPC interface" {
+  rpc allocate( in uint8 bits,
+                in genpaddr minbase,
+                in genpaddr maxlimit,
+                out errval ret,
+                out give_away_cap mem_cap );
+  rpc steal( in uint8 bits,
+             in genpaddr minbase,
+             in genpaddr maxlimit,
+             out errval ret,
+             out give_away_cap mem_cap );
+  rpc available( out genpaddr mem_avail, out genpaddr mem_total );
+
+  // XXX: Trusted call, may only be called by monitor.
+  // Should move this to its own binding.
+  rpc free_monitor(in give_away_cap mem_cap, in genpaddr base, in uint8 bits, out errval err);
+};

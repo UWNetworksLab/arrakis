@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface skb "SKB RPC Interface" {
+    rpc run( in  string input,
+    	     out string output,
+	         out string str_error,
+	         out int    int_error);
+
+  
+    /*  Used by dist2 library (move in extra interface?) */
+    rpc get_identifier(out uint64 id);
+    rpc identify(in uint64 id);
+    
+	rpc get(in string query, out string output, out string error, out errval error_code);
+	rpc set(in string input, out string error, out errval error_code);
+	rpc del(in string query, out errval error_code);
+	
+    rpc subscribe(in string query, in uint64 id, out errval err);
+    rpc unsubscribe(in uint64 id, out errval err);
+    rpc publish(in string object, out errval err);
+
+    rpc lock(in string object, out errval err);
+    rpc unlock(in string object, out errval err);
+};

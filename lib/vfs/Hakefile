@@ -1,0 +1,53 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2012, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for lib/vfs
+-- 
+--------------------------------------------------------------------------
+
+[ build library { target = "vfs",
+                  cFiles = [ "vfs.c", "vfs_path.c", "fopen.c", "mmap.c",
+                             "vfs_nfs.c", "vfs_ramfs.c", "cache.c",
+                             "vfs_blockdevfs.c", "vfs_blockdevfs_ahci.c",
+                             "vfs_blockdevfs_ata.c", "vfs_cache.c", "vfs_fat.c",
+                             "vfs_fat_conv.c", "fdtab.c", "vfs_fd.c",
+                             "vfs_blockdevfs_megaraid.c"
+                           ],
+                  mackerelDevices = [ "ata_identify", "fat_bpb", "fat16_ebpb",
+                                      "fat32_ebpb", "fat_direntry", "ahci_port",
+                                      "ahci_hba"
+                                    ],
+                  flounderBindings = [ "trivfs", "bcache", "ahci_mgmt", "ata_rw28" ],
+                  flounderExtraBindings = [ ("trivfs", ["rpcclient"]),
+                                            ("bcache", ["rpcclient"]),
+                                            ("ahci_mgmt", ["rpcclient"]),
+                                            ("ata_rw28", ["ahci", "rpcclient"])
+                                          ],
+                  flounderDefs = [ "monitor" ]
+                },
+  build library { target = "vfs_nonfs",
+                  cFiles = [ "vfs.c", "vfs_path.c", "fopen.c", "vfs_ramfs.c",
+                             "cache.c", "vfs_blockdevfs.c",
+                             "vfs_blockdevfs_ahci.c", "vfs_blockdevfs_ata.c",
+                             "vfs_cache.c", "vfs_fat.c", "vfs_fat_conv.c",
+                             "fdtab.c", "vfs_fd.c", "vfs_blockdevfs_megaraid.c"
+                           ],
+                  addCFlags = [ "-DDISABLE_NFS" ],
+                  mackerelDevices = [ "ata_identify", "fat_bpb", "fat16_ebpb",
+                                      "fat32_ebpb", "fat_direntry", "ahci_port",
+                                      "ahci_hba"
+                                    ],
+                  flounderBindings = [ "trivfs", "bcache", "ahci_mgmt" ],
+                  flounderExtraBindings = [ ("trivfs", ["rpcclient"]),
+                                            ("bcache", ["rpcclient"]),
+                                            ("ahci_mgmt", ["rpcclient"]),
+                                            ("ata_rw28", ["ahci", "rpcclient"])
+                                          ],
+                  flounderDefs = [ "monitor" ]
+                }
+]

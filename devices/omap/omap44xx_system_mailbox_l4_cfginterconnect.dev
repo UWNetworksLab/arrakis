@@ -1,0 +1,436 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_system_mailbox_l4_cfginterconnect.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_system_mailbox_l4_cfginterconnect msbfirst ( addr base ) "" {
+    
+    
+    register mailbox_revision ro addr(base, 0x0) "This register contains the IP revision code" type(uint32);
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0 = 0 "Force-idle. An idle request is acknowledged unconditionally";
+        SIDLEMODE_1 = 1 "No-idle. An idle request is never acknowledged";
+        SIDLEMODE_2 = 2 "Smart-idle. Acknowledgement to an idle request is given based on the internal activity of the module based on the internal activity of the module";
+        SIDLEMODE_3 = 3 "reserved do not use";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_r = 0 "Soft/Hard reset done";
+        SOFTRESET_0_w = 0 "No action";
+        SOFTRESET_1_r = 1 "Reset is ongoing";
+        SOFTRESET_1_w = 1 "Start the soft reset sequence";
+    };
+    
+    register mailbox_sysconfig addr(base, 0x10) "This register controls the various parameters of the communication interface" {
+        _ 28 mbz;
+        sidlemode 2 rw type(sidlemode_status) "Idle Mode";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Softreset";
+    };
+    
+    register mailbox_message_m_0 rw addr(base, 0x40) "The message register stores the next to be read message of the mailbox. Reads remove the message from the FIFO queue." type(uint32);
+    
+    register mailbox_message_m_1 rw addr(base, 0x44) "The message register stores the next to be read message of the mailbox. Reads remove the message from the FIFO queue." type(uint32);
+    
+    register mailbox_message_m_2 rw addr(base, 0x48) "The message register stores the next to be read message of the mailbox. Reads remove the message from the FIFO queue." type(uint32);
+    
+    register mailbox_message_m_3 rw addr(base, 0x4C) "The message register stores the next to be read message of the mailbox. Reads remove the message from the FIFO queue." type(uint32);
+    
+    register mailbox_message_m_4 rw addr(base, 0x50) "The message register stores the next to be read message of the mailbox. Reads remove the message from the FIFO queue." type(uint32);
+    
+    register mailbox_message_m_5 rw addr(base, 0x54) "The message register stores the next to be read message of the mailbox. Reads remove the message from the FIFO queue." type(uint32);
+    
+    register mailbox_message_m_6 rw addr(base, 0x58) "The message register stores the next to be read message of the mailbox. Reads remove the message from the FIFO queue." type(uint32);
+    
+    register mailbox_message_m_7 rw addr(base, 0x5C) "The message register stores the next to be read message of the mailbox. Reads remove the message from the FIFO queue." type(uint32);
+
+    constants fifofullmbm_status width(1) "" {
+        FIFOFULLMBM_0_r = 0 "Mailbox FIFO is not full";
+        FIFOFULLMBM_1_r = 1 "Mailbox FIFO is full";
+    };
+    
+    register mailbox_fifostatus_m_0 addr(base, 0x80) "The FIFO status register has the status related to the mailbox internal FIFO" {
+        _ 31 mbz;
+        fifofullmbm 1 ro type(fifofullmbm_status) "Full flag for Mailbox";
+    };
+    
+    register mailbox_fifostatus_m_1 addr(base, 0x84) "The FIFO status register has the status related to the mailbox internal FIFO" {
+        _ 31 mbz;
+        fifofullmbm 1 ro type(fifofullmbm_status) "Full flag for Mailbox";
+    };
+    
+    register mailbox_fifostatus_m_2 addr(base, 0x88) "The FIFO status register has the status related to the mailbox internal FIFO" {
+        _ 31 mbz;
+        fifofullmbm 1 ro type(fifofullmbm_status) "Full flag for Mailbox";
+    };
+    
+    register mailbox_fifostatus_m_3 addr(base, 0x8C) "The FIFO status register has the status related to the mailbox internal FIFO" {
+        _ 31 mbz;
+        fifofullmbm 1 ro type(fifofullmbm_status) "Full flag for Mailbox";
+    };
+    
+    register mailbox_fifostatus_m_4 addr(base, 0x90) "The FIFO status register has the status related to the mailbox internal FIFO" {
+        _ 31 mbz;
+        fifofullmbm 1 ro type(fifofullmbm_status) "Full flag for Mailbox";
+    };
+    
+    register mailbox_fifostatus_m_5 addr(base, 0x94) "The FIFO status register has the status related to the mailbox internal FIFO" {
+        _ 31 mbz;
+        fifofullmbm 1 ro type(fifofullmbm_status) "Full flag for Mailbox";
+    };
+    
+    register mailbox_fifostatus_m_6 addr(base, 0x98) "The FIFO status register has the status related to the mailbox internal FIFO" {
+        _ 31 mbz;
+        fifofullmbm 1 ro type(fifofullmbm_status) "Full flag for Mailbox";
+    };
+    
+    register mailbox_fifostatus_m_7 addr(base, 0x9C) "The FIFO status register has the status related to the mailbox internal FIFO" {
+        _ 31 mbz;
+        fifofullmbm 1 ro type(fifofullmbm_status) "Full flag for Mailbox";
+    };
+    
+    register mailbox_msgstatus_m_0 addr(base, 0xC0) "The message status register has the status of the messages in the mailbox." {
+        _ 29 mbz;
+        nbofmsgmbm 3 ro "Number of unread messages in MailboxNote: Limited to four messages per mailbox.";
+    };
+    
+    register mailbox_msgstatus_m_1 addr(base, 0xC4) "The message status register has the status of the messages in the mailbox." {
+        _ 29 mbz;
+        nbofmsgmbm 3 ro "Number of unread messages in MailboxNote: Limited to four messages per mailbox.";
+    };
+    
+    register mailbox_msgstatus_m_2 addr(base, 0xC8) "The message status register has the status of the messages in the mailbox." {
+        _ 29 mbz;
+        nbofmsgmbm 3 ro "Number of unread messages in MailboxNote: Limited to four messages per mailbox.";
+    };
+    
+    register mailbox_msgstatus_m_3 addr(base, 0xCC) "The message status register has the status of the messages in the mailbox." {
+        _ 29 mbz;
+        nbofmsgmbm 3 ro "Number of unread messages in MailboxNote: Limited to four messages per mailbox.";
+    };
+    
+    register mailbox_msgstatus_m_4 addr(base, 0xD0) "The message status register has the status of the messages in the mailbox." {
+        _ 29 mbz;
+        nbofmsgmbm 3 ro "Number of unread messages in MailboxNote: Limited to four messages per mailbox.";
+    };
+    
+    register mailbox_msgstatus_m_5 addr(base, 0xD4) "The message status register has the status of the messages in the mailbox." {
+        _ 29 mbz;
+        nbofmsgmbm 3 ro "Number of unread messages in MailboxNote: Limited to four messages per mailbox.";
+    };
+    
+    register mailbox_msgstatus_m_6 addr(base, 0xD8) "The message status register has the status of the messages in the mailbox." {
+        _ 29 mbz;
+        nbofmsgmbm 3 ro "Number of unread messages in MailboxNote: Limited to four messages per mailbox.";
+    };
+    
+    register mailbox_msgstatus_m_7 addr(base, 0xDC) "The message status register has the status of the messages in the mailbox." {
+        _ 29 mbz;
+        nbofmsgmbm 3 ro "Number of unread messages in MailboxNote: Limited to four messages per mailbox.";
+    };
+
+    constants notfullstatusenuumb7_status width(1) "" {
+        NOTFULLSTATUSENUUMB7_0_r = 0 "No event pending (message queue full)";
+        NOTFULLSTATUSENUUMB7_0_w = 0 "No action";
+        NOTFULLSTATUSENUUMB7_1_r = 1 "Event pending (message queue not full)";
+        NOTFULLSTATUSENUUMB7_1_w = 1 "Set the event (for debug)";
+    };
+
+    constants newmsgstatusuumb7_status width(1) "" {
+        NEWMSGSTATUSUUMB7_0_r = 0 "No event (message) pending";
+        NEWMSGSTATUSUUMB7_0_w = 0 "No action";
+        NEWMSGSTATUSUUMB7_1_r = 1 "Event (message) pending";
+        NEWMSGSTATUSUUMB7_1_w = 1 "Set the event (for debug)";
+    };
+    
+    register mailbox_irqstatus_raw_u_0 addr(base, 0x100) "The interrupt status register has the raw status for each event that may be responsible for the generation of an interrupt to the corresponding user - write 1 to a given bit sets this bit. This register is mainly used for debug purpose." {
+        _ 16 mbz;
+        notfullstatusenuumb7 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 7";
+        newmsgstatusuumb7 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 7";
+        notfullstatusuumb6 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 6";
+        newmsgstatusuumb6 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 6";
+        notfullstatusuumb5 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 5";
+        newmsgstatusuumb5 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 5";
+        notfullstatusuumb4 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 4";
+        newmsgstatusuumb4 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 4";
+        notfullstatusuumb3 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 3";
+        newmsgstatusuumb3 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 3";
+        notfullstatusuumb2 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 2";
+        newmsgstatusuumb2 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 2";
+        notfullstatusuumb1 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 1";
+        newmsgstatusuumb1 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 1";
+        notfullstatusuumb0 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 0";
+        newmsgstatusuumb0 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 0";
+    };
+    
+    register mailbox_irqstatus_raw_u_1 addr(base, 0x110) "The interrupt status register has the raw status for each event that may be responsible for the generation of an interrupt to the corresponding user - write 1 to a given bit sets this bit. This register is mainly used for debug purpose." {
+        _ 16 mbz;
+        notfullstatusenuumb7 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 7";
+        newmsgstatusuumb7 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 7";
+        notfullstatusuumb6 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 6";
+        newmsgstatusuumb6 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 6";
+        notfullstatusuumb5 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 5";
+        newmsgstatusuumb5 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 5";
+        notfullstatusuumb4 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 4";
+        newmsgstatusuumb4 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 4";
+        notfullstatusuumb3 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 3";
+        newmsgstatusuumb3 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 3";
+        notfullstatusuumb2 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 2";
+        newmsgstatusuumb2 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 2";
+        notfullstatusuumb1 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 1";
+        newmsgstatusuumb1 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 1";
+        notfullstatusuumb0 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 0";
+        newmsgstatusuumb0 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 0";
+    };
+    
+    register mailbox_irqstatus_raw_u_2 addr(base, 0x120) "The interrupt status register has the raw status for each event that may be responsible for the generation of an interrupt to the corresponding user - write 1 to a given bit sets this bit. This register is mainly used for debug purpose." {
+        _ 16 mbz;
+        notfullstatusenuumb7 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 7";
+        newmsgstatusuumb7 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 7";
+        notfullstatusuumb6 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 6";
+        newmsgstatusuumb6 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 6";
+        notfullstatusuumb5 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 5";
+        newmsgstatusuumb5 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 5";
+        notfullstatusuumb4 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 4";
+        newmsgstatusuumb4 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 4";
+        notfullstatusuumb3 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 3";
+        newmsgstatusuumb3 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 3";
+        notfullstatusuumb2 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 2";
+        newmsgstatusuumb2 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 2";
+        notfullstatusuumb1 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 1";
+        newmsgstatusuumb1 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 1";
+        notfullstatusuumb0 1 rw type(notfullstatusenuumb7_status) "NotFull Status bit for User u, Mailbox 0";
+        newmsgstatusuumb0 1 rw type(newmsgstatusuumb7_status) "NewMessage Status bit for User u, Mailbox 0";
+    };
+
+    constants notfullstatusenuumb7_status1 width(1) "" {
+        NOTFULLSTATUSENUUMB7_0_r_3 = 0 "No event pending (message queue full)";
+        NOTFULLSTATUSENUUMB7_0_w_3 = 0 "No action";
+        NOTFULLSTATUSENUUMB7_1_r_3 = 1 "Event pending (message queue not full)";
+        NOTFULLSTATUSENUUMB7_1_w_3 = 1 "Clear pending event, if any";
+    };
+
+    constants newmsgstatusenuumb7_status width(1) "" {
+        NEWMSGSTATUSENUUMB7_0_r = 0 "No event (message) pending";
+        NEWMSGSTATUSENUUMB7_0_w = 0 "No action";
+        NEWMSGSTATUSENUUMB7_1_r = 1 "Event (message) pending";
+        NEWMSGSTATUSENUUMB7_1_w = 1 "Clear pending event, if any";
+    };
+    
+    register mailbox_irqstatus_clr_u_0 addr(base, 0x104) "The interrupt status register has the status combined with irq-enable for each event that may be responsible for the generation of an interrupt to the corresponding user - write 1 to a given bit resets this bit" {
+        _ 16 mbz;
+        notfullstatusenuumb7 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 7";
+        newmsgstatusenuumb7 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 7";
+        notfullstatusenuumb6 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 6";
+        newmsgstatusenuumb6 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 6";
+        notfullstatusenuumb5 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 5";
+        newmsgstatusenuumb5 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 5";
+        notfullstatusenuumb4 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 4";
+        newmsgstatusenuumb4 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 4";
+        notfullstatusenuumb3 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 3";
+        newmsgstatusenuumb3 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 3";
+        notfullstatusenuumb2 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 2";
+        newmsgstatusenuumb2 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 2";
+        notfullstatusenuumb1 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 1";
+        newmsgstatusenuumb1 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 1";
+        notfullstatusenuumb0 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 0";
+        newmsgstatusenuumb0 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 0";
+    };
+    
+    register mailbox_irqstatus_clr_u_1 addr(base, 0x114) "The interrupt status register has the status combined with irq-enable for each event that may be responsible for the generation of an interrupt to the corresponding user - write 1 to a given bit resets this bit" {
+        _ 16 mbz;
+        notfullstatusenuumb7 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 7";
+        newmsgstatusenuumb7 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 7";
+        notfullstatusenuumb6 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 6";
+        newmsgstatusenuumb6 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 6";
+        notfullstatusenuumb5 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 5";
+        newmsgstatusenuumb5 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 5";
+        notfullstatusenuumb4 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 4";
+        newmsgstatusenuumb4 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 4";
+        notfullstatusenuumb3 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 3";
+        newmsgstatusenuumb3 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 3";
+        notfullstatusenuumb2 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 2";
+        newmsgstatusenuumb2 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 2";
+        notfullstatusenuumb1 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 1";
+        newmsgstatusenuumb1 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 1";
+        notfullstatusenuumb0 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 0";
+        newmsgstatusenuumb0 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 0";
+    };
+    
+    register mailbox_irqstatus_clr_u_2 addr(base, 0x124) "The interrupt status register has the status combined with irq-enable for each event that may be responsible for the generation of an interrupt to the corresponding user - write 1 to a given bit resets this bit" {
+        _ 16 mbz;
+        notfullstatusenuumb7 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 7";
+        newmsgstatusenuumb7 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 7";
+        notfullstatusenuumb6 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 6";
+        newmsgstatusenuumb6 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 6";
+        notfullstatusenuumb5 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 5";
+        newmsgstatusenuumb5 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 5";
+        notfullstatusenuumb4 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 4";
+        newmsgstatusenuumb4 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 4";
+        notfullstatusenuumb3 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 3";
+        newmsgstatusenuumb3 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 3";
+        notfullstatusenuumb2 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 2";
+        newmsgstatusenuumb2 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 2";
+        notfullstatusenuumb1 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 1";
+        newmsgstatusenuumb1 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 1";
+        notfullstatusenuumb0 1 rw type(notfullstatusenuumb7_status1) "NotFull Status bit for User u, Mailbox 0";
+        newmsgstatusenuumb0 1 rw type(newmsgstatusenuumb7_status) "NewMessage Status bit for User u, Mailbox 0";
+    };
+
+    constants notfullenableuumb7_status width(1) "" {
+        NOTFULLENABLEUUMB7_0_r = 0 "Interupt disabled";
+        NOTFULLENABLEUUMB7_0_w = 0 "No action";
+        NOTFULLENABLEUUMB7_1_r = 1 "Interrupt enabled";
+        NOTFULLENABLEUUMB7_1_w = 1 "Enable interrupt";
+    };
+    
+    register mailbox_irqenable_set_u_0 addr(base, 0x108) "The interrupt enable register enables to unmask the module internal source of interrupt to the corresponding user. This register is write 1 to set." {
+        _ 16 mbz;
+        notfullenableuumb7 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 7";
+        newmsgenableuumb7 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 7";
+        notfullenableuumb6 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 6";
+        newmsgenableuumb6 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 6";
+        notfullenableuumb5 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 5";
+        newmsgenableuumb5 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 5";
+        notfullenableuumb4 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 4";
+        newmsgenableuumb4 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 4";
+        notfullenableuumb3 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 3";
+        newmsgenableuumb3 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 3";
+        notfullenableuumb2 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 2";
+        newmsgenableuumb2 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 2";
+        notfullenableuumb1 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 1";
+        newmsgenableuumb1 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 1";
+        notfullenableuumb0 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 0";
+        newmsgenableuumb0 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 0";
+    };
+    
+    register mailbox_irqenable_set_u_1 addr(base, 0x118) "The interrupt enable register enables to unmask the module internal source of interrupt to the corresponding user. This register is write 1 to set." {
+        _ 16 mbz;
+        notfullenableuumb7 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 7";
+        newmsgenableuumb7 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 7";
+        notfullenableuumb6 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 6";
+        newmsgenableuumb6 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 6";
+        notfullenableuumb5 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 5";
+        newmsgenableuumb5 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 5";
+        notfullenableuumb4 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 4";
+        newmsgenableuumb4 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 4";
+        notfullenableuumb3 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 3";
+        newmsgenableuumb3 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 3";
+        notfullenableuumb2 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 2";
+        newmsgenableuumb2 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 2";
+        notfullenableuumb1 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 1";
+        newmsgenableuumb1 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 1";
+        notfullenableuumb0 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 0";
+        newmsgenableuumb0 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 0";
+    };
+    
+    register mailbox_irqenable_set_u_2 addr(base, 0x128) "The interrupt enable register enables to unmask the module internal source of interrupt to the corresponding user. This register is write 1 to set." {
+        _ 16 mbz;
+        notfullenableuumb7 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 7";
+        newmsgenableuumb7 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 7";
+        notfullenableuumb6 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 6";
+        newmsgenableuumb6 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 6";
+        notfullenableuumb5 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 5";
+        newmsgenableuumb5 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 5";
+        notfullenableuumb4 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 4";
+        newmsgenableuumb4 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 4";
+        notfullenableuumb3 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 3";
+        newmsgenableuumb3 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 3";
+        notfullenableuumb2 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 2";
+        newmsgenableuumb2 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 2";
+        notfullenableuumb1 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 1";
+        newmsgenableuumb1 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 1";
+        notfullenableuumb0 1 rw type(notfullenableuumb7_status) "NotFull Enable bit for User u, Mailbox 0";
+        newmsgenableuumb0 1 rw type(notfullenableuumb7_status) "NewMessage Enable bit for User u, Mailbox 0";
+    };
+
+    constants notfullenableuumb7_status1 width(1) "" {
+        NOTFULLENABLEUUMB7_0_r_3 = 0 "Interupt disabled";
+        NOTFULLENABLEUUMB7_0_w_3 = 0 "No action";
+        NOTFULLENABLEUUMB7_1_r_3 = 1 "Interrupt enabled";
+        NOTFULLENABLEUUMB7_1_w_3 = 1 "Disable interrupt";
+    };
+    
+    register mailbox_irqenable_clr_u_0 addr(base, 0x10C) "The interrupt enable register enables to mask the module internal source of interrupt to the corresponding user. This register is write 1 to clear." {
+        _ 16 mbz;
+        notfullenableuumb7 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 7";
+        newmsgenableuumb7 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 7";
+        notfullenableuumb6 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 6";
+        newmsgenableuumb6 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 6";
+        notfullenableuumb5 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 5";
+        newmsgenableuumb5 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 5";
+        notfullenableuumb4 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 4";
+        newmsgenableuumb4 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 4";
+        notfullenableuumb3 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 3";
+        newmsgenableuumb3 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 3";
+        notfullenableuumb2 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 2";
+        newmsgenableuumb2 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 2";
+        notfullenableuumb1 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 1";
+        newmsgenableuumb1 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 1";
+        notfullenableuumb0 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 0";
+        newmsgenableuumb0 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 0";
+    };
+    
+    register mailbox_irqenable_clr_u_1 addr(base, 0x11C) "The interrupt enable register enables to mask the module internal source of interrupt to the corresponding user. This register is write 1 to clear." {
+        _ 16 mbz;
+        notfullenableuumb7 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 7";
+        newmsgenableuumb7 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 7";
+        notfullenableuumb6 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 6";
+        newmsgenableuumb6 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 6";
+        notfullenableuumb5 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 5";
+        newmsgenableuumb5 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 5";
+        notfullenableuumb4 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 4";
+        newmsgenableuumb4 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 4";
+        notfullenableuumb3 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 3";
+        newmsgenableuumb3 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 3";
+        notfullenableuumb2 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 2";
+        newmsgenableuumb2 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 2";
+        notfullenableuumb1 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 1";
+        newmsgenableuumb1 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 1";
+        notfullenableuumb0 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 0";
+        newmsgenableuumb0 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 0";
+    };
+    
+    register mailbox_irqenable_clr_u_2 addr(base, 0x12C) "The interrupt enable register enables to mask the module internal source of interrupt to the corresponding user. This register is write 1 to clear." {
+        _ 16 mbz;
+        notfullenableuumb7 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 7";
+        newmsgenableuumb7 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 7";
+        notfullenableuumb6 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 6";
+        newmsgenableuumb6 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 6";
+        notfullenableuumb5 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 5";
+        newmsgenableuumb5 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 5";
+        notfullenableuumb4 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 4";
+        newmsgenableuumb4 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 4";
+        notfullenableuumb3 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 3";
+        newmsgenableuumb3 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 3";
+        notfullenableuumb2 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 2";
+        newmsgenableuumb2 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 2";
+        notfullenableuumb1 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 1";
+        newmsgenableuumb1 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 1";
+        notfullenableuumb0 1 rw type(notfullenableuumb7_status1) "NotFull Enable bit for User u, Mailbox 0";
+        newmsgenableuumb0 1 rw type(notfullenableuumb7_status1) "NewMessage Enable bit for User u, Mailbox 0";
+    };
+};

@@ -1,0 +1,80 @@
+/*
+ * Copyright (c) 2013, University of Washington. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * pci_sr_iov_cap.dev
+ *
+ * DESCRIPTION: PCI SR-IOV Extended Capability
+ * 
+ * Numbers in comments refer to the Single Root I/O Virtualization and
+ * Sharing Specification, Revision 1.1, January 20, 2010.
+ */
+
+device pci_sr_iov_cap lsbfirst ( addr base ) "PCI SR-IOV Extended Capability" {
+
+  // 3.3.1
+  register hdr ro addr( base, 0x00 ) "Extended Capabilities Header" {
+    id	   16  "PCI Express Extended Capability ID";
+    ver	   4   "Capability Version";
+    next   12  "Next Capability Offset";
+  };
+
+  // 3.3.2
+  register caps ro addr( base, 0x04 ) "SR-IOV Capabilities" {
+    vf_migration   1	 "VF Migration Capable";
+    ari_preserved  1	 "ARI Capable Hierarchy Preserved";
+    _		   19;
+    vf_mig_int	   11	 "VF Migration Interrupt Message Number";
+  };
+
+  // 3.3.3
+  register ctrl rw addr( base, 0x08 ) "SR-IOV Control" {
+    vf_enable	   	 1	 "VF Enable";
+    vf_mig_enable  	 1	 "VF Migration Enable";
+    vf_mig_int_enable	 1	 "VF Migration Interrupt Enable";
+    vf_mse		 1	 "VF MSE";
+    ari_capable		 1	 "ARI Capable Hierarchy";
+    _			 11;
+  };
+
+  // 3.3.4
+  register status rw addr( base, 0x0a ) "SR-IOV Status" {
+    vf_migration     1	   "VF Migration Status";
+    _		     15 mbz;
+  };
+
+  // 3.3.5
+  register initialvfs ro addr( base, 0x0c ) "InitialVFs" type(uint16);
+  // 3.3.6
+  register totalvfs ro addr( base, 0x0e ) "TotalVFs" type(uint16);
+  // 3.3.7
+  register numvfs rw addr( base, 0x10 ) "NumVFs" type(uint16);
+  // 3.3.8
+  register fdl ro addr( base, 0x12 ) "Function Dependency Link" type(uint8);
+  // 3.3.9
+  register offset ro addr( base, 0x14 ) "First VF Offset" type(uint16);
+  // 3.3.10
+  register stride ro addr( base, 0x16 ) "VF Stride" type(uint16);
+  // 3.3.11
+  register devid ro addr( base, 0x1a ) "VF Device ID" type(uint16);
+
+  // 3.3.12
+  register sup_psize ro addr( base, 0x1c ) "Supported Page Sizes" type(uint32);
+  // 3.3.13
+  register sys_psize rw addr( base, 0x20 ) "System Page Size" type(uint32);
+
+  // 3.3.14
+  regarray vf_bar rw addr( base, 0x24 ) [6] "VF BAR" type(uint32);
+
+  // 3.3.15
+  register vf_mig_state ro addr( base, 0x3c ) "VF Migration State Array Offset" {
+    bir	   3		"VF Migration State BIR";
+    offset 29		"VF Migration State Offset";
+  };
+
+};

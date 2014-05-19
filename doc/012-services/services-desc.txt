@@ -1,0 +1,89 @@
+binding
+	bind to an end point, 
+	connect, disconnect, wait for connection
+	facilitates communication
+capability_mgmt
+	create, destroy caps
+	copy, move caps
+	transfer caps between cores
+debugging
+	modify system state
+	query system state
+	control execution
+	attach to domains/processes/threads
+driver
+	device drivers
+device_man
+	device management (eg enumeration, address assignment, etc.)
+	bus management
+environment
+	process env
+group_comm
+	broadcast, multicast
+	consensus
+lock_service
+	mutual exclusion, synchronisation primitives
+mem_alloc
+	manage physial memory
+	allocate, free memory	
+naming
+	name->value mapping
+	notifications
+network_stack
+	TCP/IP stack
+	packet filtering
+power_mgmt
+	monitor power usage
+	manipulate power usage
+	turn subsystems on/off
+	turn hardware on/off
+principals
+	users/principals
+	accounts
+	account control
+	authorisation?
+	access control (eg via caps)
+process_mgmt
+	processes/domains
+	start, stop processes
+	load processes
+	move processes
+resource_acct_mgmt
+	keep accounting
+	monitor resource usage
+	scheduling
+routing
+	intra-machine message routing
+shell
+	command processor 
+skb
+	system knowledge base
+	database of system information
+	request information
+	constraint solving
+storage_mgmt
+	abstractions for persistent storage	
+	file system
+	database
+terminal
+	terminal/console/tty
+	multiplex terminal output
+	demultiplex terminal input
+threading
+	thread management
+	scheduling
+	thread local storage
+	synchronisation
+tracing
+	trace system events
+	monitor system events
+	query system events
+VMachine
+	virtual machine monitor
+VMem
+	virtual memory management
+	mapping/unmapping pages
+	address spaces
+	paging/swapping
+	
+	

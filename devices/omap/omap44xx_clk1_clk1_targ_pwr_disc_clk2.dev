@@ -1,0 +1,115 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_clk1_clk1_targ_pwr_disc_clk2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_clk1_clk1_targ_pwr_disc_clk2 msbfirst ( addr base ) "" {
+    
+
+    constants stdhosthdr_corereg_vendorcode_status width(1) "" {
+        STDHOSTHDR_COREREG_VENDORCODE_0_r = 0 "Third-party vendor.";
+        STDHOSTHDR_COREREG_VENDORCODE_1_r = 1 "";
+    };
+    
+    register l3_pwr_disc_stdhosthdr_corereg addr(base, 0x0) "" {
+        _ 10 mbz;
+        stdhosthdr_corereg_corecode 6 ro "The Core Code field is a constant reporting a vendor-specific core generator code. Type: Constant. Reset value: 0x38.";
+        _ 15 mbz;
+        stdhosthdr_corereg_vendorcode 1 ro type(stdhosthdr_corereg_vendorcode_status) "The Vendor Code field is a constant reporting the core generator vendor code. Type: Constant. Reset value: 0x1.";
+    };
+    
+    register l3_pwr_disc_stdhosthdr_versionreg addr(base, 0x4) "" {
+        stdhosthdr_versionreg_revisionid 8 ro "The Revision Identifier field is a constant reporting the core generator revision number. Type: Constant. Reset value: 0x0.";
+        stdhosthdr_versionreg_coreparamschecksum 24 ro "Reserved. Type: Reserved. Reset value: Reserved.";
+    };
+    
+    register l3_pwr_disc_stdhosthdr_mainctlreg addr(base, 0x8) "" {
+        _ 27 mbz;
+        _ 1 mbz;
+        stdhosthdr_mainctlreg_cm 1 ro "Reserved for internal testing. Must be set to 0. Type: Control. Reset value: 0x0.";
+        stdhosthdr_mainctlreg_flt 1 ro "Asserted when a Fault condition is detected: if the unit includes Error Logging, Flt is asserted when the FltCnt register field indicates a Fault, and deasserted when FltCnt is reset. If no Error Logging is implemented, this bit becomes unit-dependent. In all cases, Flt bit and Flt pin (service network) have the same logical level. Type: Status. Reset value: X.";
+        _ 2 mbz;
+    };
+
+    constants stderrlog_svrtstdlvl_0_status width(2) "" {
+        STDERRLOG_SVRTSTDLVL_0_0 = 0 "Error logging is disabled.";
+        STDERRLOG_SVRTSTDLVL_0_1 = 1 "Errors are logged with severity level Error.";
+        STDERRLOG_SVRTSTDLVL_0_2 = 2 "Errors are logged with severity level Fault.";
+    };
+    
+    register l3_pwr_disc_stderrlog_svrtstdlvl addr(base, 0x40) "" {
+        _ 30 mbz;
+        stderrlog_svrtstdlvl_0 2 rw type(stderrlog_svrtstdlvl_0_status) "Severity level parameters Type: Control. Reset value: 0x2.";
+    };
+
+    constants stderrlog_main_errtype_status width(1) "" {
+        STDERRLOG_MAIN_ERRTYPE_0_r = 0 "Logged Error format is standard (header and necker recorded).";
+        STDERRLOG_MAIN_ERRTYPE_1_r = 1 "Logged Error format is module dependent. CustomInfo register(s) may be implemented to store additional information.";
+    };
+    
+    register l3_pwr_disc_stderrlog_main addr(base, 0x48) "" {
+        stderrlog_main_clrlog 1 rw "Clears Error Logging Valid bit when written to 1. Type: Give_AutoCleared. Reset value: 0x0.";
+        _ 11 mbz;
+        stderrlog_main_fltcnt 1 rw "Asserted when at least one error with severity level FAULT is detected. Reset when written to 1. Type: Take. Reset value: 0x0.";
+        stderrlog_main_errcnt 1 rw "Asserted when at least one error with severity level ERROR is detected. Reset when written to 1. Type: Take. Reset value: 0x0.";
+        _ 16 mbz;
+        stderrlog_main_errtype 1 ro type(stderrlog_main_errtype_status) "Indicates logging type. Type: Status. Reset value: X.";
+        stderrlog_main_errlogvld 1 ro "Error Logging Valid. Asserted when logging information is valid(indicates that an error has been logged). Type: Status. Reset value: X.";
+    };
+    
+    register l3_pwr_disc_stderrlog_hdr addr(base, 0x4C) "" {
+        _ 8 mbz;
+        stderrlog_hdr_len1 6 ro "This field contains the number of payload cell(s) minus one of the logged packet. Type: Status. Reset value: X.";
+        _ 2 mbz;
+        stderrlog_hdr_stopofswrpsz 4 ro "StopOfs or WrapSize field of the logged packet (meaning depends on Wrp bit of logged opcode). Type: Status. Reset value: X.";
+        stderrlog_hdr_err 1 ro "Err bit of the logged packet. Type: Status. Reset value: X.";
+        _ 4 mbz;
+        stderrlog_hdr_pressure 1 ro "Pressure field of the logged packet. Type: Status. Reset value: X.";
+        _ 2 mbz;
+        stderrlog_hdr_opcode 4 ro "Opcode of the logged packet. Type: Status. Reset value: X.";
+    };
+    
+    register l3_pwr_disc_stderrlog_mstaddr addr(base, 0x50) "" {
+        _ 24 mbz;
+        stderrlog_mstaddr 8 ro "Master Address field of the logged packet. Type: Status. Reset value: X.";
+    };
+    
+    register l3_pwr_disc_stderrlog_slvaddr addr(base, 0x54) "" {
+        _ 27 mbz;
+        stderrlog_slvaddr 5 ro "Slave Address field of the logged packet. Type: Status. Reset value: X.";
+    };
+    
+    register l3_pwr_disc_stderrlog_info addr(base, 0x58) "" {
+        _ 24 mbz;
+        stderrlog_info 8 ro "Info field of the logged packet. Type: Status. Reset value: X.";
+    };
+    
+    register l3_pwr_disc_stderrlog_slvofslsb ro addr(base, 0x5C) "" type(uint32);
+    
+    register l3_pwr_disc_stderrlog_slvofsmsb addr(base, 0x60) "" {
+        _ 31 mbz;
+        stderrlog_slvofsmsb 1 ro "MSB of the slave offset field of the logged packet (according to NTTP packet format, this register field may exceed the actual slave offset size. Unused bits are stuck at 0, if any). Type: Status. Reset value: X.";
+    };
+};

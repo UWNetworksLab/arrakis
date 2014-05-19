@@ -1,0 +1,86 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2012, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+-- Attn: Systems Group.
+--
+-- Hakefile for if/
+--
+--------------------------------------------------------------------------
+
+-- whereas these are using the new-style bindings
+[ flounderGenDefs (options arch) f
+      | f <- [ "ahci_mgmt",
+               "ata_rw28",
+               "bcast",
+               "bench",
+               "boot_perfmon",
+               "bulkbench",
+               "diskd",
+               "e10k",
+               "ehci",
+               "net_queue_manager",
+               "net_ports",
+               "net_soft_filters",
+               "net_ARP",
+               "fb",
+               "glue_bench",
+               "hpet",
+               "interdisp",
+               "intermon",
+               "keyboard",
+               "lock",
+               "mem",
+               "monitor",
+               "monitor_blocking",
+               "monitor_mem",
+               "mouse",
+               "nameservice",
+--              "netd",
+               "acpi",
+               "pci",
+               "ping_pong",
+               "pixels",
+               "rcce",
+               "routing",
+               "serial",
+               "skb",
+               "skb_map",
+               "octopus",               
+               "spawn",
+               "terminal",
+               "terminal_config",
+               "terminal_session",
+               "test",
+               "timer",
+               "trivfs",
+               "usb_driver",  
+               "usb_manager",
+               "xcorecap",
+               "xcorecapbench",
+               "xmplcr",
+               "xmplmsg",
+               "xmplrpc",
+               "xmplthc",
+               "unixsock",
+	       "bcache",
+	       "replay",
+               "arrakis",
+               "e10k_vf",
+	       "empty"],
+             arch <- allArchitectures
+] ++
+
+-- these are for THC stubs
+[ flounderTHCFile (options arch) f
+      | f <- [ "bench",
+               "ping_pong",
+               "mem",
+               "xmplthc",
+               "octopus",
+               "ata_rw28" ],
+             arch <- allArchitectures
+]

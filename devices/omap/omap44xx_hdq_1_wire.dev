@@ -1,0 +1,72 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_hdq_1_wire.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_hdq_1_wire msbfirst ( addr base ) "" {
+    
+    
+    register hdq_revision ro addr(base, 0x0) "This register contains the IP revision code" type(uint32);
+    
+    register hdq_tx_data addr(base, 0x4) "This register contains the data to be transmitted." {
+        _ 24 mbz;
+        tx_data 8 rw "Transmit data (used in both HDQ and 1-Wire modes)";
+    };
+    
+    register hdq_rx_data addr(base, 0x8) "This register contains the data to be received." {
+        _ 24 mbz;
+        rx_data 8 ro "Receive data (used in both HDQ and 1-Wire modes)";
+    };
+    
+    register hdq_ctrl_status addr(base, 0xC) "This register provides status information about the module." {
+        _ 24 mbz;
+        one_wire_single_bit 1 rw "Single-bit mode for 1-Wire0x0: Disabled 0x1: Enabled";
+        interruptmask 1 rw "Interrupt masking bit0x0: Interrupts disable 0x1: Interrupts enable";
+        clockenable 1 rw "Power-down mode bit0x0: Clock disable (power down)0x1: Clock enable";
+        go 1 rw "Go bit. Write 1 to start the appropriate operation. Bit returns to 0 after the operation is complete.";
+        presencedetect 1 ro "Slave presence indicator. Actual only just after initialization time-out. Used in 1-Wire mode. Read-only flag.0x0: No slave detected0x1: Slave detected";
+        initialization 1 rw "Write 1 to send initialization pulse. Bit returns to 0 after pulse is sent.";
+        dir 1 rw "DIR bit, determines if next command is read or write0x0: Write 0x1: Read";
+        mode 1 rw "Mode selection bit0x0: HDQ mode 0x1: 1-Wire mode";
+    };
+    
+    register hdq_int_status addr(base, 0x10) "This register controls interrupts status" {
+        _ 29 mbz;
+        txcomplete 1 ro "TX-complete interrupt flag.Set to 1 if cause of interrupt. Set to 0 when register read.";
+        rxcomplete 1 ro "Read-complete interrupt flag.Set to 1 if cause of interrupt. Set to 0 when register read.";
+        timeout 1 ro "Presence detect/timeout interrupt flag.In 1-Wire mode, set to 1 if slave's presence detected. In HDQ mode, set to 1 if timeout on read occurs. Set to 0 when register read.";
+    };
+    
+    register hdq_sysconfig addr(base, 0x14) "This register controls various bits" {
+        _ 30 mbz;
+        softreset 1 rw "Start soft reset sequence.0x0: Disabled 0x1: Enabled";
+        autoidle 1 rw "Interconnect idle.0x0: Module clock is free-running. 0x1: Module is in power saving mode: Clock is running only when module is accessed or inside logic is in function to process events.";
+    };
+    
+    register hdq_sysstatus addr(base, 0x18) "This register monitors the reset sequence." {
+        _ 31 mbz;
+        resetdone 1 ro "Reset monitoring.0x0: The module is currently performing its reset. When the module is in power-down mode, set to 0 to indicate this fact. 0x1: The module has finished its reset.";
+    };
+};

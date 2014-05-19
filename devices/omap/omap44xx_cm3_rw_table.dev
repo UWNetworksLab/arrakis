@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_cm3_rw_table.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_cm3_rw_table msbfirst ( addr base ) "" {
+    
+    
+    register cortexm3_rw_pid1 rw addr(base, 0x0) "Peripheral Identification register - allows the user software to differentiate between the two ARM Cortex-M3 processors (two CPUs). The same piece of code running on the two CPUs can result in different execution (in example branch to different location) depending on what address is stored in the register. The address is stored by the BIOS code. The register cannot be accessed when the BIOS code is running (used)." type(uint32);
+    
+    register cortexm3_rw_pid2 rw addr(base, 0x4) "Peripheral Identification register - allows the user software to differentiate between the two ARM Cortex-M3 processors (two CPUs). The same piece of code running on the two CPUs can result in different execution (in example branch to different location) depending on what address is stored in the register. The address is stored by the BIOS code. The register cannot be accessed when the BIOS code is running (used)." type(uint32);
+};

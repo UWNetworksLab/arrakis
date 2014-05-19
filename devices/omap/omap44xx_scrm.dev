@@ -1,0 +1,424 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_scrm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_scrm msbfirst ( addr base ) "" {
+    
+    
+    register revision_scrm addr(base, 0x0) "This register contains the IP revision code for the SCRM." {
+        _ 24 mbz;
+        rev 8 ro "Revision Number";
+    };
+    
+    register clksetuptime addr(base, 0x100) "This register holds the clock setup time counters of the system clock source supplier." {
+        _ 10 mbz;
+        downtime 6 rw "Holds the number of 32 kHz clock cycles it takes to gate the clock source supplier.";
+        _ 4 mbz;
+        setuptime 12 rw "Holds the number of 32 kHz clock cycles it takes to stabilize the clock source supplier.";
+    };
+    
+    register pmicsetuptime addr(base, 0x104) "This register holds the setup time counters for the sleep mode of the clock-source generator power supply (the power supply in external connected PMIC or LDO)." {
+        _ 10 mbz;
+        wakeuptime 6 rw "Holds the number of 32 kHz clock cycles it takes to exit the clock-source generator power supply from sleep mode. SCRM starts Wakeup-time counter by activation of power request.";
+        _ 10 mbz;
+        sleeptime 6 rw "Holds the number of 32 kHz clock cycles it takes to enter the clock source generator power supply in sleep mode. SCRM activates Sleep-time counter by deactivation of power request.";
+    };
+
+    constants enable_ext_status width(1) "" {
+        ENABLE_EXT_0 = 0 "The alternate system clock version is disabled.";
+        ENABLE_EXT_1 = 1 "The alternate system clock version is enabled.";
+    };
+
+    constants mode_status width(2) "" {
+        MODE_0 = 0 "The alternate system clock source supplier is powered-down.";
+        MODE_1 = 1 "The alternate system clock source supplier is active.";
+        MODE_2 = 2 "The alternate system clock source supplier is bypassed.";
+        MODE_3 = 3 "Reserved";
+    };
+    
+    register altclksrc addr(base, 0x110) "This register controls the alternate system clock source supplier." {
+        _ 28 mbz;
+        enable_ext 1 rw type(enable_ext_status) "This bit allows to enable and disable the output alternate system clock version. This bit is intended to be used in order to gate this clock path while the source is stabilizing.";
+        enable_int 1 rw type(enable_ext_status) "This bit allows to enable and disable the alternate system clock version used to generate the auxiliary clocks. This bit is intended to be used in order to gate this clock path while the source is stabilizing and also to gate this clock path while switching the auxiliary clock paths on / from this possible source.";
+        mode 2 rw type(mode_status) "This bit field defines the functional mode of the alternate system clock supplier.";
+    };
+
+    constants sysclk_status width(1) "" {
+        SYSCLK_0 = 0 "The system clock version for the external C2C interface is disabled.";
+        SYSCLK_1 = 1 "The system clock version for the external C2C interface is enabled.";
+    };
+    
+    register c2cclkm addr(base, 0x11C) "This register controls the clocks of the external C2C interface." {
+        _ 30 mbz;
+        sysclk 1 rw type(sysclk_status) "This bit allows to enable and disable the system clock version of the external C2C interface.";
+        clk_32khz 1 rw type(sysclk_status) "This bit allows to enable and disable the 32 kHz clock version of the external C2C interface.";
+    };
+    
+    register extclkreq addr(base, 0x200) "This register holds qualifiers for the external clock request." {
+        _ 31 mbz;
+        polarity 1 rw type(mode_status) "This bit defines the active level of the external clock request.";
+    };
+    
+    register accclkreq addr(base, 0x204) "This register holds qualifiers for the accurate clock request." {
+        _ 31 mbz;
+        polarity 1 rw type(mode_status) "This bit defines the active level of the accurate clock request.";
+    };
+    
+    register pwrreq addr(base, 0x208) "This register holds qualifiers for the external power request." {
+        _ 31 mbz;
+        polarity 1 rw type(mode_status) "This bit defines the active level of the external power request.";
+    };
+
+    constants mapping_status width(3) "" {
+        MAPPING_0 = 0 "The auxiliary clock request #0 is mapped on the auxiliary clock #0.";
+        MAPPING_1 = 1 "The auxiliary clock request #0 is mapped on the auxiliary clock #1.";
+        MAPPING_2 = 2 "The auxiliary clock request #0 is mapped on the auxiliary clock #2.";
+        MAPPING_3 = 3 "The auxiliary clock request #0 is mapped on the auxiliary clock #3.";
+        MAPPING_4 = 4 "The auxiliary clock request #0 is mapped on the auxiliary clock #4.";
+        MAPPING_5 = 5 "The auxiliary clock request #0 is mapped on the auxiliary clock #5.";
+        MAPPING_6 = 6 "Reserved";
+        MAPPING_7 = 7 "Reserved";
+    };
+    
+    register auxclkreq0 addr(base, 0x210) "This register holds qualifiers for the auxiliary clock request #0." {
+        _ 27 mbz;
+        mapping 3 rw type(mapping_status) "This field allows re-mapping the auxiliary clock request #0 on another auxiliary clock output than auxiliary clock #0.";
+        accuracy 1 rw type(mode_status) "This bit qualifies the auxiliary clock request #0 as an accurate clock request.";
+        polarity 1 rw type(mode_status) "This bit defines the active level of the auxiliary clock request #0.";
+    };
+    
+    register auxclkreq1 addr(base, 0x214) "This register holds qualifiers for the auxiliary clock request #1." {
+        _ 27 mbz;
+        mapping 3 rw type(mapping_status) "This field allows re-mapping the auxiliary clock request #1 on another auxiliary clock output than auxiliary clock #1.";
+        accuracy 1 rw type(mode_status) "This bit qualifies the auxiliary clock request #1 as an accurate clock request.";
+        polarity 1 rw type(mode_status) "This bit defines the active level of the auxiliary clock request #1.";
+    };
+    
+    register auxclkreq2 addr(base, 0x218) "This register holds qualifiers for the auxiliary clock request #2." {
+        _ 27 mbz;
+        mapping 3 rw type(mapping_status) "This field allows re-mapping the auxiliary clock request #2 on another auxiliary clock output than auxiliary clock #2.";
+        accuracy 1 rw type(mode_status) "This bit qualifies the auxiliary clock request #2 as an accurate clock request.";
+        polarity 1 rw type(mode_status) "This bit defines the active level of the auxiliary clock request #2.";
+    };
+    
+    register auxclkreq3 addr(base, 0x21C) "This register holds qualifiers for the auxiliary clock request #3." {
+        _ 27 mbz;
+        mapping 3 rw type(mapping_status) "This field allows re-mapping the auxiliary clock request #3 on another auxiliary clock output than auxiliary clock #3.";
+        accuracy 1 rw type(mode_status) "This bit qualifies the auxiliary clock request #3 as an accurate clock request.";
+        polarity 1 rw type(mode_status) "This bit defines the active level of the auxiliary clock request #3.";
+    };
+    
+    register auxclkreq4 addr(base, 0x220) "This register holds qualifiers for the auxiliary clock request #4." {
+        _ 27 mbz;
+        mapping 3 rw type(mapping_status) "This field allows re-mapping the auxiliary clock request #4 on another auxiliary clock output than auxiliary clock #4.";
+        accuracy 1 rw type(mode_status) "This bit qualifies the auxiliary clock request #4 as an accurate clock request.";
+        polarity 1 rw type(mode_status) "This bit defines the active level of the auxiliary clock request #4.";
+    };
+    
+    register auxclkreq5 addr(base, 0x224) "This register holds qualifiers for the auxiliary clock request #5." {
+        _ 27 mbz;
+        mapping 3 rw type(mapping_status) "This field allows re-mapping the auxiliary clock request #5 on another auxiliary clock output than auxiliary clock #5.";
+        accuracy 1 rw type(mode_status) "This bit qualifies the auxiliary clock request #5 as an accurate clock request.";
+        polarity 1 rw type(mode_status) "This bit defines the active level of the auxiliary clock request #5.";
+    };
+    
+    register c2cclkreq addr(base, 0x234) "This register holds qualifiers for the external C2C interface clock request." {
+        _ 30 mbz;
+        accuracy 1 rw type(sysclk_status) "This bit qualifies the external C2C interface clock request as an accurate clock request.";
+        polarity 1 rw type(sysclk_status) "This bit defines the active level of the external C2C interface clock request.";
+    };
+
+    constants clkdiv_status width(4) "" {
+        CLKDIV_0 = 0 "The auxiliary clock #0 is divided by 1.";
+        CLKDIV_1 = 1 "The auxiliary clock #0 is divided by 2.";
+        CLKDIV_2 = 2 "The auxiliary clock #0 is divided by 3.";
+        CLKDIV_3 = 3 "The auxiliary clock #0 is divided by 4.";
+        CLKDIV_4 = 4 "The auxiliary clock #0 is divided by 5.";
+        CLKDIV_5 = 5 "The auxiliary clock #0 is divided by 6.";
+        CLKDIV_6 = 6 "The auxiliary clock #0 is divided by 7.";
+        CLKDIV_7 = 7 "The auxiliary clock #0 is divided by 8.";
+        CLKDIV_8 = 8 "The auxiliary clock #0 is divided by 9.";
+        CLKDIV_9 = 9 "The auxiliary clock #0 is divided by 10.";
+        CLKDIV_10 = 10 "The auxiliary clock #0 is divided by 11.";
+        CLKDIV_11 = 11 "The auxiliary clock #0 is divided by 12.";
+        CLKDIV_12 = 12 "The auxiliary clock #0 is divided by 13.";
+        CLKDIV_13 = 13 "The auxiliary clock #0 is divided by 14.";
+        CLKDIV_14 = 14 "The auxiliary clock #0 is divided by 15.";
+        CLKDIV_15 = 15 "The auxiliary clock #0 is divided by 16.";
+    };
+
+    constants disableclk_status width(1) "" {
+        DISABLECLK_0 = 0 "The auxiliary clock #0 is gated upon normal condition: auxiliary clock requests mapped on this path or ENABLE bit set.";
+        DISABLECLK_1 = 1 "The auxiliary clock #0 is gated wihout conditon.";
+    };
+
+    constants srcselect_status width(2) "" {
+        SRCSELECT_0 = 0 "The clock source is the system clock.";
+        SRCSELECT_1 = 1 "The clock source is the version from the CORE DPLL.";
+        SRCSELECT_2 = 2 "The clock source is the version from the PER DPLL.";
+        SRCSELECT_3 = 3 "The clock source is the alternate clock.";
+    };
+
+    constants polarity_status width(1) "" {
+        POLARITY_0_10 = 0 "The auxiliary clock #0 is gated low.";
+        POLARITY_1_10 = 1 "The auxiliary clock #0 is gated high.";
+    };
+    
+    register auxclk0 addr(base, 0x310) "This register holds qualifiers for the auxiliary clock #0." {
+        _ 12 mbz;
+        clkdiv 4 rw type(clkdiv_status) "This field holds the divider value for the auxiliary clock #0.";
+        _ 6 mbz;
+        disableclk 1 rw type(disableclk_status) "This bit allows to gate the auxiliary clock #0 without condition. This is bit is intended to be used only when the SOC is not clock provider.";
+        enable 1 rw type(mode_status) "This bit allows to request the auxiliary clock #0 by software.";
+        _ 5 mbz;
+        srcselect 2 rw type(srcselect_status) "This field allows selecting the clock source of the auxiliary clock #0.";
+        polarity 1 rw type(polarity_status) "This bit defines the output level when the auxiliary clock #0 is gated.";
+    };
+
+    constants clkdiv_status1 width(4) "" {
+        CLKDIV_0_1 = 0 "The auxiliary clock #1 is divided by 1.";
+        CLKDIV_1_1 = 1 "The auxiliary clock #1 is divided by 2.";
+        CLKDIV_2_1 = 2 "The auxiliary clock #1 is divided by 3.";
+        CLKDIV_3_1 = 3 "The auxiliary clock #1 is divided by 4.";
+        CLKDIV_4_1 = 4 "The auxiliary clock #1 is divided by 5.";
+        CLKDIV_5_1 = 5 "The auxiliary clock #1 is divided by 6.";
+        CLKDIV_6_1 = 6 "The auxiliary clock #1 is divided by 7.";
+        CLKDIV_7_1 = 7 "The auxiliary clock #1 is divided by 8.";
+        CLKDIV_8_1 = 8 "The auxiliary clock #1 is divided by 9.";
+        CLKDIV_9_1 = 9 "The auxiliary clock #1 is divided by 10.";
+        CLKDIV_10_1 = 10 "The auxiliary clock #1 is divided by 11.";
+        CLKDIV_11_1 = 11 "The auxiliary clock #1 is divided by 12.";
+        CLKDIV_12_1 = 12 "The auxiliary clock #1 is divided by 13.";
+        CLKDIV_13_1 = 13 "The auxiliary clock #1 is divided by 14.";
+        CLKDIV_14_1 = 14 "The auxiliary clock #1 is divided by 15.";
+        CLKDIV_15_1 = 15 "The auxiliary clock #1 is divided by 16.";
+    };
+
+    constants polarity_status1 width(1) "" {
+        POLARITY_0_11 = 0 "The auxiliary clock #1 is gated low.";
+        POLARITY_1_11 = 1 "The auxiliary clock #1 is gated high.";
+    };
+    
+    register auxclk1 addr(base, 0x314) "This register holds qualifiers for the auxiliary clock #1." {
+        _ 12 mbz;
+        clkdiv 4 rw type(clkdiv_status1) "This field holds the divider value for the auxiliary clock #1.";
+        _ 7 mbz;
+        enable 1 rw type(mode_status) "This bit allows to request the auxiliary clock #1 by software.";
+        _ 5 mbz;
+        srcselect 2 rw type(srcselect_status) "This field allows selecting the clock source of the auxiliary clock #1.";
+        polarity 1 rw type(polarity_status1) "This bit defines the output level when the auxiliary clock #1 is gated.";
+    };
+
+    constants clkdiv_status2 width(4) "" {
+        CLKDIV_0_2 = 0 "The auxiliary clock #2 is divided by 1.";
+        CLKDIV_1_2 = 1 "The auxiliary clock #2 is divided by 2.";
+        CLKDIV_2_2 = 2 "The auxiliary clock #2 is divided by 3.";
+        CLKDIV_3_2 = 3 "The auxiliary clock #2 is divided by 4.";
+        CLKDIV_4_2 = 4 "The auxiliary clock #2 is divided by 5.";
+        CLKDIV_5_2 = 5 "The auxiliary clock #2 is divided by 6.";
+        CLKDIV_6_2 = 6 "The auxiliary clock #2 is divided by 7.";
+        CLKDIV_7_2 = 7 "The auxiliary clock #2 is divided by 8.";
+        CLKDIV_8_2 = 8 "The auxiliary clock #2 is divided by 9.";
+        CLKDIV_9_2 = 9 "The auxiliary clock #2 is divided by 10.";
+        CLKDIV_10_2 = 10 "The auxiliary clock #2 is divided by 11.";
+        CLKDIV_11_2 = 11 "The auxiliary clock #2 is divided by 12.";
+        CLKDIV_12_2 = 12 "The auxiliary clock #2 is divided by 13.";
+        CLKDIV_13_2 = 13 "The auxiliary clock #2 is divided by 14.";
+        CLKDIV_14_2 = 14 "The auxiliary clock #2 is divided by 15.";
+        CLKDIV_15_2 = 15 "The auxiliary clock #2 is divided by 16.";
+    };
+
+    constants polarity_status2 width(1) "" {
+        POLARITY_0_12 = 0 "The auxiliary clock #2 is gated low.";
+        POLARITY_1_12 = 1 "The auxiliary clock #2 is gated high.";
+    };
+    
+    register auxclk2 addr(base, 0x318) "This register holds qualifiers for the auxiliary clock #2." {
+        _ 12 mbz;
+        clkdiv 4 rw type(clkdiv_status2) "This field holds the divider value for the auxiliary clock #2.";
+        _ 7 mbz;
+        enable 1 rw type(mode_status) "This bit allows to request the auxiliary clock #2 by software.";
+        _ 5 mbz;
+        srcselect 2 rw type(srcselect_status) "This field allows selecting the clock source of the auxiliary clock #2.";
+        polarity 1 rw type(polarity_status2) "This bit defines the output level when the auxiliary clock #2 is gated.";
+    };
+
+    constants clkdiv_status3 width(4) "" {
+        CLKDIV_0_3 = 0 "The auxiliary clock #3 is divided by 1.";
+        CLKDIV_1_3 = 1 "The auxiliary clock #3 is divided by 2.";
+        CLKDIV_2_3 = 2 "The auxiliary clock #3 is divided by 3.";
+        CLKDIV_3_3 = 3 "The auxiliary clock #3 is divided by 4.";
+        CLKDIV_4_3 = 4 "The auxiliary clock #3 is divided by 5.";
+        CLKDIV_5_3 = 5 "The auxiliary clock #3 is divided by 6.";
+        CLKDIV_6_3 = 6 "The auxiliary clock #3 is divided by 7.";
+        CLKDIV_7_3 = 7 "The auxiliary clock #3 is divided by 8.";
+        CLKDIV_8_3 = 8 "The auxiliary clock #3 is divided by 9.";
+        CLKDIV_9_3 = 9 "The auxiliary clock #3 is divided by 10.";
+        CLKDIV_10_3 = 10 "The auxiliary clock #3 is divided by 11.";
+        CLKDIV_11_3 = 11 "The auxiliary clock #3 is divided by 12.";
+        CLKDIV_12_3 = 12 "The auxiliary clock #3 is divided by 13.";
+        CLKDIV_13_3 = 13 "The auxiliary clock #3 is divided by 14.";
+        CLKDIV_14_3 = 14 "The auxiliary clock #3 is divided by 15.";
+        CLKDIV_15_3 = 15 "The auxiliary clock #3 is divided by 16.";
+    };
+
+    constants polarity_status3 width(1) "" {
+        POLARITY_0_13 = 0 "The auxiliary clock #3 is gated low.";
+        POLARITY_1_13 = 1 "The auxiliary clock #3 is gated high.";
+    };
+    
+    register auxclk3 addr(base, 0x31C) "This register holds qualifiers for the auxiliary clock #3." {
+        _ 12 mbz;
+        clkdiv 4 rw type(clkdiv_status3) "This field holds the divider value for the auxiliary clock #3.";
+        _ 7 mbz;
+        enable 1 rw type(mode_status) "This bit allows to request the auxiliary clock #3 by software.";
+        _ 5 mbz;
+        srcselect 2 rw type(srcselect_status) "This field allows selecting the clock source of the auxiliary clock #3.";
+        polarity 1 rw type(polarity_status3) "This bit defines the output level when the auxiliary clock #3 is gated.";
+    };
+
+    constants clkdiv_status4 width(4) "" {
+        CLKDIV_0_4 = 0 "The auxiliary clock #4 is divided by 1.";
+        CLKDIV_1_4 = 1 "The auxiliary clock #4 is divided by 2.";
+        CLKDIV_2_4 = 2 "The auxiliary clock #4 is divided by 3.";
+        CLKDIV_3_4 = 3 "The auxiliary clock #4 is divided by 4.";
+        CLKDIV_4_4 = 4 "The auxiliary clock #4 is divided by 5.";
+        CLKDIV_5_4 = 5 "The auxiliary clock #4 is divided by 6.";
+        CLKDIV_6_4 = 6 "The auxiliary clock #4 is divided by 7.";
+        CLKDIV_7_4 = 7 "The auxiliary clock #4 is divided by 8.";
+        CLKDIV_8_4 = 8 "The auxiliary clock #4 is divided by 9.";
+        CLKDIV_9_4 = 9 "The auxiliary clock #4 is divided by 10.";
+        CLKDIV_10_4 = 10 "The auxiliary clock #4 is divided by 11.";
+        CLKDIV_11_4 = 11 "The auxiliary clock #4 is divided by 12.";
+        CLKDIV_12_4 = 12 "The auxiliary clock #4 is divided by 13.";
+        CLKDIV_13_4 = 13 "The auxiliary clock #4 is divided by 14.";
+        CLKDIV_14_4 = 14 "The auxiliary clock #4 is divided by 15.";
+        CLKDIV_15_4 = 15 "The auxiliary clock #4 is divided by 16.";
+    };
+
+    constants polarity_status4 width(1) "" {
+        POLARITY_0_14 = 0 "The auxiliary clock #4 is gated low.";
+        POLARITY_1_14 = 1 "The auxiliary clock #4 is gated high.";
+    };
+    
+    register auxclk4 addr(base, 0x320) "This register holds qualifiers for the auxiliary clock #4." {
+        _ 12 mbz;
+        clkdiv 4 rw type(clkdiv_status4) "This field holds the divider value for the auxiliary clock #4.";
+        _ 7 mbz;
+        enable 1 rw type(mode_status) "This bit allows to request the auxiliary clock #4 by software.";
+        _ 5 mbz;
+        srcselect 2 rw type(srcselect_status) "This field allows selecting the clock source of the auxiliary clock #4.";
+        polarity 1 rw type(polarity_status4) "This bit defines the output level when the auxiliary clock #4 is gated.";
+    };
+
+    constants clkdiv_status5 width(4) "" {
+        CLKDIV_0_5 = 0 "The auxiliary clock #5 is divided by 1.";
+        CLKDIV_1_5 = 1 "The auxiliary clock #5 is divided by 2.";
+        CLKDIV_2_5 = 2 "The auxiliary clock #5 is divided by 3.";
+        CLKDIV_3_5 = 3 "The auxiliary clock #5 is divided by 4.";
+        CLKDIV_4_5 = 4 "The auxiliary clock #5 is divided by 5.";
+        CLKDIV_5_5 = 5 "The auxiliary clock #5 is divided by 6.";
+        CLKDIV_6_5 = 6 "The auxiliary clock #5 is divided by 7.";
+        CLKDIV_7_5 = 7 "The auxiliary clock #5 is divided by 8.";
+        CLKDIV_8_5 = 8 "The auxiliary clock #5 is divided by 9.";
+        CLKDIV_9_5 = 9 "The auxiliary clock #5 is divided by 10.";
+        CLKDIV_10_5 = 10 "The auxiliary clock #5 is divided by 11.";
+        CLKDIV_11_5 = 11 "The auxiliary clock #5 is divided by 12.";
+        CLKDIV_12_5 = 12 "The auxiliary clock #5 is divided by 13.";
+        CLKDIV_13_5 = 13 "The auxiliary clock #5 is divided by 14.";
+        CLKDIV_14_5 = 14 "The auxiliary clock #5 is divided by 15.";
+        CLKDIV_15_5 = 15 "The auxiliary clock #5 is divided by 16.";
+    };
+
+    constants polarity_status5 width(1) "" {
+        POLARITY_0_15 = 0 "The auxiliary clock #5 is gated low.";
+        POLARITY_1_15 = 1 "The auxiliary clock #5 is gated high.";
+    };
+    
+    register auxclk5 addr(base, 0x324) "This register holds qualifiers for the auxiliary clock #5." {
+        _ 12 mbz;
+        clkdiv 4 rw type(clkdiv_status5) "This field holds the divider value for the auxiliary clock #5.";
+        _ 7 mbz;
+        enable 1 rw type(mode_status) "This bit allows to request the auxiliary clock #5 by software.";
+        _ 5 mbz;
+        srcselect 2 rw type(srcselect_status) "This field allows selecting the clock source of the auxiliary clock #5.";
+        polarity 1 rw type(polarity_status5) "This bit defines the output level when the auxiliary clock #5 is gated.";
+    };
+    
+    register rsttime_reg addr(base, 0x400) "This register holds the reset time counter which is used to extend the reset lines beyond the release of the pad reset." {
+        _ 28 mbz;
+        rsttime 4 rw "Holds the number of 32 kHz clock cycles for which the reset duration is extended. Values 0,1 and 2 are not allowed. 0x0: Reserved. 0x1: Reserved. 0x2: Reserved.";
+    };
+    
+    register c2crstctrl addr(base, 0x41C) "This register controls the release of the external C2C interface reset lines." {
+        _ 30 mbz;
+        warmrst 1 rw type(sysclk_status) "This bit allows to release the warm reset line of the external C2C interface. [warm reset sensitive]";
+        coldrst 1 rw type(sysclk_status) "This bit allows to release the cold reset line of the external C2C interface.";
+    };
+
+    constants pwronrst_status width(1) "" {
+        PWRONRST_0 = 0 "De-asserts the external power-on reset.";
+        PWRONRST_1 = 1 "Asserts the external power-on reset.";
+    };
+    
+    register extpwronrstctrl addr(base, 0x420) "This register allows the software to perform an external power-on reset." {
+        _ 30 mbz;
+        pwronrst 1 rw type(pwronrst_status) "This bit controls the assertion and the de-assertion of the external power-on reset.";
+        enable 1 rw type(mode_status) "This bit must be set to 1 to allow the software to assert the external power-on reset.";
+    };
+
+    constants extwarmrstst_status width(1) "" {
+        EXTWARMRSTST_0 = 0 "No external warm reset occurred.";
+        EXTWARMRSTST_1 = 1 "An external warm reset occurred.";
+    };
+    
+    register extwarmrstst_reg addr(base, 0x510) "This register logs the source of warm reset output. Each bit is set upon release of the warm reset output and must be cleared by software." {
+        _ 31 mbz;
+        extwarmrstst 1 rw1c type(extwarmrstst_status) "This bit logs the external warm reset source.";
+    };
+
+    constants apewarmrstst_status width(1) "" {
+        APEWARMRSTST_0 = 0 "No APE warm reset occurred.";
+        APEWARMRSTST_1 = 1 "An APE warm reset occurred.";
+    };
+    
+    register apewarmrstst_reg addr(base, 0x514) "This register logs the source of warm reset on the APE. Each bit is set upon release of the APE warm reset and must be cleared by software." {
+        _ 30 mbz;
+        apewarmrstst 1 rw1c type(apewarmrstst_status) "This bit logs the APE warm reset source.";
+        _ 1 mbz;
+    };
+
+    constants c2cwarmrstst_status width(1) "" {
+        C2CWARMRSTST_0 = 0 "No C2C warm reset occurred.";
+        C2CWARMRSTST_1 = 1 "A C2C warm reset occurred.";
+    };
+    
+    register c2cwarmrstst_reg addr(base, 0x51C) "This register logs the source of warm reset on the external C2C interface. Each bit is set upon release of the external C2C interface warm reset and must be cleared by software." {
+        _ 28 mbz;
+        c2cwarmrstst 1 rw1c type(c2cwarmrstst_status) "This bit logs the C2C warm reset source.";
+        _ 3 mbz;
+    };
+};

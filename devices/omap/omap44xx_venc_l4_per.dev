@@ -1,0 +1,562 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_venc_l4_per.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_venc_l4_per msbfirst ( addr base ) "" {
+    
+    
+    register venc_rev_id ro addr(base, 0x0) "Revision ID for the encoder" type(uint32);
+
+    constants fsq_status width(3) "" {
+        FSQ_0_r = 0 "ODD field";
+        FSQ_1_r = 1 "EVEN field";
+    };
+    
+    register venc_status addr(base, 0x4) "STATUS" {
+        _ 27 mbz;
+        cce 1 ro "Closed Caption Status for Even Field. This bit is set immediately after the data in registers LINE21_E0 and LINE21_E1 have been encoded to closed caption. This bit is reset when both of these registers are written.";
+        cco 1 ro "Closed Caption Status for Odd Field. This bit is set immediately after the data in registers LINE21_O0 and LINE21_O1 have been encoded to closed caption. This bit is reset when both of these registers are written.";
+        fsq 3 ro type(fsq_status) "Field Sequence ID. For PAL, all three FSQ[2:0] are used whereas for NTSC only FSQ[1:0] is meaningful. Furthermore, FSQ[0] represents ODD field when it is '0' and EVEN field when it is '1'.";
+    };
+
+    constants reset_status width(1) "" {
+        RESET_0 = 0 "No effect";
+        RESET_1 = 1 "Reset the encoder, after reset, this bit is automatically set to zero.";
+    };
+
+    constants svds_status width(2) "" {
+        SVDS_0 = 0 "Use external video source";
+        SVDS_1 = 1 "Use internal Color BAR";
+        SVDS_2 = 2 "Use background color";
+        SVDS_3 = 3 "Reserved";
+    };
+
+    constants rgbf_status width(1) "" {
+        RGBF_0 = 0 "The input RGB data are in binary format with coding range 0-255 The input YCrCb data are in binary format with coding range 0-255";
+        RGBF_1 = 1 "The input RGB data are in binary format with coding range 16-235 The input YCrCb data are in binary format conforming to ITU-601 standard";
+    };
+
+    constants bcolor_status width(3) "" {
+        BCOLOR_0 = 0 "";
+        BCOLOR_1 = 1 "";
+        BCOLOR_2 = 2 "";
+        BCOLOR_3 = 3 "";
+        BCOLOR_4 = 4 "";
+        BCOLOR_5 = 5 "";
+        BCOLOR_6 = 6 "";
+        BCOLOR_7 = 7 "";
+    };
+
+    constants fmt_status width(2) "" {
+        FMT_0 = 0 "24-bit 4:4:4 RGB";
+        FMT_1 = 1 "24-bit 4:4:4";
+        FMT_2 = 2 "16-bit 4:2:2";
+        FMT_3 = 3 "8-bit ITU-R 656 4:2:2";
+    };
+    
+    register venc_f_control addr(base, 0x8) "This register specifies the input video source and format" {
+        _ 23 mbz;
+        reset 1 rw type(reset_status) "RESET the encoder";
+        svds 2 rw type(svds_status) "Select Video Data Source.";
+        rgbf 1 rw type(rgbf_status) "RGB /YCrCb input coding range";
+        bcolor 3 rw type(bcolor_status) "Background color select";
+        fmt 2 rw type(fmt_status) "These two bits specify the video input data stream format and timing";
+    };
+
+    constants mhz_27_54_status width(1) "" {
+        MHZ_27_54_0 = 0 "54 MHz, 4x oversampling";
+        MHZ_27_54_1 = 1 "27MHz, 2x oversampling, the last 2x oversampling filter bypassed";
+    };
+    
+    register venc_vidout_ctrl addr(base, 0x10) "Encoder output clock" {
+        _ 31 mbz;
+        mhz_27_54 1 rw type(mhz_27_54_status) "Encoder output clock";
+    };
+
+    constants free_status width(1) "" {
+        FREE_0 = 0 "Free running disabled";
+        FREE_1 = 1 "Free running enabled. HSYNC and VSYNC are ignored";
+    };
+
+    constants esav_status width(1) "" {
+        ESAV_0 = 0 "Detection of F and V bits on both EAV and SAV";
+        ESAV_1 = 1 "Detection of F and V bits only on EAV";
+    };
+
+    constants ignp_status width(1) "" {
+        IGNP_0 = 0 "Protection bits are not ignored";
+        IGNP_1 = 1 "Protection bits are ignored";
+    };
+
+    constants nblnks_status width(1) "" {
+        NBLNKS_0 = 0 "Blank shaping enabled";
+        NBLNKS_1 = 1 "Blank shaping disabled";
+    };
+
+    constants vblkm_status width(2) "" {
+        VBLKM_0 = 0 "Internal default blanking";
+        VBLKM_1 = 1 "Internal default blanking AND internal programmable blanking defined by FAL and LAL";
+        VBLKM_2 = 2 "Reserved";
+        VBLKM_3 = 3 "Reserved";
+    };
+
+    constants hblkm_status width(2) "" {
+        HBLKM_0 = 0 "Internal default blanking";
+        HBLKM_1 = 1 "Internal programmable blanking defined by SAVID and EAVID";
+        HBLKM_2 = 2 "External blanking defined by AVID";
+        HBLKM_3 = 3 "Reserved";
+    };
+
+    constants m_s_status width(1) "" {
+        M_S_0 = 0 "Sync master. Encoder outputs Vsync, Hsync, FID and AVID.";
+        M_S_1 = 1 "Sync slave. Encoder is synchronized to external Vsync, Hsync, FID and AVID.";
+    };
+
+    constants fid_pol_status width(1) "" {
+        FID_POL_0 = 0 "ODD field = '0' EVEN field = '1'";
+        FID_POL_1 = 1 "ODD field = '1' EVEN field = '0'";
+    };
+
+    constants vs_pol_status width(1) "" {
+        VS_POL_0 = 0 "VS is active high";
+        VS_POL_1 = 1 "VS is active low";
+    };
+
+    constants hs_pol_status width(1) "" {
+        HS_POL_0 = 0 "HS is active high";
+        HS_POL_1 = 1 "HS is active low";
+    };
+
+    constants fhvmod_status width(1) "" {
+        FHVMOD_0 = 0 "External FID";
+        FHVMOD_1 = 1 "Extracted from HSYNC and VSYNC";
+    };
+    
+    register venc_sync_ctrl addr(base, 0x14) "SYNC Control register" {
+        _ 16 mbz;
+        free 1 rw type(free_status) "Free running";
+        esav 1 rw type(esav_status) "Enable to detect F and V bits only on EAV in ITU-R 656 input mode";
+        ignp 1 rw type(ignp_status) "Ignore protection bits in ITU-R 656 input mode";
+        nblnks 1 rw type(nblnks_status) "Blank shaping";
+        vblkm 2 rw type(vblkm_status) "Vertical blanking mode";
+        hblkm 2 rw type(hblkm_status) "Horizontal blanking mode";
+        m_s 1 rw type(m_s_status) "Encoder is master or slave of external sync";
+        fid_pol 1 rw type(fid_pol_status) "FID output polarity";
+        _ 2 mbz;
+        vs_pol 1 rw type(vs_pol_status) "VS input polarity";
+        hs_pol 1 rw type(hs_pol_status) "HS input polarity";
+        _ 1 mbz;
+        fhvmod 1 rw type(fhvmod_status) "FID extracted from external FID or HSYNC and VSYNC";
+    };
+
+    constants llen_en_status width(1) "" {
+        LLEN_EN_0 = 0 "disable";
+        LLEN_EN_1 = 1 "enable";
+    };
+    
+    register venc_llen addr(base, 0x1C) "LLEN" {
+        _ 16 mbz;
+        llen_en 1 rw type(llen_en_status) "LLEN_EN";
+        _ 4 mbz;
+        llen 11 rw "LLEN[10:0] Line length or total number of pixels in a scan line including active video and blanking. Total number of pixels in a scan line = LLEN NOTE: A write to bit 11 of this bit field is illegal.";
+    };
+    
+    register venc_flens addr(base, 0x20) "FLENS" {
+        _ 21 mbz;
+        flens 11 rw "The frame length or total number of lines in a frame including active video and blanking from the source image. Total number of lines in a frame from the source image = FLENS + 1";
+    };
+
+    constants cintp_status width(2) "" {
+        CINTP_0 = 0 "The chrominance interpolation filter is enabled";
+        CINTP_1 = 1 "The first section of the chrominance interpolation filter is bypassed";
+        CINTP_2 = 2 "The second section of the chrominance interpolation filter is bypassed";
+        CINTP_3 = 3 "Both sections of the filter are bypassed";
+    };
+    
+    register venc_hfltr_ctrl addr(base, 0x24) "HFLTR_CTRL" {
+        _ 29 mbz;
+        cintp 2 rw type(cintp_status) "Chrominance interpolation filter control";
+        yintp 1 rw type(cintp_status) "Luminance interpolation filter control";
+    };
+    
+    register venc_cc_carr_wss_carr addr(base, 0x28) "Frequencie code control" {
+        fwss 16 rw "Wide screen signaling run-in code frequency control. For 50-Hz systems, FWSS = 2 * 5 * 10/(LLEN * Fh), where LLEN = total number of pixels in a scan line Fh = line frequency.";
+        fcc 16 rw "Close caption run-in code frequency control. For 60-Hz system, FCC = 2 * 0.5035 * 10/(LLEN * Fh) For 50-Hz systems, FCC = 2* 0.500 * 10/(LLEN * Fh), where LLEN = total number of pixels in a scan line Fh = line frequency.";
+    };
+    
+    register venc_c_phase addr(base, 0x2C) "C_PHASE" {
+        _ 24 mbz;
+        cphs 8 rw "Phase of the encoded video color subcarrier (including the color burst) relative to H-sync. The adjustable step is 360/256 degrees.";
+    };
+    
+    register venc_gain_u addr(base, 0x30) "Gain control for Cb signal" {
+        _ 23 mbz;
+        gu 9 rw "Gain control for Cb signal. Following are typical programming examples for NTSC and PAL standards. NTSC with 7.5 IRE pedestal: WHITE - BLACK = 92.5 IRE GU = 0x102 NTSC with no pedestal: WHITE - BLACK = 100 IRE GU = 0x117 PAL with no pedestal: WHITE - BLACK = 100 IRE GU = 0x111";
+    };
+    
+    register venc_gain_v addr(base, 0x34) "Gain control of Cr signal" {
+        _ 23 mbz;
+        gv 9 rw "Gain control of Cr signal. Following are typical programming examples for NTSC and PAL standards. NTSC with 7.5 IRE pedestal: WHITE - BLACK = 92.5 IRE GV = 0x16C NTSC with no pedestal: WHITE - BLACK = 100 IRE GV = 0x189 PAL with no pedestal: WHITE - BLACK = 100 IRE GV = 0x181";
+    };
+    
+    register venc_gain_y addr(base, 0x38) "Gain control of Y signal" {
+        _ 23 mbz;
+        gy 9 rw "Gain control of Y signal. Following are typical programming examples for NTSC/PAL standards. NTSC with 7.5 IRE pedestal: WHITE - BLACK = 92.5 IRE GY = 0x12F NTSC with no pedestal: WHITE - BLACK = 100 IRE GY = 0x147 PAL with no pedestal: WHITE - BLACK = 100 IRE GY = 0x140";
+    };
+    
+    register venc_black_level addr(base, 0x3C) "BLACK LEVEL" {
+        _ 25 mbz;
+        black 7 rw "Black level setting. Following are typical programming examples for NTSC/PAL standards. NTSC with 7.5 IRE pedestal: WHITE - BLACK = 92.5 IRE BLACK_LEVEL = 0x43 NTSC with no pedestal: WHITE - BLACK = 100 IRE BLACK_LEVEL = 0x38 PAL with no pedestal: WHITE - BLACK = 100 IRE BLACK_LEVEL = 0x3B";
+    };
+    
+    register venc_blank_level addr(base, 0x40) "BLANK LEVEL" {
+        _ 25 mbz;
+        blank 7 rw "Blank level setting. Following are typical programming examples for NTSC/PAL standards. NTSC with 7.5 IRE pedestal: WHITE - BLACK = 92.5 IRE BLANK_LEVEL = 0x38 NTSC with no pedestal: WHITE - BLACK = 100 IRE BLANK_LEVEL = 0x38 PAL with no pedestal: WHITE - BLACK = 100 IRE BLANK_LEVEL = 0x3B";
+    };
+
+    constants xce_status width(1) "" {
+        XCE_0 = 0 "Cross color reduction is disabled";
+        XCE_1 = 1 "Cross color is enabled";
+    };
+
+    constants lcd_status width(3) "" {
+        LCD_0 = 0 "0";
+        LCD_1 = 1 "0.5 pixel clock period";
+        LCD_2 = 2 "1.0 pixel clock period";
+        LCD_3 = 3 "1.5 pixel clock period";
+        LCD_4 = 4 "-2.0 pixel clock period";
+        LCD_5 = 5 "-1.5 pixel clock period";
+        LCD_6 = 6 "-1.0 pixel clock period";
+        LCD_7 = 7 "-0.5 pixel clock period";
+    };
+    
+    register venc_x_color addr(base, 0x44) "Cross-Colour Control register" {
+        _ 25 mbz;
+        xce 1 rw type(xce_status) "Cross color reduction enable for composite video output. Cross color does not affect S-video output";
+        _ 1 mbz;
+        xcbw 2 rw type(cintp_status) "Cross color reduction filter selection";
+        lcd 3 rw type(lcd_status) "These three bits can be used for chroma channel delay compensation. Delay on Luma channel.";
+    };
+
+    constants pali_status width(1) "" {
+        PALI_0 = 0 "Normal oeration";
+        PALI_1 = 1 "PAL I Enable";
+    };
+
+    constants paln_status width(1) "" {
+        PALN_0 = 0 "Normal operation";
+        PALN_1 = 1 "PAL N enable";
+    };
+
+    constants palphs_status width(1) "" {
+        PALPHS_0 = 0 "PAL switch phase is nominal";
+        PALPHS_1 = 1 "PAL switch phase is inverted compared to nominal";
+    };
+
+    constants cbw_status width(3) "" {
+        CBW_0 = 0 "-6db at 21.8 % of encoding pixel clock frequency";
+        CBW_1 = 1 "-6db at 19.8 % of encoding pixel clock frequency";
+        CBW_2 = 2 "-6db at 18.0 % of encoding pixel clock frequency";
+        CBW_3 = 3 "Reserved";
+        CBW_4 = 4 "Reserved";
+        CBW_5 = 5 "-6db at 23.7 % of encoding pixel clock frequency";
+        CBW_6 = 6 "-6db at 26.8 % of encoding pixel clock frequency";
+        CBW_7 = 7 "Chrominance lowpass filter bypass";
+    };
+
+    constants pal_status width(1) "" {
+        PAL_0 = 0 "Phase alternation line encoding disabled";
+        PAL_1 = 1 "Phase alternation line encoding enabled";
+    };
+    
+    register venc_m_control addr(base, 0x48) "M_CONTROL" {
+        _ 24 mbz;
+        pali 1 rw type(pali_status) "PAL I enable";
+        paln 1 rw type(paln_status) "PAL N Enable";
+        palphs 1 rw type(palphs_status) "PAL switch phase setting";
+        cbw 3 rw type(cbw_status) "Chrominance lowpass filter bandwidth control";
+        pal 1 rw type(pal_status) "Phase alternation line encoding selection";
+        ffrq 1 rw "The value of this field and the SQP bit in the BSTAMP_WSS_DATA register control the number of horizontal pixels displayed per scan line # OF MODE SQP FFRQ PIXEL PER LINE ITU-R 601 NTSC 0 1 858 Square pixel NTSC 1 1 780 ITU-R 601 PAL 0 0 864 Square pixel PAL 1 0 944";
+    };
+
+    constants sqp_status width(1) "" {
+        SQP_0 = 0 "ITU-R 601 sampling rate";
+        SQP_1 = 1 "Square-pixel sampling rate";
+    };
+    
+    register venc_bstamp_wss_data addr(base, 0x4C) "BSTAMP and WSS_DATA" {
+        _ 4 mbz;
+        wss_d 20 rw "Wide Screen Signaling data NTSC: WORD 0 D0, D1 WORD 1 D2, D3, D4, D5 WORD 2 D6, D7, D8, D9, D10, D11, D12, D13 CRC D14, D15, D16, D17, D18, D19 PAL: GROUP A D0, D1, D2, D3 GROUP B D4, D5, D6, D7 GROUP C D8, D9 ,D10 GROUP D D11, D12, D13";
+        sqp 1 rw type(sqp_status) "Square-pixel sampling rate. See FFRQ in M_CONTROL register for programming information.";
+        bstap 7 rw "Setting of amplitude of color burst.";
+    };
+    
+    register venc_s_carr rw addr(base, 0x50) "Color Subcarrier Frequency Registers." type(uint32);
+    
+    register venc_line21 addr(base, 0x54) "LINE 21" {
+        l21e 16 rw "The two bytes of the closed caption data in the even field.For the data stream content, see. . [31:24] First byte of data . [23:16] Second byte of data .";
+        l21o 16 rw "The two bytes of the closed caption data in the odd fieldFor the data stream content, see. . [15:8] First byte of data . [7:0] Second byte of data .";
+    };
+    
+    register venc_ln_sel addr(base, 0x58) "LN_SEL" {
+        _ 6 mbz;
+        ln21_runin 10 rw "The two Bytes of the closed caption runin code position from the HSYNC";
+        _ 11 mbz;
+        sline 5 rw "Selects the line where closed caption or extended service data are encoded.PAL mode: Because there is a one-line offset, program the desired line number - 1. . NTSC mode: Because there is a four-line offset, program the desired line number - 4. .";
+    };
+
+    constants inv_status width(1) "" {
+        INV_0 = 0 "no effect";
+        INV_1 = 1 "invert WSS data";
+    };
+
+    constants even_odd_en_status width(2) "" {
+        EVEN_ODD_EN_0 = 0 "WSS encoding OFF";
+        EVEN_ODD_EN_1 = 1 "Enables encoding in 2nd field (odd field)";
+        EVEN_ODD_EN_2 = 2 "Enables encoding in 1st field (even field)";
+        EVEN_ODD_EN_3 = 3 "Enables encoding in both fields";
+    };
+
+    constants l21en_status width(2) "" {
+        L21EN_0 = 0 "Line21 encoding OFF";
+        L21EN_1 = 1 "Enables encoding in 1st field (ODD field)";
+        L21EN_2 = 2 "Enables encoding in 2d field (EVEN field)";
+        L21EN_3 = 3 "Enables encoding in both fields";
+    };
+    
+    register venc_l21_wc_ctl addr(base, 0x5C) "L21 and WC_CTL registers" {
+        _ 16 mbz;
+        inv 1 rw type(inv_status) "WSS inverter";
+        even_odd_en 2 rw type(even_odd_en_status) "This bit controls the WSS encoding.";
+        line 5 rw "Selects the line where WSS data are encoded.PAL mode: Because there is a one-line offset, program the desired line number - 1. . NTSC mode: Because there is a four-line offset, program the desired line number - 4. .";
+        _ 6 mbz;
+        l21en 2 rw type(l21en_status) "Those bits controls the Line21 closed caption encoding according to the mode.";
+    };
+    
+    register venc_htrigger_vtrigger addr(base, 0x60) "HTRIGGER and VTRIGGER" {
+        _ 6 mbz;
+        vtrig 10 rw "Vertical trigger reference for VSYNC. These bits specify the phase between VSYNC input and the lines in a field. The VTRIG field is expressed in units of half-line.";
+        _ 5 mbz;
+        htrig 11 rw "Horizontal trigger phase, which sets HSYNC. HTRIG is expressed in half-pixels or clk2x (27 MHz) periods";
+    };
+    
+    register venc_savid_eavid addr(base, 0x64) "SAVID and EAVID" {
+        _ 5 mbz;
+        eavid 11 rw "End of active video. These bits define the ending pixel position on a horizontal display line where active video will be displayed.";
+        _ 5 mbz;
+        savid 11 rw "Start of active video. These bits define the starting pixel position on a horizontal line where active video will be displayed.";
+    };
+    
+    register venc_flen_fal addr(base, 0x68) "FLEN and FAL" {
+        _ 7 mbz;
+        fal 9 rw "First Active Line of Field. These bits define the first active line of a field";
+        _ 6 mbz;
+        flen 10 rw "Field length. These bits define the number of half_lines in each field. Length of field = (FLEN + 1) half_lines";
+    };
+
+    constants pres_status width(2) "" {
+        PRES_0 = 0 "No reset";
+        PRES_1 = 1 "Reset every two lines";
+        PRES_2 = 2 "Reset every eight fields. Color subcarrier phase is reset to C_Phase (subaddress 5A) upon reset";
+        PRES_3 = 3 "Reset every four fields. Color subcarrier phase is reset to C_Phase (subaddress 5A) upon reset";
+    };
+
+    constants sblank_status width(1) "" {
+        SBLANK_0 = 0 "Vertical blanking is defined by the setting of FAL and LAL registers.";
+        SBLANK_1 = 1 "Vertical blanking is forced automatically during field synchronization and equalization.";
+    };
+    
+    register venc_lal_phase_reset addr(base, 0x6C) "LAL and PHASE_RESET" {
+        _ 13 mbz;
+        pres 2 rw type(pres_status) "Phase reset mode.";
+        sblank 1 rw type(sblank_status) "Vertical blanking setting";
+        _ 7 mbz;
+        lal 9 rw "Last Active Line of Field. These bits define the last active line of a field";
+    };
+    
+    register venc_hs_int_start_stop_x addr(base, 0x70) "HS_INT_START_STOP_X" {
+        _ 6 mbz;
+        hs_int_stop_x 10 rw "HSYNC internal stop. These bits define HSYNC internal stop pixel value";
+        _ 6 mbz;
+        hs_int_start_x 10 rw "HSYNC internal start. These bits define HSYNC internal start pixel value";
+    };
+    
+    register venc_hs_ext_start_stop_x addr(base, 0x74) "HS_EXT_START_STOP_X" {
+        _ 6 mbz;
+        hs_ext_stop_x 10 rw "HSYNC external stop. These bits define HSYNC external stop pixel value";
+        _ 6 mbz;
+        hs_ext_start_x 10 rw "HSYNC external start. These bits define HSYNC external start pixel value";
+    };
+    
+    register venc_vs_int_start_x addr(base, 0x78) "VS_INT_START_X" {
+        _ 6 mbz;
+        vs_int_start_x 10 rw "VSYNC internal start. These bits define VSYNC internal start pixel value.";
+        _ 16 mbz;
+    };
+    
+    register venc_vs_int_stop_x_vs_int_start_y addr(base, 0x7C) "VS_INT_STOP_X and VS_INT_START_Y" {
+        _ 6 mbz;
+        vs_int_start_y 10 rw "VSYNC internal start. These bits define VSYNC internal start line value";
+        _ 6 mbz;
+        vs_int_stop_x 10 rw "VSYNC internal stop. These bits define VSYNC internal stop pixel value";
+    };
+    
+    register venc_vs_int_stop_y_vs_ext_start_x addr(base, 0x80) "VS_INT_STOP_Y and VS_EXT_START_X" {
+        _ 6 mbz;
+        vs_ext_start_x 10 rw "VSYNC external start. These bits define VSYNC external start pixel value.";
+        _ 6 mbz;
+        vs_int_stop_y 10 rw "VSYNC internal stop. These bits define VSYNC internal stop line value.";
+    };
+    
+    register venc_vs_ext_stop_x_vs_ext_start_y addr(base, 0x84) "VS_EXT_STOP_X and VS_EXT_START_Y" {
+        _ 6 mbz;
+        vs_ext_start_y 10 rw "VSYNC external start. These bits define VSYNC external start line value.";
+        _ 6 mbz;
+        vs_ext_stop_x 10 rw "VSYNC external stop. These bits define VSYNC external stop pixel value.";
+    };
+    
+    register venc_vs_ext_stop_y addr(base, 0x88) "VS_EXT_STOP_Y" {
+        _ 22 mbz;
+        vs_ext_stop_y 10 rw "VSYNC external stop. These bits define VSYNC external stop line value.";
+    };
+    
+    register venc_avid_start_stop_x addr(base, 0x90) "AVID_START_STOP_X" {
+        _ 6 mbz;
+        avid_stop_x 10 rw "AVID stop. These bits define AVID stop pixel value";
+        _ 6 mbz;
+        avid_start_x 10 rw "AVID start. These bits define AVID start pixel value";
+    };
+    
+    register venc_avid_start_stop_y addr(base, 0x94) "AVID_START_STOP_Y" {
+        _ 6 mbz;
+        avid_stop_y 10 rw "AVID stop. These bits define AVID stop line value.";
+        _ 6 mbz;
+        avid_start_y 10 rw "AVID start. These bits define AVID start line value";
+    };
+    
+    register venc_fid_int_start_x_fid_int_start_y addr(base, 0xA0) "FID_INT_START_X and FID_INT_START_Y" {
+        _ 6 mbz;
+        fid_int_start_y 10 rw "FID internal stop. These bits define FID internal start line value";
+        _ 6 mbz;
+        fid_int_start_x 10 rw "FID internal start. These bits define FID internal start pixel value";
+    };
+    
+    register venc_fid_int_offset_y_fid_ext_start_x addr(base, 0xA4) "FID_INT_OFFSET_Y and FID_EXT_START_X" {
+        _ 6 mbz;
+        fid_ext_start_x 10 rw "FID external start. These bits define FID external start pixel value";
+        _ 6 mbz;
+        fid_int_offset_y 10 rw "FID internal offset. These bits define FID internal offset linel value";
+    };
+    
+    register venc_fid_ext_start_y_fid_ext_offset_y addr(base, 0xA8) "FID_EXT_START_Y and FID_EXT_OFFSET_Y" {
+        _ 6 mbz;
+        fid_ext_offset_y 10 rw "FID external offset. These bits define FID external offset line value";
+        _ 6 mbz;
+        fid_ext_start_y 10 rw "FID external start. These bits define FID external start line value.";
+    };
+    
+    register venc_tvdetgp_int_start_stop_x addr(base, 0xB0) "TVDETGP_INT_START_STOP_X" {
+        _ 6 mbz;
+        tvdetgp_int_stop_x 10 rw "TVDETGP internal stop. These bits define TVDETGP internal stop pixel value.";
+        _ 6 mbz;
+        tvdetgp_int_start_x 10 rw "TVDETGP internal start. These bits define TVDETGP internal start pixel value";
+    };
+    
+    register venc_tvdetgp_int_start_stop_y addr(base, 0xB4) "TVDETGP_INT_START_STOP_Y" {
+        _ 6 mbz;
+        tvdetgp_int_stop_y 10 rw "TVDETGP internal stop. These bits define TVDETGP internal stop line value.";
+        _ 6 mbz;
+        tvdetgp_int_start_y 10 rw "TVDETGP internal start. These bits define TVDETGP internal start line value";
+    };
+
+    constants ms_status width(1) "" {
+        MS_0 = 0 "CbCr";
+        MS_1 = 1 "CrCb";
+    };
+
+    constants hip_status width(1) "" {
+        HIP_0 = 0 "Active Low";
+        HIP_1 = 1 "Active High";
+    };
+
+    constants en_status width(1) "" {
+        EN_0 = 0 "Disabled";
+        EN_1 = 1 "Enabled";
+    };
+    
+    register venc_gen_ctrl addr(base, 0xB8) "TVDETGP enable and SYNC_POLARITY and UVPHASE_POL" {
+        _ 5 mbz;
+        ms 1 rw type(ms_status) "UVPHASE_POL MS mode UV phase";
+        uvphase_pol_656 1 rw type(ms_status) "UVPHASE_POL 656 input mode UV phase";
+        cbar 1 rw type(ms_status) "UVPHASE_POL CBAR mode UV phase";
+        hip 1 rw type(hip_status) "HSYNC internal polarity";
+        vip 1 rw type(hip_status) "VSYNC internal polarity";
+        hep 1 rw type(hip_status) "HSYNC external polarity";
+        vep 1 rw type(hip_status) "VSYNC externall polarity";
+        avidp 1 rw type(hip_status) "AVID polarity";
+        fip 1 rw type(hip_status) "FID internal polarity";
+        fep 1 rw type(hip_status) "FID external polarity";
+        tvdp 1 rw type(hip_status) "TVDETGP polarity";
+        _ 15 mbz;
+        en 1 rw type(en_status) "TVDETGP generation enable";
+    };
+
+    constants composite_source_status width(1) "" {
+        COMPOSITE_SOURCE_0 = 0 "Composite test data comes from internal register OUTPUT_TEST[9:0]";
+        COMPOSITE_SOURCE_1 = 1 "Composite test data comes from display controller video port G[1:0], B[7:0]";
+    };
+
+    constants test_mode_status width(1) "" {
+        TEST_MODE_0 = 0 "Video outputs are in normal operation";
+        TEST_MODE_1 = 1 "Test mode. Video outputs are directly connected to either internal registers or the display controller video port.";
+    };
+
+    constants video_invert_status width(1) "" {
+        VIDEO_INVERT_0 = 0 "Video outputs are inverted";
+        VIDEO_INVERT_1 = 1 "Video outputs are normal polarity";
+    };
+
+    constants composite_enable_status width(1) "" {
+        COMPOSITE_ENABLE_0 = 0 "Composite output is disabled";
+        COMPOSITE_ENABLE_1 = 1 "Composite output is enabled";
+    };
+    
+    register venc_output_control addr(base, 0xC4) "Output channel control register Also contains some test control features" {
+        _ 25 mbz;
+        composite_source 1 rw type(composite_source_status) "Source of composite video data in test mode";
+        _ 1 mbz;
+        test_mode 1 rw type(test_mode_status) "This enables the video DACs to be tested. The values sent to the DACs comes from a register for each output channel (Luma, Composite or Chroma) or from the display controller video port bits G[1:0], B[7:0], depending on the setting of the Source bits";
+        video_invert 1 rw type(video_invert_status) "Controls the video output polarity. This may be used to correct for inversion in an external video amplifier.";
+        _ 1 mbz;
+        composite_enable 1 rw type(composite_enable_status) "Enable the Composite output channel";
+        _ 1 mbz;
+    };
+    
+    register venc_output_test addr(base, 0xC8) "Test values for the Luma/Composite Video DAC" {
+        _ 22 mbz;
+        composite_test 10 rw "In test mode, DAC input value (if composite video is selected)";
+    };
+};

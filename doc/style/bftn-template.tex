@@ -1,0 +1,42 @@
+{- 
+  Template for Barrelfish technical notes.
+
+  Modified from the University of Stirling LaTeX technical report
+  style file and template with much gratitude.
+-}  
+
+
+% \documentclass[a4paper,twoside]{article} % for an article
+\documentclass[a4paper,twoside]{report} % for a report (default)
+
+\usepackage{bftn} % You need this
+
+\title{Title}   % title of report
+\author{Author}	% author
+\tnnumber{999}  % give the number of the tech report
+\tnkey{Template} % Short title, will appear in footer
+
+% \date{Month Year} % Not needed - will be taken from version history
+
+\begin{document}
+\maketitle
+
+%
+% Include version history first
+%
+\begin{versionhistory}
+\vhEntry{1.0}{31.05.2010}{TR}{Initial version}
+\end{versionhistory}
+
+% \intro{Abstract}		% Insert abstract here
+% \intro{Acknowledgements}	% Uncomment (if needed) for acknowledgements
+% \tableofcontents		% Uncomment (if needed) for final draft
+% \listoffigures		% Uncomment (if needed) for final draft
+% \listoftables			% Uncomment (if needed) for final draft
+
+\chapter{Introduction}	
+
+\appendix			% Uncomment (if needed) for appendixes
+\chapter{Appended Chapter}	% Modify as required
+
+\end{document}

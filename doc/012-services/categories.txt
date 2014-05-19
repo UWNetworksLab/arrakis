@@ -1,0 +1,128 @@
+
+Services that provide base BF functionality
+(base bf functionality is: capabilities, communication, skb)
+- bind
+- capability management
+- group_comm
+- mem alloc
+- routing
+- skb
+
+Services that provide general OS functionality
+- devices
+- environment
+- VMem
+- VMachine
+- naming?
+- network stack
+- shell
+- terminal
+- processes
+- threading?
+- debugging
+- power mgmt
+- storage mgmt
+- resource mgmt?
+- tracing?
+
+Base:
+- capability management (at user space) (creation, deletion, bookkeeping)
+- capability transfer
+- memory allocation (manage physical memory page pool)
+- basic communication (UMP, LMP mechanisms - not binding, waiting, etc.)
+
+Virtual Mem Management:
+- address space management (creation, deletion, extension)
+- protection management (shmem)
+- device memory access
+
+skb:
+- knowledge databse (store, query)
+- constraint solving engine
+
+Communication:
+- basic communication (mechanisms for performing IDC - LMP, UMP)
+- binding (binding, waitsets) (can this be separated from basic comm?)
+- stubs
+- group communication
+- routing
+- name service
+
+Process management
+- dispatchers (basic dispatcher functionality)
+- scheduling dispatchers
+- threading within a dispatcher (scheduling)
+- thread management (pthreads-like functionality)
+- process management (start, stop, create, spawn, span, list)
+- process accounting
+- process environment
+
+Synchronisation
+- kernel mechanisms?
+- lock server - mutual exclusion
+- signalling mechnisms
+- thread mechanisms?
+
+Devices
+- interrupt handling
+- device access framework (registers, memory)
+- DMA management
+- device driver framework (if any?)
+- device drivers
+- bus management (bus scanning, device enumeration, etc.)
+- device database (tracking devices abvailable, tracking device details (addresses, IRQs, busses, etc. - also skb functionality)
+- device management (starting device drivers, stopping device drivers, initialising device drivers with proper device data)
+- pluggable device management
+- timer services (time of day, start timer, stop timer, alarm)
+
+Resource management and accounting
+- monitor resource use
+- database of historic resource use 
+- resource accounting (who is using what resources, when)
+- resource access management (give access to resources, remove access to resources) (who to give access to? processes, threads? drivers? users? apps? domains?)
+- what are 'resources'? 
+  + basic resources: CPU, memory, IRQs, device memory, registers?, coprocessors?
+  + OS resources: devices, drivers, cpu time, files, network bandwidth
+- scheduling?
+- power management
+  + monitor power usage
+  + power management mechanisms
+  + power management policies
+- paging (virtual memory)
+- hardware counters (cycle counters, etc.)
+
+Protection and Security
+- principals (users, processes, domains, dispatchers, applications, ...?)
+- objects (endpoints, processes, dispatchers, domains, apps, files, devices, network, terminals, ...?) (basic resources, OS resources, higehr level concepts?)
+- access control mechanisms
+- access control policies
+
+Interaction and IO
+- storage management (eg filesystem)
+- network stack
+- terminal
+- audio input framework
+- audio output
+- input framework
+- GUI/window framework
+- other IO frameworks
+- other system-wide frameworks (eg pub/sub, system events, etc.)
+
+Shell
+- command interpreter
+
+Applications
+- various apps that are not considered part of the OS
+
+Virtualisation
+- VMM
+
+Tracing and debugging
+- trace collector
+- trace database
+- access to kernel internals
+- access to communication internals
+- access to dispatcher internals
+- access to process internals
+- access to thread internals
+- access to memory

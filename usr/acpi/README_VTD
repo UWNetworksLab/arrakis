@@ -1,0 +1,232 @@
+=====================================================================================
+Intel VT-d (Virtualization Technology for Directed I/O) driver Overview
+=====================================================================================
+
+An overview of Intel Virtualization Technology for Directed I/O can be found on pages
+14-19 in the architecture specification (see DOCUMENTATION below).
+
+In the specification and this README, a domain is defined as an abstract isolated
+environment that consists of a subset of the host physical memory. In the case of
+Arrakis, each domain generally corresponds to an application.
+
+=====================================================================================
+
+RELEVANT FILES
+
+Contains errors that may be returned when creating/destroying domains and 
+adding/removing devices
+errors/errno.fugu
+
+Added an x86-64 VNode identity syscall and VNode identity structure
+kernel/arch/x86_64/syscall.c
+include/barrelfish_kpi/capabilities.h
+include/arch/x86_64/barrelfish/invocations_arch.h
+
+Added reference to the root PML4 VNode capability
+lib/barrelfish/capabilities.c
+include/barrelfish/caddr.h
+
+Modified the x86-64 page table entries by adding a vtd_snoop field. Also, changed 
+paging_x86_64_map_large() and paging_x86_64_map() to set the vtd_snoop field.
+include/target/x86_64/barrelfish_kpi/paging_target.h
+kernel/include/target/x86_64/paging_kernel_target.h
+
+Defined the constant VREGION_FLAGS_VTD_SNOOP, which allows the vtd_snoop field to be 
+set from user-space. This constant is bitwise OR'd with the primary flags used in
+user-mapping, such as VREGION_FLAGS_READ_WRITE.
+include/barrelfish/vregion.h
+
+Added RPC calls allowing applications to use the VT-d
+if/acpi.if
+include/acpi_client/acpi_client.h
+lib/acpi_client/acpi_client.c
+usr/acpi/acpi_service.c
+
+Changes needed to add a call to the VT-d initialization function.
+usr/acpi/acpi.c
+usr/acpi/Hakefile
+
+Added a commandline option to not allow translation through the VT-d
+usr/acpi/acpi_main.c
+usr/acpi/acpi_shared.h
+
+Debug printer and its power switch.
+usr/acpi/vtd_debug.h
+
+This header contains the functions and structures used for second-level translation.
+Only used to establish the identity pagetable, but they may also be used to establish
+arbitrary mappings
+usr/acpi/vtd_sl_paging.h
+
+Where the VT-d driver implementation is contained
+usr/acpi/intel_vtd.h
+usr/acpi/intel_vtd.c
+usr/acpi/vtd_domains.h
+
+Added an ACPI-enumerated device declaration structure type
+usr/acpi/acpica/include/actbl2.h
+
+Mackerel specifications for the remapping hardware register set for each hardware
+unit. The offset to the IOTLB registers is found in one of the remapping registers,
+so two separate specifications were created. Another one will need to created for
+the set of fault registers.
+devices/vtd.dev
+devices/vtd_iotlb.dev
+devices/Hakefile
+
+Where we add the remaining devices to the identity domain
+usr/pci/pcimain.c
+
+Contains queries for finding devices to add to the identity domain
+usr/skb/programs/pci_queries.pl
+
+Changes made to support DMA remapping through the VT-d for applications using the
+network stack and the e10k driver:
+if/e10k.if
+usr/drivers/e10k/e10k_qdriver.c
+usr/drivers/e10k/e10k_cdriver.c
+usr/drivers/e10k/e10k_vf.c
+usr/drivers/e10k/Hakefile
+lib/arranet/arranet.c
+lib/arranet/Hakefile
+
+=====================================================================================
+
+IMPLEMENTATION
+
+The VT-d driver is currently coupled with the ACPI daemon.
+
+Domains and domain-ids are manages by a sorted and bounded doubly-linked list.
+
+Remapping hardware units are managed by a simple linked list and use application
+pagetables for translation (except for the identity domain). As a result, applications
+may be required to flush the processor caches (more on this below). 
+
+At the very end of the intialization function in acpi.c, we make a call to vtd_init
+(implemented in intel_vtd.c), where we parse the DMAR table, which is comprised of
+remapping structures that contain devices under their scope. While parsing, we create
+remapping unit structures and report all devices we find to the SKB. After we have 
+completed the task of parsing the DMAR table, we then construct the identity domain.
+
+Since each application corresponds to a domain, we want each domain to have access to
+all devices. Hence, we establish minimum and maximum domain-id bounds across all
+units. We finally execute a query to retrieve and add all applicable devices
+explicitly found in the remapping structures to the identity domain. Devices that are
+applicable to be inserted into the identity domain are all PCIe devices/bridges and
+PCI devices (no bridges) that reside on the root bus. The reason for the later is
+because PCI devices behind the same bus share the same source-id on transactions.
+This also implies that all devices that reside behind the same PCI bridge must be
+contained in the same domain.
+
+Devices that are found during PCI bus enumeration are reported to the SKB in the PCI
+daemon. After PCI device discovery is complete, a RPC call is made to the ACPI daemon
+to extract these devices from the SKB and add them to the identity domain. However,
+since drivers are initiated by Kaluga during device discovery, it is possible for a
+device to be added before this call occurs.
+
+For each hardware unit, after all of this occurs, we set the root table, enable DMA 
+remapping, and report to the SKB which segment translation is enabled on and if 
+flushing is required for that segment.
+
+If remapping hardware units are present on the platform, translation is enabled by
+default. However, the commandline option "vtd_force_off" can be supplied to the ACPI 
+daemon in order to not enable translation on any hardware unit.
+
+An application that wishes to use the VT-d then does the following (excluding any
+other changes such as using virtual addresses in place of physical ones):
+
+(1) Executes a query to determine if translation is enabled for specific segments and
+    if flushing the CPU caches is required for those segments.
+
+(2) Constructs a domain using its root PML4 as an argument. A reference to it can be 
+    found in the list of well-known capabilities in include/barrelfish/caddr.h. It is
+    identified as cap_vroot.
+
+(3) The application then simply adds devices to the constructed domain using that
+    PMl4 as one of the arguments to vtd_domain_add_device(). Applications that want
+    to use the same device can do so by making SR-IOV copies.
+
+(4) Add syscall(s) to flush the cache/TLB entries if flushing is required.
+
+(5) Remove the devices from the domain when done.
+
+=====================================================================================
+
+ASSUMPTIONS AND CAVEATS
+
+The VT-d operations, such as constructing a domain, require passing the application's
+root PML4 VNode capability. As inter-core transfers of VNode capabilities have not
+yet been implemented, any application wishing to use the VT-d must be on the same
+core as the ACPI daemon.
+
+The calls for adding/removing devices require the user to specify the segment the
+device belongs to. Arrakis currently doesn't (and probably won't) support PCI
+segments, which is simply a logical collection of PCI buses. This is used for rather
+complex topologies or hierarchies, which may require more than 256 buses. Since this
+is the case, a value of 0 should be used for the segment number.
+
+Currently, the implementation assumes that there is a single remapping unit for each
+segment. Changes will need to be made to account for the possibility that more than
+one hardware unit resides on a single segment.
+
+Attemping to map the entire address space with the current implementation, which
+constructs the pagetable structure by creating and mapping frames, is infeasible. As
+a result, the identity page table only covers the first 1024 GB of physical memory,
+but the amount mapped can easily be changed.
+
+Since device drivers are started by Kaluga during PCI bus enumeration, translation 
+has to be enabled before this. But the paths of devices under the scope of the 
+remapping structures contained in the DMAR table require knowing secondary bus 
+numbers for path lengths greater than 2. All of this information is reported to the 
+SKB during bus enumeration. Currently, we avoid this problem by assuming that the 
+path length of each device is 2.
+
+Coherency with the processes caches for pages and paging entries is determined by
+the Snoop Control and Page-walk Coherency fields in the Extended Capability register,
+respectively. If the Snoop Control bit is set to 1, then second-level page table 
+entries with the SNP bit set will result in the remapping unit snooping the processor
+caches (for pages). Earlier, it was noted that x86-64 page table entries have been 
+modified to contain a vtd_snoop field. The field that was changed for this to occur 
+was an available field. This should not cause any problems with application mappings.
+Also, the vtd_snoop field is treated as reserved for hardware implementations having
+the Snoop Control bit set to 0. This should allow the VT-d to be used by hardware not 
+supporting the snooping of CPU caches for pages. 
+
+Hardware that don't have both of these bits set for relevant hardware units may 
+require applications to flush the processor caches. Flushing may also be required if 
+the addresses used by the devices in the domain of the application are not obtained 
+from the provided user-mapping functions (e.g. vspace_map_one_frame_attr()). For 
+performance benefits, syscalls to flush the cache should be avoided in the I/O 
+path of the application.
+
+Note that there may be other problems/issues that we are yet unaware of.
+
+=====================================================================================
+
+TESTING
+
+The implementation has been only tested with applications using the e10k drivers,
+with appropriate changes being made to e10k_vf.c, e10k_cdriver.c, e10k_qdriver.c, and
+arranet.c (where we construct the domain and add the appropriate device(s)). 
+
+These applications are:
+Memcached (using the UDP protocol) 
+UDP echo server
+
+In arranet.c, the processor caches have to be flushed, when required, after 
+initalizing the TX packet descriptors in lwip_arrakis_start().
+
+=====================================================================================
+
+TODO
+
+Fault logging
+Interrupt remapping
+...
+
+=====================================================================================
+
+DOCUMENTATION
+
+Based on the latest VT-d architecture specification (September 2013):
+http://www.intel.com/content/dam/www/public/us/en/documents/product-specifications/vt-directed-io-spec.pdf)

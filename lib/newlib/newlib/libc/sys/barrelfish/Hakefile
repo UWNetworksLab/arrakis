@@ -1,0 +1,21 @@
+if Config.libc == "newlib" then
+let
+    -- selection of malloc() implementation.
+    -- Note that the default is "oldmalloc", and the other two options are (in
+    -- the time of this writting) problematic:
+    --   - "sbrk" uses sbrk() system call and does not return memory to the OS
+    --   - "dlmalloc" does not seem to be work for low-level services like the memory allocator
+    malloc_files = case Config.newlib_malloc of
+        "dlmalloc"  -> ["dlmalloc.c", "mallocr.c"]
+        "oldmalloc" -> ["oldmalloc.c", "oldcalloc.c", "oldrealloc.c", "oldsys_morecore.c", "mallocr.c"]
+        "sbrk"      -> ["sbrk.c"]
+in [ build library {
+   target = "sys",
+   addCFlags  = Config.newlibAddCFlags,
+   cFiles     = [ "syscalls.c" , "findfp.c" , "posix_syscalls.c"]
+                ++ malloc_files,
+ omitCFlags   = [ "-Wmissing-prototypes",
+                  "-Wmissing-declarations",
+                  "-Wimplicit-function-declaration",
+                  "-Werror" ]
+}] else []

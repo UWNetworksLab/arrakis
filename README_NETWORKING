@@ -1,0 +1,77 @@
+--------------------------------------------
+This file describes how to use and how to hack networking subsystem of
+the Barrelfish.
+
+--------------------------------------------
+Using networking subsystem:
+Currently Barrelfish supports following NIC devices
+rtl8029 (Realtek RTL8029AS, emulation support QEMU)
+e1000 (Intel 82576 1GbE NIC)
+e10k (Intel 82599 10GbE NIC)
+eMAC (on SCC)
+
+If you want to use any of above then you should edit the menu.lst file to
+reflect which card you want to use.  The following example shows how to
+use e1000 card.
+
+Add following lines to menu.lst
+{{{
+module	/x86_64/sbin/e1000n
+module	/x86_64/sbin/NGD_mng cardname=e1000
+module	/x86_64/sbin/netd cardname=e1000
+}}}
+
+e1000n: The first line will start a driver domain which will be responsible for
+sending and receiving packets on one queue within the NIC.
+
+NGD_mng: The second line starts the "net device manager" service which is
+responsible for port management and handling of hardware queues present within
+NIC (if any).  The "cardname=e1000" argument tells this "net device manager"
+that it is responsible for NIC card e1000.
+
+netd: The third line starts the netd service is responsible for doing DHCP
+to get an IP for the NIC, running ARP lookups on behalf of all other
+applications, and handling the traffic which no other application wants.
+This daemon also has an argument stating which card it will be responsible for.
+
+
+--------------------------------------------
+How to use networking from within application?
+Every application that wants to use the networking should initialize the
+networking.  It can be done by calling a following function.
+{{{
+lwip_init(char *card_name, uint64_t  qid)
+}}}
+Here, card_name is the name of the NIC device to be used (eg: e1000), and
+queue_id the id of the hardware queue that should be used.  The queue_id 0
+is always safe option, and queue 0 is assumed to be a shared queue.
+Following is the example call:
+{{{
+lwip_init("e1000", 0);
+}}}
+
+One of the variant of this function  "lwip_init_auto" tries to guess the
+NIC device name automatically by some rudimentary logic, but it does not
+yet work for all devices and in all situations.
+
+Once "lwip_init" returns successfully, the application can start using the
+networking.  The networking interface is based on the "Light Weight
+Internet Protocol (LWIP)".  Also applications like "webserver",
+"echoserver", "vmit" use networking, and hence can be referred to
+check how to use the Barrelfish networking.
+
+--------------------------------------------
+Known limitations:
+The presence of DHCP server within same LAN is assumed to give an IP
+address.
+
+Currently, only one NIC device can be effectively used in one running
+instance of Barrelfish.
+The reason behind this is that currently, netd is stateless.  Even though most
+of the networking code can work even in presence of multiple active NIC
+devices of different type, netd is still not completely ready for this
+possibility.
+
+--------------------------------------------
+
+

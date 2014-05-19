@@ -1,0 +1,781 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_ccp2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_ccp2 msbfirst ( addr base ) "" {
+    
+    
+    register ccp2_revision ro addr(base, 0x0) "IP Revision Identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants mstandby_mode_status width(2) "" {
+        MSTANDBY_MODE_0 = 0 "Force-standby. MStandby is only asserted when the module is disabled.";
+        MSTANDBY_MODE_1 = 1 "No-standby. MStandby is never asserted.";
+        MSTANDBY_MODE_2 = 2 "Smart-standby: MStandby is asserted based on the activity of the module. The module will try to go to standby during the vertical blanking period.";
+    };
+
+    constants soft_reset_status width(1) "" {
+        SOFT_RESET_0 = 0 "Normal mode.";
+        SOFT_RESET_1 = 1 "The module is reset";
+    };
+
+    constants auto_idle_status width(1) "" {
+        AUTO_IDLE_0 = 0 "OCP clock is free-running.";
+        AUTO_IDLE_1 = 1 "Automatic OCP clock gating strategy is applied based on the OCP interface activity.";
+    };
+    
+    register ccp2_sysconfig addr(base, 0x4) "SYSTEM CONFIGURATION REGISTER This register is the OCP-socket system configuration register." {
+        _ 18 mbz;
+        mstandby_mode 2 rw type(mstandby_mode_status) "Sets the behavior of the master port power management signals.";
+        _ 10 mbz;
+        soft_reset 1 rw type(soft_reset_status) "Software reset. Set the bit to 1 to trigger a module reset. The bit is automatically reset by the hardware. During reads return 0.";
+        auto_idle 1 rw type(auto_idle_status) "Internal OCP clock gating strategy.";
+    };
+
+    constants reset_done_status width(1) "" {
+        RESET_DONE_1_r = 1 "Reset completed.";
+        RESET_DONE_0_r = 0 "Internal module reset is on going.";
+    };
+    
+    register ccp2_sysstatus addr(base, 0x8) "SYSTEM STATUS REGISTER This register provides status information about the module, excluding the interrupt status register." {
+        _ 31 mbz;
+        reset_done 1 ro type(reset_done_status) "Internal reset monitoring";
+    };
+
+    constants lc1_ocperror_irq_status width(1) "" {
+        LC1_OCPERROR_IRQ_0 = 0 "Event is masked";
+        LC1_OCPERROR_IRQ_1 = 1 "Event generates an interrupt when it occurs";
+    };
+    
+    register ccp2_lc01_irqenable addr(base, 0xC) "INTERRUPT ENABLE REGISTER - LOG CHAN 0 &amp; 1 This register regroups all the events related to logical channel 0 and logical channel 1. The events related to logical channel 0 trigger SINTERRUPTN[0]. The events related to logical channel 1 trigger SINTERRUPTN[1]. The channel shall be enabled for events to be generated on that channel." {
+        lc1_ocperror_irq 1 rw type(lc1_ocperror_irq_status) "An OCP error occurred on the master write port.";
+        _ 3 mbz;
+        lc1_fs_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 1 - Frame start sync code detection.";
+        lc1_le_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 1 - Line end sync code detection.";
+        lc1_ls_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 1 - Line start sync code detection.";
+        lc1_fe_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 1 - Frame end sync code detection.";
+        lc1_count_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 1 - Frame counter reached.";
+        _ 1 mbz;
+        lc1_fifo_ovf_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 1 - FIFO overflow error.";
+        lc1_crc_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 1 - CRC error.";
+        lc1_fsp_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 1 - FSP error.";
+        lc1_fw_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 1 - Frame width error.";
+        lc1_fsc_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 1 - False sync code error.";
+        _ 1 mbz;
+        lc0_ocperror_irq 1 rw type(lc1_ocperror_irq_status) "An OCP error occurred on the master write port.";
+        _ 3 mbz;
+        lc0_fs_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 0 - Frame start sync code detection.";
+        lc0_le_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 0 - Line end sync code detection.";
+        lc0_ls_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 0 - Line start sync code detection.";
+        lc0_fe_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 0 - Frame end sync code detection.";
+        lc0_count_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 0 - Frame counter reached.";
+        _ 1 mbz;
+        lc0_fifo_ovf_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 0 - FIFO overflow error.";
+        lc0_crc_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 0 - CRC error.";
+        lc0_fsp_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 0 - FSP error.";
+        lc0_fw_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 0 - Frame width error.";
+        lc0_fsc_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 0 - False sync code error.";
+        _ 1 mbz;
+    };
+
+    constants lc1_ocperror_irq_status1 width(1) "" {
+        LC1_OCPERROR_IRQ_0_1 = 0 "READS: Event is false. WRITES: Status bit unchanged.";
+        LC1_OCPERROR_IRQ_1_1 = 1 "READS: Event is true (pending). WRITES: Status bit is reset.";
+    };
+    
+    register ccp2_lc01_irqstatus addr(base, 0x10) "INTERRUPT STATUS REGISTER - LOG CHAN 0 &amp; 1 This register regroups all the events related to logical channel 0 and logical channel 1. The events related to logical channel 0 trigger SINTERRUPTN[0]. The events related to logical channel 1 trigger SINTERRUPTN[1]. The channel shall be enabled for events to be generated on that channel." {
+        lc1_ocperror_irq 1 rw1c type(lc1_ocperror_irq_status1) "An OCP error occurred on the master write port.";
+        _ 3 mbz;
+        lc1_fs_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 1 - Frame start sync code detection status.";
+        lc1_le_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 1 - Line end sync code detection status.";
+        lc1_ls_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 1 - Line start sync code detection status.";
+        lc1_fe_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 1 - Frame end sync code detection status.";
+        lc1_count_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 1 - Frame counter reached status.";
+        _ 1 mbz;
+        lc1_fifo_ovf_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 1 - FIFO overflow error status.";
+        lc1_crc_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 1 - CRC error status.";
+        lc1_fsp_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 1 - FSP error status.";
+        lc1_fw_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 1 - Frame width error status.";
+        lc1_fsc_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 1 - False sync code error status.";
+        _ 1 mbz;
+        lc0_ocperror_irq 1 rw1c type(lc1_ocperror_irq_status1) "An OCP error occurred on the master write port.";
+        _ 3 mbz;
+        lc0_fs_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 0 - Frame start sync code detection status.";
+        lc0_le_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 0 - Line end sync code detection status.";
+        lc0_ls_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 0 - Line start sync code detection status.";
+        lc0_fe_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 0 - Frame end sync code detection status.";
+        lc0_count_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 0 - Frame counter reached status";
+        _ 1 mbz;
+        lc0_fifo_ovf_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 0 - FIFO overflow error status.";
+        lc0_crc_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 0 - CRC error status.";
+        lc0_fsp_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 0 - FSP error status.";
+        lc0_fw_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 0 - Frame width error status.";
+        lc0_fsc_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 0 - False sync code error status.";
+        _ 1 mbz;
+    };
+    
+    register ccp2_lc23_irqenable addr(base, 0x14) "INTERRUPT ENABLE REGISTER - LOG CHAN 2 &amp; 3 This register regroups all the events related to logical channel 2 and logical channel 3. The events related to logical channel 2 trigger SINTERRUPTN[2]. The events related to logical channel 3 trigger SINTERRUPTN[3]. The channel shall be enabled for events to be generated on that channel." {
+        lc3_ocperror_irq 1 rw type(lc1_ocperror_irq_status) "An OCP error occurred on the master write port.";
+        _ 3 mbz;
+        lc3_fs_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 3 - Frame start sync code detection.";
+        lc3_le_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 3 - Line end sync code detection.";
+        lc3_ls_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 3 - Line start sync code detection.";
+        lc3_fe_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 3 - Frame end sync code detection.";
+        lc3_count_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 3 - Frame counter reached.";
+        _ 1 mbz;
+        lc3_fifo_ovf_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 3 - FIFO overflow error.";
+        lc3_crc_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 3 - CRC error.";
+        lc3_fsp_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 3 - FSP error.";
+        lc3_fw_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 3 - Frame width error.";
+        lc3_fsc_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 3 - False sync code error.";
+        _ 1 mbz;
+        lc2_ocperror_irq 1 rw type(lc1_ocperror_irq_status) "An OCP error occurred on the master write port.";
+        _ 3 mbz;
+        lc2_fs_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 2 - Frame start sync code detection.";
+        lc2_le_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 2 - Line end sync code detection.";
+        lc2_ls_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 2 - Line start sync code detection.";
+        lc2_fe_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 2 - Frame end sync code detection.";
+        lc2_count_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 2 - Frame counter reached.";
+        _ 1 mbz;
+        lc2_fifo_ovf_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 2 - FIFO overflow error.";
+        lc2_crc_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 2 - CRC error.";
+        lc2_fsp_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 2 - FSP error.";
+        lc2_fw_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 2 - Frame width error.";
+        lc2_fsc_irq 1 rw type(lc1_ocperror_irq_status) "Logical channel 2 - False sync code error.";
+        _ 1 mbz;
+    };
+    
+    register ccp2_lc23_irqstatus addr(base, 0x18) "INTERRUPT STATUS REGISTER - LOG CHAN 2 &amp; 3 This register regroups all the events related to logical channel 2 and logical channel 3. The events related to logical channel 2 trigger SINTERRUPTN[2]. The events related to logical channel 3 trigger SINTERRUPTN[3]. The channel shall be enabled for events to be generated on that channel." {
+        lc3_ocperror_irq 1 rw1c type(lc1_ocperror_irq_status1) "An OCP error occurred on the master write port.";
+        _ 3 mbz;
+        lc3_fs_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 3 - Frame start sync code detection status.";
+        lc3_le_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 3 - Line end sync code detection status.";
+        lc3_ls_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 3 - Line start sync code detection status.";
+        lc3_fe_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 3 - Frame end sync code detection status.";
+        lc3_count_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 3 - Frame counter reached status.";
+        _ 1 mbz;
+        lc3_fifo_ovf_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 3 - FIFO overflow error status.";
+        lc3_crc_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 3 - CRC error status.";
+        lc3_fsp_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 3 - FSP error status.";
+        lc3_fw_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 3 - Frame width error status.";
+        lc3_fsc_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 3 - False sync code error status.";
+        _ 1 mbz;
+        lc2_ocperror_irq 1 rw1c type(lc1_ocperror_irq_status1) "An OCP error occurred on the master write port.";
+        _ 3 mbz;
+        lc2_fs_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 2 - Frame start sync code detection status.";
+        lc2_le_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 2 - Line end sync code detection status.";
+        lc2_ls_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 2 - Line start sync code detection status.";
+        lc2_fe_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 2 - Frame end sync code detection status.";
+        lc2_count_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 2 - Frame counter reached status";
+        _ 1 mbz;
+        lc2_fifo_ovf_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 2 - FIFO overflow error status.";
+        lc2_crc_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 2 - CRC error status.";
+        lc2_fsp_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 2 - FSP error status.";
+        lc2_fw_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 2 - Frame width error status.";
+        lc2_fsc_irq 1 rw1c type(lc1_ocperror_irq_status1) "Logical channel 2 - False sync code error status.";
+        _ 1 mbz;
+    };
+    
+    register ccp2_lcm_irqenable addr(base, 0x2C) "INTERRUPT ENABLE REGISTER - Memory channel This register regroups all the events related to the memory channel 2. The events related to memory channel trigger SINTERRUPTN[8]. The channel shall be enabled for events to be generated on that channel." {
+        _ 30 mbz;
+        lcm_ocperror 1 rw type(lc1_ocperror_irq_status) "An interconnect error has been returned for a read (interconnect read master) or write (interconnect write master) transaction related to LCM operation";
+        lcm_eof 1 rw type(lc1_ocperror_irq_status) "Memory read channel - End of frame";
+    };
+    
+    register ccp2_lcm_irqstatus addr(base, 0x30) "INTERRUPT STATUS REGISTER - Memory channel This register regroups all the events related to memory channel. The events related to memory channel trigger SINTERRUPTN[8]. The channel shall be enabled for events to be generated on that channel." {
+        _ 30 mbz;
+        lcm_ocperror 1 rw1c type(lc1_ocperror_irq_status1) "An interconnect error has been returned for a read (interconnect read master) or write (interconnect write master) transaction related to LCM operation";
+        lcm_eof 1 rw1c type(lc1_ocperror_irq_status1) "Memory read channel - End of frame";
+    };
+
+    constants posted_status width(1) "" {
+        POSTED_0 = 0 "Non posted";
+        POSTED_1 = 1 "Posted";
+    };
+
+    constants dbg_en_status width(1) "" {
+        DBG_EN_0 = 0 "Disable";
+        DBG_EN_1 = 1 "Enable";
+    };
+
+    constants vp_clk_pol_status width(1) "" {
+        VP_CLK_POL_0 = 0 "The CCP2 receiver writes the data on the VP on the L3 falling edge before the next falling PCLK edge.";
+        VP_CLK_POL_1 = 1 "The CCP2 receiver writes the data on the VP on the L3 rising edge before the next rising PCLK edge.";
+    };
+
+    constants vp_only_en_status width(1) "" {
+        VP_ONLY_EN_0 = 0 "The VP is enabled and the OCP master port are enabled.";
+        VP_ONLY_EN_1 = 1 "The VP is enabled and the OCP master port is disabled. The embedded data and pixel data are output on the VP.";
+    };
+
+    constants vp_clk_force_on_status width(1) "" {
+        VP_CLK_FORCE_ON_0 = 0 "The VP_PCLK is gated during vertical blanking periods.";
+        VP_CLK_FORCE_ON_1 = 1 "The VP_PCLK is free-running during vertical blanking periods.";
+    };
+
+    constants burst_status width(3) "" {
+        BURST_0 = 0 "1x 64-bit burst = single request.";
+        BURST_1 = 1 "2x 64-bit bursts.";
+        BURST_3 = 3 "8x 64-bit bursts.";
+        BURST_4 = 4 "16x 64-bit bursts.";
+        BURST_2 = 2 "4x 64-bit bursts.";
+    };
+
+    constants mode_status width(1) "" {
+        MODE_0 = 0 "MIPI CSI1 compatible mode. When this bit is set all CCP2 settings are ignored. If the settings are not set correctly to MIPI CSI1 values, the behavior of the receiver is unpredictable.";
+        MODE_1 = 1 "CCP2 compatible mode";
+    };
+
+    constants frame_status width(1) "" {
+        FRAME_0 = 0 "When software writes IF_EN = 0 the interface is disabled immediately.";
+        FRAME_1 = 1 "When software writes IF_EN = 0 the interface is disabled after the next FEC sync code.";
+    };
+
+    constants if_en_status width(1) "" {
+        IF_EN_0 = 0 "The interface is disabled. If FRAME = 0, it is disabled immediately. If FRAME = 1, it is disabled on the next FEC sync code. If FRAME=1, it is advised to disable the logical channels first (CCP2_LCX_CTRL.CHAN_EN=0) before writing IF_EN=0.";
+        IF_EN_1 = 1 "The interface is enabled immediately, the data acquisition starts on the next FSC sync code. Writing 1 to this register when the current value is 0 has the effect to clear the output FIFO. The pixel data of the following frame will be written in the PING buffer, that is, the CCP2_LCX_CTRL.PING_PONG bits are reset to 1 as well.";
+    };
+    
+    register ccp2_ctrl addr(base, 0x40) "GLOBAL CONTROL REGISTER This register controls the CCP2 receiver. This register shall not be modified dynamically (except IF_EN bit field)." {
+        fracdiv 17 rw "Fractional clock divider control for the video port. The mean video port clock is VPBASECLOCK * FRACDIV/65536. Valid range: 1-65536";
+        posted 1 rw type(posted_status) "Selects between posted and non posted writes.";
+        dbg_en 1 rw type(dbg_en_status) "Enables the debug mode.";
+        vp_clk_pol 1 rw type(vp_clk_pol_status) "VP clock polarity";
+        vp_only_en 1 rw type(vp_only_en_status) "VP only enable.";
+        _ 1 mbz;
+        vp_clk_force_on 1 rw type(vp_clk_force_on_status) "Controls VP_PCLK gating during frame blanking periods.";
+        _ 1 mbz;
+        burst 3 rw type(burst_status) "Forces the write burst size used by the module. The write burst size shall never exceed the output FIFO size. The output FIFO size can be read with the CCP2_GNQ.FIFODEPTH bit field.";
+        mode 1 rw type(mode_status) "Selects the receiver operating mode. This bit is only writable when the CCP2MODE input is 1.";
+        frame 1 rw type(frame_status) "Set the modality in which IF_EN works.";
+        _ 1 mbz;
+        _ 1 mbz;
+        if_en 1 rw type(if_en_status) "Enables the physical interface to the module.";
+    };
+    
+    register ccp2_dbg wo addr(base, 0x44) "DEBUG REGISTER This register provides a way to debug the CCP2 receiver with no image sensor connected to the module. The debug mode is enabled by .DBG_EN. Each write to this register provides a full 32bit word to the CCP2 receiver, even when only 8 or 16 bits are written. The newly written value is merged with the previous value (check the example in the programming model section)." type(uint32);
+
+    constants fifodepth_status width(3) "" {
+        FIFODEPTH_3_r = 3 "16 x 64 bits";
+        FIFODEPTH_4_r = 4 "32 x 64 bits";
+        FIFODEPTH_2_r = 2 "8 x 64 bits";
+        FIFODEPTH_0_r = 0 "2 x 64 bits";
+        FIFODEPTH_1_r = 1 "4 x 64 bits";
+        FIFODEPTH_5_r = 5 "64 x 64 bits";
+    };
+
+    constants nbchannels_status width(2) "" {
+        NBCHANNELS_3_r = 3 "8 logical channels";
+        NBCHANNELS_2_r = 2 "4 logical channels";
+        NBCHANNELS_1_r = 1 "2 logical channels";
+        NBCHANNELS_0_r = 0 "1 logical channel";
+    };
+    
+    register ccp2_gnq addr(base, 0x48) "GENERIC PARAMETER REGISTER This register provide a way to read the generic parameters used in the design." {
+        _ 26 mbz;
+        ocpreadport 1 ro "The OCP master read port, the DPCM encoder and ALAW decompression are only present when this bit is set.";
+        fifodepth 3 ro type(fifodepth_status) "Output FIFO size in multiple of 64 bits.";
+        nbchannels 2 ro type(nbchannels_status) "Number of logical channels supported by the module.";
+    };
+
+    constants blanking_status width(2) "" {
+        BLANKING_0 = 0 "4 video port clock cycles";
+        BLANKING_1 = 1 "16 video port clock cycles";
+        BLANKING_2 = 2 "64 video port clock cycles";
+        BLANKING_3 = 3 "Free running";
+    };
+    
+    register ccp2_ctrl1 addr(base, 0x4C) "GLOBAL CONTROL REGISTER (2) This register controls the CCP2 receiver." {
+        _ 30 mbz;
+        blanking 2 rw type(blanking_status) "Controls the number of clock pulses provided during vertical and horizontal clock periods. When the blanking period provided by the camera is lower than the value set here, the blanking period is shortened by the CCP2 to prevent internal FIFO overflow. Software must increase the sensor blanking period in that case.";
+    };
+
+    constants crc_en_status width(1) "" {
+        CRC_EN_0 = 0 "Disabled";
+        CRC_EN_1 = 1 "Enabled";
+    };
+
+    constants dpcm_pred_status width(1) "" {
+        DPCM_PRED_0 = 0 "The advanced predictor is used";
+        DPCM_PRED_1 = 1 "The simple predictor is used.";
+    };
+
+    constants ping_pong_status width(1) "" {
+        PING_PONG_1_r = 1 "PONG buffer";
+        PING_PONG_0_r = 0 "PING buffer";
+    };
+
+    constants count_unlock_status width(1) "" {
+        COUNT_UNLOCK_0_w = 0 "COUNT bit field is locked. Writes have no effect";
+        COUNT_UNLOCK_1_w = 1 "COUNT bit field is unlocked. Writes are possible.";
+    };
+
+    constants format_status width(6) "" {
+        FORMAT_13 = 13 "RAW7 + DPCM10 + EXP16";
+        FORMAT_21 = 21 "RAW10 + EXP16";
+        FORMAT_30 = 30 "RAW10 -&gt; RAW8 RAW10 data from sensor is right shifted to produce RAW8 before it is send to memory";
+        FORMAT_8 = 8 "RAW6 + EXP8";
+        FORMAT_5 = 5 "RGB565";
+        FORMAT_27 = 27 "RAW10 -&gt; RAW8 DPCM RAW10 data from sensor is DPCM compressed into RAW8 before it is send to memory.";
+        FORMAT_2 = 2 "YUV4:2:0";
+        FORMAT_4 = 4 "RGB444 + EXP16";
+        FORMAT_6 = 6 "RGB888";
+        FORMAT_1 = 1 "YUV4:2:2 LITTLE ENDIAN";
+        FORMAT_29 = 29 "JPEG8";
+        FORMAT_0 = 0 "YUV4:2:2 BIG ENDIAN";
+        FORMAT_11 = 11 "RAW10 -&gt; RAW6 DPCM RAW10 data from sensor is DPCM compressed into RAW6 before it is send to memory. Used predictor is selected by the DPCM_PRED bit.";
+        FORMAT_32 = 32 "RAW10 -&gt; RAW8 ALAW";
+        FORMAT_3 = 3 "YUV4:2:2 + VP or RAW8 + VP";
+        FORMAT_23 = 23 "RAW10 -&gt; RAW7 DPCM + EXP8 RAW10 data from sensor is DPCM compressed into RAW7 and expanded to 8 bits before it is send to memory. Used predictor is selected by the DPCM_PRED bit.";
+        FORMAT_17 = 17 "RAW8 + DPCM10 + EXP16";
+        FORMAT_10 = 10 "RAW6 + DPCM10 + VP";
+        FORMAT_9 = 9 "RAW6 + DPCM10 + EXP16";
+        FORMAT_16 = 16 "RAW8 This mode can be used to output RAW6 and RAW7 as well.";
+        FORMAT_33 = 33 "RAW8 DPCM10 -&gt; ALAW";
+        FORMAT_18 = 18 "RAW8 + DPCM10 + VP";
+        FORMAT_19 = 19 "RAW10 -&gt; RAW7 DPCM RAW10 data from sensor is DPCM compressed into RAW7 before it is send to memory. Used predictor is selected by the DPCM_PRED bit.";
+        FORMAT_24 = 24 "RAW12";
+        FORMAT_20 = 20 "RAW10";
+        FORMAT_14 = 14 "RAW7 + DPCM10 + VP";
+        FORMAT_22 = 22 "RAW10 + VP";
+        FORMAT_28 = 28 "JPEG8 + FSP";
+        FORMAT_7 = 7 "RGB888 + EXP32";
+        FORMAT_25 = 25 "RAW12 + EXP16";
+        FORMAT_31 = 31 "RAW8 DPCM12 -&gt; RAW12 + VP Used predictor is selected by the DPCM_PRED bit.";
+        FORMAT_26 = 26 "RAW12 + VP";
+        FORMAT_15 = 15 "RAW10 -&gt; RAW6 DPCM + EXP8 RAW10 data from sensor is DPCM compressed into RAW6 and expanded to 8 bits before it is send to memory. Used predictor is selected by the DPCM_PRED bit.";
+        FORMAT_12 = 12 "RAW7 + EXP8";
+    };
+    
+    register ccp2_lcx_ctrl_0 addr(base, 0x50) "CONTROL REGISTER - LOG CHAN 0 This register controls the logical channel 0. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the COUNT_IRQ interrupt is triggered and CHAN_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire.";
+        _ 4 mbz;
+        crc_en 1 rw type(crc_en_status) "Enables the cyclic redundancy check.";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor to be used for the RAW6+DPCM10, RAW7+DPCM10 and RAW8+DPCM12 data formats. The RAW8+DPCM10 data format always use the simple predictor.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CCP2_LC0_DAT_PING_ADDR or CCP2_LC0_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC sync code.";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        alpha 8 rw "Alpha value for RGB888 and RBG444.";
+        format 6 rw type(format_status) "Data format selection.";
+        region_en 1 rw type(crc_en_status) "Enables the setting of regions of interest in the frame: SOF region, EOF region and DAT region.";
+        chan_en 1 rw "Enables the logical channel0x0 for LC3 .";
+    };
+    
+    register ccp2_lcx_ctrl_1 addr(base, 0x80) "CONTROL REGISTER - LOG CHAN 0 This register controls the logical channel 0. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the COUNT_IRQ interrupt is triggered and CHAN_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire.";
+        _ 4 mbz;
+        crc_en 1 rw type(crc_en_status) "Enables the cyclic redundancy check.";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor to be used for the RAW6+DPCM10, RAW7+DPCM10 and RAW8+DPCM12 data formats. The RAW8+DPCM10 data format always use the simple predictor.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CCP2_LC0_DAT_PING_ADDR or CCP2_LC0_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC sync code.";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        alpha 8 rw "Alpha value for RGB888 and RBG444.";
+        format 6 rw type(format_status) "Data format selection.";
+        region_en 1 rw type(crc_en_status) "Enables the setting of regions of interest in the frame: SOF region, EOF region and DAT region.";
+        chan_en 1 rw "Enables the logical channel0x0 for LC3 .";
+    };
+    
+    register ccp2_lcx_ctrl_2 addr(base, 0xB0) "CONTROL REGISTER - LOG CHAN 0 This register controls the logical channel 0. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the COUNT_IRQ interrupt is triggered and CHAN_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire.";
+        _ 4 mbz;
+        crc_en 1 rw type(crc_en_status) "Enables the cyclic redundancy check.";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor to be used for the RAW6+DPCM10, RAW7+DPCM10 and RAW8+DPCM12 data formats. The RAW8+DPCM10 data format always use the simple predictor.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CCP2_LC0_DAT_PING_ADDR or CCP2_LC0_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC sync code.";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        alpha 8 rw "Alpha value for RGB888 and RBG444.";
+        format 6 rw type(format_status) "Data format selection.";
+        region_en 1 rw type(crc_en_status) "Enables the setting of regions of interest in the frame: SOF region, EOF region and DAT region.";
+        chan_en 1 rw "Enables the logical channel0x0 for LC3 .";
+    };
+    
+    register ccp2_lcx_ctrl_3 addr(base, 0xE0) "CONTROL REGISTER - LOG CHAN 0 This register controls the logical channel 0. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the COUNT_IRQ interrupt is triggered and CHAN_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire.";
+        _ 4 mbz;
+        crc_en 1 rw type(crc_en_status) "Enables the cyclic redundancy check.";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor to be used for the RAW6+DPCM10, RAW7+DPCM10 and RAW8+DPCM12 data formats. The RAW8+DPCM10 data format always use the simple predictor.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CCP2_LC0_DAT_PING_ADDR or CCP2_LC0_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC sync code.";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        alpha 8 rw "Alpha value for RGB888 and RBG444.";
+        format 6 rw type(format_status) "Data format selection.";
+        region_en 1 rw type(crc_en_status) "Enables the setting of regions of interest in the frame: SOF region, EOF region and DAT region.";
+        chan_en 1 rw "Enables the logical channel0x0 for LC3 .";
+    };
+    
+    register ccp2_lcx_code_0 addr(base, 0x54) "CODE REGISTER - LOG CHAN 0 This register sets the codes that are used in the 32-bit synchronization codes to recognize the logical channel, frame start, frame end, line start and line end codes. This register applies for logical channel 0 only. The default values are usually not supposed to be modified. Updating this register with new codes under a flowing serial transmission on that channel will cause unexpected result." {
+        _ 12 mbz;
+        chan_id 4 rw "Log chan 0 identifier. The channel identifier is located between bits 4 to 7 in the 32-bit synchronization codes.";
+        fec 4 rw "Log chan 0 frame end sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        fsc 4 rw "Log chan 0 frame start sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        lec 4 rw "Log chan 0 line end sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        lsc 4 rw "Log chan 0 line start sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+    };
+    
+    register ccp2_lcx_code_1 addr(base, 0x84) "CODE REGISTER - LOG CHAN 0 This register sets the codes that are used in the 32-bit synchronization codes to recognize the logical channel, frame start, frame end, line start and line end codes. This register applies for logical channel 0 only. The default values are usually not supposed to be modified. Updating this register with new codes under a flowing serial transmission on that channel will cause unexpected result." {
+        _ 12 mbz;
+        chan_id 4 rw "Log chan 0 identifier. The channel identifier is located between bits 4 to 7 in the 32-bit synchronization codes.";
+        fec 4 rw "Log chan 0 frame end sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        fsc 4 rw "Log chan 0 frame start sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        lec 4 rw "Log chan 0 line end sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        lsc 4 rw "Log chan 0 line start sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+    };
+    
+    register ccp2_lcx_code_2 addr(base, 0xB4) "CODE REGISTER - LOG CHAN 0 This register sets the codes that are used in the 32-bit synchronization codes to recognize the logical channel, frame start, frame end, line start and line end codes. This register applies for logical channel 0 only. The default values are usually not supposed to be modified. Updating this register with new codes under a flowing serial transmission on that channel will cause unexpected result." {
+        _ 12 mbz;
+        chan_id 4 rw "Log chan 0 identifier. The channel identifier is located between bits 4 to 7 in the 32-bit synchronization codes.";
+        fec 4 rw "Log chan 0 frame end sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        fsc 4 rw "Log chan 0 frame start sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        lec 4 rw "Log chan 0 line end sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        lsc 4 rw "Log chan 0 line start sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+    };
+    
+    register ccp2_lcx_code_3 addr(base, 0xE4) "CODE REGISTER - LOG CHAN 0 This register sets the codes that are used in the 32-bit synchronization codes to recognize the logical channel, frame start, frame end, line start and line end codes. This register applies for logical channel 0 only. The default values are usually not supposed to be modified. Updating this register with new codes under a flowing serial transmission on that channel will cause unexpected result." {
+        _ 12 mbz;
+        chan_id 4 rw "Log chan 0 identifier. The channel identifier is located between bits 4 to 7 in the 32-bit synchronization codes.";
+        fec 4 rw "Log chan 0 frame end sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        fsc 4 rw "Log chan 0 frame start sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        lec 4 rw "Log chan 0 line end sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+        lsc 4 rw "Log chan 0 line start sync code identifier. The sync code identifier is located between bits 0 to 3 in the 32-bit synchronization codes.";
+    };
+    
+    register ccp2_lcx_stat_start_0 addr(base, 0x58) "STATUS LINE START REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        eof 12 rw "Sets the vertical position of the EOF status lines in regards of the FSC sync code. From 0 to 4095.";
+        _ 4 mbz;
+        sof 12 rw "Sets the vertical position of the EOF status lines in regards of the FSC sync code. Should always be 0.";
+    };
+    
+    register ccp2_lcx_stat_start_1 addr(base, 0x88) "STATUS LINE START REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        eof 12 rw "Sets the vertical position of the EOF status lines in regards of the FSC sync code. From 0 to 4095.";
+        _ 4 mbz;
+        sof 12 rw "Sets the vertical position of the EOF status lines in regards of the FSC sync code. Should always be 0.";
+    };
+    
+    register ccp2_lcx_stat_start_2 addr(base, 0xB8) "STATUS LINE START REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        eof 12 rw "Sets the vertical position of the EOF status lines in regards of the FSC sync code. From 0 to 4095.";
+        _ 4 mbz;
+        sof 12 rw "Sets the vertical position of the EOF status lines in regards of the FSC sync code. Should always be 0.";
+    };
+    
+    register ccp2_lcx_stat_start_3 addr(base, 0xE8) "STATUS LINE START REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        eof 12 rw "Sets the vertical position of the EOF status lines in regards of the FSC sync code. From 0 to 4095.";
+        _ 4 mbz;
+        sof 12 rw "Sets the vertical position of the EOF status lines in regards of the FSC sync code. Should always be 0.";
+    };
+    
+    register ccp2_lcx_stat_size_0 addr(base, 0x5C) "STATUS LINE SIZE REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        eof 12 rw "Sets the number of EOF status lines From 0 to 4095";
+        _ 4 mbz;
+        sof 12 rw "Sets the number of SOF status line(s) From 0 to 4095";
+    };
+    
+    register ccp2_lcx_stat_size_1 addr(base, 0x8C) "STATUS LINE SIZE REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        eof 12 rw "Sets the number of EOF status lines From 0 to 4095";
+        _ 4 mbz;
+        sof 12 rw "Sets the number of SOF status line(s) From 0 to 4095";
+    };
+    
+    register ccp2_lcx_stat_size_2 addr(base, 0xBC) "STATUS LINE SIZE REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        eof 12 rw "Sets the number of EOF status lines From 0 to 4095";
+        _ 4 mbz;
+        sof 12 rw "Sets the number of SOF status line(s) From 0 to 4095";
+    };
+    
+    register ccp2_lcx_stat_size_3 addr(base, 0xEC) "STATUS LINE SIZE REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        eof 12 rw "Sets the number of EOF status lines From 0 to 4095";
+        _ 4 mbz;
+        sof 12 rw "Sets the number of SOF status line(s) From 0 to 4095";
+    };
+    
+    register ccp2_lcx_sof_addr_0 addr(base, 0x60) "SOF STATUS LINE MEM ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the SOF data are stored. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_sof_addr_1 addr(base, 0x90) "SOF STATUS LINE MEM ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the SOF data are stored. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_sof_addr_2 addr(base, 0xC0) "SOF STATUS LINE MEM ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the SOF data are stored. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_sof_addr_3 addr(base, 0xF0) "SOF STATUS LINE MEM ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the SOF data are stored. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_eof_addr_0 addr(base, 0x64) "EOF STATUS LINE MEM ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the EOF data are stored. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_eof_addr_1 addr(base, 0x94) "EOF STATUS LINE MEM ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the EOF data are stored. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_eof_addr_2 addr(base, 0xC4) "EOF STATUS LINE MEM ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the EOF data are stored. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_eof_addr_3 addr(base, 0xF4) "EOF STATUS LINE MEM ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the EOF data are stored. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_start_0 addr(base, 0x68) "DATA START REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        vert 12 rw "Sets the vertical position of the data in regards of the FSC sync code. From 0 to 4095 lines.";
+        _ 16 mbz;
+    };
+    
+    register ccp2_lcx_dat_start_1 addr(base, 0x98) "DATA START REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        vert 12 rw "Sets the vertical position of the data in regards of the FSC sync code. From 0 to 4095 lines.";
+        _ 16 mbz;
+    };
+    
+    register ccp2_lcx_dat_start_2 addr(base, 0xC8) "DATA START REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        vert 12 rw "Sets the vertical position of the data in regards of the FSC sync code. From 0 to 4095 lines.";
+        _ 16 mbz;
+    };
+    
+    register ccp2_lcx_dat_start_3 addr(base, 0xF8) "DATA START REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        vert 12 rw "Sets the vertical position of the data in regards of the FSC sync code. From 0 to 4095 lines.";
+        _ 16 mbz;
+    };
+    
+    register ccp2_lcx_dat_size_0 addr(base, 0x6C) "DATA SIZE REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        vert 12 rw "Sets the vertical size of the data window. From 0 to 4095 lines. If VERT = '0', no data is output.";
+        _ 16 mbz;
+    };
+    
+    register ccp2_lcx_dat_size_1 addr(base, 0x9C) "DATA SIZE REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        vert 12 rw "Sets the vertical size of the data window. From 0 to 4095 lines. If VERT = '0', no data is output.";
+        _ 16 mbz;
+    };
+    
+    register ccp2_lcx_dat_size_2 addr(base, 0xCC) "DATA SIZE REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        vert 12 rw "Sets the vertical size of the data window. From 0 to 4095 lines. If VERT = '0', no data is output.";
+        _ 16 mbz;
+    };
+    
+    register ccp2_lcx_dat_size_3 addr(base, 0xFC) "DATA SIZE REGISTER - LOG CHAN 0 This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 4 mbz;
+        vert 12 rw "Sets the vertical size of the data window. From 0 to 4095 lines. If VERT = '0', no data is output.";
+        _ 16 mbz;
+    };
+    
+    register ccp2_lcx_dat_ping_addr_0 addr(base, 0x70) "DATA MEM PING ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_ping_addr_1 addr(base, 0xA0) "DATA MEM PING ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_ping_addr_2 addr(base, 0xD0) "DATA MEM PING ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_ping_addr_3 addr(base, 0x100) "DATA MEM PING ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_pong_addr_0 addr(base, 0x74) "DATA MEM PONG ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PONG address. Double buffering is enabled when the addresses CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_pong_addr_1 addr(base, 0xA4) "DATA MEM PONG ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PONG address. Double buffering is enabled when the addresses CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_pong_addr_2 addr(base, 0xD4) "DATA MEM PONG ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PONG address. Double buffering is enabled when the addresses CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_pong_addr_3 addr(base, 0x104) "DATA MEM PONG ADDRESS REGISTER - LOG CHAN 0 This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PONG address. Double buffering is enabled when the addresses CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_ofst_0 addr(base, 0x78) "DATA MEM ADDRESS OFFSET REGISTER - LOG CHAN 0 This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. Only full 64-bits words are written to memory at the end of lines. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        ofst 27 rw "Line offset programmed in bytes. If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line. NOTE: An OCP access (read/write) is required to properly update the CCP2_LCx_DAT_OFST register";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_ofst_1 addr(base, 0xA8) "DATA MEM ADDRESS OFFSET REGISTER - LOG CHAN 0 This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. Only full 64-bits words are written to memory at the end of lines. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        ofst 27 rw "Line offset programmed in bytes. If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line. NOTE: An OCP access (read/write) is required to properly update the CCP2_LCx_DAT_OFST register";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_ofst_2 addr(base, 0xD8) "DATA MEM ADDRESS OFFSET REGISTER - LOG CHAN 0 This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. Only full 64-bits words are written to memory at the end of lines. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        ofst 27 rw "Line offset programmed in bytes. If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line. NOTE: An OCP access (read/write) is required to properly update the CCP2_LCx_DAT_OFST register";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcx_dat_ofst_3 addr(base, 0x108) "DATA MEM ADDRESS OFFSET REGISTER - LOG CHAN 0 This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CCP2_LC0_DAT_PING_ADDR and CCP2_LC0_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. Only full 64-bits words are written to memory at the end of lines. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        ofst 27 rw "Line offset programmed in bytes. If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line. NOTE: An OCP access (read/write) is required to properly update the CCP2_LCx_DAT_OFST register";
+        _ 5 mbz;
+    };
+
+    constants dst_compr_status width(2) "" {
+        DST_COMPR_0 = 0 "No compression";
+        DST_COMPR_1 = 1 "A-Law compression RAW10 -&gt; RAW8 A-Law when DST_FORMAT=RAW8 other destination formats are invalid.";
+        DST_COMPR_2 = 2 "DPCM compression RAW10 -&gt; RAW6 DPCM when DST_FORMAT=RAW6 RAW10 -&gt; RAW7 DPCM when DST_FORMAT=RAW7 RAW10 -&gt; RAW8 DPCM when DST_FORMAT=RAW8 other destination formats are invalid.";
+    };
+
+    constants dst_format_status width(3) "" {
+        DST_FORMAT_6 = 6 "RAW16";
+        DST_FORMAT_1 = 1 "RAW7";
+        DST_FORMAT_0 = 0 "RAW6";
+        DST_FORMAT_2 = 2 "RAW8";
+        DST_FORMAT_4 = 4 "RAW12";
+        DST_FORMAT_5 = 5 "RAW14";
+        DST_FORMAT_3 = 3 "RAW10";
+    };
+
+    constants src_decompr_status width(2) "" {
+        SRC_DECOMPR_0 = 0 "No decompression";
+        SRC_DECOMPR_1 = 1 "A-Law decompression RAW8 A-Law -&gt; RAW10 when SRC_FORMAT=RAW8 other source formats are invalid.";
+        SRC_DECOMPR_3 = 3 "DPCM decompression RAW6 DPCM -&gt; RAW12 when SRC_FORMAT=RAW6 RAW8 DPCM -&gt; RAW12 when SRC_FORMAT=RAW8 other source formats are invalid.";
+        SRC_DECOMPR_2 = 2 "DPCM decompression RAW6 DPCM -&gt; RAW10 when SRC_FORMAT=RAW6 RAW7 DPCM -&gt; RAW10 when SRC_FORMAT=RAW7 RAW8 DPCM -&gt; RAW10 when SRC_FORMAT=RAW8 other source formats are invalid.";
+    };
+
+    constants src_format_status width(4) "" {
+        SRC_FORMAT_6 = 6 "RAW16";
+        SRC_FORMAT_1 = 1 "RAW7";
+        SRC_FORMAT_10 = 10 "Reserved";
+        SRC_FORMAT_7 = 7 "Reserved";
+        SRC_FORMAT_13 = 13 "Reserved";
+        SRC_FORMAT_0 = 0 "RAW6";
+        SRC_FORMAT_2 = 2 "RAW8";
+        SRC_FORMAT_8 = 8 "Reserved";
+        SRC_FORMAT_9 = 9 "Reserved";
+        SRC_FORMAT_11 = 11 "Reserved";
+        SRC_FORMAT_4 = 4 "RAW12";
+        SRC_FORMAT_5 = 5 "RAW14";
+        SRC_FORMAT_15 = 15 "Reserved";
+        SRC_FORMAT_12 = 12 "Reserved";
+        SRC_FORMAT_3 = 3 "RAW10";
+        SRC_FORMAT_14 = 14 "Reserved";
+    };
+
+    constants read_throttle_status width(2) "" {
+        READ_THROTTLE_0 = 0 "Full speed. Throughput is limited by internal processing capabilities.";
+        READ_THROTTLE_1 = 1 "1/2 speed";
+        READ_THROTTLE_3 = 3 "1/8 speed";
+        READ_THROTTLE_2 = 2 "1/4 speed";
+    };
+
+    constants dst_port_status width(1) "" {
+        DST_PORT_0 = 0 "Data is send to video port, it is always send without compression or packing. The DST_COMPR, DST_DPCM_PRED, DST_PACK, CCP2_LCM_DST_WRITE, and registers have no effect.";
+        DST_PORT_1 = 1 "Data is send to memory.";
+    };
+    
+    register ccp2_lcm_ctrl addr(base, 0x1D0) "Control register for the memory channel. It defines the data format of the source frame stored in memory and how this frame is processed." {
+        dst_pack 1 rw type(crc_en_status) "Data is packed before it is send to memory. Applies to RAW6, RAW7, RAW10, and RAW12 only.";
+        dst_dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor to be used for the RAW6+DPCM10 and RAW7+DPCM10 data formats. The RAW8+DPCM10 data format always use the simple predictor.";
+        dst_compr 2 rw type(dst_compr_status) "Enables data compression of data sent to memory";
+        _ 1 mbz;
+        dst_format 3 rw type(dst_format_status) "Output format selection. Not every combination between input and output formats are possible.";
+        src_pack 1 rw type(crc_en_status) "Data stored in memory is packed and must be unpacked.";
+        src_dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor to be used for the RAW6+DPCM10, RAW7+DPCM10 and RAW8+DPCM12 data formats. The RAW8+DPCM10 and RAW6 + DPCM12 data format always use the simple predictor.";
+        src_decompr 2 rw type(src_decompr_status) "Enable decompression of incoming data";
+        src_format 4 rw type(src_format_status) "Data format of the data stored in memory. As there is no header embedded in the data sent to memory the user is responsible of choosing the adequate format.";
+        _ 8 mbz;
+        burst_size 3 rw type(burst_status) "Defines the burst size of the master read port";
+        read_throttle 2 rw type(read_throttle_status) "Limit maximum data read speed for memory to memory operation";
+        dst_port 1 rw type(dst_port_status) "Select the destination port";
+        _ 1 mbz;
+        chan_en 1 rw type(crc_en_status) "Enables the read from memory channel. Before enabling the memory read channel software shall: - disable the physical interface using the IF_EN bit - wait until disabling of the physical interface is effective (depends on the FRAME bit) Read from memory starts as soon as this bit is set, therefore all CCP2_LCM_x registers must be configured correctly before. This bit is cleared by hardware at the end of the frame.";
+    };
+    
+    register ccp2_lcm_vsize addr(base, 0x1D4) "Memory channel vertical framing register" {
+        _ 3 mbz;
+        count 13 rw "Defines the line count to be read from memory. From 1 to 8191 lines.";
+        _ 16 mbz;
+    };
+    
+    register ccp2_lcm_hsize addr(base, 0x1D8) "Memory read channel horizontal framing register." {
+        _ 1 mbz;
+        count 15 rw "Horizontal count ofsamples to output after the skipped pixels. Valid values: 1 to 32767.";
+        _ 1 mbz;
+        skip 15 rw "Horizontal count ofsamples to skip after the start of the line. When DPCM compressed data is read from memory using this feature is the only valid way to set a horizontal starting position. Valid values: 0 to32767. 0 disables pixel skipping";
+    };
+    
+    register ccp2_lcm_prefetch addr(base, 0x1DC) "This register defines the amount of data to be fetched from memory. It must be consistent with the register (check programming model)." {
+        _ 16 mbz;
+        hwords 13 rw "64 bit words to read from memory for each line of the image. Possible values 1..8191";
+        _ 3 mbz;
+    };
+    
+    register ccp2_lcm_src_addr addr(base, 0x1E0) "Memory channel source address register This register sets the 32-bit memory address where the pixel data are stored. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary." {
+        addr 27 rw "27 most-significant bits of the 32-bit address";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcm_src_ofst addr(base, 0x1E4) "Memory channel source offset register. This register sets the offset, which is applied on the source address after each line is read from memory. For example, it enables to perform 2D data transfers of the pixel data from a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes." {
+        ofst 27 rw "Line offset programmed in bytes. If OFST = 0, the data is read contiguously from memory. Otherwise, OFST sets the source offset between the first pixel of the previous line and the first pixel of the current line.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcm_dst_addr addr(base, 0x1E8) "Memory channel destination address. This register sets the 32-bit memory address where the pixel data are stored. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary." {
+        addr 27 rw "27 most significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcm_dst_ofst addr(base, 0x1EC) "Memory channel destination offset register. This register sets the offset, which is applied on the destination address after each line is written to memory. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes." {
+        ofst 27 rw "Line offset programmed in bytes. If OFST = 0, the data is written contiguously to memory if possible. At the end of a line only full 32 bit words will be written, creating eventually gaps at the end of lines. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line.";
+        _ 5 mbz;
+    };
+    
+    register ccp2_lcm_history addr(base, 0x1F0) "Controls operation of the DPCM history read/write feature" {
+        _ 14 mbz;
+        en_hist_rd 1 rw type(dbg_en_status) "Enable DPCM history read";
+        en_hist_wr 1 rw type(dbg_en_status) "Enable DPCM history write";
+        hist_export 16 rw "Defines the horizontal position at which DPCM history information is written. The first decoded sample of a line has position 0 The last decoded sample has position SKIP+COUNT-1 Valid range [3..SKIP+COUNT-1]";
+    };
+};

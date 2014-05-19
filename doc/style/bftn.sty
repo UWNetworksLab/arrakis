@@ -1,0 +1,177 @@
+% csmtr.sty	K. J. Turner	21/10/08
+
+% This LaTeX style file sets up the environment for producing Departmental
+% Technical Reports. It can be used with article or report style and LaTeX 2e.
+
+\NeedsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{bftn}
+
+\usepackage{palatino}
+\usepackage{fancyhdr}
+\usepackage{vhistory}
+\usepackage{url}
+\usepackage{boxedminipage}
+\usepackage{fancybox}
+\usepackage{alltt}
+\usepackage{parskip}
+
+\topmargin -0.5 in			% Top margin 1 inch
+\oddsidemargin 0.0 in			% Left margin 1" on odd-numbered pages
+\evensidemargin 0.0 in			% Left margin 1" on even-numbered pages
+\marginparwidth 0.75 in			% Width of marginal notes
+
+\textwidth 6.264 in			% Width of text area
+\textheight 9.26 in			% Height of text area
+
+% Table of contents
+
+\@ifundefined{chapter}{			% "article" style
+  \def\intro#1{
+    \clearpage
+    \global\@topnum\z@ \@afterindentfalse
+    \addcontentsline{toc}{section}{#1}
+    \section*{#1}
+  }
+}{					% "report" style
+  \def\intro#1{
+    \cleardoublepage \thispagestyle{plain}
+    \global\@topnum\z@ \@afterindentfalse
+    \typeout{#1.}
+    \addcontentsline{toc}{chapter}{#1}
+    \markboth{#1}{#1}
+    \vspace*{30pt}
+    {
+      \parindent 0pt \raggedright
+      \huge \bf #1 \par
+      \nobreak \vskip 30pt
+    }
+    \@afterheading
+  }
+}
+
+% Automatic date
+
+\def\@date{
+  \ifcase \month
+    \or January
+    \or February
+    \or March
+    \or April
+    \or May
+    \or June
+    \or July
+    \or August
+    \or September
+    \or October
+    \or November
+    \or December
+  \fi
+ \space\number\year
+}
+
+% Graphics
+\RequirePackage{ifpdf}
+\ifpdf
+  \usepackage[pdftex]{graphicx}
+  \DeclareGraphicsExtensions{.pdf}
+\else
+  \usepackage{graphicx}
+  \DeclareGraphicsExtensions{.eps,.emf,.wmf}
+  \DeclareGraphicsRule{.emf}{bmp}{}{}
+  \DeclareGraphicsRule{.wmf}{bmp}{}{}
+\fi
+
+\def\graphic{\@ifnextchar[{\@graphic}{\@graphic[]}}
+
+\def\@graphic[#1]#2{\hspace*{\fill}\includegraphics[#1]{#2}\hspace*{\fill}}
+
+% Title page contents
+
+\def\tnnumber#1{\gdef\@tnnumber{#1}}	% Report number
+\def\email#1{\gdef\@email{#1}}		% Email address
+\def\tnkey#1{\gdef\@tnkey{#1 - }}          % Key (for footers)
+
+\def\bibname{References}
+
+\renewcommand{\ttdefault}{cmtt}
+
+% Environments for syntax and example formatting
+\newenvironment{syntax}%
+{\begin{Sbox}\begin{minipage}{\textwidth}\begin{alltt}}%
+{\end{alltt}\end{minipage}\end{Sbox}
+  \begin{center}\doublebox{\TheSbox}\end{center}}
+\newcommand{\synit}[1]{\textrm{\it #1}}
+\newenvironment{example}%
+{\begin{Sbox}\begin{minipage}{\textwidth}\begin{alltt}}%
+{\end{alltt}\end{minipage}\end{Sbox}
+  \begin{center}\fbox{\TheSbox}\end{center}}
+
+
+\def\maketitle{
+  \begin{titlepage}
+    \let\footnotesize\small
+    \let\footnoterule\relax
+    \setcounter{page}{1}
+    \null
+    \begin{center}
+    {
+      \LARGE \it
+      Barrelfish Project\\
+      ETH Zurich
+    }
+    \vskip 5ex
+    {
+      \includegraphics[scale=0.37]{bfish-logo}~\\[9ex]
+      \LARGE \bf
+      \@title \par
+      \vskip 2ex
+      \Large \it
+      Barrelfish Technical Note \@tnnumber\\[1.5em]
+    }
+    \vskip 5ex
+    {
+      \Large \lineskip .75em
+      \begin{tabular}[t]{c}
+      \@author
+      \end{tabular}\par
+      \vspace{3ex}
+      \vhCurrentDate \\ %% @date \\
+      \vspace{3ex}
+      \large \rm
+      Systems Group\\
+      Department of Computer Science \\
+      \large
+      ETH Zurich\\
+      CAB F.79, Universit\"atstrasse 6, Zurich 8092, Switzerland \\[1ex]
+      \large
+      \url{http://www.barrelfish.org/} \mbox{}
+      \par
+    }
+    \vskip 1.5em
+    \@thanks
+    \end{center}
+  \end{titlepage}
+
+  \setcounter{footnote}{0}
+  \let\thanks\relax
+  \gdef\@title{}
+  \gdef\@author{}
+  %% \gdef\@tnnumber{}
+  \gdef\@email{}
+  \gdef\@thanks{}
+  \let\maketitle\relax
+
+}
+
+  \fancypagestyle{plain}{%
+    \fancyfoot{}
+    \fancyfoot[RO,LE]{\@tnkey\thepage}
+    \fancyfoot[RE,LO]{Barrelfish TN-\@tnnumber}
+    \fancyhead{}
+    \renewcommand{\footrulewidth}{0.4pt}
+  }
+  \pagestyle{plain}
+  
+
+

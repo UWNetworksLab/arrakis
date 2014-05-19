@@ -1,0 +1,205 @@
+/*
+ * Copyright (c) 2010, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * x2apic.dev
+ *
+ * DESCRIPTION: Local eXtended (2) APIC hardware description
+ * 
+ * Based on xapic.dev, the local xAPIC specification.  Numbers in
+ * comments in this file refer to the Intel 64 Architecture x2APIC
+ * Specification, Reference Number: 318148-004, March 2010.
+ */
+
+import xapic;
+
+device x2apic lsbfirst () "Local x2APIC" {
+
+    space msr(index) valuewise "Model-specific Registers";
+
+    // 2.4.1
+    register id ro msr(0x802) "Local APIC ID" type(uint32);
+    
+    // 2.5.1
+    register version ro msr(0x803) "Local APIC Version" {
+	ver         8 "version";
+	_           8;
+	max_lvt     8 "max LVT entry";
+	deoi_sup    1 "Directed EOI support";
+	_           7;
+    };
+
+
+    // 2.3.5.2
+    regtype priority "Various priorities" {
+	sub_class   4 "Priority subclass";
+	priority    4 "Priority";
+	_           24;
+    };
+    register tpr rw msr(0x808) "Task priority" type(priority);
+    register ppr ro msr(0x80A) "Processor priority" type(priority);
+
+    // 2.3.5.3
+    // XXX Must be zero!
+    register eoi rwc msr(0x80b) "End Of Interrupt" type(uint32);
+
+    // 2.4.2 
+    register ldr ro msr(0x80d) "Logical Destination" {
+	logical_id  16 "Logical ID";
+	cluster_id  16 "Cluster ID";
+    };
+
+    // 2.5.1
+    register svr rw msr(0x80f) "Spurious Interrupt Vector Register" {
+	vector      8 "Vector";
+	enable      1 "APIC Software Enable/Disable";
+	_	    3;
+	eoibd	    1 "EOI Broadcast Disable";
+	_	    19;
+    };
+    regarray isr ro msr(0x810) [8; 1] "Interrupt Status" type(uint32);
+    regarray tmr ro msr(0x818) [8; 1] "Trigger Mode" type(uint32);
+    regarray irr ro msr(0x820) [8; 1] "Interrupt Request" type(uint32);
+
+    // 2.3.5.4
+    register esr rwc msr(0x828) "Error Status" {
+	_	    4;
+	ripi	    1 "Redirectible IPI";
+	siv         1 "Send illegal vector";
+	riv         1 "Receive illegal vector";
+	ira         1 "Illegal register address";
+	_           24;
+    };
+
+    constants dst_shorthand "Destination shorthand" {
+	none    = 0b00 "No shorthand";
+	self    = 0b01 "Self";
+	all_inc = 0b10 "All including self";
+	all_exc = 0b11 "All excluding self";
+    };
+    
+    constants dst_mode "Destination mode" {
+	dst_phys	= 0b00 "Physical";
+	dst_log	= 0b01 "Logical";
+    };
+    
+    constants int_level "Interrupt level" {
+	lvl_clr	= 0b00 "Clear";
+	lvl_set	= 0b01 "Set";
+    };
+
+    // 2.3.5.1, 2.4.3
+    register icr rw msr(0x830) "Interrupt Command (lo)" {
+	vector      8 "Vector";
+	dlv_mode    3 type(vdm) "Delivery mode";
+	dst_mode    1 type(dst_mode) "Destination mode";
+	_           2;
+	level       1 type(int_level) "Level";
+	trig_mode   1 type(trigm) "Trigger mode";
+	_           2;
+	dst_short   2 type(dst_shorthand) "Destination shorthand";
+	_           12;
+	dest        32 "Destination field";
+    };
+    
+    constants timer_mode "Timer mode" {
+	one_shot	= 0;
+	periodic	= 1;
+    };
+    
+    constants int_mask "Interrupt mask" {
+	not_masked	= 0 "Not masked";
+	masked	= 1 "Masked";
+    };
+    
+    register lvt_timer rw msr(0x832) "LVT Timer" {
+	vector      8 "Vector";
+	_           4;
+	status      1 "Delivery status";
+	_           3;
+	mask        1 type(int_mask) "Masked";
+	mode        1 type(timer_mode) "Mode";
+	_           14;
+    };
+    
+    constants vdm "Vector delivery mode" { 
+	fixed   = 0b000 "Fixed";
+	lowest  = 0b001 "Lowest priority";
+	smi     = 0b010 "SMI";
+	nmi     = 0b100 "NMI";
+	init    = 0b101 "INIT";
+	startup = 0b110 "Start Up";
+	extint  = 0b111 "ExtINT";
+    };
+    
+    constants trigm "Trigger mode" {
+	edge	= 0 "Edge";
+	level	= 1 "Level";
+    };
+
+    regtype lvt_lint "LVT Int" {
+	vector      8 "Vector";
+	dlv_mode    4 type(xapic.vdm) "Delivery mode";
+	_           1;
+	status      1 "Delivery status";
+	pinpol      1 "Pin polarity";
+	rirr        1 "Remote IRR";
+	trig_mode   1 type(trigm) "Trigger mode";
+	mask        1 type(int_mask) "Mask";
+	_           14;
+    };
+
+    regtype lvt_mon "LVT monitor" {
+	vector      8 "Vector";
+	dlv_mode    4 type(vdm) "Delivery mode";
+	_           1;
+	status      1 "Delivery status";
+	_           3;
+	mask        1 type(int_mask) "Mask";
+	_           14;
+    };
+
+    register lvt_thermal rw msr(0x833) type (lvt_mon);
+    register lvt_perfmon rw msr(0x834) type (lvt_mon);
+    register lvt_lint0 rw msr(0x835) type(lvt_lint);
+    register lvt_lint1 rw msr(0x836) type(lvt_lint);
+
+    register lvt_err rw msr(0x837) { 
+	vector      8 "Vector";
+	_           4;
+	status      1 "Delivery status";
+	_           3;
+	mask        1 type(int_mask) "Mask";
+	_           15;
+    };
+    
+    register init_count rw msr(0x838) "Initial Count" type(uint32);
+    register cur_count rw msr(0x839) "Current Count" type(uint32) ;
+    
+    constants divide "Timer Divide values" {
+	by1         = 0b1011;
+	by2         = 0b0000;
+	by4         = 0b0001;
+	by8         = 0b0010;
+	by16        = 0b0011;
+	by32        = 0b1000;
+	by64        = 0b1001;
+	by128       = 0b1010;
+    };
+    register dcr rw msr(0x83e) "Divide Configuration" {
+	div_val     4 type(divide) "Timer divide value";
+	_           28;
+    };
+    
+    // 2.4.5
+    register sipi wo msr(0x83f) "Self IPI" {
+	vector	8 "Vector";
+	_	24;
+    };
+
+};

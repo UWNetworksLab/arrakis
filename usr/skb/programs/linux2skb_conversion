@@ -1,0 +1,43 @@
+#!/bin/bash
+
+#geraete und bridges
+#sed -r -e '/(^[ \t]*Region)|(^[0-9])|(^[ \t]*I\/O)|(^[ \t]*Bus)|(^[ \t]*Memory)|(^[ \t]*Prefetchable)/!d' data_linux_nos4.txt 
+
+
+#nur geraete
+#sed -r -e '/(^[ \t]*Region)|(^[0-9])/!d' -e 's/^([0-9a-f]{1,2})\:([0-9a-f]{1,2})\.([0-9a-f]{1,2})/buselement\(device, addr(\1,\2,\3)/' data_linux_nos4.txt 
+
+echo ":-lib(cio)."  > $1.pl.tmp
+echo "get_devices(Devices) :-" >> $1.pl.tmp
+echo "Devices = [buselement(device, addr(-1,-1,-1),[" >> $1.pl.tmp
+
+#nur geraete ohne I/O regionen
+sed -r -e '/(^[ \t]*Region)|(^[0-9])/!d' \
+       -e "s/^([0-9a-f]{1,2})\:([0-9a-f]{1,2})\.([0-9a-f]{1,2}).*/nuet]),\nbuselement\(device, addr(16'\1,16'\2,16'\3),[/" \
+       -e '/I\/O/d' \
+       -e '/virtual/d' \
+       -e "s/Region ([0-9]): Memory at ([0-9a-f]*) \(([0-9]{2})-bit, ([a-z\-]*)\) \[size=([0-9]*)([KM]*).*/region(\1,16'\2,\3,\4,\5,\6),/" \
+       -e 's/,\),$/,b\),/' \
+       -e 's/,K\),$/,k\),/' \
+       -e 's/,M\),$/,m\),/' \
+       -e 's/non-prefetchable/nonprefetchable/'  $1 >> $1.pl.tmp
+
+echo "nuet])]." >> $1.pl.tmp
+
+
+
+echo "get_bridges(Bridges) :-" >> $1.pl.tmp
+echo "Bridges = [buselement(bridge, addr(-1,-1,-1)," >> $1.pl.tmp
+
+#nur bridges ohne I/O-Fenster
+sed -r -e '/(^[0-9])|(^[ \t]*Bus)|(^[ \t]*Memory)|(^[ \t]*Prefetchable)/!d' \
+       -e "s/^([0-9a-f]{1,2})\:([0-9a-f]{1,2})\.([0-9a-f]{1,2}).*/_),\nbuselement\(bridge, addr(16'\1,16'\2,16'\3),/" \
+       -e "s/.*secondary=([0-9a-f]{1,2}).*/secondary(16'\1),/" \
+       -e "s/.*Memory behind bridge: ([0-9a-f]*)-([0-9a-f]*)/m(16'\1,16'\2),/" \
+       -e "s/.*Prefetchable memory behind bridge: ([0-9a-f]*)-([0-9a-f]*)/p(16'\1,16'\2),/" $1 >> $1.pl.tmp
+
+echo "_)]." >> $1.pl.tmp
+
+#-e '/virtual/d' -e 's/Region ([0-9]): Memory at ([0-9a-f]*) \(([0-9]{2})-bit, ([a-z\-]*)\) \[size=([0-9]*)([KM]*).*/region(\1,\2,\3,\4,\5,\6)/'
+
+#

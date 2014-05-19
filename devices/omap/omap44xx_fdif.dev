@@ -1,0 +1,217 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_fdif.dev
+ *
+ * DESCRIPTION: Mackerel file for OMAP4 FDIF module.
+ *
+ */
+ 
+device omap44xx_fdif msbfirst ( addr base ) "" {
+    
+    
+    register fdif_revision ro addr(base, 0x0) "IP Revision Identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+    
+    register fdif_hwinfo addr(base, 0x4) "Information about the IP module's hardware configuration, that is, typically the module's HDL generics (if any). Actual field format and encoding is up to the module's designer to decide." {
+        _ 28 mbz;
+        fdif_tags 4 ro "Hardware design value. This bit field reflects the value of the FDIF_TAG generic parameter. 0x0: 1 tag supported 0x1: 2 tags supported [...] 0xF: 16 tags supported";
+    };
+
+    constants standbymode_status width(2) "" {
+        STANDBYMODE_0 = 0 "Force-standby mode: local initiator is unconditionally placed in standby state. Backup mode, for debug only.";
+        STANDBYMODE_1 = 1 "No-standby mode: local initiator is unconditionally placed out of standby state. Backup mode, for debug only.";
+        STANDBYMODE_2 = 2 "Smart-standby mode: local initiator standby status depends on local conditions, that is, the module's functional requirement from the initiator. IP module shall not generate (initiator-related) wake-up events.";
+        STANDBYMODE_3 = 3 "Reserved";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle mode: local target's idle state follows (acknowledges) the system's idle requests unconditionally, that is, regardless of the IP module's internal requirements. Backup mode, for debug only.";
+        IDLEMODE_1 = 1 "No-idle mode: local target never enters idle state. Backup mode, for debug only.";
+        IDLEMODE_2 = 2 "Smart-idle mode: local target's idle state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements. IP module shall not generate (IRQ- or DMA-request-related) wake-up events.";
+        IDLEMODE_3 = 3 "Reserved";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_DONE = 0 "Reset done, no pending action";
+        SOFTRESET_ONGOING = 1 "Reset (software or other) ongoing";
+    };
+    
+    register fdif_sysconfig addr(base, 0x10) "Clock management configuration" {
+        _ 26 mbz;
+        standbymode 2 rw type(standbymode_status) "Configuration of the local initiator state management mode. By definition, initiator may generate read/write transaction as long as it is out of STANDBY state.";
+        idlemode 2 rw type(idlemode_status) "Configuration of the local target state management mode. By definition, target can handle read/write transaction as long as it is out of IDLE state.";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Software reset.";
+    };
+
+    constants finish_irq_status width(1) "" {
+        FINISH_IRQ_0 = 0 "No event pending";
+        FINISH_IRQ_1 = 1 "Event pending";
+    };
+    
+    regarray fdif_irqstatus_raw addr(base, 0x24)[3;0x10] "Per-event raw interrupt status vector, line #n. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 23 mbz;
+        finish_irq 1 rw type(finish_irq_status) "Face detection processing done.";
+        _ 7 mbz;
+        err_irq 1 rw type(finish_irq_status) "Error received by the L3 port.";
+    };
+    
+    
+    regarray fdif_irqstatus addr(base, 0x28)[3;0x10] "Per-event 'enabled' interrupt status vector, line #n. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 23 mbz;
+        finish_irq 1 rw1c type(finish_irq_status) "Face detection processing done.";
+        _ 7 mbz;
+        err_irq 1 rw1c type(finish_irq_status) "Error received by the L3 port.";
+    };
+    
+    constants finish_irqenable_status width(1) "" {
+        FINISH_IRQ_MASKED = 0 "Interrupt disabled (masked)";
+        FINISH_IRQ_ENABLED = 1 "Interrupt enabled";
+    };
+    
+    regarray fdif_irqenable_set addr(base, 0x2C)[3;0x10] "Per-event interrupt enable bit vector, line #n. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 23 mbz;
+        finish_irq 1 rw type(finish_irqenable_status) "Face detection processing done.";
+        _ 7 mbz;
+        err_irq 1 rw type(finish_irqenable_status) "Error received by the L3 port.";
+    };
+    
+    constants finish_irq_status3 width(1) "" {
+        FINISH_IRQ_0_r_9 = 0 "Interrupt disabled (masked)";
+        FINISH_IRQ_1_r_9 = 1 "Interrupt enabled";
+    };
+    
+    regarray fdif_irqenable_clr addr(base, 0x30)[3;0x10] "Per-event interrupt enable bit vector, line #n. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 23 mbz;
+        finish_irq 1 rw1c type(finish_irqenable_status) "Face detection processing done.";
+        _ 7 mbz;
+        err_irq 1 rw1c type(finish_irqenable_status) "Error received by the L3 port.";
+    };
+
+    register fdif_picaddr addr(base, 0x60) "Picture data store address. The 5 least significant bits are forced to 0." type(uint32);
+
+    constants mstandby_hdshk_status width(1) "" {
+        MSTANDBY_HDSHK_COMPLETE = 0 "Handshaking not completed. Do not initiate traffic on L3.";
+        MSTANDBY_HDSHK_INCOMPLETE = 1 "Handshaking completed. Can safely use the FDIF module.";
+    };
+
+    constants mstandby_status width(1) "" {
+        MSTANDBY_0 = 0 "Write: Clear MStandby signal. One polls.MSTANDBY_HDSHK = 1 after writing this bit to ensure that the power management handshaking is completed.";
+        MSTANDBY_1 = 1 "Write: Asserts MStandby signal";
+    };
+
+    constants wrnp_status width(1) "" {
+        WRNP_0 = 0 "All writes are non posted";
+        WRNP_1 = 1 "All writes are posted";
+    };
+    
+    register fdif_ctrl addr(base, 0x64) "" {
+        _ 25 mbz;
+        mstandby_hdshk 1 ro type(mstandby_hdshk_status) "MStandby / Wait power management handshaking status bit The power management framework of the FDIF module is based on the handshaking of the MSTANDBY and WAIT signals. When going from a idle to normal power management transition, the software polls for FDIF_CTRL.MSTANDBY_HDSHK = 1 before starting the face detection processing.";
+        mstandby 1 rw type(mstandby_status) "MStandby signal generation. This bit shall be set to initiate a power management transition from NORMAL to IDLE or IDLE to NORMAL.";
+        max_tags 4 rw "Max interconnect tags. This bit field sets the maximum number of interconnect tags that the module shall use. This number is programmable between 1 (MAX_TAGS = 0) and FDIF_TAGS (MAX_TAGS = FDIF_TAGS - 1). The value of MAX_TAGS is reflected in the FIDIF_HWINFO register setting. This register setting is expected to have impact on performance. It shall be set once at initialization. Higher value will give more bandwidth to the initiator. Lower value will give less bandwidth to the initiator. This value shall be set as low as possible such that other system initiators are not penalized.";
+        wrnp 1 rw type(wrnp_status) "L3 port non-posted write control. Dynamic usage of this feature is not supported. This bit shall be set at initialization and not modified hereafter until the processing is completed. When non-posted writes are used, tags shall be used for best performance (MAX_TAGS &amp;gt; 1).";
+    };
+    
+    register fdif_wkaddr addr(base, 0x68) "Work area address. The 5 least significant bits are forced to 0." type(uint32);
+
+    constants finish_status width(1) "" {
+        FINISH_INCOMPLETE = 0 "Write: Disable Read: Process incomplete";
+        FINISH_COMPLETE = 1 "Write: Process complete flag clear Read: Process complete";
+    };
+
+    constants run_status width(1) "" {
+        RUN_0 = 0 "Write: Disable Read: No processing";
+        RUN_1 = 1 "Write: Process start request Read: Processing data";
+    };
+
+    constants srst_status width(1) "" {
+        SRST_CANCEL = 0 "Write: Disable Read: Reset cancel";
+        SRST_UNDER_RESET = 1 "Write: Reset Read: Under reset";
+    };
+    
+    register fd_ctrl addr(base, 0x80) "Control register Don't set more than 2 bits to '1' at the same time. Otherwise, operations cannot be guaranteed." {
+        _ 29 mbz;
+        finish 1 rw type(finish_status) "Process Completion Flag Clear";
+        run 1 rw type(run_status) "Process Start Request";
+        srst 1 rw type(srst_status) "Software Reset This bit shall not be used to reset the FDIF module. Instead, the FDIF_SYSCONFIG[0] SOFTRESET bit shall be used for complete soft reset.";
+    };
+    
+    register fd_dnum addr(base, 0x84) "Face Detection Result Count Register" {
+        _ 26 mbz;
+        dnum 6 ro "Face detection result count. Up to 35 faces can be detected. Number of face(s) detected: 0x0: 0 face detected 0x1: 1 face detected 0x2: 2 faces detected [...] 0x23: 35 faces detected 0x24 to 0x3F: unused";
+    };
+
+    constants dir_status width(2) "" {
+        DIR_UP = 0 "Executes only for UP";
+        DIR_RIGHT = 1 "Executes only for RIGHT";
+        DIR_LEFT = 2 "Executes only for LEFT";
+        DIR_3 = 3 "Reserved";
+    };
+
+    constants min_status width(2) "" {
+        MIN_20 = 0 "Set the min face size to 20 pixels";
+        MIN_25 = 1 "Set the min face size to 25 pixels";
+        MIN_32 = 2 "Set the min face size to 32 pixels";
+        MIN_40 = 3 "Set the min face size to 40 pixels";
+    };
+    
+    register fd_dcond addr(base, 0x88) "Detection Condition Setting Register" {
+        _ 28 mbz;
+        dir 2 rw type(dir_status) "Detection direction setting";
+        min 2 rw type(min_status) "Reserved";
+    };
+    
+    register fd_startx addr(base, 0x8C) "Detection Area Setting Register: X Start Coordinate." {
+        _ 24 mbz;
+        startx 8 rw "Starting X coordinates Permitted values are 0&amp;lt;=STARTX&amp;lt;=160";
+    };
+    
+    register fd_starty addr(base, 0x90) "Detection Area Setting Register: Y Start Coordinate." {
+        _ 25 mbz;
+        starty 7 rw "Starting Y coordinates Permitted values are 0&amp;lt;=STARTY&amp;lt;=120";
+    };
+    
+    register fd_sizex addr(base, 0x94) "Detection Area Setting Register: X Direction Size" {
+        _ 23 mbz;
+        sizex 9 rw "X Direction Size";
+    };
+    
+    register fd_sizey addr(base, 0x98) "Detection Area Setting Register: Y Direction Size" {
+        _ 24 mbz;
+        sizey 8 rw "Y Direction Size";
+    };
+    
+    register fd_lhit addr(base, 0x9C) "Threshold Setting Register" {
+        _ 28 mbz;
+        lhit 4 rw "Threshold Permitted values are 0x0 to 0x9";
+    };
+    
+    regarray fd_centerx addr(base, 0x160)[35;0x10] "Detection Result: X Coordinate. Its value is undefined after reset." {
+        _ 23 rsvd;
+        centerx 9 ro "Face position: center X coordinate The coordinates given by (FD_CENTERX_i, FD_CENTERY_i) give the central coordinates of the face position. Permitted values are 0x0 to 0x13F";
+    };    
+    
+    regarray fd_centery addr(base, 0x164)[35;0x10] "Detection Result: Y Coordinate. Its value is undefined after reset." {
+        _ 24 rsvd;
+        centery 8 ro "Face position: center Y coordinate The coordinates given by (FD_CENTERX_i, FD_CENTERY_i) give the central coordinates of the face position. Permitted values are 0x0 to 0xEF";
+    };
+    
+    regarray fd_confsize addr(base, 0x168)[35;0x10] "Detection Result: Confidence Level and Size. Its value is undefined after reset." {
+        _ 20 rsvd;
+        conf 4 ro "Confidence level Permitted values are 0x0 (high) to 0x9 (low)";
+        size 8 ro "Detection result face size Permitted values 0x14 to 0xF0";
+    };
+    
+    regarray fd_angle addr(base, 0x16C)[35;0x10] "Detection Result: Angle. Its value is undefined after reset." {
+        _ 23 rsvd;
+        angle 9 ro "Detection result face angle Permitted values: When DIR = 0: 0x0 (0 deg) to 0x1E (30 deg) and 0x14A (330 deg) to 0x167 (359 deg) When DIR = 1: 0x03C (60 deg) to 0x078 (120 deg) When DIR = 2: 0x0F0 (240 deg) to 0x12C (300 deg)";
+    };
+};

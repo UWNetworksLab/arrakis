@@ -1,0 +1,26 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2011, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /lib/cxx
+--
+--------------------------------------------------------------------------
+[(
+  let subdirs =  [ "src" ]
+      args = library { target = "cxx",
+                    cxxFiles = concat [ find cxxInDir dir | dir <- subdirs ],
+                    architectures = [a],
+                    omitCxxFlags = [ "-Werror", "-Wshadow", "-Wmissing-declarations",
+                                     "-Wmissing-field-initializers", "-Wredundant-decls" ],
+                    addCxxFlags = [ "-Wno-unused-parameter", "-Wwrite-strings",
+                                    "-Wno-long-long" ]
+                  }
+      defaultopts = libGetOptionsForArch a args
+  in
+    Rules [Rules [compileCxxFile defaultopts s | s <- (Args.cxxFiles args)],
+           staticLibrary defaultopts (Args.target args) (allObjectPaths defaultopts args) [] ]
+) | a <- [ "x86_64" ] ]

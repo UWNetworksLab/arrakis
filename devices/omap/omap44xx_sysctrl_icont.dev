@@ -1,0 +1,193 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_sysctrl_icont.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_sysctrl_icont msbfirst ( addr base ) "" {
+    
+    
+    register ivahd_revision ro addr(base, 0x0) "IP revision identifier (X.Y.R). Used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants sl2bank_status width(2) "" {
+        SL2BANK_0_r = 0 "1 memory bank";
+        SL2BANK_1_r = 1 "2 memory bank";
+        SL2BANK_2_r = 2 "4 memory bank";
+        SL2BANK_3_r = 3 "8 memory bank";
+    };
+
+    constants sl2size_status width(4) "" {
+        SL2SIZE_1_r = 1 "16KB";
+        SL2SIZE_2_r = 2 "32KB";
+        SL2SIZE_3_r = 3 "48KB";
+        SL2SIZE_4_r = 4 "64KB";
+        SL2SIZE_5_r = 5 "96KB";
+        SL2SIZE_6_r = 6 "128KB";
+        SL2SIZE_7_r = 7 "160KB";
+        SL2SIZE_8_r = 8 "192KB";
+        SL2SIZE_9_r = 9 "224KB";
+        SL2SIZE_10_r = 10 "256KB";
+        SL2SIZE_11_r = 11 "320KB";
+        SL2SIZE_12_r = 12 "384KB";
+        SL2SIZE_13_r = 13 "448KB";
+        SL2SIZE_14_r = 14 "512KB";
+    };
+    
+    register ivahd_hwinfo addr(base, 0x4) "Information about the IP module's hardware configuration." {
+        _ 17 mbz;
+        ecd3 1 ro "ECD3 available 0: ECD3 not present 1: ECD3 present";
+        mc3 1 ro "MC3 available 0: MC3 not present 1: MC3 present";
+        ipe3 1 ro "iPE3 available 0: iPE3 not present 1: iPE3 present";
+        calc3 1 ro "CALC3 available 0: CALC3 not present 1: CALC3 present";
+        ime3 1 ro "iME3 available 0: iME3 not present 1: iME3 present";
+        ilf3 1 ro "iLF3 available 0: iLF3 not present 1: iLF3 present";
+        vdma 1 ro "vDMA available 0: vDMA not present 1: vDMA present";
+        icont2 1 ro "iCONT2 available 0: iCONT2 not present 1: iCONT2 present";
+        icont1 1 ro "iCONT1 available 0: iCONT1 not present 1: iCONT1 present";
+        sl2bank 2 ro type(sl2bank_status) "";
+        sl2size 4 ro type(sl2size_status) "Size of SL2 memory";
+    };
+
+    constants standbymode_status width(2) "" {
+        STANDBYMODE_1 = 1 "No-standby mode: local initiator is unconditionally placed out of standby state. Backup mode, for debug only.";
+        STANDBYMODE_2 = 2 "Smart-standby mode: local initiator standby status depends on local conditions, that is, the module's functional requirement from the initiator. IP module shall not generate (initiator-related) wakeup events.";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_1 = 1 "No-idle mode: local target never enters idle state. Backup mode, for debug only.";
+        IDLEMODE_2 = 2 "Smart-idle mode: local target's idle state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements. IP module shall not generate (IRQ- or DMA-request-related) wakeup events.";
+    };
+    
+    register ivahd_sysconfig addr(base, 0x10) "Clock management configuration" {
+        _ 26 mbz;
+        standbymode 2 rw type(standbymode_status) "Configuration of the local initiator state management mode. By definition, initiator may generate read/write transaction as long as it is out of STANDBY state.0x0 and 0x3: Reserved .";
+        idlemode 2 rw type(idlemode_status) "Configuration of the local target state management mode. By definition, target can handle read/write transaction as long as it is out of IDLE state.0x0 and 0x3: Reserved .";
+        _ 2 mbz;
+    };
+
+    constants sysctrl_clkerr_status width(1) "" {
+        SYSCTRL_CLKERR_0_w = 0 "No action";
+        SYSCTRL_CLKERR_0_r = 0 "No event pending";
+        SYSCTRL_CLKERR_1_r = 1 "Event pending";
+        SYSCTRL_CLKERR_1_w = 1 "Set event (debug)";
+    };
+    
+    register ivahd_irqstatus_raw addr(base, 0x24) "Per-event raw interrupt status vector. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 31 mbz;
+        sysctrl_clkerr 1 rw type(sysctrl_clkerr_status) "Settable raw status for Clock Programming Error event";
+    };
+
+    constants sysctrl_clkerr_status1 width(1) "" {
+        SYSCTRL_CLKERR_0_w_1 = 0 "No action";
+        SYSCTRL_CLKERR_0_r_1 = 0 "No (enabled) event pending";
+        SYSCTRL_CLKERR_1_r_1 = 1 "Event pending";
+        SYSCTRL_CLKERR_1_w_1 = 1 "Clear (raw) event";
+    };
+    
+    register ivahd_irqstatus addr(base, 0x28) "Per-event 'enabled' interrupt status vector, line 0. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 31 mbz;
+        sysctrl_clkerr 1 rw type(sysctrl_clkerr_status1) "Clearable, enabled status for Clock Programming Error event";
+    };
+
+    constants sysctrl_clkerr_status2 width(1) "" {
+        SYSCTRL_CLKERR_0_w_2 = 0 "No action";
+        SYSCTRL_CLKERR_0_r_2 = 0 "Interrupt disabled (masked)";
+        SYSCTRL_CLKERR_1_r_2 = 1 "Interrupt enabled";
+        SYSCTRL_CLKERR_1_w_2 = 1 "Enable interrupt";
+    };
+    
+    register ivahd_irqenable_set addr(base, 0x2C) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 31 mbz;
+        sysctrl_clkerr 1 rw type(sysctrl_clkerr_status2) "Clock Programing Error";
+    };
+
+    constants sysctrl_clkerr_status3 width(1) "" {
+        SYSCTRL_CLKERR_0_w_3 = 0 "No action";
+        SYSCTRL_CLKERR_0_r_3 = 0 "Interrupt disabled (masked)";
+        SYSCTRL_CLKERR_1_r_3 = 1 "Interrupt enabled";
+        SYSCTRL_CLKERR_1_w_3 = 1 "Disable interrupt";
+    };
+    
+    register ivahd_irqenable_clr addr(base, 0x30) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 31 mbz;
+        sysctrl_clkerr 1 rw type(sysctrl_clkerr_status3) "Clock Programing Error";
+    };
+    
+    register ivahd_sync_irqstatus_raw addr(base, 0x34) "Per-event raw interrupt status vector. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 24 mbz;
+        sync_input7_0 8 rw "Settable raw status for SYNC INPUT event. For each bit of the bit field: Read 0: No event pending Read 1: Event pending Write 0: No action Write 1: Set event (debug)";
+    };
+    
+    register ivahd_sync_irqstatus addr(base, 0x38) "Per-event 'enabled' interrupt status vector, line 0. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 24 mbz;
+        sync_input7_0 8 rw "Clearable, enabled status for SYNC INPUT event. For each bit of the bit field: Read 0: No (enabled) event pending Read 1: Event pending Write 0: No action Write 1: Clear (raw) event";
+    };
+    
+    register ivahd_sync_irqenable_set addr(base, 0x3C) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 24 mbz;
+        sync_input7_0 8 rw "Enable for interrupt event. For each bit of the bit field: Read 0: Interrupt disabled (masked) Read 1: Interrupt enabled Write 0: No action Write 1: Enable interrupt";
+    };
+    
+    register ivahd_sync_irqenable_clr addr(base, 0x40) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 24 mbz;
+        sync_input7_0 8 rw "Enable for interrupt event. For each bit of the bitfiled: Read 0: Interrupt disabled (masked) Read 1: Interrupt enabled Write 0: No action Write 1: Disable interrupt";
+    };
+    
+    register ivahd_clkctrl addr(base, 0x50) "IVA-HD clock control register" {
+        _ 21 mbz;
+        smset 1 rw "Clock control of SMSET 0: Exit idle state and start SMSET clock 1: Request SMSET to go to idle state and stop SMSET clock Note: Shutting down SMSET clock may hang system if software performs software instrumentation and/or access to its configuration port.";
+        msgif 1 rw "Clock control of MSGIF 0: Exit idle state and start MSGIF clock 1: Request MSGIF to go to idle state and stop MSGIF clock";
+        ecd3 1 rw "Clock control of ECD3 0: Exit idle state and start ECD3 clock 1: Request ECD3 to go to idle state and stop ECD3 clock";
+        mc3 1 rw "Clock control of MC3 0: Exit idle state and start MC3 clock 1: Request MC3 to go to idle state and stop MC3 clock";
+        ipe3 1 rw "Clock control of iPE3 0: Exit idle state and start iPE3 clock 1: Request iME3 to go to idle state and stop iPE3 clock";
+        calc3 1 rw "Clock control of CALC3 0: Exit idle state and start CALC3 clock 1: Request CALC3 to go to idle state and stop CALC3 clock";
+        ilf3 1 rw "Clock control of iLF3 0: Exit idle state and start iLF3 clock 1: Request iLF3 to go to idle state and stop iLF3 clock";
+        ime3 1 rw "Clock control of iME3 0: Exit idle state and start iME3 clock 1: Request iME3 to go to idle state and stop iME3 clock";
+        vdma 1 rw "Clock control of vDMA 0: Exit idle state and start vDMA clock 1: Request vDMA to go to idle state and stop vDMA clock";
+        icont2 1 rw "Clock control of iCONT2 0: Exit idle state and start iCONT2 clock 1: Request iCONT2 to go to idle state and stop iCONT2 clock";
+        icont1 1 rw "Clock control of iCONT1 0: Exit idle state and start iCONT1 clock 1: Request iCONT1 to go to idle state and stop iCONT1 clock";
+    };
+    
+    register ivahd_clkst addr(base, 0x54) "IVA-HD clock status register" {
+        _ 21 mbz;
+        smset 1 ro "Clock status of SMSET 1: SMSET clock is active 0: SMSET clock is idled";
+        msgif 1 ro "Clock status of MSGIF 1: MSGIF clock is active 0: MSGIF clock is idled";
+        ecd3 1 ro "Clock status of ECD3 1: ECD3 clock is active 0: ECD3 clock is idled";
+        mc3 1 ro "Clock status of MC3 1: MC3 clock is active 0: MC3 clock is idled";
+        ipe3 1 ro "Clock status of iPE3 1: iPE3 clock is active 0: iPE3 clock is idled";
+        calc3 1 ro "Clock status of CALC3 1: CALC3 clock is active 0: CALC3 clock is idled";
+        ilf3 1 ro "Clock status of iLF3 1: iLF3 clock is active 0: iLF3 clock is idled";
+        ime3 1 ro "Clock status of iME3 1: iME3 clock is active 0: iME3 clock is idled";
+        vdma 1 ro "Clock status of vDMA 1: vDMA clock is active 0: vDMA clock is idled";
+        icont2 1 ro "Clock status of iCONT2 1: iCONT2 clock is active 0: iCONT2 clock is idled";
+        icont1 1 ro "Clock status of iCONT1 1: iCONT1 clock is active 0: iCONT1 clock is idled";
+    };
+    
+    register ivahd_stdbyst addr(base, 0x58) "IVA-HD STANDBY status" {
+        _ 29 mbz;
+        vdma 1 ro "vDMA Standby status 0: module is not in Standby 1: module is in Standby";
+        icont2 1 ro "iCONT2 Standby status 0: module is not in Standby 1: module is in Standby";
+        icont1 1 ro "iCONT1 Standby status 0: module is not in Standby 1: module is in Standby";
+    };
+};

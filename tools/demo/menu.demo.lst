@@ -1,0 +1,32 @@
+# This file assumes make install has installed demo bits under:
+#      $(TFTP_ROOT)/barrelfish/x86_64.
+
+timeout 0
+title   Barrelfish-demo
+root    (nd)
+kernel  /barrelfish/x86_64/sbin/cpu loglevel=4 logmask=0
+#
+# Essentials
+#
+module  /barrelfish/x86_64/sbin/init
+module  /barrelfish/x86_64/sbin/mem_serv
+module  /barrelfish/x86_64/sbin/monitor bootcpus=1-15
+module  /barrelfish/x86_64/sbin/chips
+module  /barrelfish/x86_64/sbin/skb
+module  /barrelfish/x86_64/sbin/pci
+#
+# Drivers
+#
+module /barrelfish/x86_64/sbin/lpc_timer
+module /barrelfish/x86_64/sbin/serial
+module /barrelfish/x86_64/sbin/e1000n core=11 irq
+#
+# Shell
+#
+module /barrelfish/x86_64/sbin/fish
+#
+# Demo
+#
+module /barrelfish/x86_64/sbin/bfscope core=15
+module /barrelfish/x86_64/sbin/spantest nospawn
+module /barrelfish/x86_64/sbin/pixels nospawn

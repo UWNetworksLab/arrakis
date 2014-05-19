@@ -1,0 +1,539 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_mcspi3.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_mcspi3 msbfirst ( addr base ) "" {
+    
+    
+    register mcspi_hl_rev ro addr(base, 0x0) "IP Revision Identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants ffnbyte_status width(5) "" {
+        FFNBYTE_1_r = 1 "FIFO 16 bytes depth";
+        FFNBYTE_2_r = 2 "FIFO 32 bytes depth";
+        FFNBYTE_4_r = 4 "FIFO 64 bytes depth";
+        FFNBYTE_8_r = 8 "FIFO 128 bytes depth";
+        FFNBYTE_16_r = 16 "FIFO 256 bytes depth";
+    };
+
+    constants usefifo_status width(1) "" {
+        USEFIFO_0_r = 0 "FIFO not implemented in design";
+        USEFIFO_1_r = 1 "FIFO and its management implemented in design with depth defined by FFNBYTE generic";
+    };
+    
+    register mcspi_hl_hwinfo addr(base, 0x4) "Information about the IP module's hardware configuration, that is, typically the module's HDL generics (if any). Actual field format and encoding is up to the module's designer to decide." {
+        rsvd 25 ro "Reserved These bits are initialized to 0, and writes to them are ignored.";
+        retmode 1 ro "Retention Mode generic parameter. This bit field indicates whether the retention mode is supported using the pin PIRFFRET. 0x0: Retention mode disabled 0x1: Retention mode enabled";
+        ffnbyte 5 ro type(ffnbyte_status) "FIFO number of byte generic parameter This register defines the value of FFNBYTE generic parameter, only MSB bits from 8 down to 4 are taken into account.";
+        usefifo 1 ro type(usefifo_status) "Use of a FIFO enable: This bit indicates if a FIFO is integrated within controller design with its management.";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle mode: local target's IDLE state follows (acknowledges) the system's idle requests unconditionally, that is, regardless of the IP module's internal requirements. Backup mode, for debug only.";
+        IDLEMODE_1 = 1 "No-idle mode: local target never enters IDLE state. Backup mode, for debug only.";
+        IDLEMODE_2 = 2 "Smart-idle mode: local target's IDLE state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements. IP module shall not generate (IRQ- or DMA-request-related) wake-up events.";
+        IDLEMODE_3 = 3 "Smart-idle wake-up-capable mode: local target's IDLE state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements. IP module may generate (IRQ- or DMA-request-related) wake-up events when in IDLE state. Mode is relevant only if the appropriate IP module 'swake-up' output(s) is (are) implemented.";
+    };
+
+    constants freeemu_status width(1) "" {
+        FREEEMU_0 = 0 "IP module is sensitive to emulation suspend.";
+        FREEEMU_1 = 1 "IP module is not sensitive to emulation suspend.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_w = 0 "No action";
+        SOFTRESET_0_r = 0 "Reset done, no pending action";
+        SOFTRESET_1_r = 1 "Reset (software or other) ongoing";
+        SOFTRESET_1_w = 1 "Initiate software reset";
+    };
+    
+    register mcspi_hl_sysconfig addr(base, 0x10) "Clock management configuration" {
+        rsvd 28 ro "";
+        idlemode 2 rw type(idlemode_status) "Configuration of the local target state management mode. By definition, target can handle read/write transaction as long as it is out of IDLE state.";
+        freeemu 1 rw type(freeemu_status) "Sensitivity to emulation (debug) suspend input signal.";
+        softreset 1 rw type(softreset_status) "Software reset. (Optional)";
+    };
+    
+    register mcspi_revision ro addr(base, 0x100) "This register contains the revision number." type(uint32);
+
+    constants clockactivity_status width(2) "" {
+        CLOCKACTIVITY_0 = 0 "OCP and functional clocks may be switched off.";
+        CLOCKACTIVITY_1 = 1 "OCP clock is maintained. Functional clock may be switched off.";
+        CLOCKACTIVITY_2 = 2 "Functional clock is maintained. OCP clock may be switched off.";
+        CLOCKACTIVITY_3 = 3 "OCP and functional clocks are maintained.";
+    };
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0 = 0 "If an idle request is detected, the McSPI acknowledges it unconditionally and goes in inactive mode. Interrupt, DMA requests and wake-up lines are unconditionally deasserted and the module wake-up capability is deactivated even if the[EnaWakeUp] bit is set.";
+        SIDLEMODE_1 = 1 "If an idle request is detected, the request is ignored and the module does not switch to wake-up mode, and keeps on behaving normally.";
+        SIDLEMODE_2 = 2 "If an idle request is detected, the module will switch to wake-up mode based on its internal activity, and the wake-up capability can be used if the bit[EnaWakeUp] is set.";
+        SIDLEMODE_3 = 3 "Reserved - do not use.";
+    };
+
+    constants enawakeup_status width(1) "" {
+        ENAWAKEUP_0 = 0 "Wake-up capability is disabled.";
+        ENAWAKEUP_1 = 1 "Wake-up capability is enabled.";
+    };
+
+    constants softreset_status1 width(1) "" {
+        SOFTRESET_0 = 0 "(write) Normal mode";
+        SOFTRESET_1 = 1 "(write) Set this bit to 1 to trigger a module reset. The bit is automatically reset by the hardware.";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "OCP clock is free-running.";
+        AUTOIDLE_1 = 1 "Automatic OCP clock gating strategy is applied, based on the OCP interface activity.";
+    };
+    
+    register mcspi_sysconfig addr(base, 0x110) "This register allows controlling various parameters of the OCP interface." {
+        _ 22 mbz;
+        clockactivity 2 rw type(clockactivity_status) "Clocks activity during wake-up mode period";
+        _ 3 mbz;
+        sidlemode 2 rw type(sidlemode_status) "Power management";
+        enawakeup 1 rw type(enawakeup_status) "Wake-up feature control";
+        softreset 1 rw type(softreset_status1) "Software reset. During reads it always returns 0.";
+        autoidle 1 rw type(autoidle_status) "Internal OCP clock-gating strategy";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Internal module reset is ongoing";
+        RESETDONE_1_r = 1 "Reset completed";
+    };
+    
+    register mcspi_sysstatus addr(base, 0x114) "This register provides status information about the module excluding the interrupt status information." {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal reset monitoring";
+    };
+
+    constants eow_status width(1) "" {
+        EOW_0_w = 0 "w:Event status bit unchanged";
+        EOW_0_r = 0 "r: Event false";
+        EOW_1_r = 1 "r: Event is pending";
+        EOW_1_w = 1 "w:Event status bit is reset";
+    };
+    
+    register mcspi_irqstatus addr(base, 0x118) "The interrupt status regroups all the status of the module internal events that can generate an interrupt." {
+        _ 14 mbz;
+        eow 1 rw1c type(eow_status) "End of word count event when a channel is enabled using the FIFO buffer and the channel had sent the number of SPI word defined byMCSPI_XFERLEVEL[WCNT].";
+        wks 1 rw1c type(eow_status) "Wake-up event in slave mode when an active control signal is detected on the SPIEN line programmed in the field MCSPI_CH0CONF[SPIENSLV]";
+        _ 1 mbz;
+        rx3_full 1 rw1c type(eow_status) "Receiver register is full or almost full. Only when Channel 3 is enabled";
+        tx3_underflow 1 rw1c type(eow_status) "Transmitter register underflow. Only when Channel 3 is enabled. The transmitter register is empty (not updated by host or DMA with new data) before its time slot assignment. Exception: No TX_underflow event when no data has been loaded into the transmitter register since channel has been enabled.";
+        tx3_empty 1 rw1c type(eow_status) "Transmitter register is empty or almost empty. Note: Enabling the channel automatically rises this event.";
+        _ 1 mbz;
+        rx2_full 1 rw1c type(eow_status) "Receiver register full or almost full. Channel 2";
+        tx2_underflow 1 rw1c type(eow_status) "Transmitter register underflow. Channel 2";
+        tx2_empty 1 rw1c type(eow_status) "Transmitter register empty or almost empty. Channel 2";
+        _ 1 mbz;
+        rx1_full 1 rw1c type(eow_status) "Receiver register full or almost full. Channel 1";
+        tx1_underflow 1 rw1c type(eow_status) "Transmitter register underflow. Channel 1";
+        tx1_empty 1 rw1c type(eow_status) "Transmitter register empty or almost empty. Channel 1";
+        rx0_overflow 1 rw1c type(eow_status) "Receiver register overflow (slave mode only). Channel 0";
+        rx0_full 1 rw1c type(eow_status) "Receiver register full or almost full. Channel 0";
+        tx0_underflow 1 rw1c type(eow_status) "Transmitter register underflow. Channel 0";
+        tx0_empty 1 rw1c type(eow_status) "Transmitter register empty or almost empty. Channel 0";
+    };
+
+    constants eow_enable_status width(1) "" {
+        EOW_ENABLE_0 = 0 "Interrupt disabled";
+        EOW_ENABLE_1 = 1 "Interrupt enabled";
+    };
+    
+    register mcspi_irqenable addr(base, 0x11C) "This register allows enabling/disabling of the module internal sources of interrupt, on an event-by-event basis." {
+        _ 14 mbz;
+        eow_enable 1 rw type(eow_enable_status) "End of Word count Interrupt Enable.";
+        wke 1 rw type(eow_enable_status) "Wake-up event interrupt enable in slave mode when an active control signal is detected on the SPIEN line programmed in the MCSPI_CH0CONF[SPIENSLV] bit";
+        _ 1 mbz;
+        rx3_full_enable 1 rw type(eow_enable_status) "Receiver register Full Interrupt Enable. Channel 3";
+        tx3_underflow_enable 1 rw type(eow_enable_status) "Transmitter register Underflow Interrupt Enable. Channel 3";
+        tx3_empty_enable 1 rw type(eow_enable_status) "Transmitter register Empty Interrupt Enable. Channel 3";
+        _ 1 mbz;
+        rx2_full_enable 1 rw type(eow_enable_status) "Receiver register Full Interrupt Enable. Channel 2";
+        tx2_underflow_enable 1 rw type(eow_enable_status) "Transmitter register Underflow Interrupt Enable. Channel 2";
+        tx2_empty_enable 1 rw type(eow_enable_status) "Transmitter register Empty Interrupt Enable. Channel 2";
+        _ 1 mbz;
+        rx1_full_enable 1 rw type(eow_enable_status) "Receiver register Full Interrupt Enable. Channel 1";
+        tx1_underflow_enable 1 rw type(eow_enable_status) "Transmitter register Underflow Interrupt Enable. Channel 1";
+        tx1_empty_enable 1 rw type(eow_enable_status) "Transmitter register Empty Interrupt Enable. Channel 1";
+        rx0_overflow_enable 1 rw type(eow_enable_status) "Receiver register Overflow Interrupt Enable. Channel 0";
+        rx0_full_enable 1 rw type(eow_enable_status) "Receiver register Full Interrupt Enable. Channel 0";
+        tx0_underflow_enable 1 rw type(eow_enable_status) "Transmitter register Underflow Interrupt Enable. Channel 0";
+        tx0_empty_enable 1 rw type(eow_enable_status) "Transmitter register Empty Interrupt Enable. Channel 0";
+    };
+
+    constants wken_status width(1) "" {
+        WKEN_0 = 0 "The event is not allowed to wake-up the system, even if the global control bit MCSPI_SYSCONF[EnaWakeUp] is set.";
+        WKEN_1 = 1 "The event is allowed to wake-up the system if the global control bit MCSPI_SYSCONF[EnaWakeUp] is set.";
+    };
+    
+    register mcspi_wakeupenable addr(base, 0x120) "The wake-up enable register allows enabling and disabling of the module internal sources of wakeup on event-by-event basis." {
+        _ 31 mbz;
+        wken 1 rw type(wken_status) "Wake-up functionality in slave mode when an active control signal is detected on the SPIEN line programmed in the MCSPI_CH0CONF[SPIENSLV] bit";
+    };
+
+    constants spiendir_status width(1) "" {
+        SPIENDIR_0 = 0 "Output (as in master mode)";
+        SPIENDIR_1 = 1 "Input (as in slave mode)";
+    };
+
+    constants spidatdir1_status width(1) "" {
+        SPIDATDIR1_0 = 0 "Output";
+        SPIDATDIR1_1 = 1 "Input";
+    };
+
+    constants wakd_status width(1) "" {
+        WAKD_0 = 0 "The pin is driven low.";
+        WAKD_1 = 1 "The pin is driven high.";
+    };
+    
+    register mcspi_syst addr(base, 0x124) "This register is used to check the correctness of the system interconnect either internally to peripheral bus, or externally to device I/O pads, when the module is configured in system test (SYSTEST) mode." {
+        _ 20 mbz;
+        ssb 1 rw type(wken_status) "Set status bit";
+        spiendir 1 rw type(spiendir_status) "Set the direction of the SPIEN[3:0] lines and SPICLK line.";
+        spidatdir1 1 rw type(spidatdir1_status) "Set the direction of the SPIDAT[1].";
+        spidatdir0 1 rw type(spidatdir1_status) "Set the direction of the SPIDAT[0].";
+        wakd 1 rw type(wakd_status) "SWAKEUP output (signal data value of internal signal to system). The signal is driven high or low according to the value written into this register bit.";
+        spiclk 1 rw "SPICLK line (signal data value) If MCSPI_SYST[SPIENDIR] = 1 (input mode direction), this bit returns the value on the CLKSPI line (high or low), and a write into this bit has no effect. If MCSPI_SYST[SPIENDIR] = 0 (output mode direction), the CLKSPI line is driven high or low according to the value written into this register.";
+        spidat_1 1 rw "SPIDAT[1] line (signal data value) If MCSPI_SYST[SPIDATDIR1] = 0 (output mode direction), the SPIDAT[1] line is driven high or low according to the value written into this register. If MCSPI_SYST[SPIDATDIR1] = 1 (input mode direction), this bit returns the value on the SPIDAT[1] line (high or low), and a write into this bit has no effect.";
+        spidat_0 1 rw "SPIDAT[0] line (signal data value) If MCSPI_SYST[SPIDATDIR0] = 0 (output mode direction), the SPIDAT[0] line is driven high or low according to the value written into this register. If MCSPI_SYST[SPIDATDIR0] = 1 (input mode direction), this bit returns the value on the SPIDAT[0] line (high or low), and a write into this bit has no effect.";
+        spien_3 1 rw "SPIEN[3] line (signal data value) If MCSPI_SYST[SPIENDIR] = 0 (output mode direction), the SPIENT[3] line is driven high or low according to the value written into this register. If MCSPI_SYST[SPIENDIR] = 1 (input mode direction), this bit returns the value on the SPIEN[3] line (high or low), and a write into this bit has no effect.";
+        spien_2 1 rw "SPIEN[2] line (signal data value) If MCSPI_SYST[SPIENDIR] = 0 (output mode direction), the SPIENT[2] line is driven high or low according to the value written into this register. If MCSPI_SYST[SPIENDIR] = 1 (input mode direction), this bit returns the value on the SPIEN[2] line (high or low), and a write into this bit has no effect.";
+        spien_1 1 rw "SPIEN[1] line (signal data value) If MCSPI_SYST[SPIENDIR] = 0 (output mode direction), the SPIENT[1] line is driven high or low according to the value written into this register. If MCSPI_SYST[SPIENDIR] = 1 (input mode direction), this bit returns the value on the SPIEN[1] line (high or low), and a write into this bit has no effect.";
+        spien_0 1 rw "SPIEN[0] line (signal data value) If MCSPI_SYST[SPIENDIR] = 0 (output mode direction), the SPIENT[0] line is driven high or low according to the value written into this register. If MCSPI_SYST[SPIENDIR] = 1 (input mode direction), this bit returns the value on the SPIEN[0] line (high or low), and a write into this bit has no effect.";
+    };
+
+    constants fdaa_status width(1) "" {
+        FDAA_0 = 0 "FIFO data managed by MCSPI_TX(i) and MCSPI_RX(i) registers.";
+        FDAA_1 = 1 "FIFO data managed by MCSPI_DAFTX and MCSPI_DAFRX registers.";
+    };
+
+    constants moa_status width(1) "" {
+        MOA_0 = 0 "Multiple word access disabled";
+        MOA_1 = 1 "Multiple word access enabled with FIFO";
+    };
+
+    constants initdly_status width(3) "" {
+        INITDLY_0 = 0 "No delay for first spi transfer.";
+        INITDLY_1 = 1 "The controller wait 4 SPI bus clock";
+        INITDLY_2 = 2 "The controller wait 8 SPI bus clock";
+        INITDLY_3 = 3 "The controller wait 16 SPI bus clock";
+        INITDLY_4 = 4 "The controller wait 32 SPI bus clock";
+    };
+
+    constants system_test_status width(1) "" {
+        SYSTEM_TEST_0 = 0 "Functional mode";
+        SYSTEM_TEST_1 = 1 "System test mode (SYSTEST)";
+    };
+
+    constants ms_status width(1) "" {
+        MS_0 = 0 "Master - The module generates the SPICLK and SPIEN[3:0].";
+        MS_1 = 1 "Slave - The module receives the SPICLK and SPIEN[3:0].";
+    };
+
+    constants pin34_status width(1) "" {
+        PIN34_0 = 0 "SPIEN is used as a chip-select.";
+        PIN34_1 = 1 "SPIEN is not used. In this mode all related options to chip-select have no meaning.";
+    };
+
+    constants single_status width(1) "" {
+        SINGLE_0 = 0 "More than one channel will be used in master mode.";
+        SINGLE_1 = 1 "Only one channel will be used in master mode. This bit must be set in Force SPIEN mode.";
+    };
+    
+    register mcspi_modulctrl addr(base, 0x128) "This register is dedicated to the configuration of the serial port interface." {
+        _ 23 mbz;
+        fdaa 1 rw type(fdaa_status) "FIFO DMA address 256-bit aligned This register is used when a FIFO is managed by the module and DMA connected to the controller provides only 256-bit aligned address. If this bit is set the enabled channel which uses the FIFO has its data managed through MCSPI_DAFTX and MCSPI_DAFRX registers instead of MCSPI_TX(i) and MCSPI_RX(i) registers.";
+        moa 1 rw type(moa_status) "Multiple word OCP access: This register can only be used when a channel is enabled using a FIFO. It allows the system to perform multiple SPI word access for a single 32-bit OCP word access. This is possible for WL &amp;lt; 16.";
+        initdly 3 rw type(initdly_status) "Initial SPI delay for first transfer: This register is an option only available in SINGLE master mode. The controller waits for a delay to transmit the first SPI word after channel enabled and corresponding TX register filled. This delay is based on SPI output frequency clock. No clock output provided to the boundary and chip select is not active in 4-pin mode within this period.";
+        system_test 1 rw type(system_test_status) "Enables the system test mode";
+        ms 1 rw type(ms_status) "Master/slave";
+        pin34 1 rw type(pin34_status) "Pin mode selection: This register is used to configure the SPI pin mode, in master or slave mode. If asserted the controller only use SIMO, SOMI, and SPICLK clock pin for SPI transfers.";
+        single 1 rw type(single_status) "Single channel/Multi Channel (master mode only)";
+    };
+
+    constants clkg_status width(1) "" {
+        CLKG_0 = 0 "Clock granularity of power of 2";
+        CLKG_1 = 1 "One clock cycle granularity";
+    };
+
+    constants ffer_status width(1) "" {
+        FFER_0 = 0 "The buffer is not used to receive data.";
+        FFER_1 = 1 "The buffer is used to receive data.";
+    };
+
+    constants ffew_status width(1) "" {
+        FFEW_0 = 0 "The buffer is not used to transmit data.";
+        FFEW_1 = 1 "The buffer is used to transmit data.";
+    };
+
+    constants tcs0_status width(2) "" {
+        TCS0_0 = 0 "0.5 clock cycle";
+        TCS0_1 = 1 "1.5 clock cycles";
+        TCS0_2 = 2 "2.5 clock cycles";
+        TCS0_3 = 3 "3.5 clock cycles";
+    };
+
+    constants sbpol_status width(1) "" {
+        SBPOL_0 = 0 "Start-bit polarity is held to 0 during SPI transfer.";
+        SBPOL_1 = 1 "Start-bit polarity is held to 1 during SPI transfer.";
+    };
+
+    constants sbe_status width(1) "" {
+        SBE_0 = 0 "Default SPI transfer length as specified by WL bit field";
+        SBE_1 = 1 "Start bit D/CX added before SPI transfer polarity is defined by MCSPI_CH0CONF[SBPOL]";
+    };
+
+    constants spienslv_status width(2) "" {
+        SPIENSLV_0 = 0 "Detection enabled only on SPIEN[0]";
+        SPIENSLV_1 = 1 "Detection enabled only on SPIEN[1]";
+        SPIENSLV_2 = 2 "Detection enabled only on SPIEN[2]";
+        SPIENSLV_3 = 3 "Detection enabled only on SPIEN[3]";
+    };
+
+    constants force_status width(1) "" {
+        FORCE_0 = 0 "Writing 0 into this bit drives low the SPIEN line when MCSPI_CHCONF(i)[EPOL]=0, and drives it high when MCSPI_CHCONF(i)[EPOL]=1.";
+        FORCE_1 = 1 "Writing 1 into this bit drives high the SPIEN line when MCSPI_CHCONF(i)[EPOL]=0, and drives it low when MCSPI_CHCONF(i)[EPOL]=1.";
+    };
+
+    constants is_status width(1) "" {
+        IS_0 = 0 "Data line 0 (SPIDAT[0]) selected for reception";
+        IS_1 = 1 "Data line 1 (SPIDAT[1]) selected for reception";
+    };
+
+    constants dpe1_status width(1) "" {
+        DPE1_0 = 0 "Data line 1 (SPIDAT[1]) selected for transmission";
+        DPE1_1 = 1 "No transmission on Data Line1 (SPIDAT[1])";
+    };
+
+    constants dpe0_status width(1) "" {
+        DPE0_0 = 0 "Data Line0 (SPIDAT[0]) selected for transmission";
+        DPE0_1 = 1 "No transmission on data line 0 (SPIDAT[0])";
+    };
+
+    constants dmar_status width(1) "" {
+        DMAR_0 = 0 "DMA read request disabled";
+        DMAR_1 = 1 "DMA read request enabled";
+    };
+
+    constants dmaw_status width(1) "" {
+        DMAW_0 = 0 "DMA write request disabled";
+        DMAW_1 = 1 "DMA write request enabled";
+    };
+
+    constants trm_status width(2) "" {
+        TRM_0 = 0 "Transmit-and-receive mode";
+        TRM_1 = 1 "Receive-only mode";
+        TRM_2 = 2 "Transmit-only mode";
+        TRM_3 = 3 "Reserved";
+    };
+
+    constants wl_status width(5) "" {
+        WL_0 = 0 "Reserved";
+        WL_1 = 1 "Reserved";
+        WL_2 = 2 "Reserved";
+        WL_3 = 3 "The SPI word is 4 bits long";
+        WL_4 = 4 "The SPI word is 5 bits long";
+        WL_5 = 5 "The SPI word is 6 bits long";
+        WL_6 = 6 "The SPI word is 7 bits long";
+        WL_7 = 7 "The SPI word is 8 bits long";
+        WL_8 = 8 "The SPI word is 9 bits long";
+        WL_9 = 9 "The SPI word is 10 bits long";
+        WL_10 = 10 "The SPI word is 11 bits long";
+        WL_11 = 11 "The SPI word is 12 bits long";
+        WL_12 = 12 "The SPI word is 13 bits long";
+        WL_13 = 13 "The SPI word is 14 bits long";
+        WL_14 = 14 "The SPI word is 15 bits long";
+        WL_15 = 15 "The SPI word is 16 bits long";
+        WL_16 = 16 "The SPI word is 17 bits long";
+        WL_17 = 17 "The SPI word is 18 bits long";
+        WL_18 = 18 "The SPI word is 19 bits long";
+        WL_19 = 19 "The SPI word is 20 bits long";
+        WL_20 = 20 "The SPI word is 21 bits long";
+        WL_21 = 21 "The SPI word is 22 bits long";
+        WL_22 = 22 "The SPI word is 23 bits long";
+        WL_23 = 23 "The SPI word is 24 bits long";
+        WL_24 = 24 "The SPI word is 25 bits long";
+        WL_25 = 25 "The SPI word is 26 bits long";
+        WL_26 = 26 "The SPI word is 27 bits long";
+        WL_27 = 27 "The SPI word is 28 bits long";
+        WL_28 = 28 "The SPI word is 29 bits long";
+        WL_29 = 29 "The SPI word is 30 bits long";
+        WL_30 = 30 "The SPI word is 31 bits long";
+        WL_31 = 31 "The SPI word is 32 bits long";
+    };
+
+    constants epol_status width(1) "" {
+        EPOL_0 = 0 "SPIEN is held high during the ACTIVE state.";
+        EPOL_1 = 1 "SPIEN is held low during the ACTIVE state.";
+    };
+
+    constants clkd_status width(4) "" {
+        CLKD_0 = 0 "1";
+        CLKD_1 = 1 "2";
+        CLKD_2 = 2 "4";
+        CLKD_3 = 3 "8";
+        CLKD_4 = 4 "16";
+        CLKD_5 = 5 "32";
+        CLKD_6 = 6 "64";
+        CLKD_7 = 7 "128";
+        CLKD_8 = 8 "256";
+        CLKD_9 = 9 "512";
+        CLKD_10 = 10 "1024";
+        CLKD_11 = 11 "2048";
+        CLKD_12 = 12 "4096";
+        CLKD_13 = 13 "8192";
+        CLKD_14 = 14 "16384";
+        CLKD_15 = 15 "32768";
+    };
+
+    constants pol_status width(1) "" {
+        POL_0 = 0 "SPICLK is held high during the ACTIVE state";
+        POL_1 = 1 "SPICLK is held low during the ACTIVE state";
+    };
+
+    constants pha_status width(1) "" {
+        PHA_0 = 0 "Data are latched on odd-numbered edges of SPICLK.";
+        PHA_1 = 1 "Data are latched on even-numbered edges of SPICLK.";
+    };
+    
+    register mcspi_chxconf addr(base, 0x12C) "This register is dedicated to the configuration of the channel 0" {
+        _ 2 mbz;
+        clkg 1 rw type(clkg_status) "Clock divider granularity This register defines the granularity of channel clock divider: power of 2 or one clock cycle granularity. When this bit is set the register MCSPI_CHCTRL[EXTCLK] must be configured to reach a maximum of 4096 clock divider ratio. Then the clock divider ratio is a concatenation of MCSPI_CHCONF[CLKD] and MCSPI_CHCTRL[EXTCLK] values";
+        ffer 1 rw type(ffer_status) "FIFO enabled for receive: Only one channel can have this bit field set.";
+        ffew 1 rw type(ffew_status) "FIFO enabled for transmit: Only one channel can have this bit field set.";
+        tcs0 2 rw type(tcs0_status) "Chip-select time control This 2-bit field defines the number of interface clock cycles between CS toggling and first or last edge of SPI clock.";
+        sbpol 1 rw type(sbpol_status) "Start-bit polarity";
+        sbe 1 rw type(sbe_status) "Start-bit enable for SPI transfer";
+        spienslv 2 rw type(spienslv_status) "Channel 0 only and slave mode only: SPI slave select signal detection. Reserved bits for other cases.";
+        force 1 rw type(force_status) "Manual SPIEN assertion to keep SPIEN active between SPI words (single channel master mode only).";
+        turbo 1 rw type(sbpol_status) "Turbo mode";
+        is 1 rw type(is_status) "Input Select";
+        dpe1 1 rw type(dpe1_status) "Transmission enable for data line 1 (SPIDATAGZEN[1])";
+        dpe0 1 rw type(dpe0_status) "Transmission Enable for data line 0 (SPIDATAGZEN[0])";
+        dmar 1 rw type(dmar_status) "DMA read request The DMA read request line is asserted when the channel is enabled and a new data is available in the receive register of the channel. The DMA read request line is deasserted on read completion of the receive register of the channel.";
+        dmaw 1 rw type(dmaw_status) "DMA write request. The DMA write request line is asserted when The channel is enabled and the transmitter register of the channel is empty. The DMA write request line is deasserted on load completion of the transmitter register of the channel.";
+        trm 2 rw type(trm_status) "Transmit/receive modes";
+        wl 5 rw type(wl_status) "SPI word length";
+        epol 1 rw type(epol_status) "SPIEN polarity";
+        clkd 4 rw type(clkd_status) "Frequency divider for SPICLK (only when the module is a Master SPI device). A programmable clock divider divides the SPI reference clock (CLKSPIREF) with a 4-bit value, and results in a new clock SPICLK available to shift-in and shift-out data. By default the clock divider ratio has a power of 2 granularity when MCSPI_CHCONF[CLKG] is cleared. Otherwise this register is the 4-LSB bit of a 12-bit register concatenated with clock divider extension MCSPI_CHCTRL[EXTCLK] register. The value description below defines the clock ratio when MCSPI_CHCONF[CLKG] is set to 0.";
+        pol 1 rw type(pol_status) "SPICLK polarity";
+        pha 1 rw type(pha_status) "SPICLK phase";
+    };
+
+    constants rxfff_status width(1) "" {
+        RXFFF_0_r = 0 "FIFO receive buffer is not full";
+        RXFFF_1_r = 1 "FIFO receive buffer is full";
+    };
+
+    constants rxffe_status width(1) "" {
+        RXFFE_0_r = 0 "FIFO receive buffer is not empty";
+        RXFFE_1_r = 1 "FIFO receive buffer is empty";
+    };
+
+    constants txfff_status width(1) "" {
+        TXFFF_0_r = 0 "FIFO transmit buffer is not full";
+        TXFFF_1_r = 1 "FIFO transmit buffer is full";
+    };
+
+    constants txffe_status width(1) "" {
+        TXFFE_0_r = 0 "FIFO transmit buffer is not empty";
+        TXFFE_1_r = 1 "FIFO transmit buffer is empty";
+    };
+
+    constants eot_status width(1) "" {
+        EOT_0_r = 0 "This flag is automatically cleared when the shift register is loaded with the data from the transmitter register (beginning of transfer).";
+        EOT_1_r = 1 "This flag is automatically set to one at the end of an SPI transfer.";
+    };
+
+    constants txs_status width(1) "" {
+        TXS_0_r = 0 "Register is full.";
+        TXS_1_r = 1 "Register is empty.";
+    };
+
+    constants rxs_status width(1) "" {
+        RXS_0_r = 0 "Register is empty.";
+        RXS_1_r = 1 "Register is full.";
+    };
+    
+    register mcspi_chxstat addr(base, 0x130) "This register provides status information about transmitter and receiver registers of channel 0." {
+        _ 25 mbz;
+        rxfff 1 ro type(rxfff_status) "Channel 'i' FIFO receive buffer full status";
+        rxffe 1 ro type(rxffe_status) "Channel 'i' FIFO receive buffer empty status";
+        txfff 1 ro type(txfff_status) "Channel 'i' FIFO transmit buffer full status";
+        txffe 1 ro type(txffe_status) "Channel 'i' FIFO transmit buffer empty status";
+        eot 1 ro type(eot_status) "Channel 'i' end of transfer status. The definitions of beginning and end of transfer vary with master versus slave and the transfer format (transmit/receive modes, turbo mode). See dedicated chapters for details.";
+        txs 1 ro type(txs_status) "Channel 'i' transmitter register status";
+        rxs 1 ro type(rxs_status) "Channel 'i' receiver register status";
+    };
+
+    constants extclk_status width(8) "" {
+        EXTCLK_0 = 0 "Clock ratio is CLKD + 1.";
+        EXTCLK_1 = 1 "Clock ratio is CLKD + 1 + 16.";
+        EXTCLK_255 = 255 "Clock ratio is CLKD + 1 + 4080.";
+    };
+
+    constants en_status width(1) "" {
+        EN_0 = 0 "Channel 'i' is not active.";
+        EN_1 = 1 "Channel 'i' is active.";
+    };
+    
+    register mcspi_chxctrl addr(base, 0x134) "This register is dedicated to enable channel 0." {
+        _ 16 mbz;
+        extclk 8 rw type(extclk_status) "Clock ratio extension: This register is used to concatenate with MCSPI_CHCONF[CLKD] register for clock ratio only when granularity is one clock cycle (MCSPI_CHCONF[CLKG] set to 1). Then the maximum value reached is 4096 clock divider ratio.";
+        _ 7 mbz;
+        en 1 rw type(en_status) "Channel enable";
+    };
+    
+    register mcspi_txx rw addr(base, 0x138) "This register contains a single SPI word to transmit on the serial link, what ever SPI word length is." type(uint32);
+    
+    register mcspi_rxx ro addr(base, 0x13C) "This register contains a single SPI word received through the serial link, what ever SPI word length is." type(uint32);
+
+    constants wcnt_status width(16) "" {
+        WCNT_0 = 0 "Counter not used";
+        WCNT_1 = 1 "One word";
+        WCNT_65534 = 65534 "65534 SPI word";
+        WCNT_65535 = 65535 "65535 SPI word";
+    };
+
+    constants afl_status width(8) "" {
+        AFL_0 = 0 "1 byte";
+        AFL_1 = 1 "2 bytes";
+        AFL_254 = 254 "255bytes";
+        AFL_255 = 255 "256bytes";
+    };
+
+    constants ael_status width(8) "" {
+        AEL_0 = 0 "1 byte";
+        AEL_1 = 1 "2 bytes";
+        AEL_254 = 254 "255 bytes";
+        AEL_255 = 255 "256bytes";
+    };
+    
+    register mcspi_xferlevel addr(base, 0x17C) "This register provides transfer levels needed while using FIFO buffer during transfer." {
+        wcnt 16 rw type(wcnt_status) "SPI word counter. This register holds the programmable value of number of SPI word to be transferred on channel which is using the FIFO buffer. When transfer had started, a read back in this register returns the current SPI word transfer index.";
+        afl 8 rw type(afl_status) "Buffer almost full This register holds the programmable almost full level value used to determine almost full buffer condition. If the user wants an interrupt or a DMA read request to be issued during a receive operation when the data buffer holds at least n bytes, then the buffer MCSPI_MODULCTRL[AFL] must be set with n-1.The size of this register is defined by the generic parameter FFNBYTE.";
+        ael 8 rw type(ael_status) "Buffer almost empty. This register holds the programmable almost empty level value used to determine almost empty buffer condition. If the user wants an interrupt or a DMA write request to be issued during a transmit operation when the data buffer is able to receive n bytes, then the bufferMCSPI_MODULCTRL[AEL] must be set with - 1.";
+    };
+};

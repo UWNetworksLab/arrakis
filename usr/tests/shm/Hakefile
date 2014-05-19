@@ -1,0 +1,9 @@
+[ build application { target = "shm_client" ,
+                      cFiles = [ "shm_client.c" ],
+                      addLibraries = [ "posixcompat", "octopus", "thc"  ]
+                    },
+  build application { target = "shm_server" ,
+                      cFiles = [ "shm_server.c" ],
+                      addLibraries = [ "posixcompat", "octopus", "thc" ]
+                    }
+]

@@ -1,0 +1,31 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for lib/rcce
+-- 
+--------------------------------------------------------------------------
+
+[ build library { target = "rcce",
+                  cFiles = [ "rcce.c", "RCCE_reduce.c", "RCCE_comm.c",
+                             "RCCE_debug.c", "bcast.c", "ring_barriers.c" ],
+                  addIncludes = [ "/include/rcce" ],
+                  addCFlags = [ "-DCOPPERRIDGE", "-Wno-parentheses",
+                                "-Wno-unused", "-DBULK_TRANSFER_ENABLED" ],
+                  flounderDefs = [ "rcce", "monitor" ],
+		  flounderBindings = [ "rcce" ]
+                },
+  build library { target = "rcce_nobulk",
+                  cFiles = [ "rcce.c", "RCCE_reduce.c", "RCCE_comm.c",
+                             "RCCE_debug.c", "bcast.c", "ring_barriers.c" ],
+                  addIncludes = [ "/include/rcce" ],
+                  addCFlags = [ "-DCOPPERRIDGE", "-Wno-parentheses",
+                                "-Wno-unused" ],
+                  flounderDefs = [ "rcce", "monitor" ],
+		  flounderBindings = [ "rcce" ]
+                }
+]

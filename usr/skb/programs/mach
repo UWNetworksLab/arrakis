@@ -1,0 +1,31 @@
+#!/bin/sh
+# $1 = Prolog file with the bridge programming algorithm (e.g. bridge_page.pl)
+# $2 = data file with the Prolog facts about PCI
+## $2 = Machine (e.g. nos4)
+
+echo ":-dynamic(bar/7)." > bbbbbbb.pl
+echo ":-dynamic(currentbar/5)." >> bbbbbbb.pl
+echo ":-dynamic(bridge/8)." >> bbbbbbb.pl
+echo ":-dynamic(device/8)." >> bbbbbbb.pl
+echo ":-dynamic(fixed_memory/2)." >> bbbbbbb.pl
+echo ":-lib(cio)."  >> bbbbbbb.pl
+
+dotnama=$(echo $1|sed -r -e 's/\./_/' );
+dotnama=$(echo -n $dotnama;echo "_dot");
+echo $dotnama
+
+# DATEINAME=../data/data_$2.txt
+DATEINAME=$2
+#echo ":-include(\"../data/data_nos5.txt\")." >> bbbbbbb.pl
+echo ":-include(\"$DATEINAME\")." >> bbbbbbb.pl
+#cat bridge_page.pl >> bbbbbbb.pl
+cat $1 >> bbbbbbb.pl
+#echo "[bbbbbbb],bridge_programming(B,_),flatten(B, F),replace_current_BAR_values(F).\n\nlisting.\n\nhalt." | eclipse-clp
+echo "[compute_required_resources],[bbbbbbb],bridge_programming(B,_),flatten(B, F)," \
+"replace_current_BAR_values(F),compute_required_resources(B, ResList, $dotnama).\n\nhalt." | eclipse-clp
+#"replace_current_BAR_values(F).\n\ncompute_required_resources(BusElements, ResWithoutPadding, RealRes, PaddingOverhead)\n\nhalt." | eclipse-clp
+
+
+
+#dot -O -Tpng $dotnama
+

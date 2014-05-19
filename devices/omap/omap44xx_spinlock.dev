@@ -1,0 +1,117 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_spinlock.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_spinlock msbfirst ( addr base ) "" {
+    
+    
+    register revision ro addr(base, 0x0) "This register contains the IP revision code" type(uint32);
+
+    constants clockactivity_status width(1) "" {
+        CLOCKACTIVITY_0_r = 0 "Interface clock is not required by the module during IDLE mode and may be switched off.";
+        CLOCKACTIVITY_1_r = 1 "Interface clock is required by the module, even during idle mode.";
+    };
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0_r = 0 "Force-idle. IDLE request is acknowledged unconditionally and immediately.";
+        SIDLEMODE_1_r = 1 "No-idle. IDLE request is never acknowledged.";
+        SIDLEMODE_2_r = 2 "Smart-idle. IDLE request acknowledgement is based on the internal module activity.";
+        SIDLEMODE_3_r = 3 "Reserved. Do not use.";
+    };
+
+    constants enwakeup_status width(1) "" {
+        ENWAKEUP_0_r = 0 "Wakeup generation is disabled.";
+        ENWAKEUP_1_r = 1 "Wakeup generation is enabled.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_w = 0 "No action";
+        SOFTRESET_1_w = 1 "Start soft reset sequence";
+    };
+
+    constants autogating_status width(1) "" {
+        AUTOGATING_0_r = 0 "Interface clock is not gated when the L4-CFG interface is idle.";
+        AUTOGATING_1_r = 1 "Automatic internal interface clock gating strategy is applied, based on the L4-CFG interface activity.";
+    };
+    
+    register sysconfig addr(base, 0x10) "This register controls the various parameters of the L4-CFG interface. Note that most fields are read-only." {
+        _ 23 mbz;
+        clockactivity 1 ro type(clockactivity_status) "Indicates whether the module requires the interface clock when in IDLE mode.";
+        _ 3 mbz;
+        sidlemode 2 ro type(sidlemode_status) "Slave interface power management (IDLE request/acknowledgement control).";
+        enwakeup 1 ro type(enwakeup_status) "Asynchronous wakeup gereration.";
+        softreset 1 wo type(softreset_status) "Module software reset.";
+        autogating 1 ro type(autogating_status) "Internal interface clock gating strategy.";
+    };
+
+    constants numlocks_status width(8) "" {
+        NUMLOCKS_1_r = 1 "This instance has 32 lock registers.";
+        NUMLOCKS_2_r = 2 "This instance has 64 lock registers.";
+        NUMLOCKS_4_r = 4 "This instance has 128 lock registers.";
+        NUMLOCKS_8_r = 8 "This instance has 256 lock registers.";
+    };
+
+    constants iu0_status width(1) "" {
+        IU0_0_r = 0 "All lock registers 0 31 are in the Not Taken state.";
+        IU0_1_r = 1 "At least one of the lock registers 0 31 is in the Taken state.";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Reset in progress.";
+        RESETDONE_1_r = 1 "Reset is completed.";
+    };
+    
+    register systatus addr(base, 0x14) "This register provides status information about this instance of the Spinlock module." {
+        numlocks 8 ro type(numlocks_status) "Number of lock registers implemeted.";
+        _ 8 mbz;
+        iu7 1 ro "In-Use flag 7. Reads always return 0.";
+        iu6 1 ro "In-Use flag 6. Reads always return 0.";
+        iu5 1 ro "In-Use flag 5. Reads always return 0.";
+        iu4 1 ro "In-Use flag 4. Reads always return 0.";
+        iu3 1 ro "In-Use flag 3. Reads always return 0.";
+        iu2 1 ro "In-Use flag 2. Reads always return 0.";
+        iu1 1 ro "In-Use flag 1. Reads always return 0.";
+        iu0 1 ro type(iu0_status) "In-Use flag 0, covering lock registers 0 - 31.";
+        _ 7 mbz;
+        resetdone 1 ro type(resetdone_status) "Reset done status.";
+    };
+
+//XXX:commented out repeated values, since the compiler would complain about duplicate case values
+    constants taken_status width(1) "" {
+        TAKEN_0_r = 0 "Lock was previously Not Taken (free). The requester is granted the lock.";
+//        TAKEN_0_w = 0 "Set the lock to Not Taken (free).";
+        TAKEN_1_r = 1 "Lock was previously Taken. The requester is not granted the lock and must retry.";
+//        TAKEN_1_w = 1 "No update to the lock value.";
+    };
+
+//changed individual register definitions to a regarray
+
+    regarray lock_reg_i addr(base, 0x800)[32] "This register contains the state of one lock."{
+        _ 31 mbz;
+        taken 1 rw type(taken_status) "Lock State";
+    };
+    
+};

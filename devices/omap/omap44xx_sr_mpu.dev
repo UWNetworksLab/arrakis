@@ -1,0 +1,154 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_sr_mpu.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_sr_mpu msbfirst ( addr base ) "" {
+    
+    
+    register srconfig addr(base, 0x0) "Configuration bits for the Sensor Core and the Digital Processing." {
+        accumdata 10 rw "Number of Values to Accumulate";
+        srclklength 10 rw "Determines frequency of SRClk";
+        srenable 1 rw "0: Asynchronously resets MinMaxAvgAccumValid, MinMaxAvgValid, ErrorGeneratorValid, AccumData sensor, SRClk counter, and MinMaxAvg registers. Also gates the clock for power savings and disables all the digital logic. , 1: Enables the module";
+        senenable 1 rw "0: All sensors disabled, 1: Sensors enabled per SenNEnable and SenPEnable";
+        errorgeneratorenable 1 rw "0: Error Generator Module disabled, 1: Error Generator Module enabled";
+        minmaxavgenable 1 rw "0: MinMaxAvg Detector Module disabled, 1: MinMaxAvg Detector Module enabled";
+        _ 6 mbz;
+        sennenable 1 rw "0: Disable SenN sensor, 1: Enable SenN sensor";
+        senpenable 1 rw "0: Disable SenP sensor, 1: Enable SenP sensor";
+    };
+    
+    register srstatus addr(base, 0x4) "Status bits that indicate that the values in the register are valid or events have occurred." {
+        _ 28 mbz;
+        avgerrvalid 1 ro "0: AvgError registers are not valid, 1: AvgError registers are valid.";
+        minmaxavgvalid 1 ro "0: SenVal, SenMin, SenMax, SenAvg registers are not valid, 1: SenVal, SenMin, SenMax, SenAvg registers are valid, but not necessarily fully accumulated";
+        errorgeneratorvalid 1 ro "0: SenError register do not have valid data, 1: SenError registers have valid data.";
+        minmaxavgaccumvalid 1 ro "0: SenVal, SenMin, SenMax, SenAvg registers are not valid, 1: SenVal, SenMin, SenMax, SenAvg registers have valid, final data";
+    };
+    
+    register senval addr(base, 0x8) "The current sensor values from the Sensor Core." {
+        senpval 16 ro "The latest value of the SenPVal from the sensor core.";
+        sennval 16 ro "The latest value of the SenNVal from the sensor core.";
+    };
+    
+    register senmin addr(base, 0xC) "The minimum sensor values." {
+        senpmin 16 ro "The minimum value of the SenPVal from the sensor core since the last restat operation.";
+        sennmin 16 ro "The minimum value of the SenNVal from the sensor core since the last restat operation.";
+    };
+    
+    register senmax addr(base, 0x10) "The maximum sensor values." {
+        senpmax 16 ro "The maximum value of the SenPVal from the sensor core since the last restat operation.";
+        sennmax 16 ro "The maximum value of the SenNVal from the sensor core since the last restat operation.";
+    };
+    
+    register senavg addr(base, 0x14) "The average sensor values." {
+        senpavg 16 ro "The running average of the SenPVal from the sensor core since the last restat operation.";
+        sennavg 16 ro "The running average of the SenNVal from the sensor core since the last restat operation.";
+    };
+    
+    register avgweight addr(base, 0x18) "The weighting factor in the average computation." {
+        _ 28 mbz;
+        senpavgweight 2 rw "The weighting factor for the SenP averager.";
+        sennavgweight 2 rw "The weighting factor for the SenN averager.";
+    };
+    
+    register nvaluereciprocal addr(base, 0x1C) "The reciprocal of the SenN and SenP values used in error generation." {
+        _ 8 mbz;
+        senpgain 4 rw "The gain value for the SenP reciprocal.";
+        senngain 4 rw "The gain value for the SenN reciprocal.";
+        senprn 8 rw "The scale value for the SenP reciprocal.";
+        sennrn 8 rw "The scale value for the SenN reciprocal.";
+    };
+    
+    register irqstatus_raw addr(base, 0x24) "MCU raw interrup status and set." {
+        _ 28 mbz;
+        mcuaccumintstatraw 1 rw "0: Accum interrupt status is unchanged 1: Accum interrupt status is set";
+        mcuvalidintstatraw 1 rw "0: Valid interrupt status is unchanged 1: Valid interrupt status is set";
+        mcuboundsintstatraw 1 rw "0: Bounds interrupt status is unchanged 1: Bounds interrupt status is set";
+        mcudisableackintstatraw 1 rw "0: MCUDisable acknowledge status is unchanged 1: MCUDisable acknowledge status is set";
+    };
+
+    constants mcuaccumintstatena_status width(1) "" {
+        MCUACCUMINTSTATENA_1_r = 1 "Accum interrupt status is set.";
+        MCUACCUMINTSTATENA_0_w = 0 "Accum interrupt status is unchanged.";
+    };
+
+    constants mcuvalidintstatena_status width(1) "" {
+        MCUVALIDINTSTATENA_1_r = 1 "Valid interrupt status is set.";
+        MCUVALIDINTSTATENA_0_w = 0 "Valid interrupt status is unchanged.";
+    };
+
+    constants mcuboundsintstatena_status width(1) "" {
+        MCUBOUNDSINTSTATENA_1_r = 1 "Bounds interrupt status is set.";
+        MCUBOUNDSINTSTATENA_0_w = 0 "Bounds interrupt status is unchanged.";
+    };
+
+    constants mcudisableackintstatena_status width(1) "" {
+        MCUDISABLEACKINTSTATENA_1_r = 1 "MCUDisable acknowledge status is set.";
+        MCUDISABLEACKINTSTATENA_0_w = 0 "MCUDisable interrupt status is unchanged.";
+    };
+    
+    register irqstatus addr(base, 0x28) "MCU masked interrupt status and clear." {
+        _ 28 mbz;
+        mcuaccumintstatena 1 rw type(mcuaccumintstatena_status) "Read 0: Accum interrupt status is unchanged.";
+        mcuvalidintstatena 1 rw type(mcuvalidintstatena_status) "Read 0: Valid interrupt status is unchanged.";
+        mcuboundsintstatena 1 rw type(mcuboundsintstatena_status) "Read 0: Bounds interrupt status is unchanged.";
+        mcudisableackintstatena 1 rw type(mcudisableackintstatena_status) "Read 0: MCUDisable acknowledge status is unchanged.";
+    };
+    
+    register irqenable_set addr(base, 0x2C) "MCU interrupt enable flag and set." {
+        _ 28 mbz;
+        mcuaccumintenaset 1 rw "Read mode: 0: Accum interrupt generation is disabled/masked, 1: Accum interrupt generation is enabled; Write mode: 0: No change to Accum interrupt enable, 1: Enable Accum interrupt generation.";
+        mcuvalidintenaset 1 rw "Read mode: 0: Valid interrupt generation is disabled/masked, 1: Valid interrupt generation is enabled; Write mode: 0: No change to Valid interrupt enable, 1: Enable Valid interrupt generation.";
+        mcuboundsintenaset 1 rw "Read mode: 0: Bounds interrupt generation is disabled/masked, 1: Bounds interrupt generation is enabled; Write mode: 0: No change to Bounds interrupt enable, 1: Enable Bounds interrupt generation.";
+        mcudisableactintenaset 1 rw "Read mode: 0: MCUDisableAck interrupt generation is disabled/masked, 1: MCUDisableAck interrupt generation is enabled; Write mode: 0: No change to MCUDisAck interrupt enable, 1: Enable MCUDisableAck interrupt generation.";
+    };
+    
+    register irqenable_clr addr(base, 0x30) "MCU interrup enable flag and clear." {
+        _ 28 mbz;
+        mcuaccumintenaclr 1 rw "Read mode: 0: Accum interrupt generation is disabled/masked, 1: Accum interrupt generation is enabled; Write mode: 0: No change to Accum interrupt enable, 1: Enable Accum interrupt generation.";
+        mcuvalidintenaclr 1 rw "Read mode: 0: Valid interrupt generation is disabled/masked, 1: Valid interrupt generation is enabled; Write mode: 0: No change to Valid interrupt enable, 1: Enable Valid interrupt generation.";
+        mcuboundsintenaclr 1 rw "Read mode: 0: Bounds interrupt generation is disabled/masked, 1: Bounds interrupt generation is enabled; Write mode: 0: No change to Bounds interrupt enable, 1: Enable Bounds interrupt generation.";
+        mcudisableackintenaclr 1 rw "Read mode: 0: MCUDisableAck interrupt generation is disabled/masked, 1: MCUDisableAck interrupt generation is enabled; Write mode: 0: No change to MCUDisAck interrupt enable, 1: Enable MCUDisableAck interrupt generation.";
+    };
+    
+    register senerror addr(base, 0x34) "The sensor error from the error generator." {
+        _ 16 mbz;
+        avgerror 8 ro "The average sensor error.";
+        senerror 8 ro "The percentage of sensor error.";
+    };
+    
+    register errconfig addr(base, 0x38) "The sensor error configuration." {
+        _ 5 mbz;
+        wakeupenable 1 rw "Wakeup from MCU Interrupts enable.";
+        idlemode 2 rw "0b00: Force-Idle Mode, 0b01: No Idle Mode, 0b10: Smart-Idle Mode #2, 0b11: Smart-Idle-Wkup mode";
+        vpboundsintstatena 1 rw "0: Bounds interrupt status is unchanged, 1: Bounds interrupt status is cleared.";
+        vpboundsintenable 1 rw "0: Bounds interrupt disabled, 1: Bounds interrupt enabled.";
+        _ 3 mbz;
+        errweight 3 rw "The AvgSenError weight.";
+        errmaxlimit 8 rw "The upper limit of SenError for interrupt generation.";
+        errminlimit 8 rw "The lower limit of SenError for interrupt generation.";
+    };
+};

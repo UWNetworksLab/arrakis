@@ -1,0 +1,10 @@
+#!/bin/bash
+
+count=0;
+
+for i in $*; do
+    current_count=$(sed -r -e '/\/\//d' -e '/^[ \t]*\*/d' -e '/;$/!d' $i|wc -l);
+    count=$[$count+$current_count];
+done
+echo $count
+

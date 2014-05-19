@@ -1,0 +1,26 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, 2011, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for lib/elf
+-- 
+--------------------------------------------------------------------------
+
+[
+ build library { target = "elf", cFiles = [ "elf.c", "elf64.c", "elf32.c" ] },
+
+ -- CPU driver version of ELF library. Built without SSE on x86.
+ build library {
+             target = "elf_kernel",
+             cFiles = [ "elf.c", "elf64.c", "elf32.c" ],
+             addCFlags = [ "-mno-mmx", "-mno-sse", "-mno-sse2",
+                           "-mno-sse3", "-mno-ssse3", "-mno-sse4.1",
+                           "-mno-sse4.2", "-mno-sse4", "-mno-sse4a",
+                           "-mno-3dnow" ],
+             architectures = [ "x86_64", "x86_32", "scc" ]
+           }
+]

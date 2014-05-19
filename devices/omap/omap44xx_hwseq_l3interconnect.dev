@@ -1,0 +1,542 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_hwseq_l3interconnect.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_hwseq_l3interconnect msbfirst ( addr base ) "" {
+    
+
+    constants cpu_proc_done_status width(1) "" {
+        CPU_PROC_DONE_0_w = 0 "No effect.";
+        CPU_PROC_DONE_1_w = 1 "CPU processing completed.";
+    };
+
+    constants bitstream_status width(3) "" {
+        BITSTREAM_0 = 0 "Bank 0: coprocessor bus (0x1000-0x17FF) Bank 1: coprocessor bus (0x1800-0x1FFF)";
+        BITSTREAM_1 = 1 "Bank 0: DMA (0x1000-0x17FF) Bank 1: DMA (0x1800-0x1FFF)";
+        BITSTREAM_2 = 2 "Bank 0: VLCDJ.B (0x000-0x7FF) Bank 1: VLCDJ.B (0x800-0xFFF)";
+        BITSTREAM_3 = 3 "Bank 0: DMA (0x1000-0x17FF) Bank 1: VLCDJ.B (0x800-0xFFF)";
+        BITSTREAM_4 = 4 "Bank 0: VLCDJ.B (0x000-0x7FF) Bank 1: DMA (0x1800-0x1FFF)";
+        BITSTREAM_5 = 5 "The bitstream buffer is managed by hardware as a PING/PONG buffer to support JPEG encode use case. It can be accessed by the SIMCOP DMA or the VLCDJ module. The BITSTREAM hardware sequence is reset when the mode is changed to COPR, VLCDJ or DMA.";
+        BITSTREAM_6 = 6 "The bitstream buffer is managed by hardware as a PING/PONG buffer to support JPEG decode use case. It can be accessed by the SIMCOP DMA or the VLCDJ module. The BITSTREAM hardware sequence is reset when the mode is changed to COPR, VLCDJ or DMA.";
+    };
+
+    constants bitstr_xfer_size_status width(2) "" {
+        BITSTR_XFER_SIZE_0 = 0 "2048 bytes";
+        BITSTR_XFER_SIZE_1 = 1 "1024 bytes";
+        BITSTR_XFER_SIZE_2 = 2 "512 bytes";
+        BITSTR_XFER_SIZE_3 = 3 "256 bytes";
+    };
+
+    constants hw_seq_stop_status width(1) "" {
+        HW_SEQ_STOP_0_w = 0 "No effect.";
+        HW_SEQ_STOP_1_w = 1 "Stop the hardware sequence immediately (don't wait for expected DONE events). Setting this bit while the sequencer is idle has no effect.";
+    };
+
+    constants hw_seq_start_status width(1) "" {
+        HW_SEQ_START_0_w = 0 "No effect.";
+        HW_SEQ_START_1_w = 1 "Starts step number[12:11] STEP of the hardware sequence. Setting this bit while the sequencer is running has no effect.";
+    };
+    
+    register simcop_hwseq_ctrl addr(base, 0x68) "SIMCOP hardware sequencer control register" {
+        hw_seq_step_counter 16 rw "Number of steps executed by the hardware sequencer. HW_SEQ_STEP_COUNTER=0 corresponds to manual sequencing.";
+        _ 3 mbz;
+        step 2 rw "This register is automatically updated by the hardware sequencer when it is active. Otherwise, software can use it to activate the content of a given set of step registers (SIMCOP_HWSEQ_STEP_i) or to choose the first step number of a sequence.";
+        cpu_proc_done 1 wo type(cpu_proc_done_status) "Used by the CPU to tell that it has completed data processing. This feature should be used together with the CPU_PROC_START_IRQ event Read's always return 0.";
+        bbm_sync_chan 2 rw "Defines the SIMCOP DMA hardware synchronization channel to be used for BBM. This register is only used when BITSTREAM=ENCODE or DECODE. Software must ensure that the same DMA hardware synchronization channel is not used by the hardware sequencer.";
+        bbm_status 1 ro "Status of the Bitstream buffer management hardware.Used only during automatic mode [BITSTREAM=5 or 6]. Equals 0 (IDLE) in manual mode [BITSTREAM=0..4].Set when automatic mode is entered. Automatic encode mode: used to detect when all banks have been flushed after the processing has completed (i.e. but request bank signals have been de-asserted by BBM). Automatic decode mode (BITSTREAM=DECODE): returns to 0 (IDLE) when automatic mode is left (BITSTREAM=COPR).Read 0x1: BBM is busy.Read 0x0: BBM is idle";
+        bitstream 3 rw type(bitstream_status) "Bitstream buffer access control";
+        bitstr_xfer_size 2 rw type(bitstr_xfer_size_status) "Defines the amount of data to be transferred per hardware request to the SIMCOP DMA. Bigger sizes lead to better SDRAM efficiency but prevents fine grained DMA transfer arbitration. This register is only used by hardware when BITSTREAM=ENCODE or BITSTREAM=DECODE.";
+        hw_seq_stop 1 wo type(hw_seq_stop_status) "Stop the hardware sequencer. This feature is typically used to recover from an error condition. Read's always return 0.";
+        hw_seq_start 1 wo type(hw_seq_start_status) "Start the hardware sequencer. Read's always return 0.";
+    };
+
+    constants state_status width(1) "" {
+        STATE_0_r = 0 "Idle";
+        STATE_1_r = 1 "Running";
+    };
+    
+    register simcop_hwseq_status addr(base, 0x6C) "Hardware sequencer status register" {
+        hw_seq_step_counter 16 ro "Current step number";
+        _ 15 mbz;
+        state 1 ro type(state_status) "Current state";
+    };
+    
+    register simcop_hwseq_override addr(base, 0x70) "Hardware sequencer override control register. Bits in this register select what configuration register control a resource. 0: Resource controlled by hardware sequencer. Hardware uses the value from SIMCOP_HWSEQ_STEP_xx registers for the chosen resource 1: Resource controlled by software. Hardware uses the value from SIMCOP_HWSEQ_STEP_x_OVERRIDE registers for the chosen resource The bit field name matches the one of the resource.For example, IMX_A_D_OFST_OVR selects if" {
+        _ 13 mbz;
+        coeff_b 1 rw "See register description";
+        coeff_a 1 rw "See register description";
+        imbuff_h 1 rw "See register description";
+        imbuff_g 1 rw "See register description";
+        imbuff_f 1 rw "See register description";
+        imbuff_e 1 rw "See register description";
+        imbuff_d 1 rw "See register description";
+        imbuff_c 1 rw "See register description";
+        imbuff_b 1 rw "See register description";
+        imbuff_a 1 rw "See register description";
+        ldc_o_ofst_ovr 1 rw "See register description";
+        rot_o_ofst_ovr 1 rw "See register description";
+        rot_i_ofst_ovr 1 rw "See register description";
+        nsf_io_ofst_ovr 1 rw "See register description";
+        dct_f_ofst_ovr 1 rw "See register description";
+        dct_s_ofst_ovr 1 rw "See register description";
+        vlcdj_io_ofst_ovr 1 rw "See register description";
+        imx_b_d_ofst_ovr 1 rw "See register description";
+        imx_a_d_ofst_ovr 1 rw "See register description";
+    };
+
+    constants rot_o_ofst_status width(2) "" {
+        ROT_O_OFST_0 = 0 "EFGH";
+        ROT_O_OFST_1 = 1 "FGHE";
+        ROT_O_OFST_2 = 2 "GHEF";
+        ROT_O_OFST_3 = 3 "HEFG";
+    };
+
+    constants rot_i_ofst_status width(2) "" {
+        ROT_I_OFST_0 = 0 "ABCD";
+        ROT_I_OFST_1 = 1 "BCDA";
+        ROT_I_OFST_2 = 2 "CDAB";
+        ROT_I_OFST_3 = 3 "DABC";
+    };
+
+    constants dct_f_ofst_status width(3) "" {
+        DCT_F_OFST_0 = 0 "ABCD";
+        DCT_F_OFST_1 = 1 "BCDG";
+        DCT_F_OFST_2 = 2 "CDGH";
+        DCT_F_OFST_3 = 3 "DGHA";
+        DCT_F_OFST_4 = 4 "GHAB";
+        DCT_F_OFST_5 = 5 "HABC";
+    };
+
+    constants dct_s_ofst_status width(2) "" {
+        DCT_S_OFST_0 = 0 "EF";
+        DCT_S_OFST_1 = 1 "FG";
+        DCT_S_OFST_2 = 2 "GH";
+        DCT_S_OFST_3 = 3 "HE";
+    };
+
+    constants imx_b_d_ofst_status width(2) "" {
+        IMX_B_D_OFST_0 = 0 "ABCD";
+        IMX_B_D_OFST_1 = 1 "CDEF";
+        IMX_B_D_OFST_2 = 2 "EFGH";
+        IMX_B_D_OFST_3 = 3 "GHAB";
+    };
+
+    constants dma_trigger_status width(3) "" {
+        DMA_TRIGGER_0_w = 0 "No effect";
+        DMA_TRIGGER_0_r = 0 "No done pulse have been received since last non zero write into the DMA_TRIGGER register";
+        DMA_TRIGGER_1_r = 1 "DONE pulses for channel 0 and 1 have been received";
+        DMA_TRIGGER_1_w = 1 "Trigger channel 0 and 1. Clears all memorized done pulses for DMA.";
+        DMA_TRIGGER_2_w = 2 "Trigger channel 0, 1, 2. Clears all memorized done pulses for DMA.";
+        DMA_TRIGGER_2_r = 2 "DONE pulses for channel 0, 1 and 2 have been received";
+        DMA_TRIGGER_3_r = 3 "DONE pulses for channel 0, 1, 2 and 3 have been received.";
+        DMA_TRIGGER_3_w = 3 "Trigger channel 0, 1, 2 and 3. Clears all memorized done pulses for DMA.";
+        DMA_TRIGGER_4_r = 4 "DONE pulse for channel 0 has been received";
+        DMA_TRIGGER_4_w = 4 "Trigger channel 0. Clears all memorized done pulses for DMA.";
+        DMA_TRIGGER_5_w = 5 "Trigger channel 1. Clears all memorized done pulses for DMA.";
+        DMA_TRIGGER_5_r = 5 "DONE pulse for channel 1 has been received";
+        DMA_TRIGGER_6_r = 6 "DONE pulse for channel 2 has been received";
+        DMA_TRIGGER_6_w = 6 "Trigger channel 2. Clears all memorized done pulses for DMA.";
+        DMA_TRIGGER_7_w = 7 "Trigger channel 3. Clears all memorized done pulses for DMA.";
+        DMA_TRIGGER_7_r = 7 "DONE pulse for channel 3 has been received";
+    };
+
+    constants rot_a_trigger_status width(1) "" {
+        ROT_A_TRIGGER_0_w = 0 "No Effect";
+        ROT_A_TRIGGER_0_r = 0 "No DONE pulse received since the last START pulse has been sent";
+        ROT_A_TRIGGER_1_r = 1 "DONE pulse received";
+        ROT_A_TRIGGER_1_w = 1 "Send a start pulse and clears the memorized done pulse";
+    };
+    
+    register simcop_hwseq_step_ctrl_override addr(base, 0x74) "Hardware sequencer override register. Used to execute software sequences in parallel to hardware sequencing steps" {
+        _ 4 mbz;
+        rot_o_ofst 2 rw type(rot_o_ofst_status) "Controls ROT.O bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        rot_i_ofst 2 rw type(rot_i_ofst_status) "Controls ROT_I bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 1 mbz;
+        dct_f_ofst 3 rw type(dct_f_ofst_status) "Controls DCT.F bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        dct_s_ofst 2 rw type(dct_s_ofst_status) "Controls DCT.S bus mapping to image buffers: 0x0000 0x1000";
+        vlcdj_io_ofst 3 rw type(dct_f_ofst_status) "Controls VLCDJ IO data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        imx_b_d_ofst 2 rw type(imx_b_d_ofst_status) "Controls iMX B data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        imx_a_d_ofst 2 rw type(imx_b_d_ofst_status) "Controls iMX A data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 3 mbz;
+        dma_trigger 3 rw type(dma_trigger_status) "Software controlled START/DONE synchronization";
+        rot_a_trigger 1 rw type(rot_a_trigger_status) "Software controlled START/DONE synchronization";
+        nsf_trigger 1 rw type(rot_a_trigger_status) "Software controlled START/DONE synchronization";
+        vlcdj_trigger 1 rw type(rot_a_trigger_status) "Software controlled START/DONE synchronization";
+        dct_trigger 1 rw type(rot_a_trigger_status) "Software controlled START/DONE synchronization";
+        ldc_trigger 1 rw type(rot_a_trigger_status) "Software controlled START/DONE synchronization";
+    };
+
+    constants imbuff_h_status width(4) "" {
+        IMBUFF_H_0 = 0 "Coprocessor bus";
+        IMBUFF_H_1 = 1 "SIMCOP DMA";
+        IMBUFF_H_2 = 2 "iMX A";
+        IMBUFF_H_3 = 3 "iMX B";
+        IMBUFF_H_4 = 4 "VLCDJ_IO";
+        IMBUFF_H_5 = 5 "DCT_S";
+        IMBUFF_H_6 = 6 "DCT_F";
+        IMBUFF_H_7 = 7 "ROT_A_O";
+        IMBUFF_H_8 = 8 "NSF_IO";
+        IMBUFF_H_9 = 9 "LDC_O";
+    };
+
+    constants imbuff_f_status width(3) "" {
+        IMBUFF_F_0 = 0 "Coprocessor bus";
+        IMBUFF_F_1 = 1 "SIMCOP DMA";
+        IMBUFF_F_2 = 2 "iMX A";
+        IMBUFF_F_3 = 3 "iMX B";
+        IMBUFF_F_4 = 4 "DCT_S";
+        IMBUFF_F_5 = 5 "NSF_IO";
+        IMBUFF_F_6 = 6 "LDC_O";
+        IMBUFF_F_7 = 7 "ROT_A_O";
+    };
+
+    constants imbuff_d_status width(3) "" {
+        IMBUFF_D_0 = 0 "Coprocessor bus";
+        IMBUFF_D_1 = 1 "SIMCOP DMA";
+        IMBUFF_D_2 = 2 "iMX A";
+        IMBUFF_D_3 = 3 "iMX B";
+        IMBUFF_D_4 = 4 "VLCDJ_IO";
+        IMBUFF_D_5 = 5 "DCT_F";
+        IMBUFF_D_6 = 6 "ROT_A_I";
+        IMBUFF_D_7 = 7 "Reserved";
+    };
+
+    constants imbuff_b_status width(3) "" {
+        IMBUFF_B_0 = 0 "Coprocessor bus";
+        IMBUFF_B_1 = 1 "SIMCOP DMA";
+        IMBUFF_B_2 = 2 "iMX A IMBUFF";
+        IMBUFF_B_3 = 3 "iMX B IMBUFF";
+        IMBUFF_B_4 = 4 "VLCDJ_IO";
+        IMBUFF_B_5 = 5 "DCT_F";
+        IMBUFF_B_6 = 6 "ROT_A_I";
+        IMBUFF_B_7 = 7 "Reserved";
+    };
+    
+    register simcop_hwseq_step_switch_override addr(base, 0x78) "Hardware sequencer override register. Used to execute software sequences in parallel to hardware sequencing steps" {
+        imbuff_h 4 rw type(imbuff_h_status) "Switch for image buffer h";
+        imbuff_g 4 rw type(imbuff_h_status) "Switch for image buffer g";
+        _ 1 mbz;
+        imbuff_f 3 rw type(imbuff_f_status) "Switch for image buffer f";
+        _ 1 mbz;
+        imbuff_e 3 rw type(imbuff_f_status) "Switch for image buffer e";
+        _ 1 mbz;
+        imbuff_d 3 rw type(imbuff_d_status) "Switch for image buffer d";
+        _ 1 mbz;
+        imbuff_c 3 rw type(imbuff_d_status) "Switch for image buffer c.";
+        _ 1 mbz;
+        imbuff_b 3 rw type(imbuff_b_status) "Switch for image buffer b.";
+        _ 1 mbz;
+        imbuff_a 3 rw type(imbuff_b_status) "Switch for image buffer a";
+    };
+
+    constants coeff_b_status width(3) "" {
+        COEFF_B_0 = 0 "Coprocessor bus";
+        COEFF_B_1 = 1 "SIMCOP DMA";
+        COEFF_B_2 = 2 "iMX A";
+        COEFF_B_3 = 3 "iMX B";
+        COEFF_B_4 = 4 "VLCDJ_IO";
+        COEFF_B_5 = 5 "DCT_F";
+        COEFF_B_6 = 6 "ROT A O";
+        COEFF_B_7 = 7 "Reserved";
+    };
+    
+    register simcop_hwseq_step_ctrl2_override addr(base, 0x7C) "Hardware sequencer override register. Used to execute software sequences in parallel to hardware sequencing steps" {
+        _ 20 mbz;
+        nsf2_io_ofst 2 rw type(dct_s_ofst_status) "Controls NSF_IO bus mapping to image buffers: 0x0000 0x1000";
+        ldc_o_ofst 2 rw type(rot_o_ofst_status) "Controls LDC.O bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 1 mbz;
+        coeff_b 3 rw type(coeff_b_status) "Coefficient buffer b switch";
+        _ 1 mbz;
+        coeff_a 3 rw type(imbuff_d_status) "Coefficient buffer a switch";
+    };
+
+    constants cpu_sync_status width(1) "" {
+        CPU_SYNC_0 = 0 "Disabled";
+        CPU_SYNC_1 = 1 "Enabled.";
+    };
+
+    constants dma_ofst_status width(3) "" {
+        DMA_OFST_0 = 0 "ABCDEFGH";
+        DMA_OFST_1 = 1 "BCDEFGHA";
+        DMA_OFST_2 = 2 "CDEFGHAB";
+        DMA_OFST_3 = 3 "DEFGHABC";
+        DMA_OFST_4 = 4 "EFGHABCD";
+        DMA_OFST_5 = 5 "FGHABCDE";
+        DMA_OFST_6 = 6 "GHABCDEF";
+        DMA_OFST_7 = 7 "HABCDEFG";
+    };
+
+    constants next_status width(2) "" {
+        NEXT_0 = 0 "Step 0";
+        NEXT_1 = 1 "Step 1";
+        NEXT_2 = 2 "Step 2";
+        NEXT_3 = 3 "Step 3";
+    };
+
+    constants dma_sync_status width(3) "" {
+        DMA_SYNC_0 = 0 "Disabled";
+        DMA_SYNC_1 = 1 "Channel 0 and 1";
+        DMA_SYNC_2 = 2 "Channel 0, 1, 2";
+        DMA_SYNC_3 = 3 "Channel 0, 1, 2 and 3";
+        DMA_SYNC_4 = 4 "Channel 0";
+        DMA_SYNC_5 = 5 "Channel 1";
+        DMA_SYNC_6 = 6 "Channel 2";
+        DMA_SYNC_7 = 7 "Channel 3";
+    };
+
+    constants nsf_sync_status width(1) "" {
+        NSF_SYNC_0 = 0 "Disabled";
+        NSF_SYNC_1 = 1 "Enabled";
+    };
+    
+    register simcop_hwseq_step_ctrl_i_0 addr(base, 0x80) "Hardware sequencer step control register" {
+        cpu_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the CPU so that it can be used for some processing on in the macroblock pipeline.";
+        dma_ofst 3 rw type(dma_ofst_status) "Controls DMA bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000 0x4000 0x5000 0x6000 0x7000";
+        rot_o_ofst 2 rw type(rot_o_ofst_status) "Controls ROT.O bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        rot_i_ofst 2 rw type(rot_i_ofst_status) "Controls ROT_I bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 1 mbz;
+        dct_f_ofst 3 rw type(dct_f_ofst_status) "Controls DCT.F bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        dct_s_ofst 2 rw type(dct_s_ofst_status) "Controls DCT.S bus mapping to image buffers: 0x0000 0x1000";
+        vlcdj_io_ofst 3 rw type(dct_f_ofst_status) "Controls VLCDJ IO data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        imx_b_d_ofst 2 rw type(imx_b_d_ofst_status) "Controls iMX B data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        imx_a_d_ofst 2 rw type(imx_b_d_ofst_status) "Controls iMX A data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        next 2 rw type(next_status) "Next channel in the sync chain";
+        _ 1 mbz;
+        dma_sync 3 rw type(dma_sync_status) "Enable hardware synchronization with the SIMCOP DMA";
+        rot_a_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the ROT #a module";
+        nsf_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the NSF module";
+        vlcdj_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the VLCDJ module";
+        dct_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the DCT module";
+        ldc_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the LDC module";
+    };
+    
+    register simcop_hwseq_step_ctrl_i_1 addr(base, 0x90) "Hardware sequencer step control register" {
+        cpu_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the CPU so that it can be used for some processing on in the macroblock pipeline.";
+        dma_ofst 3 rw type(dma_ofst_status) "Controls DMA bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000 0x4000 0x5000 0x6000 0x7000";
+        rot_o_ofst 2 rw type(rot_o_ofst_status) "Controls ROT.O bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        rot_i_ofst 2 rw type(rot_i_ofst_status) "Controls ROT_I bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 1 mbz;
+        dct_f_ofst 3 rw type(dct_f_ofst_status) "Controls DCT.F bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        dct_s_ofst 2 rw type(dct_s_ofst_status) "Controls DCT.S bus mapping to image buffers: 0x0000 0x1000";
+        vlcdj_io_ofst 3 rw type(dct_f_ofst_status) "Controls VLCDJ IO data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        imx_b_d_ofst 2 rw type(imx_b_d_ofst_status) "Controls iMX B data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        imx_a_d_ofst 2 rw type(imx_b_d_ofst_status) "Controls iMX A data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        next 2 rw type(next_status) "Next channel in the sync chain";
+        _ 1 mbz;
+        dma_sync 3 rw type(dma_sync_status) "Enable hardware synchronization with the SIMCOP DMA";
+        rot_a_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the ROT #a module";
+        nsf_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the NSF module";
+        vlcdj_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the VLCDJ module";
+        dct_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the DCT module";
+        ldc_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the LDC module";
+    };
+    
+    register simcop_hwseq_step_ctrl_i_2 addr(base, 0xA0) "Hardware sequencer step control register" {
+        cpu_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the CPU so that it can be used for some processing on in the macroblock pipeline.";
+        dma_ofst 3 rw type(dma_ofst_status) "Controls DMA bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000 0x4000 0x5000 0x6000 0x7000";
+        rot_o_ofst 2 rw type(rot_o_ofst_status) "Controls ROT.O bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        rot_i_ofst 2 rw type(rot_i_ofst_status) "Controls ROT_I bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 1 mbz;
+        dct_f_ofst 3 rw type(dct_f_ofst_status) "Controls DCT.F bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        dct_s_ofst 2 rw type(dct_s_ofst_status) "Controls DCT.S bus mapping to image buffers: 0x0000 0x1000";
+        vlcdj_io_ofst 3 rw type(dct_f_ofst_status) "Controls VLCDJ IO data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        imx_b_d_ofst 2 rw type(imx_b_d_ofst_status) "Controls iMX B data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        imx_a_d_ofst 2 rw type(imx_b_d_ofst_status) "Controls iMX A data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        next 2 rw type(next_status) "Next channel in the sync chain";
+        _ 1 mbz;
+        dma_sync 3 rw type(dma_sync_status) "Enable hardware synchronization with the SIMCOP DMA";
+        rot_a_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the ROT #a module";
+        nsf_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the NSF module";
+        vlcdj_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the VLCDJ module";
+        dct_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the DCT module";
+        ldc_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the LDC module";
+    };
+    
+    register simcop_hwseq_step_ctrl_i_3 addr(base, 0xB0) "Hardware sequencer step control register" {
+        cpu_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the CPU so that it can be used for some processing on in the macroblock pipeline.";
+        dma_ofst 3 rw type(dma_ofst_status) "Controls DMA bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000 0x4000 0x5000 0x6000 0x7000";
+        rot_o_ofst 2 rw type(rot_o_ofst_status) "Controls ROT.O bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        rot_i_ofst 2 rw type(rot_i_ofst_status) "Controls ROT_I bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 1 mbz;
+        dct_f_ofst 3 rw type(dct_f_ofst_status) "Controls DCT.F bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        dct_s_ofst 2 rw type(dct_s_ofst_status) "Controls DCT.S bus mapping to image buffers: 0x0000 0x1000";
+        vlcdj_io_ofst 3 rw type(dct_f_ofst_status) "Controls VLCDJ IO data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        imx_b_d_ofst 2 rw type(imx_b_d_ofst_status) "Controls iMX B data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        imx_a_d_ofst 2 rw type(imx_b_d_ofst_status) "Controls iMX A data bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        next 2 rw type(next_status) "Next channel in the sync chain";
+        _ 1 mbz;
+        dma_sync 3 rw type(dma_sync_status) "Enable hardware synchronization with the SIMCOP DMA";
+        rot_a_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the ROT #a module";
+        nsf_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the NSF module";
+        vlcdj_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the VLCDJ module";
+        dct_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the DCT module";
+        ldc_sync 1 rw type(nsf_sync_status) "Enable hardware synchronization with the LDC module";
+    };
+    
+    register simcop_hwseq_step_switch_i_0 addr(base, 0x84) "Image buffer switch control. The configuration of step #0 is used when hardware sequencer is idle." {
+        imbuff_h 4 rw type(imbuff_h_status) "Switch for image buffer h";
+        imbuff_g 4 rw type(imbuff_h_status) "Switch for image buffer g";
+        _ 1 mbz;
+        imbuff_f 3 rw type(imbuff_f_status) "Switch for image buffer f";
+        _ 1 mbz;
+        imbuff_e 3 rw type(imbuff_f_status) "Switch for image buffer e";
+        _ 1 mbz;
+        imbuff_d 3 rw type(imbuff_d_status) "Switch for image buffer d";
+        _ 1 mbz;
+        imbuff_c 3 rw type(imbuff_d_status) "Switch for image buffer c.";
+        _ 1 mbz;
+        imbuff_b 3 rw type(imbuff_b_status) "Switch for image buffer b.";
+        _ 1 mbz;
+        imbuff_a 3 rw type(imbuff_b_status) "Switch for image buffer a";
+    };
+    
+    register simcop_hwseq_step_switch_i_1 addr(base, 0x94) "Image buffer switch control. The configuration of step #0 is used when hardware sequencer is idle." {
+        imbuff_h 4 rw type(imbuff_h_status) "Switch for image buffer h";
+        imbuff_g 4 rw type(imbuff_h_status) "Switch for image buffer g";
+        _ 1 mbz;
+        imbuff_f 3 rw type(imbuff_f_status) "Switch for image buffer f";
+        _ 1 mbz;
+        imbuff_e 3 rw type(imbuff_f_status) "Switch for image buffer e";
+        _ 1 mbz;
+        imbuff_d 3 rw type(imbuff_d_status) "Switch for image buffer d";
+        _ 1 mbz;
+        imbuff_c 3 rw type(imbuff_d_status) "Switch for image buffer c.";
+        _ 1 mbz;
+        imbuff_b 3 rw type(imbuff_b_status) "Switch for image buffer b.";
+        _ 1 mbz;
+        imbuff_a 3 rw type(imbuff_b_status) "Switch for image buffer a";
+    };
+    
+    register simcop_hwseq_step_switch_i_2 addr(base, 0xA4) "Image buffer switch control. The configuration of step #0 is used when hardware sequencer is idle." {
+        imbuff_h 4 rw type(imbuff_h_status) "Switch for image buffer h";
+        imbuff_g 4 rw type(imbuff_h_status) "Switch for image buffer g";
+        _ 1 mbz;
+        imbuff_f 3 rw type(imbuff_f_status) "Switch for image buffer f";
+        _ 1 mbz;
+        imbuff_e 3 rw type(imbuff_f_status) "Switch for image buffer e";
+        _ 1 mbz;
+        imbuff_d 3 rw type(imbuff_d_status) "Switch for image buffer d";
+        _ 1 mbz;
+        imbuff_c 3 rw type(imbuff_d_status) "Switch for image buffer c.";
+        _ 1 mbz;
+        imbuff_b 3 rw type(imbuff_b_status) "Switch for image buffer b.";
+        _ 1 mbz;
+        imbuff_a 3 rw type(imbuff_b_status) "Switch for image buffer a";
+    };
+    
+    register simcop_hwseq_step_switch_i_3 addr(base, 0xB4) "Image buffer switch control. The configuration of step #0 is used when hardware sequencer is idle." {
+        imbuff_h 4 rw type(imbuff_h_status) "Switch for image buffer h";
+        imbuff_g 4 rw type(imbuff_h_status) "Switch for image buffer g";
+        _ 1 mbz;
+        imbuff_f 3 rw type(imbuff_f_status) "Switch for image buffer f";
+        _ 1 mbz;
+        imbuff_e 3 rw type(imbuff_f_status) "Switch for image buffer e";
+        _ 1 mbz;
+        imbuff_d 3 rw type(imbuff_d_status) "Switch for image buffer d";
+        _ 1 mbz;
+        imbuff_c 3 rw type(imbuff_d_status) "Switch for image buffer c.";
+        _ 1 mbz;
+        imbuff_b 3 rw type(imbuff_b_status) "Switch for image buffer b.";
+        _ 1 mbz;
+        imbuff_a 3 rw type(imbuff_b_status) "Switch for image buffer a";
+    };
+    
+    register simcop_hwseq_step_imx_ctrl_i_0 addr(base, 0x88) "Hardware sequencer step control register The configuration of step #0 is used when hardware sequencer is idle." {
+        imx_b_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the iMX B module";
+        _ 2 mbz;
+        imx_b_start 13 rw "This register is only used whenSIMCOP_HWSEQ_STEP_IMX_CTRL_i[31] IMX_B_SYNC=1. It contains the address, in 16-bit words, of the first instruction iMX will execute when it gets started.";
+        imx_a_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the iMX A module";
+        _ 2 mbz;
+        imx_a_start 13 rw "This register is only used whenSIMCOP_HWSEQ_STEP_IMX_CTRL_i[15] IMX_A_SYNC=1. It contains the address, in 16-bit words, of the first instruction iMX will execute when it gets started.";
+    };
+    
+    register simcop_hwseq_step_imx_ctrl_i_1 addr(base, 0x98) "Hardware sequencer step control register The configuration of step #0 is used when hardware sequencer is idle." {
+        imx_b_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the iMX B module";
+        _ 2 mbz;
+        imx_b_start 13 rw "This register is only used whenSIMCOP_HWSEQ_STEP_IMX_CTRL_i[31] IMX_B_SYNC=1. It contains the address, in 16-bit words, of the first instruction iMX will execute when it gets started.";
+        imx_a_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the iMX A module";
+        _ 2 mbz;
+        imx_a_start 13 rw "This register is only used whenSIMCOP_HWSEQ_STEP_IMX_CTRL_i[15] IMX_A_SYNC=1. It contains the address, in 16-bit words, of the first instruction iMX will execute when it gets started.";
+    };
+    
+    register simcop_hwseq_step_imx_ctrl_i_2 addr(base, 0xA8) "Hardware sequencer step control register The configuration of step #0 is used when hardware sequencer is idle." {
+        imx_b_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the iMX B module";
+        _ 2 mbz;
+        imx_b_start 13 rw "This register is only used whenSIMCOP_HWSEQ_STEP_IMX_CTRL_i[31] IMX_B_SYNC=1. It contains the address, in 16-bit words, of the first instruction iMX will execute when it gets started.";
+        imx_a_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the iMX A module";
+        _ 2 mbz;
+        imx_a_start 13 rw "This register is only used whenSIMCOP_HWSEQ_STEP_IMX_CTRL_i[15] IMX_A_SYNC=1. It contains the address, in 16-bit words, of the first instruction iMX will execute when it gets started.";
+    };
+    
+    register simcop_hwseq_step_imx_ctrl_i_3 addr(base, 0xB8) "Hardware sequencer step control register The configuration of step #0 is used when hardware sequencer is idle." {
+        imx_b_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the iMX B module";
+        _ 2 mbz;
+        imx_b_start 13 rw "This register is only used whenSIMCOP_HWSEQ_STEP_IMX_CTRL_i[31] IMX_B_SYNC=1. It contains the address, in 16-bit words, of the first instruction iMX will execute when it gets started.";
+        imx_a_sync 1 rw type(cpu_sync_status) "Enable hardware synchronization with the iMX A module";
+        _ 2 mbz;
+        imx_a_start 13 rw "This register is only used whenSIMCOP_HWSEQ_STEP_IMX_CTRL_i[15] IMX_A_SYNC=1. It contains the address, in 16-bit words, of the first instruction iMX will execute when it gets started.";
+    };
+    
+    register simcop_hwseq_step_ctrl2_i_0 addr(base, 0x8C) "Hardware sequencer step control register" {
+        _ 20 mbz;
+        nsf2_io_ofst 2 rw type(dct_s_ofst_status) "Controls NSF_IO bus mapping to image buffers: 0x0000 0x1000";
+        ldc_o_ofst 2 rw type(rot_o_ofst_status) "Controls LDC.O bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 1 mbz;
+        coeff_b 3 rw type(coeff_b_status) "Coefficient buffer b switch";
+        _ 1 mbz;
+        coeff_a 3 rw type(imbuff_d_status) "Coefficient buffer a switch";
+    };
+    
+    register simcop_hwseq_step_ctrl2_i_1 addr(base, 0x9C) "Hardware sequencer step control register" {
+        _ 20 mbz;
+        nsf2_io_ofst 2 rw type(dct_s_ofst_status) "Controls NSF_IO bus mapping to image buffers: 0x0000 0x1000";
+        ldc_o_ofst 2 rw type(rot_o_ofst_status) "Controls LDC.O bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 1 mbz;
+        coeff_b 3 rw type(coeff_b_status) "Coefficient buffer b switch";
+        _ 1 mbz;
+        coeff_a 3 rw type(imbuff_d_status) "Coefficient buffer a switch";
+    };
+    
+    register simcop_hwseq_step_ctrl2_i_2 addr(base, 0xAC) "Hardware sequencer step control register" {
+        _ 20 mbz;
+        nsf2_io_ofst 2 rw type(dct_s_ofst_status) "Controls NSF_IO bus mapping to image buffers: 0x0000 0x1000";
+        ldc_o_ofst 2 rw type(rot_o_ofst_status) "Controls LDC.O bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 1 mbz;
+        coeff_b 3 rw type(coeff_b_status) "Coefficient buffer b switch";
+        _ 1 mbz;
+        coeff_a 3 rw type(imbuff_d_status) "Coefficient buffer a switch";
+    };
+    
+    register simcop_hwseq_step_ctrl2_i_3 addr(base, 0xBC) "Hardware sequencer step control register" {
+        _ 20 mbz;
+        nsf2_io_ofst 2 rw type(dct_s_ofst_status) "Controls NSF_IO bus mapping to image buffers: 0x0000 0x1000";
+        ldc_o_ofst 2 rw type(rot_o_ofst_status) "Controls LDC.O bus mapping to image buffers: 0x0000 0x1000 0x2000 0x3000";
+        _ 1 mbz;
+        coeff_b 3 rw type(coeff_b_status) "Coefficient buffer b switch";
+        _ 1 mbz;
+        coeff_a 3 rw type(imbuff_d_status) "Coefficient buffer a switch";
+    };
+};

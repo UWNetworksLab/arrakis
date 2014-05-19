@@ -1,0 +1,276 @@
+/*
+ * Copyright (c) 2009, 2010, 2012, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/**
+    Hamlet input file.
+
+    This file defines the Barrelfish capability type system.
+
+    (Meta-)Comments about the syntax are enclosed between /** ... **/
+    Comments of the Hamlet language are enclosed between /* ... */
+**/
+
+/** We can define some constants using the "define" construct **/
+
+/* XXX: these must match the corresponding OBJBITS definitions in barrelfish_kpi/capabilities.h */
+
+/* Size of CNode entry: */
+define cte_size 7;
+/* Size of DCB: */
+define dispatcher_size 10;
+/* Size of (x86_64) VNode: */
+define vnode_size 12; /* BASE_PAGE_BITS */
+
+/**
+    The capabilities of the whole system are listed thereafter.
+    The minimal definition consists of a name and an empty body.
+**/
+
+cap Null is_never_copy {
+    /* Null/invalid object type */
+};
+
+cap PhysAddr from_self {
+    /* Physical address range (root of cap tree) */
+
+    /**
+      For a populated cap, we need to give the type and name of each
+      of its fields, such as:
+      "genpaddr base;" for instance
+
+      In order to implement various comparisons, we need to specify a address
+      and size for each type that is backed by memory. The size may be
+      specified directly with "size" or as "size_bits".
+
+      Additional equality fields can be specified with an "eq" prefix, as in
+      "eq genpaddr base;"
+    **/
+
+    address genpaddr base;  /* Base address of untyped region */
+    size_bits uint8 bits;   /* Address bits that untyped region bears */
+
+};
+
+/** The following caps are similar to the previous one **/
+
+cap RAM from PhysAddr from_self {
+    /* RAM memory object */
+
+    address genpaddr base;  /* Base address of untyped region */
+    size_bits uint8 bits; /* Address bits that untyped region bears */
+
+};
+
+cap CNode from RAM {
+    /* CNode table, stores further capabilities */
+
+    lpaddr cnode;           /* Base address of CNode */
+    uint8 bits;             /* Number of bits this CNode resolves */
+    caprights rightsmask;
+    uint8 guard_size;       /* Number of bits in guard */
+    caddr guard;            /* Bitmask already resolved when reaching this CNode */
+
+    /**
+      Address and size may also be specified with some very limited
+      expressions.
+    **/
+
+    /* Shouldn't this be mem_to_phys(cnode)? (causes breakage) -MN */
+    address { cnode };
+    size_bits { bits + cte_size };
+
+};
+
+cap FCNode {
+     /* Foreign CNode capability */
+
+     eq genpaddr cnode;	    /* Base address of CNode */
+     eq uint8 bits;    	    /* Number of bits this CNode resolves */
+     caprights rightsmask;
+     eq coreid core_id;     /* The core the cap is local on */
+     uint8 guard_size; 	    /* Number of bits in guard */
+     caddr guard;           /* Bitmask already resolved when reaching this CNode */
+};
+
+/** Dispatcher is interesting is several ways. **/
+
+/**
+  XXX: The whole multi_retype stuff is hack in hamlet that should be removed as
+  soon as parts of an object can be retyped individually. -MN
+**/
+
+cap Dispatcher from RAM {
+    /* Dispatcher */
+
+    /**
+      The Dispatcher is a special case that can be retyped several
+      times to an end-point
+    **/
+    /** Note: This must be the first statement */
+    can_retype_multiple;
+
+    /**
+      We allow the use of unknow structures. However, equality will
+      be defined by address, not by structure.
+    **/
+    "struct dcb" dcb;       /* Pointer to kernel DCB */
+
+    address { mem_to_phys(dcb) };
+    size_bits { dispatcher_size };
+};
+
+cap EndPoint from Dispatcher {
+    /* IDC endpoint */
+
+    "struct dcb" listener;  /* Dispatcher listening on this endpoint */
+    lvaddr epoffset;        /* Offset of endpoint buffer in disp frame */
+    uint32 epbuflen;        /* Length of endpoint buffer in words */
+
+    address { mem_to_phys(listener) };
+
+    /** XXX
+       Preferable definitions for address and size would be as below. These
+       should be used as soon as the whole multi retype hack stuff is fixed:
+
+       address { mem_to_phys(listener + epoffset) };
+       size { epbuflen };
+
+       -MN
+    **/
+};
+
+/** Then, we go back to routine **/
+
+cap Frame from RAM from_self {
+    /* Mappable memory frame */
+
+    address genpaddr base;  /* Physical base address of frame */
+    size_bits uint8 bits;      /* Address bits this frame bears */
+};
+
+cap DevFrame from PhysAddr from_self {
+    /* Mappable device frame */
+
+    address genpaddr base;  /* Physical base address of frame */
+    size_bits uint8 bits;      /* Address bits this frame bears */
+};
+
+
+cap Kernel is_always_copy {
+    /* Capability to a kernel */
+};
+
+
+
+/* x86_64-specific capabilities: */
+
+cap VNode_x86_64_pml4 from RAM {
+    /* PML4 */
+
+    address genpaddr base;  /* Base address of VNode */
+    size_bits { vnode_size };
+};
+
+cap VNode_x86_64_pdpt from RAM {
+    /* PDPT */
+
+    address genpaddr base;  /* Base address of VNode */
+    size_bits { vnode_size };
+};
+
+cap VNode_x86_64_pdir from RAM {
+    /* Page directory */
+
+    address genpaddr base;  /* Base address of VNode */
+    size_bits { vnode_size };
+};
+
+cap VNode_x86_64_ptable from RAM {
+    /* Page table */
+
+    address genpaddr base;  /* Base address of VNode */
+    size_bits { vnode_size };
+};
+
+
+/* x86_32-specific capabilities: */
+
+cap VNode_x86_32_pdpt from RAM {
+    /* PDPT */
+
+    address genpaddr base;  /* Base address of VNode */
+    size_bits { vnode_size };
+};
+
+cap VNode_x86_32_pdir from RAM {
+    /* Page directory */
+
+    address genpaddr base;  /* Base address of VNode */
+    size_bits { vnode_size };
+};
+
+cap VNode_x86_32_ptable from RAM {
+    /* Page table */
+
+    address genpaddr base;  /* Base address of VNode */
+    size_bits { vnode_size };
+};
+
+/* ARM specific capabilities: */
+
+cap VNode_ARM_l1 from RAM {
+    /* L1 Page Table */
+
+    address genpaddr base;  /* Base address of VNode */
+    size_bits { vnode_size };
+};
+
+cap VNode_ARM_l2 from RAM {
+    /* L2 Page Table */
+    address genpaddr base;  /* Base address of VNode */
+    size_bits { vnode_size };
+};
+
+/** IRQTable and IO are slightly different **/
+
+cap IRQTable is_always_copy {
+    /* IRQ Routing table */
+    /**
+       When testing two IRQTable caps for is_copy, we always return True: all
+       IRQ entries originate from a single, primitive Cap. Grand'pa Cap, sort
+       of.
+    **/
+};
+
+cap IO {
+    /* Legacy IO capability */
+    eq uint16 start;
+    eq uint16 end;          /* Granted IO range */
+};
+
+/* really RCK notify caps */
+cap Notify_RCK {
+    eq coreid coreid;
+    eq uint16 chanid;
+};
+
+/* IPI notify caps */
+cap Notify_IPI {
+    eq coreid coreid;
+    eq uint16 chanid;
+};
+
+/* ID capability, system-wide unique */
+cap ID {
+    eq coreid coreid; /* core cap was created */
+    eq uint32 core_local_id; /* per core unique id */
+};
+
+cap PerfMon is_always_copy {
+};

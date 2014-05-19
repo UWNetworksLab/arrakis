@@ -1,0 +1,583 @@
+binding
+capability_mgmt
+debugging
+device_man
+driver
+environment
+group_comm
+lock_service
+mem_alloc
+naming
+network_stack
+power_mgmt
+principals
+process_mgmt
+resource_acct_mgmt
+routing
+shell
+skb
+storage_mgmt
+terminal
+threading
+tracing
+VMachine
+VMem
+---
+# x depends on (requires) y
+# 0 - no dependency, 1 - dependency, 2 - don't know
+# should have a way of saying optional, and disallowed
+# f - fundamental, fb - fundamental using barrelfish mechanisms, 
+# b - barrelfish implementation, i - implementation
+# assuming single machine (not network-based IDC)
+binding capability_mgmt	       		1	fb	# requires end points. also to be able to send/receive caps
+binding debugging			0
+binding driver				0
+binding device_man			0
+binding environment			0
+binding group_comm			1	f	# group communication functionality is accessed through the binding service
+binding lock_service			2	i	# implementation may use locking	
+binding mem_alloc			0		
+binding naming				0
+binding network_stack			0
+binding power_mgmt			0
+binding principals			0
+binding process_mgmt			0
+binding resource_acct_mgmt		0
+binding routing				1	f	# routed connections are managed through the binding service
+binding shell				0
+binding skb				1	fb	#  need to know about cores available, and to set up communication mechanisms
+binding storage_mgmt			0
+binding terminal			0
+binding threading			1	f	# binding needs to wake up threads in a dispatcher
+binding tracing				0
+binding VMachine			0
+binding VMem				1	i	# binding needs to set up shared memory
+capability_mgmt binding			1	b 	# needs to bind to other services and managers 
+capability_mgmt debugging		0
+capability_mgmt driver			0
+capability_mgmt device_man		0
+capability_mgmt environment		0
+capability_mgmt group_comm		2	i	# depends on how it communicates with capability managers on other cores
+capability_mgmt lock_service		0
+capability_mgmt mem_alloc		1	f	# needs memory (RAM caps) to create, move, etc. caps
+capability_mgmt naming			1	b	# needs to find other services and managers 
+capability_mgmt network_stack		0
+capability_mgmt power_mgmt		0
+capability_mgmt principals		0
+capability_mgmt process_mgmt		0
+capability_mgmt resource_acct_mgmt	0		
+capability_mgmt routing			0
+capability_mgmt shell			0
+capability_mgmt skb			0
+capability_mgmt storage_mgmt		0
+capability_mgmt terminal		0
+capability_mgmt threading		0
+capability_mgmt tracing			0
+capability_mgmt VMachine		0
+capability_mgmt VMem			0
+debugging binding			1	b	# needs to bind to other services and managers 
+debugging capability_mgmt		1	f	# need to inspect and modify cap allocations 
+debugging driver			0
+debugging device_man			0
+debugging environment			0
+debugging group_comm			0
+debugging lock_service			0
+debugging mem_alloc			0	
+debugging naming			1	b	# needs to find other services and managers 
+debugging network_stack			0
+debugging power_mgmt			0
+debugging principals			0
+debugging process_mgmt			1	f	# to debug at the process level, connect to processes etc.
+debugging resource_acct_mgmt		0
+debugging routing			0
+debugging shell				0
+debugging skb				2	fb	# ? does debug service need to know about system?
+debugging storage_mgmt			0
+debugging terminal			0
+debugging threading			1	f	# to debug at thread level, connect to threads, etc.
+debugging tracing			0		
+debugging VMachine			0
+debugging VMem				1	f	# inspect and modify memory mappings, page tables
+driver binding				1	b 	# needs to bind to other services and managers 
+driver capability_mgmt			1	fb	# device drivers need caps to their hardware
+driver debugging			0
+driver environment			0
+driver group_comm			0
+driver lock_service			2	i	# drivers may need locking
+driver mem_alloc			1	fb	# drivers need mem caps, e.g, for DMA
+driver naming				1	b	# needs to find other services and managers
+driver network_stack			0
+driver power_mgmt			2	f	# drivers need to know system power state (e.g., suspend, shut down, etc.). Note this could just be an interface they provide that is invoked by power manager rather than that drivers have to use power manager.
+driver principals			0
+driver process_mgmt			0
+driver resource_acct_mgmt		0
+driver routing				0
+driver shell				0
+driver skb				0
+driver storage_mgmt			0
+driver terminal				0
+driver threading			0
+driver tracing				0
+driver VMachine				0
+driver VMem				1	f	# drivers need to map memory for DMA, zero copy, etc.
+device_man binding			1	b 	# needs to bind to other services and managers 
+device_man capability_mgmt		0
+device_man debugging			0
+device_man environment			0
+device_man group_comm			0
+device_man lock_service			2	i
+device_man mem_alloc			0
+device_man naming			1	b	# needs to find other services and managers
+device_man network_stack		0
+device_man power_mgmt			2	f	# device manager needs to know system power state (e.g., suspend, shut down, etc.). Note this could just be an interface they provide that is invoked by power manager rather than that it have to use power manager.
+device_man principals			0
+device_man process_mgmt			0
+device_man resource_acct_mgmt		0
+device_man routing			0
+device_man shell			0
+device_man skb				1	fb	# device and bus management (eg PCI) needs to know what's in the system for assigning addresses etc. also register info
+device_man storage_mgmt			0
+device_man terminal			0
+device_man threading			0
+device_man tracing			0
+device_man VMachine			0
+device_man VMem				0
+environment binding			0
+environment capability_mgmt		0
+environment debugging			0
+environment driver			0
+environment device_man			0
+environment group_comm			0
+environment lock_service		0
+environment mem_alloc			0
+environment naming			0
+environment network_stack		0
+environment power_mgmt			0
+environment principals			2	f	# per user/session environment needs to know about users/sessions
+environment process_mgmt		2	f	# per process environment needs to know about processes
+environment resource_acct_mgmt		0
+environment routing			0
+environment shell			0
+environment skb				0
+environment storage_mgmt		0
+environment terminal			0
+environment threading			0
+environment tracing			0
+environment VMachine			0
+environment VMem			0
+group_comm binding			1	f	# group communication needs to use single bindings
+group_comm capability_mgmt		2	fb	# does it need to manipulate endpoints. May need to pass endpoints
+group_comm debugging			0
+group_comm driver			0
+group_comm device_man			0
+group_comm environment			0
+group_comm lock_service			2	f	# lock_service used to implement coordination, synchronisation, consensus? or vice versa?
+group_comm mem_alloc			0
+group_comm naming			0
+group_comm network_stack		0
+group_comm power_mgmt			0
+group_comm principals			0
+group_comm process_mgmt			0
+group_comm resource_acct_mgmt		0
+group_comm routing			2	i	# needs to send messages between members.  does it use routing directly? or through a general messaging layer?
+group_comm shell			0
+group_comm skb				1	fb	# needs to know what is available (eg cores in system, interconnects, etc.)
+group_comm storage_mgmt			0
+group_comm terminal			0
+group_comm threading			0
+group_comm tracing			0
+group_comm VMachine			0
+group_comm VMem				0
+lock_service binding			1	b	# needs to bind to other services and managers 
+lock_service capability_mgmt		0
+lock_service debugging			0
+lock_service driver			0
+lock_service device_man			0
+lock_service environment		0
+lock_service group_comm			2	i	# depends on how the lock primitives are implemented
+lock_service mem_alloc			0
+lock_service naming			1	b	# needs to communicate with other services and managers 
+lock_service network_stack		0
+lock_service power_mgmt			0
+lock_service principals			0
+lock_service process_mgmt		1	f	# needs to block process execution, needs to notify processes
+lock_service resource_acct_mgmt		0	
+lock_service routing			0
+lock_service shell			0
+lock_service skb			0
+lock_service storage_mgmt		0	
+lock_service terminal			0
+lock_service threading			1	f	# needs to block thread execution, needs to notify threads
+lock_service tracing			0
+lock_service VMachine			0
+lock_service VMem			0
+mem_alloc binding			1	b	# needs to bind to other services and managers 
+mem_alloc capability_mgmt		1	fb	# needs RAM caps to do cap management
+mem_alloc debugging			0
+mem_alloc driver			0
+mem_alloc device_man			0
+mem_alloc environment			0
+mem_alloc group_comm			0
+mem_alloc lock_service			0
+mem_alloc naming			0
+mem_alloc network_stack			0
+mem_alloc power_mgmt			0
+mem_alloc principals			0
+mem_alloc process_mgmt			0
+mem_alloc resource_acct_mgmt		2	f	# possibly needs to know about available (memory) resources at any given moment
+mem_alloc routing			0
+mem_alloc shell				0
+mem_alloc skb				2	fb	# needs to know what resources the system has
+mem_alloc storage_mgmt			0
+mem_alloc terminal			0
+mem_alloc threading			0
+mem_alloc tracing			0
+mem_alloc VMachine			0
+mem_alloc VMem				0
+naming binding				1	b	# needs to bind to other services and managers 
+naming capability_mgmt			0
+naming debugging			0
+naming driver				0
+naming device_man			0
+naming environment			0
+naming group_comm			2	i	# may use group communication for notification
+naming lock_service			0	
+naming mem_alloc			0
+naming network_stack			0
+naming power_mgmt			0
+naming principals			0
+naming process_mgmt			0
+naming resource_acct_mgmt		0
+naming routing				0
+naming shell				0
+naming skb				0
+naming storage_mgmt			0
+naming terminal				0
+naming threading			0	
+naming tracing				0
+naming VMachine				0
+naming VMem				0
+network_stack binding			1	b	# needs to bind to other services and managers 
+network_stack capability_mgmt		0
+network_stack debugging			0
+network_stack driver			1	f	# needs to access network drivers
+network_stack device_man		0
+network_stack environment		2	i	# may rely on environment settings
+network_stack group_comm		2	i	# may be implemented using group communication
+network_stack lock_service		2	i	# likely to be implemented with locking
+network_stack mem_alloc			0
+network_stack naming			1	b	# needs to find other services and managers
+network_stack power_mgmt		0
+network_stack principals		0
+network_stack process_mgmt		0
+network_stack resource_acct_mgmt	0
+network_stack routing			0
+network_stack shell			0
+network_stack skb			2	fb	# needs to know about network devices and other system info
+network_stack storage_mgmt		0
+network_stack terminal			0
+network_stack threading			0
+network_stack tracing			0
+network_stack VMachine			0
+network_stack VMem			2	i	# may need to manipulate mapping for zero-copy
+power_mgmt binding			1	b	# needs to bind to other services and managers 
+power_mgmt capability_mgmt		2	fb	# may need to manipulate caps to be able to modify power settings
+power_mgmt debugging			0
+power_mgmt driver			1	f	# needs to access drivers to change power states, etc.
+power_mgmt device_man			1	f	# needs to access drivers to change power states, etc.
+power_mgmt environment			0
+power_mgmt group_comm			2	i	# likely to be implemented using group communication
+power_mgmt lock_service			2	i	# likely to require locking
+power_mgmt mem_alloc			0
+power_mgmt naming			1	b	# needs to find other services and managers
+power_mgmt network_stack		0
+power_mgmt principals			0
+power_mgmt process_mgmt			0
+power_mgmt resource_acct_mgmt		2	f	# needs information about system resources to make power management decisions
+power_mgmt routing			0
+power_mgmt shell			0
+power_mgmt skb				1	fb	# needs to know what is available in the system, what should be monitored and controlled
+power_mgmt storage_mgmt			0
+power_mgmt terminal			0
+power_mgmt threading			0
+power_mgmt tracing			0
+power_mgmt VMachine			0
+power_mgmt VMem				0
+principals binding			2	b	# needs to bind to other services and managers 
+principals capability_mgmt		1	fb	# access control based on capabilities
+principals debugging			0
+principals driver			0
+principals device_man			0
+principals environment			0
+principals group_comm			0
+principals lock_service			0
+principals mem_alloc			0
+principals naming			2	b	# needs to find other services and managers
+principals network_stack		0
+principals power_mgmt			0
+principals process_mgmt			0
+principals resource_acct_mgmt		0
+principals routing			0
+principals shell			0
+principals skb				0
+principals storage_mgmt			0
+principals terminal			0
+principals threading			0
+principals tracing			0
+principals VMachine			0
+principals VMem				0
+process_mgmt binding			1	b	# needs to bind to other services and managers 
+process_mgmt capability_mgmt		1	fb	# needs to manipulate processes cspace (setup, teardown, etc.)
+process_mgmt debugging			0
+process_mgmt driver			0
+process_mgmt device_man			0
+process_mgmt environment		0
+process_mgmt group_comm			2	i	# likely to use group comm to contact dispatchers that make up a domain)
+process_mgmt lock_service		0
+process_mgmt mem_alloc			0
+process_mgmt naming			1	b	# needs to find other services and managers
+process_mgmt network_stack		0
+process_mgmt power_mgmt			0
+process_mgmt principals			1	f	# needs to know what permissions to give process (and thus what caps to give it)
+process_mgmt resource_acct_mgmt		1	f	# needs to account process's usage
+process_mgmt routing			0
+process_mgmt shell			0
+process_mgmt skb			0
+process_mgmt storage_mgmt		0
+process_mgmt terminal			0
+process_mgmt threading			1	f	# manage threads as part of process management
+process_mgmt tracing			0
+process_mgmt VMachine			0
+process_mgmt VMem			1	f	# needs to set up a process's address space
+resource_acct_mgmt binding		2	b	# needs to bind to other services and managers 
+resource_acct_mgmt capability_mgmt	1	fb	# needs to manipulate caps for resource management
+resource_acct_mgmt debugging		0
+resource_acct_mgmt driver		1	f	# needs to find out about and manage device usage from drivers and device managers
+resource_acct_mgmt device_man		1	f	# needs to find out about and manage device usage from drivers and device managers
+resource_acct_mgmt environment		0
+resource_acct_mgmt group_comm		2	i	# likely to use group communication
+resource_acct_mgmt lock_service		2	i	# likely to use locking/synchronisation
+resource_acct_mgmt mem_alloc		0
+resource_acct_mgmt naming		1	b	# needs to find other services and managers
+resource_acct_mgmt network_stack	0
+resource_acct_mgmt power_mgmt		1	f	# needs to account and manage power usage (power is also a type of resource to be managed)
+resource_acct_mgmt principals		0
+resource_acct_mgmt process_mgmt		1	f	# account and manage processes
+resource_acct_mgmt routing		0
+resource_acct_mgmt shell		0
+resource_acct_mgmt skb			1	fb	# needs to know what resources there are to manage
+resource_acct_mgmt storage_mgmt		2	f	# things like disk space management, quota management, etc.
+resource_acct_mgmt terminal		0
+resource_acct_mgmt threading		0
+resource_acct_mgmt tracing		2	i	# might use tracing service to get data
+resource_acct_mgmt VMachine		0
+resource_acct_mgmt VMem			0
+routing binding	   			1	f	# will need to use point-to-point bindings to implement multi-hop routing
+routing capability_mgmt			1	fb	# will need to create new endpoints?
+routing debugging			0
+routing driver				0
+routing device_man			0
+routing environment			0
+routing group_comm			2	i	# likely to use group communication to do routing
+routing lock_service			2	i 	# likely to use locking/synchronisation
+routing mem_alloc			0
+routing naming				2	b	# needs to find other services and managers, also for point-to-point links
+routing network_stack			0
+routing power_mgmt			0
+routing principals			0
+routing process_mgmt			0
+routing resource_acct_mgmt		0
+routing shell				0
+routing skb				2	fb	# needs to know what cores and interconnects there are to do routing
+routing storage_mgmt			0
+routing terminal			0
+routing threading			0
+routing tracing				0
+routing VMachine			0
+routing VMem				0
+shell binding				1	b	# needs to bind to other services and managers 
+shell capability_mgmt			0
+shell debugging				0
+shell driver				0
+shell device_man				0
+shell environment			1	f	# environment affects shell's behaviour
+shell group_comm			0
+shell lock_service			0
+shell mem_alloc				0
+shell naming				1	b	# needs to find other services and managers
+shell network_stack			0
+shell power_mgmt			0
+shell principals			1	f	# needs to determine authorisation, permissions, access control
+shell process_mgmt			1	f	# needs to start, stop, suspend, etc. processes
+shell resource_acct_mgmt		0
+shell routing				0
+shell skb				0
+shell storage_mgmt			1	f	# needs to access program files
+shell terminal				1	f	# I/O through terminal
+shell threading				1	f	# needs to manage thread execution (start, stop, suspend)
+shell tracing				0
+shell VMachine				0
+shell VMem				0
+skb binding				1      b	# needs to listen for connections
+skb capability_mgmt			0
+skb debugging				0
+skb driver				0
+skb device_man				0
+skb environment				0
+skb group_comm				0
+skb lock_service			0
+skb mem_alloc				0
+skb naming				1	b	# needs to register
+skb network_stack			0
+skb power_mgmt				0
+skb principals				0
+skb process_mgmt			0
+skb resource_acct_mgmt			0
+skb routing				0
+skb shell				0
+skb storage_mgmt			1	i	# needs to read pl files and store DB
+skb terminal				0
+skb threading				0
+skb tracing				0
+skb VMachine				0
+skb VMem				0
+storage_mgmt binding			1	b	# needs to bind to other services and managers 
+storage_mgmt capability_mgmt		0
+storage_mgmt debugging			0
+storage_mgmt driver			1	f	# needs to access disk/storage devices
+storage_mgmt device_man			0
+storage_mgmt environment		0
+storage_mgmt group_comm			2	i	# likely to use group communication
+storage_mgmt lock_service		2	i	# likely to use locking
+storage_mgmt mem_alloc				0
+storage_mgmt naming			1	b	# needs to find other services and managers
+storage_mgmt network_stack		0
+storage_mgmt power_mgmt			0
+storage_mgmt principals			1	f	# needs to do access control
+storage_mgmt process_mgmt		0
+storage_mgmt resource_acct_mgmt		0
+storage_mgmt routing			0
+storage_mgmt shell			0
+storage_mgmt skb			2	fb	# to find out what devices are available?
+storage_mgmt terminal			0
+storage_mgmt threading			0
+storage_mgmt tracing			0
+storage_mgmt VMachine			0
+storage_mgmt VMem			1	f	# mmaped files, zero copy, etc.
+terminal binding			1	b	# needs to bind to other services and managers 
+terminal capability_mgmt		2	i	# possibly for framebuffer or mapping output buffers?
+terminal debugging			0
+terminal driver				1	f	# needs to access input an output devices
+terminal device_man			0
+terminal environment			0
+terminal group_comm			0
+terminal lock_service			2	i	 # likely to use locking, synchronisation
+terminal mem_alloc			0
+terminal naming				1	b	# needs to find other services and managers
+terminal network_stack			0
+terminal power_mgmt			0
+terminal principals			0
+terminal process_mgmt			0
+terminal resource_acct_mgmt		0
+terminal routing			0
+terminal shell				0
+terminal skb				2	fb	# needs to find out what devices are available
+terminal storage_mgmt			0
+terminal threading			0
+terminal tracing			0
+terminal VMachine			0
+terminal VMem				2	i	# possibly for framebuffer or mapping output buffers?
+threading binding			2	b	# needs to bind to other services and managers 
+threading capability_mgmt		1	fb	# needs to manipulate access to thread local storage, stacks, etc.
+threading debugging			0
+threading driver			0
+threading device_man			0
+threading environment			0
+threading group_comm			0
+threading lock_service			2	f	# needs to provide thread specific synch 
+threading mem_alloc			0	
+threading naming			2	b	# needs to find other services and managers
+threading network_stack			0
+threading power_mgmt			0
+threading principals			0
+threading process_mgmt			1	f	# threads exist in the context of a process/domain
+threading resource_acct_mgmt		0
+threading routing			0
+threading shell				0
+threading skb				0
+threading storage_mgmt			0
+threading terminal			0
+threading tracing			0
+threading VMachine			0
+threading VMem				1	f	# manage memory accessible by a thread
+# not sure how the tracing works - it's potentially dependent on everything and vice versa?
+tracing binding				1   	b     # needs to listen for connectiosn	      
+tracing capability_mgmt			0
+tracing debugging			0
+tracing driver				0
+tracing device_man			0
+tracing environment			0
+tracing group_comm			0
+tracing lock_service			0
+tracing mem_alloc			0	
+tracing naming				1	b	# needs to register	
+tracing network_stack			0
+tracing power_mgmt			0
+tracing principals			0
+tracing process_mgmt			0
+tracing resource_acct_mgmt		0
+tracing routing				0
+tracing shell				0
+tracing skb				0
+tracing storage_mgmt			0
+tracing terminal			0
+tracing threading			0
+tracing VMachine			0
+tracing VMem				0
+# not sure about the VMM
+VMachine binding			1	b	# needs to use other services
+VMachine capability_mgmt		1	fb
+VMachine debugging			0
+VMachine driver				1	f
+VMachine device_man			1	f
+VMachine environment			0
+VMachine group_comm			0
+VMachine lock_service			2	i
+VMachine mem_alloc			1	f	# needs to deal with RAm and device memory
+VMachine naming				1	b	# needs to find other services
+VMachine network_stack			2	i	# may use net stack to virtualise network traffic
+VMachine power_mgmt			2	i	# may do power management
+VMachine principals			0
+VMachine process_mgmt			1	f
+VMachine resource_acct_mgmt		0
+VMachine routing			0
+VMachine shell				0
+VMachine skb				2	fb	# may need to find avaialbel resources
+VMachine storage_mgmt			2	i	# may use FS to virtualise storage access
+VMachine terminal			0
+VMachine threading			0
+VMachine tracing			0
+VMachine VMem				1	f	# needs to manage virtual mem mappings
+VMem binding				1	b	# needs to bind to other services and managers 
+VMem capability_mgmt			1	fb	# needs to manipulate caps 
+VMem debugging				0
+VMem driver				0
+VMem device_man				0
+VMem environment			0
+VMem group_comm				2	i	# likely to be implemented using group comm
+VMem lock_service			2	i	# likely to use locking/sync
+VMem mem_alloc				1	f	# needs RAM caps to do mappings etc.
+VMem naming				1	b	# needs to find other services and managers
+VMem network_stack			0
+VMem power_mgmt				0
+VMem principals				0
+VMem process_mgmt			0
+VMem resource_acct_mgmt			0
+VMem routing				0
+VMem shell				0
+VMem skb				1	fb	# needs to know what memory is available
+VMem storage_mgmt			0
+VMem terminal				0
+VMem threading				0
+VMem tracing				0
+VMem VMachine				0

@@ -1,0 +1,630 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_sysctrl_padconf_wkup.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_sysctrl_padconf_wkup msbfirst ( addr base ) "" {
+    
+    
+    register control_padconf_wkup_revision ro addr(base, 0x0) "Control module revision identifier Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_padconf_wkup_hwinfo ro addr(base, 0x4) "Information about the IP module hardware configuration that is, typically the module HDL generics (if any). Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+
+    constants ip_sysconfig_idlemode_status width(2) "" {
+        IP_SYSCONFIG_IDLEMODE_0 = 0 "Clock is manually gated";
+        IP_SYSCONFIG_IDLEMODE_1 = 1 "Clock is manually enabled";
+    };
+    
+    register control_padconf_wkup_sysconfig addr(base, 0x10) "Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        ip_sysconfig_idlemode 2 rw type(ip_sysconfig_idlemode_status) "Select the local clock-gating strategy0x2,0x3: Clock is automatically gated when there is no access to the Control Module through L4-interconnect .";
+        _ 2 mbz;
+    };
+
+    constants gpio_wk1_wakeupevent_status width(1) "" {
+        GPIO_WK1_WAKEUPEVENT_0_r = 0 "No wake-up event occurred";
+        GPIO_WK1_WAKEUPEVENT_1_r = 1 "A wake-up event occurred";
+    };
+
+    constants gpio_wk1_wakeupenable_status width(1) "" {
+        GPIO_WK1_WAKEUPENABLE_0 = 0 "wake-up detection is disabled";
+        GPIO_WK1_WAKEUPENABLE_1 = 1 "wake-up detection is enabled";
+    };
+
+    constants gpio_wk1_inputenable_status width(1) "" {
+        GPIO_WK1_INPUTENABLE_0 = 0 "Input buffer of I/O cell is disabled";
+        GPIO_WK1_INPUTENABLE_1 = 1 "Input buffer of I/O cell is enabled";
+    };
+
+    constants gpio_wk1_pulltypeselect_status width(1) "" {
+        GPIO_WK1_PULLTYPESELECT_0 = 0 "pulldown selected";
+        GPIO_WK1_PULLTYPESELECT_1 = 1 "pullup selected";
+    };
+
+    constants gpio_wk1_pulludenable_status width(1) "" {
+        GPIO_WK1_PULLUDENABLE_0 = 0 "pullup/down disabled";
+        GPIO_WK1_PULLUDENABLE_1 = 1 "pullup/down enabled";
+    };
+
+    constants gpio_wk1_muxmode_status width(3) "" {
+        GPIO_WK1_MUXMODE_0 = 0 "Reserved";
+        GPIO_WK1_MUXMODE_3 = 3 "Select gpio_wk1";
+        GPIO_WK1_MUXMODE_6 = 6 "Select hw_dbg2";
+        GPIO_WK1_MUXMODE_7 = 7 "Select safe_mode";
+    };
+
+    constants gpio_wk0_muxmode_status width(3) "" {
+        GPIO_WK0_MUXMODE_0 = 0 "Reserved";
+        GPIO_WK0_MUXMODE_3 = 3 "Select gpio_wk0";
+        GPIO_WK0_MUXMODE_4 = 4 "Select c2c_pwkup";
+        GPIO_WK0_MUXMODE_6 = 6 "Select hw_dbg1";
+        GPIO_WK0_MUXMODE_7 = 7 "Select safe_mode";
+    };
+    
+    register control_wkup_pad0_gpio_wk0_pad1_gpio_wk1 addr(base, 0x40) "Register control for Pads gpio_wk0 and gpio_wk1 Access conditions. Read: unrestricted, Write: unrestricted" {
+        gpio_wk1_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        gpio_wk1_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        gpio_wk1_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad gpio_wk1";
+        _ 3 mbz;
+        gpio_wk1_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad gpio_wk1";
+        gpio_wk1_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad gpio_wk1";
+        gpio_wk1_muxmode 3 rw type(gpio_wk1_muxmode_status) "Functional multiplexing selection for pad gpio_wk1";
+        gpio_wk0_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        gpio_wk0_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        gpio_wk0_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad gpio_wk0";
+        _ 3 mbz;
+        gpio_wk0_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad gpio_wk0";
+        gpio_wk0_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad gpio_wk0";
+        gpio_wk0_muxmode 3 rw type(gpio_wk0_muxmode_status) "Functional multiplexing selection for pad gpio_wk0";
+    };
+
+    constants gpio_wk3_muxmode_status width(3) "" {
+        GPIO_WK3_MUXMODE_0 = 0 "Reserved";
+        GPIO_WK3_MUXMODE_3 = 3 "Select gpio_wk3";
+        GPIO_WK3_MUXMODE_6 = 6 "Select hw_dbg4";
+        GPIO_WK3_MUXMODE_7 = 7 "Select safe_mode";
+    };
+
+    constants gpio_wk2_muxmode_status width(3) "" {
+        GPIO_WK2_MUXMODE_0 = 0 "Reserved";
+        GPIO_WK2_MUXMODE_3 = 3 "Select gpio_wk2";
+        GPIO_WK2_MUXMODE_6 = 6 "Select hw_dbg3";
+        GPIO_WK2_MUXMODE_7 = 7 "Select safe_mode";
+    };
+    
+    register control_wkup_pad0_gpio_wk2_pad1_gpio_wk3 addr(base, 0x44) "Register control for Pads gpio_wk2 and gpio_wk3 Access conditions. Read: unrestricted, Write: unrestricted" {
+        gpio_wk3_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        gpio_wk3_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        gpio_wk3_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad gpio_wk3";
+        _ 3 mbz;
+        gpio_wk3_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad gpio_wk3";
+        gpio_wk3_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad gpio_wk3";
+        gpio_wk3_muxmode 3 rw type(gpio_wk3_muxmode_status) "Functional multiplexing selection for pad gpio_wk3";
+        gpio_wk2_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        gpio_wk2_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        gpio_wk2_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad gpio_wk2";
+        _ 3 mbz;
+        gpio_wk2_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad gpio_wk2";
+        gpio_wk2_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad gpio_wk2";
+        gpio_wk2_muxmode 3 rw type(gpio_wk2_muxmode_status) "Functional multiplexing selection for pad gpio_wk2";
+    };
+
+    constants gpio_wk4_muxmode_status width(3) "" {
+        GPIO_WK4_MUXMODE_0 = 0 "Reserved";
+        GPIO_WK4_MUXMODE_3 = 3 "Select gpio_wk4";
+        GPIO_WK4_MUXMODE_6 = 6 "Select hw_dbg5";
+        GPIO_WK4_MUXMODE_7 = 7 "Select safe_mode";
+    };
+    
+    register control_wkup_pad0_gpio_wk4_pad1_sr_scl addr(base, 0x48) "Register control for Pads gpio_wk4 and sr_scl Access conditions. Read: unrestricted, Write: unrestricted" {
+        sr_scl_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        sr_scl_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        sr_scl_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad sr_scl";
+        _ 3 mbz;
+        sr_scl_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad sr_scl";
+        sr_scl_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad sr_scl";
+        _ 3 mbz;
+        gpio_wk4_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        gpio_wk4_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        gpio_wk4_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad gpio_wk4";
+        _ 3 mbz;
+        gpio_wk4_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad gpio_wk4";
+        gpio_wk4_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad gpio_wk4";
+        gpio_wk4_muxmode 3 rw type(gpio_wk4_muxmode_status) "Functional multiplexing selection for pad gpio_wk4";
+    };
+
+    constants fref_xtal_in_muxmode_status width(3) "" {
+        FREF_XTAL_IN_MUXMODE_0 = 0 "Select fref_xtal_in";
+        FREF_XTAL_IN_MUXMODE_4 = 4 "Select c2c_wakereqin";
+    };
+    
+    register control_wkup_pad0_sr_sda_pad1_fref_xtal_in addr(base, 0x4C) "Register control for Pads sr_sda and fref_xtal_in Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 13 mbz;
+        fref_xtal_in_muxmode 3 rw type(fref_xtal_in_muxmode_status) "Functional multiplexing selection for pad fref_xtal_in";
+        sr_sda_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        sr_sda_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        sr_sda_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad sr_sda";
+        _ 3 mbz;
+        sr_sda_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad sr_sda";
+        sr_sda_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad sr_sda";
+        _ 3 mbz;
+    };
+
+    constants fref_slicer_in_muxmode_status width(3) "" {
+        FREF_SLICER_IN_MUXMODE_0 = 0 "Select fref_slicer_in";
+        FREF_SLICER_IN_MUXMODE_3 = 3 "Select gpi_wk5";
+        FREF_SLICER_IN_MUXMODE_4 = 4 "Select c2c_wakereqin";
+        FREF_SLICER_IN_MUXMODE_7 = 7 "Select safe_mode";
+    };
+    
+    register control_wkup_pad0_fref_slicer_in_pad1_fref_clk_ioreq addr(base, 0x50) "Register control for Pads fref_slicer_in and fref_clk_ioreq Access conditions. Read: unrestricted, Write: unrestricted" {
+        fref_clk_ioreq_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        fref_clk_ioreq_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        fref_clk_ioreq_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad fref_clk_ioreq";
+        _ 3 mbz;
+        fref_clk_ioreq_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad fref_clk_ioreq";
+        fref_clk_ioreq_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad fref_clk_ioreq";
+        _ 16 mbz;
+        fref_slicer_in_muxmode 3 rw type(fref_slicer_in_muxmode_status) "Functional multiplexing selection for pad fref_slicer_in";
+    };
+
+    constants fref_clk3_req_muxmode_status width(3) "" {
+        FREF_CLK3_REQ_MUXMODE_0 = 0 "Select fref_clk3_req";
+        FREF_CLK3_REQ_MUXMODE_1 = 1 "Select fref_clk1_req";
+        FREF_CLK3_REQ_MUXMODE_2 = 2 "Reserved";
+        FREF_CLK3_REQ_MUXMODE_3 = 3 "Select gpio_wk30";
+        FREF_CLK3_REQ_MUXMODE_4 = 4 "Select c2c_wakereqin";
+        FREF_CLK3_REQ_MUXMODE_5 = 5 "Select sdmmc2_dat4";
+        FREF_CLK3_REQ_MUXMODE_6 = 6 "Select hw_dbg7";
+        FREF_CLK3_REQ_MUXMODE_7 = 7 "Select safe_mode";
+    };
+
+    constants fref_clk0_out_muxmode_status width(3) "" {
+        FREF_CLK0_OUT_MUXMODE_0 = 0 "Select fref_clk0_out";
+        FREF_CLK0_OUT_MUXMODE_1 = 1 "Select fref_clk1_req";
+        FREF_CLK0_OUT_MUXMODE_2 = 2 "Reserved";
+        FREF_CLK0_OUT_MUXMODE_3 = 3 "Select gpio_wk6";
+        FREF_CLK0_OUT_MUXMODE_5 = 5 "Select sdmmc2_dat7";
+        FREF_CLK0_OUT_MUXMODE_6 = 6 "Select hw_dbg6";
+        FREF_CLK0_OUT_MUXMODE_7 = 7 "Select safe_mode";
+    };
+    
+    register control_wkup_pad0_fref_clk0_out_pad1_fref_clk3_req addr(base, 0x54) "Register control for Pads fref_clk0_out and fref_clk3_req Access conditions. Read: unrestricted, Write: unrestricted" {
+        fref_clk3_req_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        fref_clk3_req_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        fref_clk3_req_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad fref_clk3_req";
+        _ 3 mbz;
+        fref_clk3_req_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad fref_clk3_req";
+        fref_clk3_req_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad fref_clk3_req";
+        fref_clk3_req_muxmode 3 rw type(fref_clk3_req_muxmode_status) "Functional multiplexing selection for pad fref_clk3_req";
+        fref_clk0_out_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        fref_clk0_out_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        fref_clk0_out_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad fref_clk0_out";
+        _ 3 mbz;
+        fref_clk0_out_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad fref_clk0_out";
+        fref_clk0_out_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad fref_clk0_out";
+        fref_clk0_out_muxmode 3 rw type(fref_clk0_out_muxmode_status) "Functional multiplexing selection for pad fref_clk0_out";
+    };
+
+    constants fref_clk4_req_muxmode_status width(3) "" {
+        FREF_CLK4_REQ_MUXMODE_0 = 0 "Select fref_clk4_req";
+        FREF_CLK4_REQ_MUXMODE_1 = 1 "Select fref_clk5_out";
+        FREF_CLK4_REQ_MUXMODE_3 = 3 "Select gpio_wk7";
+        FREF_CLK4_REQ_MUXMODE_5 = 5 "Select sdmmc2_dat6";
+        FREF_CLK4_REQ_MUXMODE_6 = 6 "Select hw_dbg9";
+    };
+
+    constants fref_clk3_out_muxmode_status width(3) "" {
+        FREF_CLK3_OUT_MUXMODE_0 = 0 "Select fref_clk3_out";
+        FREF_CLK3_OUT_MUXMODE_1 = 1 "Select fref_clk2_req";
+        FREF_CLK3_OUT_MUXMODE_2 = 2 "Reserved";
+        FREF_CLK3_OUT_MUXMODE_3 = 3 "Select gpio_wk31";
+        FREF_CLK3_OUT_MUXMODE_4 = 4 "Select c2c_wakereqout";
+        FREF_CLK3_OUT_MUXMODE_5 = 5 "Select sdmmc2_dat5";
+        FREF_CLK3_OUT_MUXMODE_6 = 6 "Select hw_dbg8";
+        FREF_CLK3_OUT_MUXMODE_7 = 7 "Select safe_mode";
+    };
+    
+    register control_wkup_pad0_fref_clk3_out_pad1_fref_clk4_req addr(base, 0x58) "Register control for Pads fref_clk3_out and fref_clk4_req Access conditions. Read: unrestricted, Write: unrestricted" {
+        fref_clk4_req_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        fref_clk4_req_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        fref_clk4_req_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad fref_clk4_req";
+        _ 3 mbz;
+        fref_clk4_req_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad fref_clk4_req";
+        fref_clk4_req_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad fref_clk4_req";
+        fref_clk4_req_muxmode 3 rw type(fref_clk4_req_muxmode_status) "Functional multiplexing selection for pad fref_clk4_req";
+        fref_clk3_out_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        fref_clk3_out_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        fref_clk3_out_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad fref_clk3_out";
+        _ 3 mbz;
+        fref_clk3_out_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad fref_clk3_out";
+        fref_clk3_out_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad fref_clk3_out";
+        fref_clk3_out_muxmode 3 rw type(fref_clk3_out_muxmode_status) "Functional multiplexing selection for pad fref_clk3_out";
+    };
+
+    constants fref_clk4_out_muxmode_status width(3) "" {
+        FREF_CLK4_OUT_MUXMODE_0 = 0 "Select fref_clk4_out";
+        FREF_CLK4_OUT_MUXMODE_3 = 3 "Select gpio_wk8";
+        FREF_CLK4_OUT_MUXMODE_6 = 6 "Select hw_dbg10";
+    };
+    
+    register control_wkup_pad0_fref_clk4_out_pad1_sys_32k addr(base, 0x5C) "Register control for Pads fref_clk4_out and sys_32k Access conditions. Read: unrestricted, Write: unrestricted" {
+        sys_32k_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        sys_32k_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        sys_32k_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad sys_32k";
+        _ 3 mbz;
+        sys_32k_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad sys_32k";
+        sys_32k_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad sys_32k";
+        _ 3 mbz;
+        fref_clk4_out_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        fref_clk4_out_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        fref_clk4_out_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad fref_clk4_out";
+        _ 3 mbz;
+        fref_clk4_out_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad fref_clk4_out";
+        fref_clk4_out_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad fref_clk4_out";
+        fref_clk4_out_muxmode 3 rw type(fref_clk4_out_muxmode_status) "Functional multiplexing selection for pad fref_clk4_out";
+    };
+    
+    register control_wkup_pad0_sys_nrespwron_pad1_sys_nreswarm addr(base, 0x60) "Register control for Pads sys_nreswarm Access conditions. Read: unrestricted, Write: unrestricted" {
+        sys_nreswarm_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        sys_nreswarm_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 30 mbz;
+    };
+
+    constants sys_pwron_reset_out_muxmode_status width(3) "" {
+        SYS_PWRON_RESET_OUT_MUXMODE_0 = 0 "Select sys_pwron_reset_out";
+        SYS_PWRON_RESET_OUT_MUXMODE_3 = 3 "Select gpio_wk29";
+        SYS_PWRON_RESET_OUT_MUXMODE_5 = 5 "Select hw_dbg0";
+        SYS_PWRON_RESET_OUT_MUXMODE_6 = 6 "Select hw_dbg11";
+    };
+    
+    register control_wkup_pad0_sys_pwr_req_pad1_sys_pwron_reset_out addr(base, 0x64) "Register control for Pads sys_pwr_req and sys_pwron_reset_out Access conditions. Read: unrestricted, Write: unrestricted" {
+        sys_pwron_reset_out_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        sys_pwron_reset_out_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        sys_pwron_reset_out_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad sys_pwron_reset_out";
+        _ 3 mbz;
+        sys_pwron_reset_out_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad sys_pwron_reset_out";
+        sys_pwron_reset_out_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad sys_pwron_reset_out";
+        sys_pwron_reset_out_muxmode 3 rw type(sys_pwron_reset_out_muxmode_status) "Functional multiplexing selection for pad sys_pwron_reset_out";
+        sys_pwr_req_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        sys_pwr_req_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        sys_pwr_req_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad sys_pwr_req";
+        _ 3 mbz;
+        sys_pwr_req_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad sys_pwr_req";
+        sys_pwr_req_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad sys_pwr_req";
+        _ 3 mbz;
+    };
+
+    constants sys_boot7_muxmode_status width(3) "" {
+        SYS_BOOT7_MUXMODE_0 = 0 "Select sys_boot7";
+        SYS_BOOT7_MUXMODE_1 = 1 "Select dpm_emu19";
+        SYS_BOOT7_MUXMODE_3 = 3 "Select gpio_wk10";
+        SYS_BOOT7_MUXMODE_6 = 6 "Select hw_dbg13";
+        SYS_BOOT7_MUXMODE_7 = 7 "Select safe_mode";
+    };
+
+    constants sys_boot6_muxmode_status width(3) "" {
+        SYS_BOOT6_MUXMODE_0 = 0 "Select sys_boot6";
+        SYS_BOOT6_MUXMODE_1 = 1 "Select dpm_emu18";
+        SYS_BOOT6_MUXMODE_3 = 3 "Select gpio_wk9";
+        SYS_BOOT6_MUXMODE_4 = 4 "Select c2c_wakereqout";
+        SYS_BOOT6_MUXMODE_6 = 6 "Select hw_dbg12";
+        SYS_BOOT6_MUXMODE_7 = 7 "Select safe_mode";
+    };
+    
+    register control_wkup_pad0_sys_boot6_pad1_sys_boot7 addr(base, 0x68) "Register control for Pads sys_boot6 and sys_boot7 Access conditions. Read: unrestricted, Write: unrestricted" {
+        sys_boot7_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        sys_boot7_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        sys_boot7_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad sys_boot7";
+        _ 3 mbz;
+        sys_boot7_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad sys_boot7";
+        sys_boot7_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad sys_boot7";
+        sys_boot7_muxmode 3 rw type(sys_boot7_muxmode_status) "Functional multiplexing selection for pad sys_boot7";
+        sys_boot6_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        sys_boot6_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        sys_boot6_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad sys_boot6";
+        _ 3 mbz;
+        sys_boot6_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad sys_boot6";
+        sys_boot6_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad sys_boot6";
+        sys_boot6_muxmode 3 rw type(sys_boot6_muxmode_status) "Functional multiplexing selection for pad sys_boot6";
+    };
+
+    constants jtag_tck_muxmode_status width(3) "" {
+        JTAG_TCK_MUXMODE_0 = 0 "Select jtag_tck";
+        JTAG_TCK_MUXMODE_7 = 7 "Select safe_mode";
+    };
+    
+    register control_wkup_pad0_jtag_ntrst_pad1_jtag_tck addr(base, 0x6C) "Register control for Pads jtag_ntrst and jtag_tck Access conditions. Read: unrestricted, Write: unrestricted" {
+        jtag_tck_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        jtag_tck_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        jtag_tck_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad jtag_tck";
+        _ 3 mbz;
+        jtag_tck_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad jtag_tck";
+        jtag_tck_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad jtag_tck";
+        jtag_tck_muxmode 3 rw type(jtag_tck_muxmode_status) "Functional multiplexing selection for pad jtag_tck";
+        jtag_ntrst_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        jtag_ntrst_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        jtag_ntrst_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad jtag_ntrst";
+        _ 3 mbz;
+        jtag_ntrst_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad jtag_ntrst";
+        jtag_ntrst_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad jtag_ntrst";
+        _ 3 mbz;
+    };
+
+    constants jtag_tms_tmsc_muxmode_status width(3) "" {
+        JTAG_TMS_TMSC_MUXMODE_0 = 0 "Select jtag_tms_tmsc";
+        JTAG_TMS_TMSC_MUXMODE_7 = 7 "Select safe_mode";
+    };
+    
+    register control_wkup_pad0_jtag_rtck_pad1_jtag_tms_tmsc addr(base, 0x70) "Register control for Pads jtag_rtck and jtag_tms_tmsc Access conditions. Read: unrestricted, Write: unrestricted" {
+        jtag_tms_tmsc_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        jtag_tms_tmsc_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        jtag_tms_tmsc_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad jtag_tms_tmsc";
+        _ 5 mbz;
+        jtag_tms_tmsc_muxmode 3 rw type(jtag_tms_tmsc_muxmode_status) "Functional multiplexing selection for pad jtag_tms_tmsc";
+        jtag_rtck_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        jtag_rtck_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 9 mbz;
+        jtag_rtck_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad jtag_rtck";
+        jtag_rtck_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad jtag_rtck";
+        _ 3 mbz;
+    };
+    
+    register control_wkup_pad0_jtag_tdi_pad1_jtag_tdo addr(base, 0x74) "Register control for Pads jtag_tdi and jtag_tdo Access conditions. Read: unrestricted, Write: unrestricted" {
+        jtag_tdo_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        jtag_tdo_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        jtag_tdo_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad jtag_tdo";
+        _ 3 mbz;
+        jtag_tdo_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad jtag_tdo";
+        jtag_tdo_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad jtag_tdo";
+        _ 3 mbz;
+        jtag_tdi_wakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Pad_x wake-up event status latched in the IO";
+        jtag_tdi_wakeupenable 1 rw type(gpio_wk1_wakeupenable_status) "Input pad wake-up enable (and OFF mode input enable value)";
+        _ 5 mbz;
+        jtag_tdi_inputenable 1 rw type(gpio_wk1_inputenable_status) "Input enable value for pad jtag_tdi";
+        _ 3 mbz;
+        jtag_tdi_pulltypeselect 1 rw type(gpio_wk1_pulltypeselect_status) "pullup/down selection for pad jtag_tdi";
+        jtag_tdi_pulludenable 1 rw type(gpio_wk1_pulludenable_status) "pullup/down enable for pad jtag_tdi";
+        _ 3 mbz;
+    };
+    
+    register control_wkup_padconf_wakeupevent_0 addr(base, 0x7C) "Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 7 mbz;
+        jtag_tdo_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad jtag_tdo";
+        jtag_tdi_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad jtag_tdi";
+        jtag_tms_tmsc_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad jtag_tms_tmsc";
+        jtag_rtck_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad jtag_rtck";
+        jtag_tck_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad jtag_tck";
+        jtag_ntrst_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad jtag_ntrst";
+        sys_boot7_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad sys_boot7";
+        sys_boot6_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad sys_boot6";
+        sys_pwron_reset_out_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad sys_pwron_reset_out";
+        sys_pwr_req_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad sys_pwr_req";
+        sys_nreswarm_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad sys_nreswarm";
+        sys_32k_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad sys_32k";
+        fref_clk4_out_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad fref_clk4_out";
+        fref_clk4_req_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad fref_clk4_req";
+        fref_clk3_out_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad fref_clk3_out";
+        fref_clk3_req_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad fref_clk3_req";
+        fref_clk0_out_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad fref_clk0_out";
+        fref_clk_ioreq_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad fref_clk_ioreq";
+        sr_sda_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad sr_sda";
+        sr_scl_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad sr_scl";
+        gpio_wk4_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad gpio_wk4";
+        gpio_wk3_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad gpio_wk3";
+        gpio_wk2_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad gpio_wk2";
+        gpio_wk1_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad gpio_wk1";
+        gpio_wk0_duplicatewakeupevent 1 ro type(gpio_wk1_wakeupevent_status) "Wake-up event status latched in the I/O for pad gpio_wk0";
+    };
+    
+    register control_smart1nopmio_padconf_0 addr(base, 0x5A0) "SMART1 NOPM I/O control 0 Access conditions. Read: unrestricted, Write: unrestricted" {
+        fref_dr0_sc 2 rw "Slew rate control for group fref_dr0 Refer to , section Low Speed I/Os Combined Slew Rate vs TL Length and Load Settings for more details on SR settings.";
+        _ 10 mbz;
+        gpio_dr7_sc 2 rw "Slew rate control for group gpio_dr7 Refer to , section Low Speed I/Os Combined Slew Rate vs TL Length and Load Settings for more details on SR settings.";
+        _ 2 mbz;
+        dpm_dr0_sc 2 rw "Slew rate control for group dpm_dr0 Refer to , section Low Speed I/Os Combined Slew Rate vs TL Length and Load Settings for more details on SR settings.";
+        gpiowk4_dr0_sc 2 rw "Slew rate control for group gpiowk4_dr0 Refer to , section Low Speed I/Os Combined Slew Rate vs TL Length and Load Settings for more details on SR settings.";
+        _ 12 mbz;
+    };
+
+    constants fref_dr0_lb_status width(2) "" {
+        FREF_DR0_LB_0 = 0 "TL Length= [2cm-20cm] / Farend cap per TL= [1pF-10pF]";
+        FREF_DR0_LB_1 = 1 "Dual TL Length= [20cm-40cm] / Farend cap per TL= [1pF-10pF]";
+        FREF_DR0_LB_2 = 2 "TL Length = [2cm-20cm] / Farend cap per TL= [10pF-20pF]";
+        FREF_DR0_LB_3 = 3 "Dual TL Length = [20cm-40cm] / Farend cap per TL= [10pF-20pF]";
+    };
+    
+    register control_smart1nopmio_padconf_1 addr(base, 0x5A4) "SMART1 NOPM I/O control 1 Access conditions. Read: unrestricted, Write: unrestricted" {
+        fref_dr0_lb 2 rw type(fref_dr0_lb_status) "Load control for group fref_dr0";
+        _ 10 mbz;
+        gpio_dr7_lb 2 rw type(fref_dr0_lb_status) "Load control for group gpio_dr7";
+        _ 2 mbz;
+        dpm_dr0_lb 2 rw type(fref_dr0_lb_status) "Load control for group dpm_dr0";
+        gpiowk4_dr0_lb 2 rw type(fref_dr0_lb_status) "Load control for group gpiowk4_dr0";
+        _ 12 mbz;
+    };
+
+    constants vdds_dv_fref_status width(1) "" {
+        VDDS_DV_FREF_0 = 0 "VDDS = 1.8V";
+        VDDS_DV_FREF_1 = 1 "VDDS = 1.2V";
+    };
+    
+    register control_wkup_padconf_mode addr(base, 0x5A8) "PAD Voltage Mode control Access conditions. Read: unrestricted, Write: unrestricted" {
+        vdds_dv_fref 1 rw type(vdds_dv_fref_status) "PAD Voltage level control for vdds_dv_fref";
+        vdds_dv_bank2_shared1 1 rw type(vdds_dv_fref_status) "PAD Voltage level control for vdds_dv_bank2_shared1";
+        _ 30 mbz;
+    };
+
+    constants oscillator_boost_status width(1) "" {
+        OSCILLATOR_BOOST_0 = 0 "Fast startup is disabled";
+        OSCILLATOR_BOOST_1 = 1 "Fast startup is enabled";
+    };
+
+    constants oscillator_os_out_status width(1) "" {
+        OSCILLATOR_OS_OUT_0_r = 0 "low to high transition in BOOST mode";
+        OSCILLATOR_OS_OUT_1_r = 1 "BOOST is disabled";
+    };
+    
+    register control_xtal_oscillator addr(base, 0x5AC) "XTAL OSCILLATOR control Access conditions. Read: unrestricted, Write: unrestricted" {
+        oscillator_boost 1 rw type(oscillator_boost_status) "Fast startup control";
+        oscillator_os_out 1 ro type(oscillator_os_out_status) "Oscillator output";
+        _ 30 mbz;
+    };
+    
+    register control_smart3nopmio_padconf_0 addr(base, 0x5B0) "SMART3 NOPM IO control 0 Access conditions. Read: unrestricted, Write: unrestricted" {
+        fref_dr1_mb 2 rw "50-ohm output buffer mode control for group fref_dr1 Refer to 50-ohm output buffer I/Os with combined Mode and Load Settings for more details on mode settings.";
+        fref_dr5_mb 2 rw "50-ohm output buffer mode control for group fref_dr5 Refer to 50-ohm output buffer I/Os with combined Mode and Load Settings for more details on mode settings.";
+        fref_dr6_mb 2 rw "50-ohm output buffer mode control for group fref_dr6 Refer to 50-ohm output buffer I/Os with combined Mode and Load Settings for more details on mode settings.";
+        fref_dr7_mb 2 rw "50-ohm output buffer mode control for group Refer to 50-ohm output buffer I/Os with combined Mode and Load Settings for more details on mode settings.";
+        fref_dr4_mb 2 rw "50-ohm output buffer mode control for group fref_dr4 Refer to 50-ohm output buffer I/Os with combined Mode and Load Settings for more details on mode settings.";
+        _ 22 mbz;
+    };
+    
+    register control_smart3nopmio_padconf_1 addr(base, 0x5B4) "SMART3 NOPM IO control 1 Access conditions. Read: unrestricted, Write: unrestricted" {
+        fref_dr1_lb0 1 rw "50-ohm output buffer load control for group fref_dr1 Refer to 50-ohm output buffer I/Os with combined Mode and Load Settings for more details on mode settings.";
+        fref_dr5_lb0 1 rw "50-ohm output buffer load control for group fref_dr5 Refer to 50-ohm output buffer I/Os with combined Mode and Load Settings for more details on mode settings.";
+        fref_dr6_lb0 1 rw "50-ohm output buffer load control for group fref_dr6 Refer to 50-ohm output buffer I/Os with combined Mode and Load Settings for more details on mode settings.";
+        fref_dr7_lb0 1 rw "50-ohm output buffer load control for group fref_dr7 Refer to 50-ohm output buffer I/Os with combined Mode and Load Settings for more details on mode settings.";
+        fref_dr4_lb0 1 rw "50-ohm output buffer load control for group fref_dr4 Refer to 50-ohm output buffer I/Os with combined Mode and Load Settings for more details on mode settings.";
+        _ 27 mbz;
+    };
+    
+    register control_gpiowk addr(base, 0x600) "GPIOWK pads I/O control Access conditions. Read: unrestricted; Write: unrestricted" {
+        pad_gpio_wk1_low 1 rw "LOW enable for gpio_wk1 PAD";
+        _ 1 rsvd;
+        pad_gpio_wk2_low 1 rw "LOW enable for gpio_wk2 PAD";
+        gpiowk_io_pwrdnz 1 rw "PWRDNZ control to gpiowk0-gpiowk2 IOsThis bit is used to protect the gpio_wk0-gpio_wk2 pads associated I/O cell when SIM_VDDS is not stable. .";
+        _ 28 rsvd;
+    };
+
+    constants sr_sda_glfenb_status width(1) "" {
+        SR_SDA_GLFENB_0 = 0 "Disable i2c4 glitch free operation";
+        SR_SDA_GLFENB_1 = 1 "Enable i2c4 glitch free operation";
+    };
+
+    constants sr_sda_load_bits_status width(2) "" {
+        SR_SDA_LOAD_BITS_0 = 0 "4.5 kohm (5-15 pF) / 1.66 kohm (5-12 pF)";
+        SR_SDA_LOAD_BITS_1 = 1 "2.1 kohm (15-50 pF) / 920 ohm (12-25 pF)";
+        SR_SDA_LOAD_BITS_2 = 2 "860 ohm (50-150 pF) / 500 ohm (25-50 pF)";
+        SR_SDA_LOAD_BITS_3 = 3 "N.A / 300 ohm (50-80 pF)";
+    };
+
+    constants sr_sda_pullupresx_status width(1) "" {
+        SR_SDA_PULLUPRESX_0 = 0 "Enable Internal Pull up resistor";
+        SR_SDA_PULLUPRESX_1 = 1 "Disable Internal Pull up resisitor";
+    };
+    
+    register control_i2c_2 addr(base, 0x604) "I2C pads control 2 Access conditions. Read: unrestricted, Write: unrestricted" {
+        sr_sda_glfenb 1 rw type(sr_sda_glfenb_status) "Active_high glitch free operation enable pin for sr i2c receiver";
+        sr_sda_load_bits 2 rw type(sr_sda_load_bits_status) "Internal Pull up resistor in Fast or Standard mode / High_speed mode for sr i2c";
+        sr_sda_pullupresx 1 rw type(sr_sda_pullupresx_status) "Active_low internal pull_up resistor enabled for sr i2c";
+        sr_scl_glfenb 1 rw type(sr_sda_glfenb_status) "Active_high glitch free operation enable pin for sr i2c receiver";
+        sr_scl_load_bits 2 rw type(sr_sda_load_bits_status) "Internal Pull up resistor in Fast or Standard mode / High_speed mode for sr i2c";
+        sr_scl_pullupresx 1 rw type(sr_sda_pullupresx_status) "Active_low internal pull_up resistor enabled for sr i2c";
+        _ 24 mbz;
+    };
+
+    constants jtag_ntrst_en_status width(1) "" {
+        JTAG_NTRST_EN_0 = 0 "Disable bus holder functionality";
+        JTAG_NTRST_EN_1 = 1 "Enable bus holder functionality";
+    };
+    
+    register control_jtag addr(base, 0x608) "JTAG pads control Access conditions. Read: unrestricted, Write: unrestricted" {
+        jtag_ntrst_en 1 rw type(jtag_ntrst_en_status) "bus holder enable for jtag_ntrst PAD";
+        jtag_tck_en 1 rw type(jtag_ntrst_en_status) "bus holder enable for jtag_tck PAD";
+        jtag_rtck_en 1 rw type(jtag_ntrst_en_status) "bus holder enable for jtag_rtck PAD";
+        jtag_tdi_en 1 rw type(jtag_ntrst_en_status) "bus holder enable for jtag_tdi PAD";
+        jtag_tdo_en 1 rw type(jtag_ntrst_en_status) "bus holder enable for jtag_tdo PAD";
+        _ 27 mbz;
+    };
+
+    constants sys_nreswarm_pipu_status width(1) "" {
+        SYS_NRESWARM_PIPU_0 = 0 "Enable pull up";
+        SYS_NRESWARM_PIPU_1 = 1 "Disable pull up";
+    };
+    
+    register control_sys addr(base, 0x60C) "SYS controls Access conditions. Read: unrestricted, Write: unrestricted" {
+        sys_nreswarm_pipu 1 rw type(sys_nreswarm_pipu_status) "Pull up enable for sys_nreswarm PAD";
+        _ 31 mbz;
+    };
+    
+    register control_wkup_control_spare_rw rw addr(base, 0x614) "Wake-up control spare RW Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_r ro addr(base, 0x618) "Wake-up control spare R Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_r_c0 addr(base, 0x61C) "Wake-up control spare RC Access conditions. Read: unrestricted, Write: unrestricted" {
+        wkup_control_spare_r_c0 1 rw "Wake-up control spare register bits RC";
+        wkup_control_spare_r_c1 1 rw "Wake-up control spare register bits RC";
+        wkup_control_spare_r_c2 1 rw "Wake-up control spare register bits RC";
+        wkup_control_spare_r_c3 1 rw "Wake-up control spare register bits RC";
+        wkup_control_spare_r_c4 1 rw "Wake-up control spare register bits RC";
+        wkup_control_spare_r_c5 1 rw "Wake-up control spare register bits RC";
+        wkup_control_spare_r_c6 1 rw "Wake-up control spare register bits RC";
+        wkup_control_spare_r_c7 1 rw "Wake-up control spare register bits RC";
+        _ 24 mbz;
+    };
+    
+    register control_wkup_control_spare_rw1 rw addr(base, 0x620) "WKUP control spare RW1 Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_rw2 rw addr(base, 0x624) "WKUP control spare RW2 Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_rw3 rw addr(base, 0x628) "WKUP control spare RW3 Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_rw4 rw addr(base, 0x62C) "WKUP control spare RW4 Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_rw5 rw addr(base, 0x630) "WKUP control spare RW5 Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_rw6 rw addr(base, 0x634) "WKUP control spare RW6 Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_rw7 rw addr(base, 0x638) "WKUP control spare RW7 Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_rw8 rw addr(base, 0x63C) "WKUP control spare RW8 Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_rw9 rw addr(base, 0x640) "WKUP control spare RW9 Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_wkup_control_spare_r1 ro addr(base, 0x64C) "WKUP control spare R1 Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+};

@@ -1,0 +1,364 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_emif1.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_emif1 msbfirst ( addr base ) "" {
+    
+    
+    register emif_mod_id_rev ro addr(base, 0x0) "Revision number register" type(uint32);
+    
+    register emif_status addr(base, 0x4) "SDRAM Status Register (STATUS)" {
+        reg_be 1 ro "Big endian mode select for 8 and 16-bit devices, set to 1 for big endian or 0 for little endian operation.";
+        reg_dual_clk_mode 1 ro "Dual Clock mode. Defines whether the L3_clk and EMIF_FCLK clock are asynchronous. L3_clk and EMIF_FCLK clock are asynchronous, if set to 1.";
+        reg_fast_init 1 ro "Fast Init. Defines whether the EMIF fast initialization mode has been enabled. Fast initialization is enabled if set to 1.";
+        _ 26 mbz;
+        reg_phy_dll_ready 1 ro "DDR PHY Ready. Reflects the value on the phy_ready port (active high) that defines whether the DDR PHY is ready for normal operation. The DDR PHY is ready for normal operation, if set to 1.";
+        _ 2 mbz;
+    };
+    
+    register emif_sdram_config addr(base, 0x8) "SDRAM Config Register. A write to this register will cause the EMIF to start the SDRAM initialization sequence if it was not performed previously because [31] REG_INITREF_DIS was a zero." {
+        reg_sdram_type 3 rw "SDRAM Type selection. Set to 4 for LPDDR2-S4, Set to 5 for LPDDR2-S2 All other value are reserved.";
+        reg_ibank_pos 2 rw "Internal bank position. Set to 0 to assign internal bank address bits from L3 address as shown in and . Set to 1, 2, or 3 to assign internal bank address bits from L3 address as shown in , , and .";
+        _ 3 mbz;
+        reg_ddr2_ddqs 1 rw "DDR2 differential DQS enable. Set to 0 for single-ended DQS. Set to 1 for differential DQS. This bit is only for DDR2 mode, because the device supports LPDDR2; this bit is don't care.";
+        _ 2 rsvd;
+        reg_ddr_disable_dll 1 rw "Disable DLL select. Set to 1 to disable DLL inside SDRAM.";
+        _ 4 mbz;
+        reg_narrow_mode 2 rw "SDRAM data bus width. Set to 0 for 32-bit and set to 1 for 16-bit. All other values are reserved.";
+        reg_cl 4 rw "CAS Latency (referred to as read latency (RL) in some SDRAM specs). The value of this field defines the CAS latency to be used when accessing connected SDRAM devices. Value of 3, 4, 5, 6, 7, and 8 (CAS latency of 3, 4, 5, 6, 7, and 8) are supported for LPDDR2-SDRAM. All other values are reserved. Also program the EMIF_DDR_PHY_CTRL_1[3:0] REG_READ_LATENCY";
+        reg_rowsize 3 rw "Row Size. Defines the number of row address bits of connected SDRAM devices. Set to 0 for 9 row bits, Set to 1 for 10 row bits, Set to 2 for 11 row bits, Set to 3 for 12 row bits, Set to 4 for 13 row bits, Set to 5 for 14 row bits, Set to 6 for 15 row bits, Set to 7 for 16 row bits. This field is only used when EMIF_SDRAM_CONFIG[28:27] REG_IBANK_POS field is set to 1, 2, or 3 or REG_EBANK_POS field in EMIF_SDRAM_CONFIG_2 register is set to 1.";
+        reg_ibank 3 rw "Internal Bank setup. Defines number of banks inside connected SDRAM devices. Set to 0 for 1 bank, Set to 1 for 2 banks, Set to 2 for 4 banks, Set to 3 for 8 banks. All other values are reserved.";
+        reg_ebank 1 rw "External chip select setup. Defines whether SDRAM accesses will use 1 or 2 chip select lines. Set to 0 to use pad_cs_o_n[0] only. Set to 1 to use pad_cs_o_n[1:0]. This bit will automatically be set to 0 if EMIF_SDRAM_CONFIG_2[30] REG_CS1NVMEN field is set to 1.";
+        reg_pagesize 3 rw "Page Size. Defines the internal page size of connected SDRAM devices. Set to 0 for 256-word page (8 column bits), Set to 1 for 512-word page (9 column bits), Set to 2 for 1024-word page (10 column bits), Set to 3 for 2048-word page (11 column bits). All other values are reserved.";
+    };
+    
+    register emif_sdram_config_2 addr(base, 0xC) "" {
+        _ 1 mbz;
+        reg_cs1nvmen 1 rw "CS1 LPDDR2-NVM enable. Set to 1 if LPDDR2-NVM is connected to CS1. This bit will automatically be set to 0 if reg_sdram_type field in the SDRAM Config register is not set to LPDDR2.";
+        _ 2 mbz;
+        reg_ebank_pos 1 rw "External bank position. Set to 0 to assign external bank address bits from lower OCP address as shown in tables. Set to 1 to assign external bank address bits from higher OCP address bits as shown in tables.";
+        _ 21 mbz;
+        reg_rdbnum 2 rw "Row Buffer setup. Defines number of row buffers inside connected LPDDR2-NVM devices. Set to 0 for 1 row buffer, set to 1 for 2 row buffers, set to 2 for 4 row buffers, and set to 3 for 8 row buffers. All other values are reserved.";
+        _ 1 mbz;
+        reg_rdbsize 3 rw "Row Data Buffer Size. Defines the row data buffer size of connected LPDDR2-NVM devices. Set to 0 for 32 bytes, set to 1 for 64 bytes, set to 2 for 128 bytes, set to 3 for 256 bytes, set to 4 for 512 bytes, set to 5 for 1024 bytes, set to 6 for 2048 bytes, and set to 7 for 4096 bytes.";
+    };
+    
+    register emif_sdram_ref_ctrl addr(base, 0x10) "SDRAM Refresh Control Register" {
+        reg_initref_dis 1 rw "Initialization and Refresh disable. When set to 1, EMIF will disable SDRAM initialization and refreshes, but will carry out SDRAM write/read transactions.";
+        _ 15 mbz;
+        reg_refresh_rate 16 rw "Refresh Rate. Value in this field is used to define the rate at which connected SDRAM devices will be refreshed. SDRAM refresh rate = DDR_PHY_CLK / REG_REFRESH_RATE. To avoid lock-up situations, the programmer must not program REG_REFRESH_RATE &amp;lt; (6 x REG_T_RFC). For DDR_PHY_CLK description, see, .";
+    };
+    
+    register emif_sdram_ref_ctrl_shdw addr(base, 0x14) "SDRAM Refresh Control Shadow Register" {
+        _ 16 mbz;
+        reg_refresh_rate_shdw 16 rw "Shadow field for REG_REFRESH_RATE. This field is loaded intoEMIF_SDRAM_REF_CTRL[15:0] REG_REFRESH_RATE field when SIdleAck is asserted. This register is not auto corrected when the value is invalid.";
+    };
+    
+    register emif_sdram_tim_1 addr(base, 0x18) "SDRAM Timing 1 Register. If this register is byte written, care must be taken that all the fields are written before performing any accesses to the SDRAM." {
+        _ 3 mbz;
+        reg_t_rp 4 rw "Minimum number of DDR clock cycles from Precharge to Activate or Refresh, minus one.";
+        reg_t_rcd 4 rw "Minimum number of DDR clock cycles from Activate to Read or Write, minus one.";
+        reg_t_wr 4 rw "Minimum number of DDR clock cycles from last Write transfer to Precharge, minus one.";
+        reg_t_ras 5 rw "Minimum number of DDR clock cycles from Activate to Precharge, minus one. reg_t_ras value needs to be bigger than or equal to reg_t_rcd value.";
+        reg_t_rc 6 rw "Minimum number of DDR clock cycles from Activate to Activate, minus one.";
+        reg_t_rrd 3 rw "Minimum number of DDR clock cycles from Activate to Activate for a different bank, minus one. For an 8-bank, this field must be equal to ((tFAW/(4*tCK))-1).";
+        reg_t_wtr 3 rw "Minimum number of DDR clock cycles from last Write to Read, minus one.";
+    };
+    
+    register emif_sdram_tim_1_shdw addr(base, 0x1C) "SDRAM Timing 1 Shadow Register" {
+        _ 3 mbz;
+        reg_t_rp_shdw 4 rw "Shadow field for REG_T_RP. This field is loaded intoEMIF_SDRAM_TIM_1[28:25] REG_T_RP field when SIdleAck is asserted.";
+        reg_t_rcd_shdw 4 rw "Shadow field for REG_T_RCD. This field is loaded intoEMIF_SDRAM_TIM_1[24:21] REG_T_RCD field when SIdleAck is asserted.";
+        reg_t_wr_shdw 4 rw "Shadow field for REG_T_WR. This field is loaded intoEMIF_SDRAM_TIM_1[20:17] REG_T_WR field when SIdleAck is asserted.";
+        reg_t_ras_shdw 5 rw "Shadow field for REG_T_RAS. This field is loaded intoEMIF_SDRAM_TIM_1[16:12] REG_T_RAS field when SIdleAck is asserted.";
+        reg_t_rc_shdw 6 rw "Shadow field for REG_T_RC. This field is loaded intoEMIF_SDRAM_TIM_1[11:6] REG_T_RC field when SIdleAck is asserted.";
+        reg_t_rrd_shdw 3 rw "Shadow field for REG_T_RRD. This field is loaded intoEMIF_SDRAM_TIM_1[5:3] REG_T_RRD field when SIdleAck is asserted.";
+        reg_t_wtr_shdw 3 rw "Shadow field for REG_T_WTR. This field is loaded intoEMIF_SDRAM_TIM_1[2:0] REG_T_WTR field when SIdleAck is asserted.";
+    };
+    
+    register emif_sdram_tim_2 addr(base, 0x20) "SDRAM Timing 2 Register. If this register is byte written, care must be taken that all the fields are written before performing any accesses to the SDRAM." {
+        _ 1 mbz;
+        reg_t_xp 3 rw "Minimum number of DDR clock cycles from power-down exit to any command other than a read command, minus one.";
+        _ 3 mbz;
+        reg_t_xsnr 9 rw "Minimum number of DDR clock cycles from Self-Refresh exit to any command other than a Read command, minus one. REG_T_XSNR and REG_T_XSRD must be programmed with the same value.";
+        reg_t_xsrd 10 rw "Minimum number of DDR clock cycles from Self-Refresh exit to a Read command, minus one. REG_T_XSNR and REG_T_XSRD must be programmed with the same value.";
+        reg_t_rtp 3 rw "Minimum number of DDR clock cycles for the last read command to a Precharge command, minus one.";
+        reg_t_cke 3 rw "Minimum number of DDR clock cycles between pad_cke_o changes, minus one.";
+    };
+    
+    register emif_sdram_tim_2_shdw addr(base, 0x24) "SDRAM Timing 2 Shadow Register" {
+        _ 1 mbz;
+        reg_t_xp_shdw 3 rw "Shadow field for REG_T_XP. This field is loaded intoEMIF_SDRAM_TIM_2[30:28] REG_T_XP field when SIdleAck is asserted.";
+        _ 3 mbz;
+        reg_t_xsnr_shdw 9 rw "Shadow field for REG_T_XSNR. This field is loaded intoEMIF_SDRAM_TIM_2[24:16] REG_T_XSNR field when SIdleAck is asserted.";
+        reg_t_xsrd_shdw 10 rw "Shadow field for REG_T_XSRD. This field is loaded intoEMIF_SDRAM_TIM_2[15:6] REG_T_XSRD field when SIdleAck is asserted.";
+        reg_t_rtp_shdw 3 rw "Shadow field for REG_T_RTP. This field is loaded intoEMIF_SDRAM_TIM_2[5:3] REG_T_RTP field when SIdleAck is asserted.";
+        reg_t_cke_shdw 3 rw "Shadow field for REG_T_CKE. This field is loaded intoEMIF_SDRAM_TIM_2[2:0] REG_T_CKE field when SIdleAck is asserted.";
+    };
+    
+    register emif_sdram_tim_3 addr(base, 0x28) "SDRAM Timing 3 Register. If this register is byte written, care must be taken that all the fields are written before performing any accesses to the SDRAM." {
+        _ 8 mbz;
+        reg_t_ckesr 3 rw "Minimum number of DDR clock cycles for which LPDDR2 must remain in Self Refresh, minus one.";
+        reg_zq_zqcs 6 rw "Number of DDR clock cycles for a ZQCS command, minus one.";
+        reg_t_tdqsckmax 2 rw "Number of DDR clock that satisfies tDQSCKmax for LPDDR2, minus one.";
+        reg_t_rfc 9 rw "Minimum number of DDR clock cycles from Refresh or Load Mode to Refresh or Activate, minus one.";
+        reg_t_ras_max 4 rw "Maximum number of reg_refresh_rate intervals from Activate to Precharge command. This field must be equal to ((tRASmax / tREFI)-1) rounded down to the next lower integer. Value for REG_T_RAS_MAX can be calculated as follows: If tRASmax = 120 us and tREFI = 15.7 us, then REG_T_RAS_MAX = ((120/15.7)-1) = 6.64. Round down to the next lower integer. Therefore, the programmed value must be 6.";
+    };
+    
+    register emif_sdram_tim_3_shdw addr(base, 0x2C) "SDRAM Timing 3 Shadow Register" {
+        _ 8 mbz;
+        reg_t_ckesr_shdw 3 rw "Shadow field for reg_t_ckesr. This field is loaded into reg_t_ckesr field inEMIF_SDRAM_TIM_3 register when SIdleAck is asserted.";
+        reg_zq_zqcs_shdw 6 rw "Shadow field for reg_zq_zqcs. This field is loaded into reg_zq_zqcs field inEMIF_SDRAM_TIM_3 register when SIdleAck is asserted.";
+        reg_t_tdqsckmax_shdw 2 rw "Shadow field for REG_T_TDQSCKMAX. This field is loaded intoEMIF_SDRAM_TIM_3[14:13] REG_T_TDQSCKMAX field when SIdleAck is asserted.";
+        reg_t_rfc_shdw 9 rw "Shadow field for REG_T_RFC. This field is loaded intoEMIF_SDRAM_TIM_3[12:4] REG_T_RFC when SIdleAck is asserted.";
+        reg_t_ras_max_shdw 4 rw "Shadow field for REG_T_RAS_MAX. This field is loaded intoEMIF_SDRAM_TIM_3[3:0] REG_T_RAS_MAX field when SIdleAck is asserted.";
+    };
+    
+    register emif_lpddr2_nvm_tim addr(base, 0x30) "LPDDR2-NVM Timing Register. If this register is byte written, care must be taken that all the fields are written before performing any accesses to the LPDDR2-NVM. NOT USED." {
+        _ 1 mbz;
+        reg_nvm_t_xp 3 rw "Minimum number of DDR clock cycles from power-down exit to any command minus one.";
+        _ 1 mbz;
+        reg_nvm_t_wtr 3 rw "Minimum number of DDR clock cycles from last Write to Read, minus one.";
+        reg_nvm_t_rp 4 rw "Minimum number of DDR clock cycles from Preactive to Activate, minus one.";
+        reg_nvm_t_wra 4 rw "Minimum number of DDR clock cycles from last Write transfer to Activate, minus one.";
+        reg_nvm_t_rrd 8 rw "Minimum number of DDR clock cycles from Activate to Activate for a different bank, minus one.";
+        reg_nvm_t_rcdmin 8 rw "Minimum number of DDR clock cycles from Activate to Read or Write, minus one.";
+    };
+    
+    register emif_lpddr2_nvm_tim_shdw addr(base, 0x34) "LPDDR2-NVM Timing Shadow Register" {
+        _ 1 mbz;
+        reg_nvm_t_xp_shdw 3 rw "Shadow field for REG_NVM_T_XP. This field is loaded intoEMIF_LPDDR2_NVM_TIM[30:28] REG_NVM_T_XP field when SIdleAck is asserted.";
+        _ 1 mbz;
+        reg_nvm_t_wtr_shdw 3 rw "Shadow field for REG_NVM_T_WTR. This field is loaded intoEMIF_LPDDR2_NVM_TIM[26:24] REG_NVM_T_WTR field when SIdleAck is asserted.";
+        reg_nvm_t_rp_shdw 4 rw "Shadow field for REG_NVM_T_RP. This field is loaded intoEMIF_LPDDR2_NVM_TIM[23:20] REG_NVM_T_RP field when SIdleAck is asserted.";
+        reg_nvm_t_wra_shdw 4 rw "Shadow field for REG_NVM_T_WRA. This field is loaded intoEMIF_LPDDR2_NVM_TIM[19:16] REG_NVM_T_WRA field when SIdleAck is asserted.";
+        reg_nvm_t_rrd_shdw 8 rw "Shadow field for REG_NVM_T_RRD. This field is loaded intoEMIF_LPDDR2_NVM_TIM[15:8] REG_NVM_T_RRD field when SIdleAck is asserted.";
+        reg_nvm_t_rcdmin_shdw 8 rw "Shadow field for . This field is loaded intoEMIF_LPDDR2_NVM_TIM[7:0] REG_NVM_T_RCDMIN field when SIdleAck is asserted.";
+    };
+    
+    register emif_pwr_mgmt_ctrl addr(base, 0x38) "Power Management Control Register" {
+        _ 16 mbz;
+        reg_pd_tim 4 rw "Power Mangement timer for Power-Down. The EMIF will put the external SDRAM in Power-Down mode after the EMIF is idle for these number of DDR clock cycles and if reg_lp_mode field is set to 4. Set to 0 to immediately enter Power-Down mode. Set to 1 for 16 clocks, set to 2 for 32 clocks, set to 3 for 64 clocks, set to 4 for 128 clocks, set to 5 for 256 clocks, set to 6 for 512 clocks, set to 7 for 1024 clocks, set to 8 for 2048 clocks, set to 9 for 4096 clocks, set to 10 for 8192 clocks, set to 11 for 16384 clocks, set to 12 for 32768 clocks, set to 13 for 65536 clocks, set to 14 for 131072 clocks, and set to 15 for 262144 clocks.";
+        reg_dpd_en 1 rw "Deep Power Down enable. Set to 0 for normal operation. Set to 1 to enter deep power-down mode. This mode will override the reg_lp_mode field setting.";
+        reg_lp_mode 3 rw "Automatic Power Management enableSet to 1: Reserved . Set to 2: Self-refresh mode . Set to 4: Power-down mode . All other values will disable automatic power management. .";
+        reg_sr_tim 4 rw "Power Mangement timer for Self Refresh. The EMIF will put the external SDRAM in Self Refresh mode after the EMIF is idle for these number of DDR clock cycles and if reg_lp_mode field is set to 2. Set to 0 to immediately enter Self Refresh mode. Set to 1 for 16 clocks, set to 2 for 32 clocks, set to 3 for 64 clocks, set to 4 for 128 clocks, set to 5 for 256 clocks, set to 6 for 512 clocks, set to 7 for 1024 clocks, set to 8 for 2048 clocks, set to 9 for 4096 clocks, set to 10 for 8192 clocks, set to 11 for 16384 clocks, set to 12 for 32768 clocks, set to 13 for 65536 clocks, set to 14 for 131072 clocks, and set to 15 for 262144 clocks.";
+        reg_cs_tim 4 rw "Power Mangement timer for Clock Stop. The EMIF will put the external SDRAM in Clock Stop mode after the EMIF is idle for these number of DDR clock cycles and if reg_lp_mode field is set to 1. Set to 0 to immediately enter Clock Stop mode. Set to 1 for 16 clocks, set to 2 for 32 clocks, set to 3 for 64 clocks, set to 4 for 128 clocks, set to 5 for 256 clocks, set to 6 for 512 clocks, set to 7 for 1024 clocks, set to 8 for 2048 clocks, set to 9 for 4096 clocks, set to 10 for 8192 clocks, set to 11 for 16384 clocks, set to 12 for 32768 clocks, set to 13 for 65536 clocks, set to 14 for 131072 clocks, and set to 15 for 262144 clocks.";
+    };
+    
+    register emif_pwr_mgmt_ctrl_shdw addr(base, 0x3C) "Power Management Control Shadow Register" {
+        _ 16 mbz;
+        reg_pd_tim_shdw 4 rw "Shadow field for reg_pd_tim. This field is loaded into reg_pd_tim field in Power Management Control register when SIdleAck is asserted.";
+        _ 4 mbz;
+        reg_sr_tim_shdw 4 rw "Shadow field for reg_sr_tim. This field is loaded into reg_sr_tim field in Power Management Control register when SIdleAck is asserted.";
+        reg_cs_tim_shdw 4 rw "Shadow field for reg_cs_tim. This field is loaded into reg_cs_tim field in Power Management Control register when SIdleAck is asserted.";
+    };
+    
+    register emif_lpddr2_mode_reg_data addr(base, 0x40) "LPDDR2 Mode Reg Data Register A write to this register will cause a Mode Register write command to be sent to the LPDDR2 device with write data as specified in the REG_VALUE_0 field. The address and chip select are taken from the LPDDR2_MODE_REG_CFG register. A read to this register will cause a Mode Register read command to be sent to the LPDDR2 device. The address and chip select are taken from the LPDDR2_MODE_REG_CFG register. The read data will appear in REG_VALUE_0 field." {
+        _ 24 mbz;
+        reg_value_0 8 rw "Mode register value.";
+    };
+    
+    register emif_lpddr2_mode_reg_cfg addr(base, 0x50) "LPDDR2 Mode Reg Config Register" {
+        reg_cs 1 rw "Chip select to issue mode register command. Set to 0 for CS0 and set to 1 for CS1.";
+        reg_refresh_en 1 rw "Refresh Enable after MRW write. If a Mode Data register write occurs with this bit set to 1, the refresh operations will commence.";
+        _ 22 mbz;
+        reg_address 8 rw "Mode register address.";
+    };
+    
+    register emif_l3_config addr(base, 0x54) "Config Register" {
+        _ 4 mbz;
+        reg_sys_thresh_max 4 rw "System L3 Threshold Maximum. The number of commands the system interface can consume in the command FIFO. The value is used to determine when to stop future request, writing a zero will reserve no space for the associated interface. In the event the value is set to zero and a request is seen for that interface, the command FIFO will assume a value of 1. Since the low-latency interface has effectively a higher priority, the only way for the system interface to use all command FIFO entries is to set the REG_LL_THRESH_MAX to zero.";
+        reg_mpu_thresh_max 4 rw "MPU Interface Threshold Maximum. The number of commands the MPU interface can consume in the command FIFO. The value is used to determine when to stop future request, writing a zero will reserve no space for the associated interface. In the event the value is set to zero and a request is seen for that interface, the command FIFO will assume a value of 1.";
+        reg_ll_thresh_max 4 rw "Low-latency L3 Threshold Maximum. The number of commands the low latency interface can consume in the command FIFO. The value is used to determine when to stop future request, writing a zero will reserve no space for the associated interface. In the event the value is set to zero and a request is seen for that interface, the command FIFO will assume a value of 1.";
+        _ 8 mbz;
+        _ 8 rsvd;
+    };
+    
+    register emif_l3_cfg_val_1 addr(base, 0x58) "Config Value 1 Register" {
+        reg_sys_bus_width 2 ro "System L3 data bus width 0 = 32-bit wide, 1 = 64-bit wide, 2 = 128-bit wide, 3 = Reserved";
+        reg_ll_bus_width 2 ro "Low-latency L3 data bus width 0 = 32-bit wide, 1 = 64-bit wide, 2 = 128-bit wide, 3 = Reserved";
+        _ 12 mbz;
+        reg_wr_fifo_depth 8 ro "Write Data FIFO depth";
+        reg_cmd_fifo_depth 8 ro "Command FIFO depth";
+    };
+    
+    register emif_l3_cfg_val_2 addr(base, 0x5C) "Config Value 2 Register" {
+        _ 8 mbz;
+        reg_rreg_fifo_depth 8 ro "Register Read Data FIFO depth";
+        reg_rsd_fifo_depth 8 ro "SDRAM Read Data FIFO depth";
+        reg_rcmd_fifo_depth 8 ro "Read Command FIFO depth";
+    };
+    
+    register emif_perf_cnt_1 ro addr(base, 0x80) "Performance Counter 1 Register" type(uint32);
+    
+    register emif_perf_cnt_2 ro addr(base, 0x84) "Performance Counter 2 Register" type(uint32);
+    
+    register emif_perf_cnt_cfg addr(base, 0x88) "Performance Counter Config Register" {
+        reg_cntr2_mconnid_en 1 rw "MConnID filter enable for Performance Counter 2 register.";
+        reg_cntr2_region_en 1 rw "Chip Select filter enable for Performance Counter 2 register.";
+        _ 10 mbz;
+        reg_cntr2_cfg 4 rw "Filter configuration for Performance Counter 2. Refer to for details.";
+        reg_cntr1_mconnid_en 1 rw "MConnID filter enable for Performance Counter 1 register.";
+        reg_cntr1_region_en 1 rw "Chip Select filter enable for Performance Counter 1 register.";
+        _ 10 mbz;
+        reg_cntr1_cfg 4 rw "Filter configuration for Performance Counter 1. Refer to for details.";
+    };
+    
+    register emif_perf_cnt_sel addr(base, 0x8C) "Performance Counter Master Region Select Register" {
+        reg_mconnid2 8 rw "MConnID for Performance Counter 2 register. The values programmed are those in, , in , , left-shifted by 2 bits.";
+        _ 6 mbz;
+        reg_region_sel2 2 rw "MAddrSpace for Performance Counter 2 register.";
+        reg_mconnid1 8 rw "MConnID for Performance Counter 1 register. The values programmed are those in, , in , , left-shifted by 2 bits.";
+        _ 6 mbz;
+        reg_region_sel1 2 rw "MAddrSpace for Performance Counter 1 register.";
+    };
+    
+    register emif_perf_cnt_tim ro addr(base, 0x90) "Performance Counter Time Register. This is a free running counter." type(uint32);
+    
+    register emif_read_idle_ctrl addr(base, 0x98) "Read Idle Control Register" {
+        _ 12 mbz;
+        reg_read_idle_len 4 rw "The Read Idle Length field determines the minimum required size that a read idle window must be to be detected or generated. The actual read idle length will be (REG_READ_IDLE_LEN+1)*2 EMIF_FCLK clocks. The value programmed should be (the required read idle length minus one) divided by two.";
+        _ 7 mbz;
+        reg_read_idle_interval 9 rw "The Read Idle Interval field determines the maximum interval between successive read idle events. The actual interval between read idle events is (REG_READ_IDLE_INTERVAL+1)*64 EMIF_FCLK clocks. The value programmed should be (the required max interval divided by sixty four) minus one. A value of 0 disables the read idle function.";
+    };
+    
+    register emif_read_idle_ctrl_shdw addr(base, 0x9C) "Read Idle Control Shadow Register" {
+        _ 12 mbz;
+        reg_read_idle_len_shdw 4 rw "Shadow field for REG_READ_IDLE_LEN. This field is loaded intoEMIF_READ_IDLE_CTRL[19:16] REG_READ_IDLE_LEN field when SIdleAck is asserted.";
+        _ 7 mbz;
+        reg_read_idle_interval_shdw 9 rw "Shadow field for REG_READ_IDLE_INTERVAL. This field is loaded intoEMIF_READ_IDLE_CTRL[8:0] REG_READ_IDLE_INTERVAL field when SIdleAck is asserted.";
+    };
+    
+    register emif_irqstatus_raw_sys addr(base, 0xA4) "System L3 Interrupt Raw Status Register" {
+        _ 29 mbz;
+        reg_dnv_sys 1 rw "Raw status of system L3 interrupt for LPDDR2 NVM data not valid. Write 1 to set the (raw) status, typically for debug. Writing 0 has no effect.";
+        reg_ta_sys 1 rw "Raw status of system L3 interrupt for SDRAM temperature alert. Write 1 to set the (raw) status, mostly for debug. Writing a 0 has no effect.";
+        reg_err_sys 1 rw "Raw status of system L3 interrupt for command or address error. Write 1 to set the (raw) status, mostly for debug. Writing a 0 has no effect.";
+    };
+    
+    register emif_irqstatus_raw_ll addr(base, 0xA8) "Low-Latency L3 Interrupt Raw Status Register" {
+        _ 29 mbz;
+        reg_dnv_ll 1 rw "Raw status of low-latency L3 interrupt for LPDDR2 NVM data not valid. Write 1 to set the (raw) status, typically for debug. Writing 0 has no effect.";
+        reg_ta_ll 1 rw "Raw status of low-latency L3 interrupt or SDRAM temperature alert. Write 1 to set the (raw) status, mostly for debug. Writing a 0 has no effect.";
+        reg_err_ll 1 rw "Raw status of low-latency L3 interrupt for command or address error. Write 1 to set the (raw) status, mostly for debug. Writing a 0 has no effect.";
+    };
+    
+    register emif_irqstatus_sys addr(base, 0xAC) "System L3 Interrupt Status Register" {
+        _ 29 mbz;
+        reg_dnv_sys 1 rw "Enabled status of system L3 interrupt for LPDDR2 NVM data not valid. Write 1 to clear the status after interrupt is serviced (raw status is cleared; that is, even if not enabled). Writing 0 has no effect.";
+        reg_ta_sys 1 rw "Enabled status of system L3 interrupt for SDRAM temperature alert. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled). Writing a 0 has no effect.";
+        reg_err_sys 1 rw "Enabled status of system L3 interrupt interrupt for command or address error. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled). Writing a 0 has no effect.";
+    };
+    
+    register emif_irqstatus_ll addr(base, 0xB0) "Low-Latency L3 Interrupt Status Register" {
+        _ 29 mbz;
+        reg_dnv_ll 1 rw1c "Enabled status of low-latency L3 interrupt for LPDDR2 NVM data not valid. Write 1 to clear the status after interrupt is serviced (raw status is cleared; that is, even if not enabled). Writing 0 has no effect.";
+        reg_ta_ll 1 rw1c "Enabled status of low-latency L3 interrupt for SDRAM temperature alert. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled). Writing a 0 has no effect.";
+        reg_err_ll 1 rw1c "Enabled status of low-latency L3 interrupt for command or address error. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled). Writing a 0 has no effect.";
+    };
+    
+    register emif_irqenable_set_sys addr(base, 0xB4) "System L3 Interrupt Enable Set Register" {
+        _ 29 mbz;
+        reg_en_dnv_sys 1 rw "Enable set for system L3 interrupt for LPDDR2 NVM data not valid. Writing 1 enables the interrupt and sets this bit and the corresponding Interrupt-enable clear register. Writing 0 has no effect.";
+        reg_en_ta_sys 1 rw "Enable set for system L3 interrupt for SDRAM temperature alert. . Writing a 1 will enable the interrupt, and set this bit as well as the corresponding Interrupt Enable Clear Register. Writing a 0 has no effect.";
+        reg_en_err_sys 1 rw "Enable set for system L3 interrupt for command or address error. Writing a 1 will enable the interrupt, and set this bit as well as the corresponding Interrupt Enable Clear Register. Writing a 0 has no effect.";
+    };
+    
+    register emif_irqenable_set_ll addr(base, 0xB8) "Low-Latency L3 Interrupt Enable Set Register" {
+        _ 29 mbz;
+        reg_en_dnv_ll 1 rw "Enable set for low-latency L3 interrupt for LPDDR2 NVM data not valid. Writing 1 enables the interrupt and sets this bit and the corresponding Interrupt-enable clear register. Writing a 0 has no effect.";
+        reg_en_ta_ll 1 rw "Enable set for low-latency L3 interrupt for SDRAM temperature alert. Writing a 1 will enable the interrupt, and set this bit as well as the corresponding Interrupt Enable Clear Register. Writing a 0 has no effect.";
+        reg_en_err_ll 1 rw "Enable set for low-latency L3 interrupt for command or address error. Writing a 1 will enable the interrupt, and set this bit as well as the corresponding Interrupt Enable Clear Register. Writing a 0 has no effect.";
+    };
+    
+    register emif_irqenable_clr_sys addr(base, 0xBC) "System L3 Interrupt Enable Clear Register" {
+        _ 29 mbz;
+        reg_en_dnv_sys 1 rw1c "Enable clear for system OCP interrupt for LPDDR2 NVM data not valid. Writing 1 disables the interrupt and clears this bit and the corresponding interrupt-enable set register. Writing 0 has no effect.";
+        reg_en_ta_sys 1 rw1c "Enable clear for system L3 interrupt for SDRAM temperature alert. Writing a 1 will disable the interrupt, and clear this bit as well as the corresponding Interrupt Enable Set Register. Writing a 0 has no effect.";
+        reg_en_err_sys 1 rw1c "Enable clear for system L3 interrupt for command or address error. Writing a 1 will disable the interrupt, and clear this bit as well as the corresponding Interrupt Enable Set Register. Writing a 0 has no effect.";
+    };
+    
+    register emif_irqenable_clr_ll addr(base, 0xC0) "Low-Latency L3 Interrupt Enable Clear Register" {
+        _ 29 mbz;
+        reg_en_dnv_ll 1 rw1c "Enable clear for low-latency OCP interrupt for LPDDR2 NVM data not valid. Writing 1 disables the interrupt and clears this bit and the corresponding interrupt enable set register. Writing 0 has no effect.";
+        reg_en_ta_ll 1 rw1c "Enable clear for low-latency L3 interrupt for SDRAM temperature alert. Writing a 1 will disable the interrupt, and clear this bit as well as the corresponding Interrupt Enable Set Register. Writing a 0 has no effect.";
+        reg_en_err_ll 1 rw1c "Enable clear for low-latency L3 interrupt for command or address error. Writing a 1 will disable the interrupt, and clear this bit as well as the corresponding Interrupt Enable Set Register. Writing a 0 has no effect.";
+    };
+    
+    register emif_zq_config addr(base, 0xC8) "SDRAM Output Impedance Calibration Config Register" {
+        reg_zq_cs1en 1 rw "Writing a 1 enables ZQ calibration for CS1.";
+        reg_zq_cs0en 1 rw "Writing a 1 enables ZQ calibration for CS0.";
+        reg_zq_dualcalen 1 rw "ZQ Dual Calibration enable. Allows both ranks to be ZQ calibrated simultaneously. Setting this bit requires both chip selects to have a separate calibration resistor per device.";
+        reg_zq_sfexiten 1 rw "ZQCL on Self-Refresh, Active Power-Down, and Precharge Power-Down exit enable. Writing a 1 enables the issuing of ZQCL on Self-Refresh, Active Power-Down, and Precharge Power-Down exit.";
+        _ 8 mbz;
+        reg_zq_zqinit_mult 2 rw "Indicates the number of ZQCL durations that make up a ZQINIT duration, minus one..";
+        reg_zq_zqcl_mult 2 rw "Indicates the number of ZQCS intervals that make up a ZQCL duration, minus one. ZQCS interval is defined by reg_zq_zqcs inEMIF_SDRAM_TIM_3.";
+        reg_zq_refinterval 16 rw "Number of refresh periods between ZQCS commands. This field supports between one refresh period to 256 ms between ZQCS calibration commands. Refresh period is defined by reg_refresh_rate inEMIF_SDRAM_REF_CTRL register.";
+    };
+    
+    register emif_temp_alert_config addr(base, 0xCC) "Temperature Alert Config Register" {
+        reg_ta_cs1en 1 rw "Writing a 1 enables temperature alert polling for CS1.";
+        reg_ta_cs0en 1 rw "Writing a 1 enables temperature alert polling for CS0.";
+        _ 1 mbz;
+        reg_ta_sfexiten 1 rw "Temperature Alert Poll on Self-Refresh, Active Power-Down, and Precharge Power-Down exit enable. Writing a 1 enables the issuing of a temperature alert poll on Self-Refresh exit.";
+        reg_ta_devwdt 2 rw "This field indicates how wide a physical device is. It is used in conjunction with the reg_ta_devcnt register to determine which byte lanes contain the temperature alert info. A value of 0 = eight bit wide, 1 = sixteen bit wide, 2 = thirty two bit wide. All others are reserved. If this field is set to 1 and the reg_ta_devcnt field is set to one the byte mask for checking will be 4'b0101.";
+        reg_ta_devcnt 2 rw "This field indicates which external byte lanes contain a device for temperature monitoring. A value of 0 = one device, 1 = two devices, 2 = four devices. All other reserved.";
+        _ 2 mbz;
+        reg_ta_refinterval 22 rw "Number of refresh periods between temperature alert polls. This field supports between one refresh period to 10 seconds between temperature alert polls. Refresh period is defined by reg_refresh_rate in SDRAM Refresh Control register.";
+    };
+    
+    register emif_l3_err_log addr(base, 0xD0) "Error Log Register" {
+        _ 16 mbz;
+        reg_maddrspace 2 ro "Address space of the first errored transaction. 0x0: SDRAM 0x1: LPDDR2-NVM 0x2: reserved 0x3: internal registers";
+        reg_mburstseq 3 ro "Addressing mode of the first errored transaction. (see, for more information)";
+        reg_mcmd 3 ro "Command type of the first errored transaction. (see, for more information)";
+        reg_mconnid 8 ro "Connection ID of the first errored transaction.";
+    };
+
+    constants reg_dll_slave_dly_ctrl_status width(8) "" {
+        REG_DLL_SLAVE_DLY_CTRL_64 = 64 "DLL ratio of 4";
+        REG_DLL_SLAVE_DLY_CTRL_128 = 128 "DLL ratio of 2";
+        REG_DLL_SLAVE_DLY_CTRL_255 = 255 "DLL ratio of 1";
+    };
+    
+    register emif_ddr_phy_ctrl_1 addr(base, 0xE4) "DDR PHY Control 1 Register. This register is used to control the DDR PHY. The bit field definitions are DDR PHY specific." {
+        dll_master_sensitivity 2 rw "This field defines the level of sensitivity of the DLL master: the lower the value, the more sensitive the DLL is to PVT variation. The recommended setting is 0x2.";
+        reg_phy_freeze_delay_code_postamble 4 rw "Postamble time respected by the DATA PHY freezing the DLL slave code after reads. Use the TI-validated value of 0x1.";
+        reg_phy_freeze_delay_code_preamble 4 rw "Preamble time respected by the DATA PHY before freezing the DLL slave code during reads. Use the TI-validated value of 0x2.";
+        reg_dll_master_sw_code_ctrl 10 rw "DLL delay code when in software override mode, typically at OPP_BOOT. Keep at maximum delay (0x1FF) for this case. Override mode is controlled through DLL_OVERRIDE register fields in PRCM.";
+        reg_dll_slave_dly_ctrl 8 rw type(reg_dll_slave_dly_ctrl_status) "DLL slave delay ratio control.For the typical SDRAM frequency of 400-MHz and DLL reference clock frequency of 100-MHz, this number must be set to 0x40 (1/4-th of 0xFF). .";
+        reg_read_latency 4 rw "This field defines the read latency for the read data from SDRAM in number of DDR clock cycles. This field is used by the EMIF as well as the PHY. The EMIF will expect the first read data to arrive (reg_read_latency + 3) DDR clock cycles from the read command. The REG_READ_LATENCY must be set to RL +EMIF_SDRAM_TIM_3 [14:13] REG_T_TDQSCKMAX , where REG_T_TDQSCKMAX = ceiling(tDQSCKmax / tCKavg) - 1 The write latency (WL) is tied to the RL. See the LPDDR2 SDRAM standard.";
+    };
+    
+    register emif_ddr_phy_ctrl_1_shdw addr(base, 0xE8) "DDR PHY Control 1 Shadow Register. Shadow field for." {
+        _ 2 mbz;
+        reg_phy_freeze_delay_code_postamble_shdw 4 rw "Shadow field for REG_PHY_FREEZE_DELAY_CODE_POSTAMBLE";
+        reg_phy_freeze_delay_code_preamble_shdw 4 rw "Shadow field for REG_PHY_FREEZE_DELAY_CODE_PREAMBLE";
+        reg_dll_master_sw_code_ctrl_shdw 10 rw "Shadow field for REG_DLL_MASTER_SW_CODE_CTRL";
+        reg_dll_slave_dly_ctrl_shdw 8 rw "Shadow field for REG_DLL_SLAVE_DLY_CTRL";
+        reg_read_latency_shdw 4 rw "Shadow field for REG_READ_LATENCY. This field is loaded intoEMIF_DDR_PHY_CTRL_1[3:0] REG_READ_LATENCY field when SIdleAck is asserted.";
+    };
+};

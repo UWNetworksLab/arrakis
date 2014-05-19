@@ -1,0 +1,159 @@
+
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ti_twl6030.dev
+ *
+ * DESCRIPTION: TI TWL6030 Power Companion IC
+ * 
+ * Section numbers refer to TWL6030 Register Map
+ * (Literature Number: SWCU084)
+ *
+ * Talking to this device will usually go over I2C, but it's still helpful to
+ * have the register definitions
+ *
+ * TODO: need to add everything other than VMMC -SG
+ */
+
+device ti_twl6030 msbfirst (addr b) "TI TWL6030 Power Companion (via I2C)" {
+    // dummy set of constants representing the I2C addresses of the different
+    // register groups
+    constants i2c_addrs "Physical (I2C) addresses" {
+        i2c_addr_vmmc = 0x48 "VMMC I2C address";
+    };
+
+    // address spaces for I2C physical adresses
+    // id1 == i2c addr 0x48
+    space id1(i) valuewise "Registers accessed via I2C addr 0x48";
+
+    regtype cfg_grp "Group Configuration" {
+        _       5 rsvd;
+        grp_mod 1 "Modem Power Group";
+        grp_con 1 "Connectivity Power Group";
+        grp_app 1 "Application Power Group";
+    };
+
+    constants transition_cmd width(2) "Transition Command" {
+        tcmd_off = 0b00 "Off";
+        tcmd_ams = 0b01 "Sleep/Active";
+        // 0b10 is reserved
+        tcmd_act = 0b11 "Active";
+    };
+    regtype cfg_trans "Transition Configuration" { // not sure about name, guessing -SG
+        _      2 rsvd;
+        off    2 type(transition_cmd) "off state";
+        sleep  2 type(transition_cmd) "sleep state";
+        active 2 type(transition_cmd) "active state";
+    };
+
+    constants pwrstate width(2) "Power State" {
+        pwr_off   = 0b00 "Off";
+        pwr_on    = 0b01 "On";
+        pwr_off_2 = 0b10 "Off";
+        pwr_sleep = 0b11 "Sleep";
+    };
+
+    regtype cfg_state_w "State configuration (write)" {
+        grp_mod 1 "Set if apply state to modem power group";
+        grp_con 1 "Set if apply state to connectivity power group";
+        grp_app 1 "Set if apply state to application power group";
+        _       3 rsvd;
+        state   2 type(pwrstate) "Resource state to apply";
+    };
+
+    regtype cfg_state_r "State configuration (read)" {
+        mod_state 2 type(pwrstate) "Resource state for modem power group";
+        con_state 2 type(pwrstate) "Resource state for connectivity power group";
+        app_state 2 type(pwrstate) "Resource state for application power group";
+        state     2 type(pwrstate) "Resource state after power group arbitration";
+    };
+
+    constants wr width(1) "Warm reset" {
+        wr_reload_dflt = 0b0 "Reload default VSEL value on warm reset";
+        wr_keep        = 0b1 "Keep voltage configuration settings on warm reset";
+    };
+    // Table 121
+    constants vsel width(5) "Voltage selector" {
+        v0v0 = 0b00000 "0.0V";
+        v1v0 = 0b00001 "1.0V";
+        v1v1 = 0b00010 "1.1V";
+        v1v2 = 0b00011 "1.2V";
+        v1v3 = 0b00100 "1.3V";
+        v1v4 = 0b00101 "1.4V";
+        v1v5 = 0b00110 "1.5V";
+        v1v6 = 0b00111 "1.6V";
+        v1v7 = 0b01000 "1.7V";
+        v1v8 = 0b01001 "1.8V";
+        v1v9 = 0b01010 "1.9V";
+        v2v0 = 0b01011 "2.0V";
+        v2v1 = 0b01100 "2.1V";
+        v2v2 = 0b01101 "2.2V";
+        v2v3 = 0b01110 "2.3V";
+        v2v4 = 0b01111 "2.4V";
+        v2v5 = 0b10000 "2.5V";
+        v2v6 = 0b10001 "2.6V";
+        v2v7 = 0b10010 "2.7V";
+        v2v8 = 0b10011 "2.8V";
+        v2v9 = 0b10100 "2.9V";
+        v3v0 = 0b10101 "3.0V";
+        v3v1 = 0b10110 "3.1V";
+        v3v2 = 0b10111 "3.2V";
+        v3v3 = 0b11000 "3.3V";
+        // 0b11001 - 0b11110 reserved
+        v2v75 = 0b11111 "2.75V";
+    };
+    regtype cfg_voltage "Voltage configuration" {
+        wr_s 1 type(wr) "Warm reset sensitivity";
+        _    2 rsvd;
+        vsel 5 type(vsel) "Voltage to apply";
+    };
+
+    regtype cfg_voltage2 "Voltage configuration" {
+        wr_s 1 type(wr) "Warm reset sensitivity";
+        _    1 rsvd;
+        vsel 6 "Voltage to apply";
+    };
+
+    register mmcctrl id1(0xEE) "MMCCTRL" {
+        _               4 rsvd;
+        vmmc_auto_off   1 "Is the regulator turned off automatically in case card is extracted?";
+        sw_fc           1 "Configure the external receptable mechanical contact";
+        _               1 rsvd;
+        sts_mmc         1 "Is card present?";
+    };
+
+    register mmcdebouncing id1(0xED) "MMC Debouncing" {
+        mmc_dev_bypass  1 "Is MMC debouncing bypassed?";
+        mins_deb        4 "Card insertion debouncing time";
+        mext_deb        3 "Card extraction debouncing time";
+    };
+
+    register vcore_cfg_voltage id1(0x62) "VCORE3 Config Voltage" type(cfg_voltage2);
+
+    // VMMC registers
+    // Table 152
+    //register vmmc_cfg_grp addr(b, 0x98) "VMMC Group Configuration" type(cfg_grp);
+    register vmmc_cfg_grp id1(0x98) "VMMC Group Configuration" type(cfg_grp);
+
+    // Table 153
+    //register vmmc_cfg_trans addr(b, 0x99) "VMMC Transition Configuration" type(cfg_trans);
+    register vmmc_cfg_trans id1(0x99) "VMMC Transition Configuration" type(cfg_trans);
+
+    // Table 154
+    //register vmmc_cfg_state_w wo addr(b, 0x9A) "VMMC State Configuration (write format)" type(cfg_state_w);
+    register vmmc_cfg_state_w wo id1(0x9A) "VMMC State Configuration (write format)" type(cfg_state_w);
+
+    // Table 155
+    //register vmmc_cfg_state_r ro also addr(b, 0x9A) "VMMC State Configuration (read format)" type(cfg_state_r);
+    register vmmc_cfg_state_r ro also id1(0x9A) "VMMC State Configuration (read format)" type(cfg_state_r);
+
+    // Table 156
+    //register vmmc_cfg_voltage addr(b, 0x9B) "VMMC Voltage Configuration" type(cfg_voltage);
+    register vmmc_cfg_voltage id1(0x9B) "VMMC Voltage Configuration" type(cfg_voltage);
+};

@@ -1,0 +1,40 @@
+\section{Other OSes}
+
+Most Unix-derived Operating Systems (Linux, BSD flavours, OpenSolaris, etc)
+integrate their \ac{ahci} subsystem into a larger disk subsystem with support
+for IDE disks, \ac{sata} disks (via \ac{ahci}), CDROM/DVD drives, and also
+floppy drives.
+
+This larger disk subsystem often utilizes a general buffer layer which the OS
+kernel provides to its subsystems. Furthermore most Unix derivates -- due to
+their essentially monolithic nature -- couple the different layers of their
+disk subsystems (transport layer, message format and disk commands, e.g.
+\ac{ahci}, \ac{sata} and \ac{ata} respectively) using function pointers and
+most of them have in-kernel structures that describe commands that are issued
+to the disk in a message format and transport agnostic way. This makes those
+systems relatively easy to extend by adding a new layer implementations (e.g.
+when \ac{ahci} was first implemented a few years ago, it was as simple as
+providing a new transport layer implementation for disks attached to \ac{ahci}
+controller).
+
+\subsection{FreeBSD}
+
+FreeBSD employs the \ac{cam}\footnote{FreeBSD \acs{scsi} Documentation can be
+found under
+\url{http://www.freebsd.org/doc/en_US.ISO8859-1/books/arch-handbook/scsi-general.html}}
+framework to seperate implementation of the driver for the I/O bus from the
+device driver for the attached device. Therefore, FreeBSD's \ac{ahci} driver is
+realized as a \ac{sim} handling the I/O operations needed to get an \ac{ata} or
+\acs{scsi} command to the device (transparently using the packet interface of
+\ac{atapi}). Other aspects of the storage system, such as filesystem or disk
+driver do not have to be modified.
+
+\subsection{Linux}
+
+Linux handles access to \ac{ata} devices with libATA\footnote{The libATA
+Developer's Guide can be found under
+\url{http://www.kernel.org/doc/htmldocs/libata.html}} which unifies interfacing
+with \acs{scsi} and \ac{ata} based devices and adapters in a common API. libATA
+can translate \acs{scsi} commands to \ac{ata} and vice-versa or simulate a
+certain command if there is no translation possible.  Drivers for adapters only
+need to implement hooks for basic device operations and communication.

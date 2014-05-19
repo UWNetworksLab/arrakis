@@ -1,0 +1,150 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_gpio.dev
+ *
+ * DESCRIPTION: OMAP44xx General-Purpose I/O blocks.  The 4460 has 6
+ * of these. 
+ *
+ * This is derived from:
+ *
+ * OMAP4460 Multimedia Device Silicon Revision 1.x Technical Reference
+ * Manual Version Q, in particular Section 25.6
+ *
+ */
+
+device omap44xx_gpio msbfirst ( addr base ) "OMAP44xx Gen. Purpose I/O" {
+
+    register revision ro addr(base, 0x0000) "IP revision number" type(uint32);
+
+    constants idle_m width(2) "Idle mode" {
+	im_force	= 0x0 "Force idle";
+	im_none		= 0x1 "No idle";
+	im_smart	= 0x2 "Smart idle";
+	im_smartw	= 0x3 "Smart idle wakeup";
+    };
+    register sysconfig rw addr(base, 0x0010) "System configuration" {
+	_		27;
+	idlemode	2 type(idle_m)	"Idle mode";
+	enawakeup	1		"Wake-up enable";
+	softreset	1		"Software reset";
+	autoidle	1		"OCP clock gating control";
+    };
+
+    register irqstatus_raw_0 rw addr(base, 0x0024) 
+	"Per-event raw interrupt status vector (1st line)" type(uint32);
+
+    register irqstatus_raw_1 rw addr(base, 0x0028)
+	"Per-event raw interrupt status vector (2nd line)" type(uint32);
+
+    register irqstatus_0 rw addr(base, 0x002C) 
+	"Per-event interrupt status vector (1st line)" type(uint32);
+
+    register irqstatus_1 rw addr(base, 0x0030) 
+	"Per-event interrupt status vector (2nd line)" type(uint32);
+
+    register irqstatus_set_0 rw addr(base, 0x0034)
+	"Interrupt enable set vector (1st line)" type(uint32);
+        
+    register irqstatus_set_1 rw addr(base, 0x0038) 
+	"Interrupt enable set vector (2nd line)" type(uint32);
+
+    register irqstatus_clr_0 rw addr(base, 0x003C)
+	"Interrupt enable clear vector (1st line)" type(uint32);
+
+    register irqstatus_clr_1 rw addr(base, 0x0040)
+	"Interrupt enable clear vector (1st line)" type(uint32);
+
+    register irqwaken_0 rw addr(base, 0x0044)
+	"Per-event wakeup enable set vector (1st line)" type(uint32);
+
+    register irqwaken_1 rw addr(base, 0x0048)
+	"Per-event wakeup enable set vector (2nd line)" type(uint32);
+
+    register sysstatus ro addr(base, 0x0114) "System status" {
+	_		31;
+	resetdone	1		"Reset is complete";
+    };
+
+    register irqstatus1 rw addr(base, 0x0118) 
+	"Interrupt status (legacy) for 1st line" type(uint32);
+
+    register irqenable1 rw addr(base, 0x011C) 
+	"Interrupt enable (legacy) for 1st line" type(uint32);
+
+    register wakeupenable rw addr(base, 0x0120) 
+	"Wake-up enable (legacy) for 1st line" type(uint32);
+
+    register irqstatus2 rw addr(base, 0x0128)
+	"Interrupt status (legacy) for 2nd line" type(uint32);
+
+    register irqenable2 rw addr(base, 0x012C) 
+	"Interrupt enable (legacy) for 2nd line" type(uint32);
+
+    register ctrl rw addr(base, 0x0130) "Control" {
+	_		29;
+	gatingratio	2	"Clock gating ratio (1<<x)";
+	disablemodule	1	"Disable module; gate clocks";
+    };
+    
+    register oe rw addr(base, 0x0134) 
+	"Output enable" type(uint32);
+
+    register datain ro addr(base, 0x0138) 
+	"Data input" type(uint32);
+
+    register dataout rw addr(base, 0x013C) 
+	"Data output" type(uint32);
+
+    register leveldetect0 rw addr(base, 0x0140) 
+	"Detect low level" type(uint32);
+
+    register leveldetect1 rw addr(base, 0x0144) 
+	"Detect high level" type(uint32);
+
+    register risingdetect rw addr(base, 0x0148) 
+	"Detect rising edge" type(uint32);
+
+    register fallingdetect rw addr(base, 0x014C) 
+	"Detect falling edge" type(uint32);
+
+    register debouncenable rw addr(base, 0x0150) 
+	"Debounce enable" type(uint32);
+
+    register debouncingtime rw addr(base, 0x0154) "Debouncing time" {
+	_	24;
+	time	8	"Debouncing time in 31us steps";
+    };
+
+    register clearirqenable1 rw addr(base, 0x0160) 
+	"Clear interrupt enable - legacy mode" type(uint32);
+
+    register setirqenable1 rw addr(base, 0x0164) 
+	"Set interrupt enable - legacy mode" type(uint32);
+
+    register clearirqenable2 rw addr(base, 0x0170) 
+	"Clear interrupt enable" type(uint32);
+
+    register setirqenable2 rw addr(base, 0x0174)
+	"Set interrupt enable" type(uint32);
+
+    register clearwkupena rw addr(base, 0x0180) 
+	"Clear Wakeup enable" type(uint32);
+    
+    register setwkuena rw addr(base, 0x0184) 
+	"Set wakeup enable" type(uint32);
+
+    register cleardataout rw addr(base, 0x0190) 
+	"Clear data out" type(uint32);
+
+    register setdataout rw addr(base, 0x0194) 
+	"Set data out" type(uint32);
+
+};

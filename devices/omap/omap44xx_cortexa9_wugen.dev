@@ -1,0 +1,344 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_cortexa9_wugen.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_cortexa9_wugen msbfirst ( addr base ) "" {
+    
+    
+    register wkg_control_0 addr(base, 0x0) "Wake-up generator status register for CPU0" {
+        _ 16 mbz;
+        domain_rst 1 ro "MPU always-on power domain (PD_ALWON_MPU) reset status bit. It shows if the reset occurred previously. 0x0: no reset occur 0x1: reset occur";
+        cortexa9_warm_rst 1 ro "This bit is set when the CORTEXA9_RSTN signal is asserted. 0x0: CORTEXA9_RSTN reset signal has not been asserted 0x1: CORTEXA9_RSTN reset request has been asserted";
+        cortexa9_cold_rst 1 ro "This bit is set when the CORTEXA9_PWRON_RSTN signal is asserted. 0x0: CORTEXA9_PWRON_RSTN reset signal has not been asserted 0x1: CORTEXA9_PWRON_RSTN reset request has been asserted";
+        wdt_rst 1 ro "This bit is set when the WD timer Reset Request signal from the SCU is asserted. 0x0: WDT reset request has not been asserted 0x1: WDT reset request has been asserted";
+        _ 1 mbz;
+        evento 1 ro "EVENTO status bit. The event output signal is active, when one SEV instruction is executed. This bit is set when a rising edge of EVENTO from CPU is detected. 0x0: Rising edge of EVENTO is not detected 0x1: Rising edge of EVENTO is detected";
+        standbywfe 1 ro "This bit gives software the visibility to track whether WFE mode have been entered. 0x0: WFE mode has not been entered 0x1: WFE mode has been entered";
+        standbywfi 1 ro "This bit gives software the visibility to track whether WFI mode have been entered. 0x0: WFI mode has not been entered 0x1: WFI mode has been entered";
+        _ 8 mbz;
+    };
+    
+    register wkg_enb_a_0 addr(base, 0x10) "This register enables the interrupts (for CPU0) from MA_IRQ_0 to MA_IRQ_31 write 0x0: disable interrupt write 0x1: enable interrupt" {
+        wkg_enb_for_intr31 1 rw "";
+        wkg_enb_for_intr30 1 rw "";
+        wkg_enb_for_intr29 1 rw "";
+        wkg_enb_for_intr28 1 rw "";
+        wkg_enb_for_intr27 1 rw "";
+        wkg_enb_for_intr26 1 rw "";
+        wkg_enb_for_intr25 1 rw "";
+        wkg_enb_for_intr24 1 rw "";
+        wkg_enb_for_intr23 1 rw "";
+        wkg_enb_for_intr22 1 rw "";
+        wkg_enb_for_intr21 1 rw "";
+        wkg_enb_for_intr20 1 rw "";
+        wkg_enb_for_intr19 1 rw "";
+        wkg_enb_for_intr18 1 rw "";
+        wkg_enb_for_intr17 1 rw "";
+        wkg_enb_for_intr16 1 rw "";
+        wkg_enb_for_intr15 1 rw "";
+        wkg_enb_for_intr14 1 rw "";
+        wkg_enb_for_intr13 1 rw "";
+        wkg_enb_for_intr12 1 rw "";
+        wkg_enb_for_intr11 1 rw "";
+        wkg_enb_for_intr10 1 rw "";
+        wkg_enb_for_intr9 1 rw "";
+        _ 1 mbz;
+        wkg_enb_for_intr7 1 rw "";
+        wkg_enb_for_intr6 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr4 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr2 1 rw "";
+        wkg_enb_for_intr1 1 rw "";
+        wkg_enb_for_intr0 1 rw "";
+    };
+    
+    register wkg_enb_b_0 addr(base, 0x14) "This register enables the interrupts (for CPU0) from MA_IRQ_32 to MA_IRQ_63 write 0x0: disable interrupt write 0x1: enable interrupt" {
+        _ 1 rsvd;
+        wkg_enb_for_intr62 1 rw "";
+        wkg_enb_for_intr61 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr59 1 rw "";
+        wkg_enb_for_intr58 1 rw "";
+        wkg_enb_for_intr57 1 rw "";
+        wkg_enb_for_intr56 1 rw "";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr53 1 rw "";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr48 1 rw "";
+        wkg_enb_for_intr47 1 rw "";
+        wkg_enb_for_intr46 1 rw "";
+        wkg_enb_for_intr45 1 rw "";
+        wkg_enb_for_intr44 1 rw "";
+        wkg_enb_for_intr43 1 rw "";
+        wkg_enb_for_intr42 1 rw "";
+        wkg_enb_for_intr41 1 rw "";
+        wkg_enb_for_intr40 1 rw "";
+        wkg_enb_for_intr39 1 rw "";
+        wkg_enb_for_intr38 1 rw "";
+        wkg_enb_for_intr37 1 rw "";
+        wkg_enb_for_intr36 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr34 1 rw "";
+        wkg_enb_for_intr33 1 rw "";
+        wkg_enb_for_intr32 1 rw "";
+    };
+    
+    register wkg_enb_c_0 addr(base, 0x18) "This register enables the interrupts (for CPU0) from MA_IRQ_64 to MA_IRQ_95 write 0x0: disable interrupt write 0x1: enable interrupt" {
+        _ 1 rsvd;
+        wkg_enb_for_intr94 1 rw "";
+        wkg_enb_for_intr93 1 rw "";
+        wkg_enb_for_intr92 1 rw "";
+        wkg_enb_for_intr91 1 rw "";
+        wkg_enb_for_intr90 1 rw "";
+        wkg_enb_for_intr89 1 rw "";
+        wkg_enb_for_intr88 1 rw "";
+        wkg_enb_for_intr87 1 rw "";
+        wkg_enb_for_intr86 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr84 1 rw "";
+        wkg_enb_for_intr83 1 rw "";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr80 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr78 1 rw "";
+        wkg_enb_for_intr77 1 rw "";
+        wkg_enb_for_intr76 1 rw "";
+        wkg_enb_for_intr75 1 rw "";
+        wkg_enb_for_intr74 1 rw "";
+        wkg_enb_for_intr73 1 rw "";
+        wkg_enb_for_intr72 1 rw "";
+        wkg_enb_for_intr71 1 rw "";
+        wkg_enb_for_intr70 1 rw "";
+        wkg_enb_for_intr69 1 rw "";
+        wkg_enb_for_intr68 1 rw "";
+        wkg_enb_for_intr67 1 rw "";
+        wkg_enb_for_intr66 1 rw "";
+        wkg_enb_for_intr65 1 rw "";
+        _ 1 rsvd;
+    };
+    
+    register wkg_enb_d_0 addr(base, 0x1C) "This register enables the interrupts (for CPU0) from MA_IRQ_96 to MA_IRQ_127 write 0x0: disable interrupt write 0x1: enable interrupt" {
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr120 1 rw "";
+        wkg_enb_for_intr119 1 rw "";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr114 1 rw "";
+        wkg_enb_for_intr113 1 rw "";
+        wkg_enb_for_intr112 1 rw "";
+        wkg_enb_for_intr111 1 rw "";
+        wkg_enb_for_intr110 1 rw "";
+        wkg_enb_for_intr109 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr107 1 rw "";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr104 1 rw "";
+        wkg_enb_for_intr103 1 rw "";
+        wkg_enb_for_intr102 1 rw "";
+        wkg_enb_for_intr101 1 rw "";
+        wkg_enb_for_intr100 1 rw "";
+        wkg_enb_for_intr99 1 rw "";
+        wkg_enb_for_intr98 1 rw "";
+        wkg_enb_for_intr97 1 rw "";
+        wkg_enb_for_intr96 1 rw "";
+    };
+    
+    register wkg_control_1 addr(base, 0x400) "Wake-up generator status register for CPU1" {
+        _ 16 mbz;
+        domain_rst 1 ro "MPU always-on power domain (PD_ALWON_MPU) reset status bit. It shows if the reset occurred previously. 0x0: no reset occur 0x1: reset occur";
+        cortexa9_warm_rst 1 ro "This bit is set when the CORTEXA9_RSTN signal is asserted. 0x0: CORTEXA9_RSTN reset signal has not been asserted 0x1: CORTEXA9_RSTN reset request has been asserted";
+        cortexa9_cold_rst 1 ro "This bit is set when the CORTEXA9_PWRON_RSTN signal is asserted. 0x0: CORTEXA9_PWRON_RSTN reset signal has not been asserted 0x1: CORTEXA9_PWRON_RSTN reset request has been asserted";
+        wdt_rst 1 ro "This bit is set when the WD timer Reset Request signal from the SCU is asserted. 0x0: WDT reset request has not been asserted 0x1: WDT reset request has been asserted";
+        _ 1 mbz;
+        evento 1 ro "EVENTO status bit. The event output signal is active, when one SEV instruction is executed. This bit is set when a rising edge of EVENTO from CPU is detected. 0x0: Rising edge of EVENTO is not detected 0x1: Rising edge of EVENTO is detected";
+        standbywfe 1 ro "This bit gives software the visibility to track whether WFE mode have been entered. 0x0: WFE mode has not been entered 0x1: WFE mode has been entered";
+        standbywfi 1 ro "This bit gives software the visibility to track whether WFI mode have been entered. 0x0: WFI mode has not been entered 0x1: WFI mode has been entered";
+        _ 8 mbz;
+    };
+    
+    register wkg_enb_a_1 addr(base, 0x410) "This register enables the interrupts (for CPU1) from MA_IRQ_0 to MA_IRQ_31 write 0x0: disable interrupt write 0x1: enable interrupt" {
+        wkg_enb_for_intr31 1 rw "";
+        wkg_enb_for_intr30 1 rw "";
+        wkg_enb_for_intr29 1 rw "";
+        wkg_enb_for_intr28 1 rw "";
+        wkg_enb_for_intr27 1 rw "";
+        wkg_enb_for_intr26 1 rw "";
+        wkg_enb_for_intr25 1 rw "";
+        wkg_enb_for_intr24 1 rw "";
+        wkg_enb_for_intr23 1 rw "";
+        wkg_enb_for_intr22 1 rw "";
+        wkg_enb_for_intr21 1 rw "";
+        wkg_enb_for_intr20 1 rw "";
+        wkg_enb_for_intr19 1 rw "";
+        wkg_enb_for_intr18 1 rw "";
+        wkg_enb_for_intr17 1 rw "";
+        wkg_enb_for_intr16 1 rw "";
+        wkg_enb_for_intr15 1 rw "";
+        wkg_enb_for_intr14 1 rw "";
+        wkg_enb_for_intr13 1 rw "";
+        wkg_enb_for_intr12 1 rw "";
+        wkg_enb_for_intr11 1 rw "";
+        wkg_enb_for_intr10 1 rw "";
+        wkg_enb_for_intr9 1 rw "";
+        _ 1 mbz;
+        wkg_enb_for_intr7 1 rw "";
+        wkg_enb_for_intr6 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr4 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr2 1 rw "";
+        wkg_enb_for_intr1 1 rw "";
+        wkg_enb_for_intr0 1 rw "";
+    };
+    
+    register wkg_enb_b_1 addr(base, 0x414) "This register enables the interrupts (for CPU1) from MA_IRQ_32 to MA_IRQ_63 write 0x0: disable interrupt write 0x1: enable interrupt" {
+        _ 1 rsvd;
+        wkg_enb_for_intr62 1 rw "";
+        wkg_enb_for_intr61 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr59 1 rw "";
+        wkg_enb_for_intr58 1 rw "";
+        wkg_enb_for_intr57 1 rw "";
+        wkg_enb_for_intr56 1 rw "";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr53 1 rw "";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr48 1 rw "";
+        wkg_enb_for_intr47 1 rw "";
+        wkg_enb_for_intr46 1 rw "";
+        wkg_enb_for_intr45 1 rw "";
+        wkg_enb_for_intr44 1 rw "";
+        wkg_enb_for_intr43 1 rw "";
+        wkg_enb_for_intr42 1 rw "";
+        wkg_enb_for_intr41 1 rw "";
+        wkg_enb_for_intr40 1 rw "";
+        wkg_enb_for_intr39 1 rw "";
+        wkg_enb_for_intr38 1 rw "";
+        wkg_enb_for_intr37 1 rw "";
+        wkg_enb_for_intr36 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr34 1 rw "";
+        wkg_enb_for_intr33 1 rw "";
+        wkg_enb_for_intr32 1 rw "";
+    };
+    
+    register wkg_enb_c_1 addr(base, 0x418) "This register enables the interrupts (for CPU1) from MA_IRQ_64 to MA_IRQ_95 write 0x0: disable interrupt write 0x1: enable interrupt" {
+        _ 1 rsvd;
+        wkg_enb_for_intr94 1 rw "";
+        wkg_enb_for_intr93 1 rw "";
+        wkg_enb_for_intr92 1 rw "";
+        wkg_enb_for_intr91 1 rw "";
+        wkg_enb_for_intr90 1 rw "";
+        wkg_enb_for_intr89 1 rw "";
+        wkg_enb_for_intr88 1 rw "";
+        wkg_enb_for_intr87 1 rw "";
+        wkg_enb_for_intr86 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr84 1 rw "";
+        wkg_enb_for_intr83 1 rw "";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr80 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr78 1 rw "";
+        wkg_enb_for_intr77 1 rw "";
+        wkg_enb_for_intr76 1 rw "";
+        wkg_enb_for_intr75 1 rw "";
+        wkg_enb_for_intr74 1 rw "";
+        wkg_enb_for_intr73 1 rw "";
+        wkg_enb_for_intr72 1 rw "";
+        wkg_enb_for_intr71 1 rw "";
+        wkg_enb_for_intr70 1 rw "";
+        wkg_enb_for_intr69 1 rw "";
+        wkg_enb_for_intr68 1 rw "";
+        wkg_enb_for_intr67 1 rw "";
+        wkg_enb_for_intr66 1 rw "";
+        wkg_enb_for_intr65 1 rw "";
+        _ 1 rsvd;
+    };
+    
+    register wkg_enb_d_1 addr(base, 0x41C) "This register enables the interrupts (for CPU1) from MA_IRQ_96 to MA_IRQ_127 write 0x0: disable interrupt write 0x1: enable interrupt" {
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr120 1 rw "";
+        wkg_enb_for_intr119 1 rw "";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr114 1 rw "";
+        wkg_enb_for_intr113 1 rw "";
+        wkg_enb_for_intr112 1 rw "";
+        wkg_enb_for_intr111 1 rw "";
+        wkg_enb_for_intr110 1 rw "";
+        wkg_enb_for_intr109 1 rw "";
+        _ 1 rsvd;
+        wkg_enb_for_intr107 1 rw "";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        wkg_enb_for_intr104 1 rw "";
+        wkg_enb_for_intr103 1 rw "";
+        wkg_enb_for_intr102 1 rw "";
+        wkg_enb_for_intr101 1 rw "";
+        wkg_enb_for_intr100 1 rw "";
+        wkg_enb_for_intr99 1 rw "";
+        wkg_enb_for_intr98 1 rw "";
+        wkg_enb_for_intr97 1 rw "";
+        wkg_enb_for_intr96 1 rw "";
+    };
+    
+    register aux_core_boot_0 addr(base, 0x800) "This register is used by the ROM code and OS during SMP boot. It is used to indicate the boot status to CPU1." {
+        _ 28 mbz;
+        cpu1_status 2 rw "CPU1 boot status. If != 0x0, branch at the address specified inAUX_CORE_BOOT_1.";
+        _ 2 mbz;
+    };
+    
+    register aux_core_boot_1 rw addr(base, 0x804) "This register is used by the ROM code and OS during SMP boot. It is intended to store the execution start address of CPU1. When needed, the SMP OS (executing on CPU0) stores the execution start address of CPU1 in, and then wakes up CPU1 by executing a SEV command. When CPU1 received an event (caused by the SEV command), it executes the event handler in the ROM Code, which eventually branches to the address stored in ." type(uint32);
+};

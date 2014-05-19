@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, 2011, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/* XXX: "blocking" is a misnomer. There is nothing in particular about this
+ * interface that requires clients to block on calls, simply the current
+ * implementation of the default (non-THC) Flounder RPC client stubs.
+ */
+interface monitor_blocking "The monitor to client RPC interface" {
+        typedef struct {
+            uint64 w0;
+            uint64 w1;
+            uint64 w2;
+            uint64 w3;
+        } caprep;
+
+        // For special boot domains to request the bootinfo frame
+        rpc get_bootinfo(out errval err, out cap frame, out size frame_size);
+
+	/* Remote cap operation messages */
+        rpc remote_cap_retype(in cap croot, in uint32 src,
+                              in uint64 objtype, in uint8 size_bits,
+                              in uint32 to, in uint32 slot,
+                              in int dcn_vbits, out errval err);
+        rpc remote_cap_delete(in cap croot, in uint32 src, in uint8 vbits, 
+                              out errval err);
+        rpc remote_cap_revoke(in cap croot, in uint32 src, in uint8 vbits,
+                              out errval err);
+
+    rpc get_phyaddr_cap(out cap pyaddr, out errval err);
+    rpc get_io_cap(out cap io, out errval err);
+
+	// Resource control
+	rpc rsrc_manifest(in cap dispatcher, in string manifest,
+	    		  out rsrcid id, out errval err);
+        rpc rsrc_join(in rsrcid id, in cap dispatcher, out errval err);
+	rpc rsrc_phase(in rsrcid id, in uint32 phase);
+
+	// New monitor endpoint
+	rpc alloc_monitor_ep(out errval err, out cap ep);
+
+        // debug cap identify mechanism
+        rpc cap_identify(in cap cap, out errval err, out caprep caprep);
+
+	// XXX: Hack to set a cap remote until we have x-core cap management
+	rpc cap_set_remote(in cap cap, in bool remote, out errval err);
+
+        /* Allocate local IRQ vector */
+        rpc irq_handle(in cap ep, out errval err, out uint32 vector);
+        
+        /* Allocate an IRQ on the arm plattform */
+        rpc arm_irq_handle(in cap ep, in uint32 irq, out errval err);
+
+        /* Retrieve local arch-specific core ID (e.g. APIC ID on x86)*/
+        rpc get_arch_core_id(out uintptr id);
+};

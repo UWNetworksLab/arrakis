@@ -1,0 +1,198 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_gptimer5_dsp.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_gptimer5_dsp msbfirst ( addr base ) "" {
+    
+    
+    register gpt_tidr ro addr(base, 0x0) "This read-only register contains the revision number of the module. A write to this register has no effect. This register is used by software to track features, bugs, and compatibility." type(uint32);
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle mode: local target idle state follows (acknowledges) the system idle requests unconditionally, that is, regardless of the IP module internal requirements. Back-up mode, for debug only.";
+        IDLEMODE_1 = 1 "No-idle mode: local target never enters idle state. Back-up mode, for debug only.";
+        IDLEMODE_2 = 2 "Smart-idle mode: local target idle state eventually follows (acknowledges) the system idle requests, depending on the IP module internal requirements. IP module should not generate (IRQ- or DMA-request-related) wake-up events.";
+        IDLEMODE_3 = 3 "Smart-idle wake-up-capable mode: local target idle state eventually follows (acknowledges) the system idle requests, depending on the IP module internal requirements. IP module may generate (IRQ- or DMA-request-related) wake-up events when in idle state. Mode is only relevant if the appropriate IP moduleswake-up output(s) is (are) implemented.";
+    };
+
+    constants emufree_status width(1) "" {
+        EMUFREE_0 = 0 "The timer is frozen in emulation mode (PINSUSPENDN signal active).";
+        EMUFREE_1 = 1 "The timer runs free, regardless of PINSUSPENDN value.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "Read 0: reset done, no pending action Write 0: No action";
+        SOFTRESET_1 = 1 "Read 1: initiate software reset Write 1: Reset ongoing";
+    };
+    
+    register gpt_tiocp_cfg addr(base, 0x10) "This register controls the various parameters of the L4 interface." {
+        _ 28 mbz;
+        idlemode 2 rw type(idlemode_status) "Power management, req/ack control";
+        emufree 1 rw type(emufree_status) "Emulation mode";
+        softreset 1 rw type(softreset_status) "Software reset";
+    };
+    
+    register gpt_irqstatus_raw addr(base, 0x24) "Component interrupt-request status. Check the corresponding secondary status register. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 29 mbz;
+        tcar_it_flag 1 rw "IRQ status for CaptureRead 0: No event pending Write 0: No action Read 1: IRQ event pending Write 1: Trigger IRQ event by software.";
+        ovf_it_flag 1 rw "IRQ status for OverflowRead 0: No event pending Write 0: No action Read 1: IRQ event pending Write 1: Trigger IRQ event by software.";
+        mat_it_flag 1 rw "IRQ status for MatchRead 0: No event pending Write 0: No action Read 1: IRQ event pending Write 1: Trigger IRQ event by software";
+    };
+    
+    register gpt_irqstatus addr(base, 0x28) "Component interrupt-request status. Check the corresponding secondary status register. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 29 mbz;
+        tcar_it_flag 1 rw "IRQ status for captureRead 0: No event pending Write 0: No action Read 1: IRQ event pending Write 1: Clear any pending event.";
+        ovf_it_flag 1 rw "IRQ status for OverflowRead 0: No event pending Write 0: No action Read 1: IRQ event pending Write 1: Clear any pending event.";
+        mat_it_flag 1 rw "IRQ status for MatchRead 0: No event pending Write 0: No action Read 1: IRQ event pending Write 1: Clear any pending event.";
+    };
+    
+    register gpt_irqenable_set addr(base, 0x2C) "Component interrupt-request enable. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 29 mbz;
+        tcar_en_flag 1 rw "IRQ enable for CompareRead 0: IRQ event is disabled.Write 0: No action Read 1: IRQ event is enabled Write 1: Set IRQ enable.";
+        ovf_en_flag 1 rw "IRQ enable for OverflowRead 0: IRQ event is disabled.Write 0: No action Read 1: IRQ event is enabled.Write 1: Set IRQ enable.";
+        mat_en_flag 1 rw "IRQ enable for MatchRead 0: IRQ event is disabled.Write 0: No action Read 1: IRQ event is enabled.Write 1: Set IRQ enable.";
+    };
+    
+    register gpt_irqenable_clr addr(base, 0x30) "Component interrupt-request enable. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 29 mbz;
+        tcar_en_flag 1 rw "IRQ enable for CompareRead 0: IRQ event is disabled.Write 0: No action Read 1: IRQ event is enabled.Write 1: Clear IRQ enable.";
+        ovf_en_flag 1 rw "IRQ enable for OverflowRead 0: IRQ event is disabled.Write 0: No action Read 1: IRQ event is enabled.Write 1: Clear IRQ enable.";
+        mat_en_flag 1 rw "IRQ enable for MatchRead 0: IRQ event is disabled.Write 0: No action Read 1: IRQ event is enabled.Write 1: Clear IRQ enable.";
+    };
+
+    constants tcar_wup_ena_status width(1) "" {
+        TCAR_WUP_ENA_0 = 0 "Wake-up disabled";
+        TCAR_WUP_ENA_1 = 1 "Wake-up enabled";
+    };
+    
+    register gpt_irqwakeen addr(base, 0x34) "Wake-up-enabled events taking place when module is idle should generate an asynchronous wake-up." {
+        _ 29 mbz;
+        tcar_wup_ena 1 rw type(tcar_wup_ena_status) "Wake-up generation for Compare";
+        ovf_wup_ena 1 rw type(tcar_wup_ena_status) "Wake-up generation for Overflow";
+        mat_wup_ena 1 rw type(tcar_wup_ena_status) "Wake-up generation for Match";
+    };
+
+    constants gpo_cfg_status width(1) "" {
+        GPO_CFG_0 = 0 "GPTi_PORGPOCFG drives 0.";
+        GPO_CFG_1 = 1 "GPTi_PORGPOCFG drives 1.";
+    };
+
+    constants capt_mode_status width(1) "" {
+        CAPT_MODE_0 = 0 "Single capture: Capture the first enabled capture event in TCAR1.";
+        CAPT_MODE_1 = 1 "Capture on second event: Capture the second enabled capture event in TCAR2.";
+    };
+
+    constants pt_status width(1) "" {
+        PT_0 = 0 "Pulse modulation";
+        PT_1 = 1 "Toggle modulation";
+    };
+
+    constants trg_status width(2) "" {
+        TRG_0 = 0 "No trigger";
+        TRG_1 = 1 "Trigger on overflow.";
+        TRG_2 = 2 "Trigger on overflow and match.";
+        TRG_3 = 3 "Reserved";
+    };
+
+    constants tcm_status width(2) "" {
+        TCM_0 = 0 "No capture";
+        TCM_1 = 1 "Capture on rising edges of GPTi_EVENT_CAPTURE pin";
+        TCM_2 = 2 "Capture on falling edges of GPTi_EVENT_CAPTURE pin";
+        TCM_3 = 3 "Capture on both edges of GPTi_EVENT_CAPTURE pin";
+    };
+
+    constants ce_status width(1) "" {
+        CE_0 = 0 "Compare mode is disable.";
+        CE_1 = 1 "Compare mode is enable.";
+    };
+
+    constants pre_status width(1) "" {
+        PRE_0 = 0 "The TIMER clock input pin clocks the counter.";
+        PRE_1 = 1 "The divided input pin clocks the counter.";
+    };
+
+    constants ar_status width(1) "" {
+        AR_0 = 0 "One shot timer";
+        AR_1 = 1 "Autoreload timer";
+    };
+
+    constants st_status width(1) "" {
+        ST_0 = 0 "Stop timer: Only the counter is frozen. If one-shot mode selected (AR =0), this bit is automatically reset by internal logic when the counter is overflowed.";
+        ST_1 = 1 "Start timer";
+    };
+    
+    register gpt_tclr addr(base, 0x38) "This register controls optional features specific to the timer functionality." {
+        _ 17 mbz;
+        gpo_cfg 1 rw type(gpo_cfg_status) "General-purpose output - this register directly drives the GPTi_PORGPOCFG output pin. For specific use of the GPO_CFG bit, see, .";
+        capt_mode 1 rw type(capt_mode_status) "Capture mode select bit (first/second)";
+        pt 1 rw type(pt_status) "Pulse or toggle mode on GPTi_PWM_out output pin";
+        trg 2 rw type(trg_status) "Trigger output mode on GPTi_PWM_out output pin";
+        tcm 2 rw type(tcm_status) "Transition capture mode on GPTi_EVENT_CAPTURE input pin (When the TCM field passed from (00) to any other combination, the TCAR_IT_FLAG and the edge detection logic are cleared.)";
+        scpwm 1 rw type(softreset_status) "Pulse width modulation output pin default settingThis bit must be set or clear while the timer is stopped or the trigger is off.";
+        ce 1 rw type(ce_status) "Compare enable";
+        pre 1 rw type(pre_status) "Prescaler enable";
+        ptv 3 rw "Prescale clock timer valueThe timer counter is prescaled with the value 2. Example: PTV = 3, counter increases value (if started) after 16 functional clock periods.";
+        ar 1 rw type(ar_status) "Autoreload mode";
+        st 1 rw type(st_status) "Start/stop timer control";
+    };
+    
+    register gpt_tcrr rw addr(base, 0x3C) "This register holds the value of the internal counter." type(uint32);
+    
+    register gpt_tldr rw addr(base, 0x40) "This register holds the timer load value." type(uint32);
+    
+    register gpt_ttgr rw addr(base, 0x44) "The read value of this register is always 0xFFFF FFFF." type(uint32);
+    
+    register gpt_twps addr(base, 0x48) "This register contains the write posting bits for all writable functional registers." {
+        _ 27 mbz;
+        w_pend_tmar 1 ro "When equal to 1, a write is pending to theGPT_TMAR register.";
+        w_pend_ttgr 1 ro "When equal to 1, a write is pending to theGPT_TTGR register.";
+        w_pend_tldr 1 ro "When equal to 1, a write is pending to theGPT_TLDR register.";
+        w_pend_tcrr 1 ro "When equal to 1, a write is pending to theGPT_TCRR register.";
+        w_pend_tclr 1 ro "When equal to 1, a write is pending to theGPT_TCLR register.";
+    };
+    
+    register gpt_tmar rw addr(base, 0x4C) "The compare logic consists of a 32-bit-wide, read/write data TMAR register and logic to compare counter." type(uint32);
+    
+    register gpt_tcar1 ro addr(base, 0x50) "This register holds the first captured value of the counter register." type(uint32);
+
+    constants posted_status width(1) "" {
+        POSTED_0 = 0 "Posted mode inactive: Delay the command accept output signal.";
+        POSTED_1 = 1 "Posted mode active";
+    };
+
+    constants sft_status width(1) "" {
+        SFT_0 = 0 "Software reset is disabled.";
+        SFT_1 = 1 "Software reset is enabled.";
+    };
+    
+    register gpt_tsicr addr(base, 0x54) "Timer synchronous interface control register" {
+        _ 29 mbz;
+        posted 1 rw type(posted_status) "Posted mode selection";
+        sft 1 rw type(sft_status) "This bit resets all the functional part of the module.";
+        _ 1 mbz;
+    };
+    
+    register gpt_tcar2 ro addr(base, 0x58) "This register holds the second captured value of the counter register." type(uint32);
+};

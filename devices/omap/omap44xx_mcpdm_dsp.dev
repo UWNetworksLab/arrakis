@@ -1,0 +1,243 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_mcpdm_dsp.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_mcpdm_dsp msbfirst ( addr base ) "" {
+    
+    
+    register mcpdm_revision ro addr(base, 0x0) "IP revision identifier (X.Y.R) used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force- idle. idle request is acknowledged unconditionally and immediately. No wake-up capability.";
+        IDLEMODE_1 = 1 "No-idle. Idle request is never acknowledged. No wake-up capability.";
+        IDLEMODE_2 = 2 "Smart-idle. The acknowledgment to an idle request is given based on the internal activity. No wake-up capability.";
+        IDLEMODE_3 = 3 "Idle request acknowledged pending internal conditions, asynchronous wake-up enabled. Wakeup capability.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_w = 0 "No Action";
+        SOFTRESET_0_r = 0 "No ongoing software reset";
+        SOFTRESET_1_r = 1 "Reset is ongoing";
+        SOFTRESET_1_w = 1 "Start software reset";
+    };
+    
+    register mcpdm_sysconfig addr(base, 0x10) "This register allows controlling various parameters of the OCP interface." {
+        _ 28 mbz;
+        idlemode 2 rw type(idlemode_status) "Configuration of the idle mode.";
+        freemu 1 rw type(idlemode_status) "Sensitivity to emulation (debug) suspend input signal.";
+        softreset 1 rw type(softreset_status) "McPDM software Reset.";
+    };
+
+    constants up_irq_full_status width(1) "" {
+        UP_IRQ_FULL_0_r = 0 "No event pending";
+        UP_IRQ_FULL_0_w = 0 "No action";
+        UP_IRQ_FULL_1_w = 1 "Set the event (for debug)";
+        UP_IRQ_FULL_1_r = 1 "Event pending";
+    };
+    
+    register mcpdm_irqstatus_raw addr(base, 0x24) "Interrupt request raw status register (for debug purpose)." {
+        _ 20 mbz;
+        up_irq_full 1 rw type(up_irq_full_status) "FIFO-uplink-full signal appears when a write access is performed and the FIFO uplink is already full.";
+        up_irq_alst_full 1 rw type(up_irq_full_status) "FIFO uplink almost-full signal appears when the FIFO uplink contains (FIFO uplink size - 1) elements.";
+        up_irq_empty 1 rw type(up_irq_full_status) "FIFO uplink empty signal appears when a read access is done and FIFO uplink already empty.";
+        up_irq 1 rw type(up_irq_full_status) "FIFO uplink interrupt appears when the number of data present in the FIFO uplink has reached the value of the FIFO uplink threshold.";
+        _ 4 mbz;
+        dn_irq_full 1 rw type(up_irq_full_status) "FIFO downlink full signal appears when the FIFO uplink is full and another a write access is performed.";
+        dn_irq_alst_empty 1 rw type(up_irq_full_status) "FIFO downlink almost empty signal appears when the FIFO downlink contains only one element.";
+        dn_irq_empty 1 rw type(up_irq_full_status) "FIFO-downlink-empty signal appears when read access is performed and FIFO downlink is already empty.";
+        dn_irq 1 rw type(up_irq_full_status) "FIFO downlink status is set when the number of data is below the FIFO downlink threshold value.";
+    };
+
+    constants up_irq_full_status1 width(1) "" {
+        UP_IRQ_FULL_0_r_1 = 0 "No event pending";
+        UP_IRQ_FULL_0_w_1 = 0 "No action";
+        UP_IRQ_FULL_1_w_1 = 1 "Clear pending event";
+        UP_IRQ_FULL_1_r_1 = 1 "Event pending";
+    };
+    
+    register mcpdm_irqstatus addr(base, 0x28) "Interrupt request status register." {
+        _ 20 mbz;
+        up_irq_full 1 rw type(up_irq_full_status1) "FIFO-uplink-full signal appears when a write access is performed and the FIFO uplink is already full.";
+        up_irq_alst_full 1 rw type(up_irq_full_status1) "FIFO uplink almost-full signal appears when the FIFO uplink contains (FIFO uplink size - 1) elements.";
+        up_irq_empty 1 rw type(up_irq_full_status1) "FIFO uplink empty signal appears when a read access is done and FIFO uplink already empty.";
+        up_irq 1 rw type(up_irq_full_status1) "FIFO uplink interrupt appears when the number of data present in the FIFO uplink has reached the value of the FIFO uplink threshold.";
+        _ 4 mbz;
+        dn_irq_full 1 rw type(up_irq_full_status1) "FIFO downlink full signal appears when the FIFO uplink is full and another a write access is performed.";
+        dn_irq_alst_empty 1 rw type(up_irq_full_status1) "FIFO downlink almost empty signal appears when the FIFO downlink contains only one element.";
+        dn_irq_empty 1 rw type(up_irq_full_status1) "FIFO-downlink-empty signal appears when read access is performed and FIFO downlink is already empty.";
+        dn_irq 1 rw type(up_irq_full_status1) "FIFO downlink status is set when the number of data is below the FIFO downlink threshold value.";
+    };
+
+    constants up_irq_full_mask_status width(1) "" {
+        UP_IRQ_FULL_MASK_0_r = 0 "Interrupt disabled";
+        UP_IRQ_FULL_MASK_0_w = 0 "No action";
+        UP_IRQ_FULL_MASK_1_w = 1 "Enable interrupt";
+        UP_IRQ_FULL_MASK_1_r = 1 "Interrupt enabled";
+    };
+    
+    register mcpdm_irqenable_set addr(base, 0x2C) "Interrupt request enable set register." {
+        _ 20 mbz;
+        up_irq_full_mask 1 rw type(up_irq_full_mask_status) "FIFO-uplink-full event interrupt enabling bit.";
+        up_irq_alst_full_mask 1 rw type(up_irq_full_mask_status) "FIFO-uplink-almost-full event interrupt enabling bit.";
+        up_irq_empty_mask 1 rw type(up_irq_full_mask_status) "FIFO-uplink-empty event interrupt enabling bit.";
+        up_irq_mask 1 rw type(up_irq_full_mask_status) "FIFO-uplink-read-request event interrupt enabling bit.";
+        _ 4 mbz;
+        dn_irq_full_mask 1 rw type(up_irq_full_mask_status) "FIFO-downlink-full event interrupt enabling bit.";
+        dn_irq_alst_empty_mask 1 rw type(up_irq_full_mask_status) "FIFO downlink almost-empty event interrupt enabling bit.";
+        dn_irq_empty_mask 1 rw type(up_irq_full_mask_status) "FIFO-downlink-empty event interrupt enabling bit.";
+        dn_irq_mask 1 rw type(up_irq_full_mask_status) "FIFO downlink write-request event interrupt enabling bit.";
+    };
+
+    constants up_irq_full_mask_status1 width(1) "" {
+        UP_IRQ_FULL_MASK_0_r_1 = 0 "Interrupt disabled";
+        UP_IRQ_FULL_MASK_0_w_1 = 0 "No action";
+        UP_IRQ_FULL_MASK_1_w_1 = 1 "Disable interrupt";
+        UP_IRQ_FULL_MASK_1_r_1 = 1 "Interrupt enabled";
+    };
+    
+    register mcpdm_irqenable_clr addr(base, 0x30) "Interrupt request enable clear register." {
+        _ 20 mbz;
+        up_irq_full_mask 1 rw type(up_irq_full_mask_status1) "FIFO-uplink-full event interrupt disabling bit.";
+        up_irq_alst_full_mask 1 rw type(up_irq_full_mask_status1) "FIFO-uplink-almost-full event interrupt disabling bit.";
+        up_irq_empty_mask 1 rw type(up_irq_full_mask_status1) "FIFO-uplink-empty event interrupt disabling bit.";
+        up_irq_mask 1 rw type(up_irq_full_mask_status1) "FIFO-uplink-read-request event interrupt disabling bit.";
+        _ 4 mbz;
+        dn_irq_full_mask 1 rw type(up_irq_full_mask_status1) "FIFO-downlink-full event interrupt disabling bit.";
+        dn_irq_alst_empty_mask 1 rw type(up_irq_full_mask_status1) "FIFO downlink almost-empty event interrupt disabling bit.";
+        dn_irq_empty_mask 1 rw type(up_irq_full_mask_status1) "FIFO-downlink-empty event interrupt disabling bit.";
+        dn_irq_mask 1 rw type(up_irq_full_mask_status1) "FIFO downlink write-request event interrupt disabling bit.";
+    };
+
+    constants irq_wakeup_up_en_status width(1) "" {
+        IRQ_WAKEUP_UP_EN_0 = 0 "Disable the wake-up request generation";
+        IRQ_WAKEUP_UP_EN_1 = 1 "Enable the wake-up request generation";
+    };
+    
+    register mcpdm_irqwakeen addr(base, 0x34) "Interrupt request wake-up enable register." {
+        _ 30 mbz;
+        irq_wakeup_up_en 1 rw type(irq_wakeup_up_en_status) "Enabling/disabling bit for wake-up request generation upon a FIFO-uplink-read-request event.";
+        irq_wakeup_dn_en 1 rw type(irq_wakeup_up_en_status) "Enabling/disabling bit for wake-up by FIFO downlink write-request event.";
+    };
+
+    constants dma_up_enable_status width(1) "" {
+        DMA_UP_ENABLE_0_r = 0 "DMA request disabled";
+        DMA_UP_ENABLE_0_w = 0 "No action";
+        DMA_UP_ENABLE_1_w = 1 "Enable DMA request";
+        DMA_UP_ENABLE_1_r = 1 "DMA request enabled";
+    };
+    
+    register mcpdm_dmaenable_set addr(base, 0x38) "DMA request enable set register." {
+        _ 30 mbz;
+        dma_up_enable 1 rw type(dma_up_enable_status) "Uplink path DMA request generation enabling bit.";
+        dma_dn_enable 1 rw type(dma_up_enable_status) "Downlink path DMA request generation enabling bit.";
+    };
+
+    constants dma_up_enable_status1 width(1) "" {
+        DMA_UP_ENABLE_0_r_1 = 0 "DMA request disabled";
+        DMA_UP_ENABLE_0_w_1 = 0 "No action";
+        DMA_UP_ENABLE_1_w_1 = 1 "Disable DMA request";
+        DMA_UP_ENABLE_1_r_1 = 1 "DMA request enabled";
+    };
+    
+    register mcpdm_dmaenable_clr addr(base, 0x3C) "DMA request enable clear register." {
+        _ 30 mbz;
+        dma_up_enable 1 rw type(dma_up_enable_status1) "Uplink path DMA request generation disabling bit.";
+        dma_dn_enable 1 rw type(dma_up_enable_status1) "Downlink path DMA request generation disabling bit.";
+    };
+    
+    register mcpdm_dmawakeen addr(base, 0x40) "DMA request wake-up enable register." {
+        _ 30 mbz;
+        dma_wakeup_up_en 1 rw type(irq_wakeup_up_en_status) "Enabling/disabling bit for wake-up request generation upon an uplink path DMA request.";
+        dma_wakeup_dn_en 1 rw type(irq_wakeup_up_en_status) "Enabling/disabling bit for wake-up request generation upon a downlink path DMA request.";
+    };
+
+    constants sw_dn_rst_status width(1) "" {
+        SW_DN_RST_0 = 0 "Downlink path is out of reset.";
+        SW_DN_RST_1 = 1 "Reset of the downlink path";
+    };
+
+    constants sw_up_rst_status width(1) "" {
+        SW_UP_RST_0 = 0 "Uplink path is out of reset.";
+        SW_UP_RST_1 = 1 "Reset of the uplink path";
+    };
+
+    constants status_int_status width(1) "" {
+        STATUS_INT_0 = 0 "Status channel is disabled.";
+        STATUS_INT_1 = 1 "Status channel is enabled.";
+    };
+
+    constants cmd_int_status width(1) "" {
+        CMD_INT_0 = 0 "Command channel is disabled.";
+        CMD_INT_1 = 1 "Command channel is enabled.";
+    };
+    
+    register mcpdm_ctrl addr(base, 0x44) "MCPDM control register." {
+        _ 17 mbz;
+        wd_en 1 rw "This bit is used to enable or disable the pulse-density modulator watchdog logic.0x0: Disabled (default after reset)0x1: Enabled";
+        div_sel 1 rw "Multiply by 2 the FS of the uplink path0x0: FS = 88.2 kHz, or 96 kHz0x1: FS = 176.4 kHz, or 192 kHz";
+        sw_dn_rst 1 rw type(sw_dn_rst_status) "Software reset of the downlink path.";
+        sw_up_rst 1 rw type(sw_up_rst_status) "Software reset of the uplink path.";
+        status_int 1 rw type(status_int_status) "Status channel enabling/disabling bit.";
+        cmd_int 1 rw type(cmd_int_status) "Command channel enabling/disabling bit.";
+        pdmoutformat 1 rw type(idlemode_status) "Audio format selection:";
+        pdm_dn5_en 1 rw "Audio downlink channel 5 enabling/disabling bit";
+        pdm_dn4_en 1 rw "Audio downlink channel 4 enabling/disabling bit";
+        pdm_dn3_en 1 rw "Audio downlink channel 3 enabling/disabling bit";
+        pdm_dn2_en 1 rw "Audio downlink channel 2 enabling/disabling bit";
+        pdm_dn1_en 1 rw "Audio downlink channel 1 enabling/disabling bit";
+        pdm_up3_en 1 rw "Audio uplink channel 3 enabling/disabling bit";
+        pdm_up2_en 1 rw "Audio uplink channel 2 enabling/disabling bit";
+        pdm_up1_en 1 rw "Audio uplink channel 1 enabling/disabling bit";
+    };
+    
+    register mcpdm_dn_data rw addr(base, 0x48) "Downlink path data register." type(uint32);
+    
+    register mcpdm_up_data ro addr(base, 0x4C) "Uplink path data register." type(uint32);
+    
+    register mcpdm_fifo_ctrl_dn addr(base, 0x50) "FIFO downlink control register." {
+        _ 28 mbz;
+        dn_tresh 4 rw "FIFO downlink threshold value";
+    };
+    
+    register mcpdm_fifo_ctrl_up addr(base, 0x54) "FIFO uplink control register." {
+        _ 28 mbz;
+        up_tresh 4 rw "FIFO uplink threshold value";
+    };
+
+    constants dn_ofst_rx2_en_status width(1) "" {
+        DN_OFST_RX2_EN_0 = 0 "Offset cancellation disabled.";
+        DN_OFST_RX2_EN_1 = 1 "Offset cancellation enabled.";
+    };
+    
+    register mcpdm_dn_offset addr(base, 0x58) "" {
+        _ 18 mbz;
+        dn_ofst_rx2 5 rw "Offset value for the audio downlink channel 2";
+        dn_ofst_rx2_en 1 rw type(dn_ofst_rx2_en_status) "Offset cancellation feature enabling/disabling bit for the audio downlink channel 2.";
+        _ 2 mbz;
+        dn_ofst_rx1 5 rw "Offset value for the audio downlink channel 1";
+        dn_ofst_rx1_en 1 rw type(dn_ofst_rx2_en_status) "Offset cancellation feature enabling/disabling bit for the audio downlink channel 1.";
+    };
+};

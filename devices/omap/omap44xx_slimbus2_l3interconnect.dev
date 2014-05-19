@@ -1,0 +1,1330 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_slimbus2_l3interconnect.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_slimbus2_l3interconnect msbfirst ( addr base ) "" {
+    
+    
+    register slimbus_cmp_revision ro addr(base, 0x0) "IP Revision Identifier Used by software to track features, bugs, and compatibility" type(uint32);
+    
+    register slimbus_cmp_hwinfo addr(base, 0x4) "Those read-only, hardcoded fields display the values of the eponymous hardware configuration depending on module instantiation - SLIMBUS1 or SLIMBUS2." {
+        dev 4 ro "Device count: number of devices supported by the component, most notably through the automatically reception of the messages addressed to them. Sets the number of instances of the 'DEV_XYZ' registers.";
+        tdc 4 ro "Transmit Data agent Count: Number of transmit hardware data agents (FIFO and associated logic) Sets the number of instances of the 'DCT_XYZ' registers.";
+        rdc 4 ro "Receive Data agent Count: Number of receive hardware data agents (FIFO and associated logic) Sets the number of instances of the 'DCR_XYZ' registers.";
+        rrsz 8 ro "Size of receive FIFO RAM, in 32-bit words. RX message FIFO and all RX data FIFOs map to that shared RAM.";
+        trsz 8 ro "Size of transmit FIFO RAM, in 32-bit words. TX message FIFO and all TX data FIFOs map to that shared RAM.";
+        psz 4 ro "Size of (both TX and RX) FIFO segment word pointers, in bits. Determines the maximum number of (variable-sized) segment words a data agent FIFO can contain. Sets the width of FIFO control and status fields: size, threshold, level.";
+    };
+
+    constants autogatingdisable_status width(1) "" {
+        AUTOGATINGDISABLE_0 = 0 "Internal clocks are gated off when unused, power is optimized.";
+        AUTOGATINGDISABLE_1 = 1 "Internal clocks are free-running, maximum dynamic power.";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle mode: local target's idle state follows (acknowledges) the system's idle requests unconditionally, that is, regardless of the IP module's internal requirements. Backup mode, for debug only.";
+        IDLEMODE_1 = 1 "No-idle mode: local target never enters idle state. Backup mode, for debug only.";
+        IDLEMODE_3 = 3 "Smart-idle wakeup-capable mode: local target's idle state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements. IP module may generate (IRQ- or DMA-request-related) wakeup events when in idle state. Mode is only relevant if the appropriate IP module 'swakeup' output(s) is (are) implemented.";
+        IDLEMODE_2 = 2 "Smart-idle mode: local target's idle state eventually follows (acknowledges) the system's idle requests, depending on the IP module's internal requirements. IP module shall not generate (IRQ- or DMA-request-related) wakeup events.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_w = 0 "No action";
+        SOFTRESET_1_w = 1 "Initiate software reset";
+        SOFTRESET_1_r = 1 "Reset (software or other) ongoing";
+        SOFTRESET_0_r = 0 "Reset done, no pending action";
+    };
+    
+    register slimbus_cmp_sysconfig addr(base, 0x10) "This register allows controlling various parameters of the interconnect interface" {
+        _ 23 mbz;
+        autogatingdisable 1 rw type(autogatingdisable_status) "Control of the internal clock autogating for safety / debug only. No impact on module functionality, only on dynamic power.";
+        _ 4 mbz;
+        idlemode 2 rw type(idlemode_status) "Configuration of the local target state management mode. By definition, target can handle read/write transaction as long as it is out of IDLE state.";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Software reset. (Optional)";
+    };
+
+    constants dcr_info_7_status width(1) "" {
+        DCR_INFO_7_0_w = 0 "No action";
+        DCR_INFO_7_1_w = 1 "Trigger IRQ event by software";
+        DCR_INFO_7_1_r = 1 "IRQ event pending";
+        DCR_INFO_7_0_r = 0 "No event pending";
+    };
+    
+    register slimbus_cmp_irqstatus_raw addr(base, 0x24) "Component (that is, main) interrupt request status. Check the corresponding secondary status register. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 12 mbz;
+        dcr_info_7 1 rw type(dcr_info_7_status) "IRQ status for RX Data agent 7 If implemented:";
+        dcr_info_6 1 rw type(dcr_info_7_status) "IRQ status for RX Data agent 6 If implemented:";
+        dcr_info_5 1 rw type(dcr_info_7_status) "IRQ status for RX Data agent 5 If implemented:";
+        dcr_info_4 1 rw type(dcr_info_7_status) "IRQ status for RX Data agent 4 If implemented:";
+        dcr_info_3 1 rw type(dcr_info_7_status) "IRQ status for RX Data agent 3 If implemented:";
+        dcr_info_2 1 rw type(dcr_info_7_status) "IRQ status for RX Data agent 2 If implemented:";
+        dcr_info_1 1 rw type(dcr_info_7_status) "IRQ status for RX Data agent 1 If implemented:";
+        dcr_info_0 1 rw type(dcr_info_7_status) "IRQ status for RX Data agent 0 If implemented:";
+        dct_info_7 1 rw type(dcr_info_7_status) "IRQ status for TX Data agent 7";
+        dct_info_6 1 rw type(dcr_info_7_status) "IRQ status for TX Data agent 6";
+        dct_info_5 1 rw type(dcr_info_7_status) "IRQ status for TX Data agent 5";
+        dct_info_4 1 rw type(dcr_info_7_status) "IRQ status for TX Data agent 4";
+        dct_info_3 1 rw type(dcr_info_7_status) "IRQ status for TX Data agent 3";
+        dct_info_2 1 rw type(dcr_info_7_status) "IRQ status for TX Data agent 2";
+        dct_info_1 1 rw type(dcr_info_7_status) "IRQ status for TX Data agent 1";
+        dct_info_0 1 rw type(dcr_info_7_status) "IRQ status for TX Data agent 0";
+        smr_info 1 rw type(dcr_info_7_status) "IRQ status for message receive";
+        smt_info 1 rw type(dcr_info_7_status) "IRQ status for message transmit";
+        fr_info 1 rw type(dcr_info_7_status) "IRQ status for Framer device, when active";
+        fl_info 1 rw type(dcr_info_7_status) "IRQ status for Frame Layer";
+    };
+
+    constants dcr_info_7_status1 width(1) "" {
+        DCR_INFO_7_0_w_1 = 0 "No action";
+        DCR_INFO_7_1_w_1 = 1 "Clear pending event, if any";
+        DCR_INFO_7_1_r_1 = 1 "IRQ event pending";
+        DCR_INFO_7_0_r_1 = 0 "No event pending";
+    };
+    
+    register slimbus_cmp_irqstatus addr(base, 0x28) "Component (that is, main) interrupt request status. Check the corresponding secondary status register. Enabled status isn't set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 12 mbz;
+        dcr_info_7 1 rw1c type(dcr_info_7_status1) "IRQ status for RX Data agent 7. If implemented:";
+        dcr_info_6 1 rw1c type(dcr_info_7_status1) "IRQ status for RX Data agent 6. If implemented:";
+        dcr_info_5 1 rw1c type(dcr_info_7_status1) "IRQ status for RX Data agent 5 . If implemented:";
+        dcr_info_4 1 rw1c type(dcr_info_7_status1) "IRQ status for RX Data agent 4 . If implemented:";
+        dcr_info_3 1 rw1c type(dcr_info_7_status1) "IRQ status for RX Data agent 3 . If implemented:";
+        dcr_info_2 1 rw1c type(dcr_info_7_status1) "IRQ status for RX Data agent 2 . If implemented:";
+        dcr_info_1 1 rw1c type(dcr_info_7_status1) "IRQ status for RX Data agent 1 . If implemented:";
+        dcr_info_0 1 rw1c type(dcr_info_7_status1) "IRQ status for RX Data agent 0 . If implemented:";
+        dct_info_7 1 rw1c type(dcr_info_7_status1) "IRQ status for TX Data agent 7";
+        dct_info_6 1 rw1c type(dcr_info_7_status1) "IRQ status for TX Data agent 6";
+        dct_info_5 1 rw1c type(dcr_info_7_status1) "IRQ status for TX Data agent 5";
+        dct_info_4 1 rw1c type(dcr_info_7_status1) "IRQ status for TX Data agent 4";
+        dct_info_3 1 rw1c type(dcr_info_7_status1) "IRQ status for TX Data agent 3";
+        dct_info_2 1 rw1c type(dcr_info_7_status1) "IRQ status for TX Data agent 2";
+        dct_info_1 1 rw1c type(dcr_info_7_status1) "IRQ status for TX Data agent 1";
+        dct_info_0 1 rw1c type(dcr_info_7_status1) "IRQ status for TX Data agent 0";
+        smr_info 1 rw1c type(dcr_info_7_status1) "IRQ status for message receive";
+        smt_info 1 rw1c type(dcr_info_7_status1) "IRQ status for message transmit";
+        fr_info 1 rw1c type(dcr_info_7_status1) "IRQ status for Framer device, when active";
+        fl_info 1 rw1c type(dcr_info_7_status1) "IRQ status for Frame Layer";
+    };
+
+    constants dcr_info_7_en_status width(1) "" {
+        DCR_INFO_7_EN_0_w = 0 "No action";
+        DCR_INFO_7_EN_1_w = 1 "Set IRQ enable (that is, enable event)";
+        DCR_INFO_7_EN_1_r = 1 "IRQ event is enabled";
+        DCR_INFO_7_EN_0_r = 0 "IRQ event is disabled";
+    };
+    
+    register slimbus_cmp_irqenable_set addr(base, 0x2C) "Component (that is, main) interrupt request enable Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 12 mbz;
+        dcr_info_7_en 1 rw type(dcr_info_7_en_status) "IRQ enable for RX Data agent 7. If implemented:";
+        dcr_info_6_en 1 rw type(dcr_info_7_en_status) "IRQ enable for RX Data agent 6. If implemented:";
+        dcr_info_5_en 1 rw type(dcr_info_7_en_status) "IRQ enable for RX Data agent 5. If implemented:";
+        dcr_info_4_en 1 rw type(dcr_info_7_en_status) "IRQ enable for RX Data agent 4. If implemented:";
+        dcr_info_3_en 1 rw type(dcr_info_7_en_status) "IRQ enable for RX Data agent 3. If implemented:";
+        dcr_info_2_en 1 rw type(dcr_info_7_en_status) "IRQ enable for RX Data agent 2. If implemented:";
+        dcr_info_1_en 1 rw type(dcr_info_7_en_status) "IRQ enable for RX Data agent 1. If implemented:";
+        dcr_info_0_en 1 rw type(dcr_info_7_en_status) "IRQ enable for RX Data agent 0. If implemented:";
+        dct_info_7_en 1 rw type(dcr_info_7_en_status) "IRQ enable for TX Data agent 7";
+        dct_info_6_en 1 rw type(dcr_info_7_en_status) "IRQ enable for TX Data agent 6";
+        dct_info_5_en 1 rw type(dcr_info_7_en_status) "IRQ enable for TX Data agent 5";
+        dct_info_4_en 1 rw type(dcr_info_7_en_status) "IRQ enable for TX Data agent 4";
+        dct_info_3_en 1 rw type(dcr_info_7_en_status) "IRQ enable for TX Data agent 3";
+        dct_info_2_en 1 rw type(dcr_info_7_en_status) "IRQ enable for TX Data agent 2";
+        dct_info_1_en 1 rw type(dcr_info_7_en_status) "IRQ enable for TX Data agent 1";
+        dct_info_0_en 1 rw type(dcr_info_7_en_status) "IRQ enable for TX Data agent 0";
+        smr_info_en 1 rw type(dcr_info_7_en_status) "IRQ enable for message receive";
+        smt_info_en 1 rw type(dcr_info_7_en_status) "IRQ enable for message transmit";
+        fr_info_en 1 rw type(dcr_info_7_en_status) "IRQ enable for Framer device, when active";
+        fl_info_en 1 rw type(dcr_info_7_en_status) "IRQ enable for Frame Layer";
+    };
+
+    constants dcr_info_7_en_status1 width(1) "" {
+        DCR_INFO_7_EN_0_w_1 = 0 "No action";
+        DCR_INFO_7_EN_1_w_1 = 1 "Clear IRQ enable (that is, disable event)";
+        DCR_INFO_7_EN_1_r_1 = 1 "IRQ event is enabled";
+        DCR_INFO_7_EN_0_r_1 = 0 "IRQ event is disabled";
+    };
+    
+    register slimbus_cmp_irqenable_clr addr(base, 0x30) "Component (that is, main) interrupt request enable Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 12 mbz;
+        dcr_info_7_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for RX data agent 7. If implemented:";
+        dcr_info_6_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for RX data agent 6. If implemented:";
+        dcr_info_5_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for RX data agent 5. If implemented:";
+        dcr_info_4_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for RX data agent 4. If implemented:";
+        dcr_info_3_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for RX data agent 3. If implemented:";
+        dcr_info_2_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for RX data agent 2. If implemented:";
+        dcr_info_1_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for RX data agent 1. If implemented:";
+        dcr_info_0_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for RX data agent 0. If implemented:";
+        dct_info_7_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for TX Data agent 7";
+        dct_info_6_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for TX Data agent 6";
+        dct_info_5_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for TX Data agent 5";
+        dct_info_4_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for TX Data agent 4";
+        dct_info_3_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for TX Data agent 3";
+        dct_info_2_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for TX Data agent 2";
+        dct_info_1_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for TX Data agent 1";
+        dct_info_0_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for TX Data agent 0";
+        smr_info_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for message receive";
+        smt_info_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for message transmit";
+        fr_info_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for Framer device, when active";
+        fl_info_en 1 rw1c type(dcr_info_7_en_status1) "IRQ enable for Frame Layer";
+    };
+
+    constants dcr_dma_7_en_status width(1) "" {
+        DCR_DMA_7_EN_0_w = 0 "No action";
+        DCR_DMA_7_EN_1_w = 1 "Set DMA enable (that is, enable channel)";
+        DCR_DMA_7_EN_1_r = 1 "DMA channel is enabled";
+        DCR_DMA_7_EN_0_r = 0 "DMA chanel is disabled";
+    };
+    
+    register slimbus_cmp_dmaenable_set addr(base, 0x34) "Components DMA enable (1 bit per DMA-capable channel) Write 1 to set (enable DMA). Readout equal to corresponding _CLR register." {
+        _ 12 mbz;
+        dcr_dma_7_en 1 rw type(dcr_dma_7_en_status) "DMA enable for RX Data agent 7 . If implemented:";
+        dcr_dma_6_en 1 rw type(dcr_dma_7_en_status) "DMA enable for RX Data agent 6 . If implemented:";
+        dcr_dma_5_en 1 rw type(dcr_dma_7_en_status) "DMA enable for RX Data agent 5 . If implemented:";
+        dcr_dma_4_en 1 rw type(dcr_dma_7_en_status) "DMA enable for RX Data agent 4 . If implemented:";
+        dcr_dma_3_en 1 rw type(dcr_dma_7_en_status) "DMA enable for RX Data agent 3 . If implemented:";
+        dcr_dma_2_en 1 rw type(dcr_dma_7_en_status) "DMA enable for RX Data agent 2 . If implemented:";
+        dcr_dma_1_en 1 rw type(dcr_dma_7_en_status) "DMA enable for RX Data agent 1 . If implemented:";
+        dcr_dma_0_en 1 rw type(dcr_dma_7_en_status) "DMA enable for RX Data agent 0 . If implemented:";
+        dct_dma_7_en 1 rw type(dcr_dma_7_en_status) "DMA enable for TX Data agent 7";
+        dct_dma_6_en 1 rw type(dcr_dma_7_en_status) "DMA enable for TX Data agent 6";
+        dct_dma_5_en 1 rw type(dcr_dma_7_en_status) "DMA enable for TX Data agent 5";
+        dct_dma_4_en 1 rw type(dcr_dma_7_en_status) "DMA enable for TX Data agent 4";
+        dct_dma_3_en 1 rw type(dcr_dma_7_en_status) "DMA enable for TX Data agent 3";
+        dct_dma_2_en 1 rw type(dcr_dma_7_en_status) "DMA enable for TX Data agent 2";
+        dct_dma_1_en 1 rw type(dcr_dma_7_en_status) "DMA enable for TX Data agent 1";
+        dct_dma_0_en 1 rw type(dcr_dma_7_en_status) "DMA enable for TX Data agent 0";
+        _ 4 mbz;
+    };
+    
+    register slimbus_cmp_dmaenable_clr addr(base, 0x38) "Components DMA enable (1 bit per DMA-capable channel) Write 1 to clear (disable DMA). Readout equal to corresponding _SET register." {
+        _ 12 mbz;
+        dcr_dma_7_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for RX Data agent 7 . If implemented:";
+        dcr_dma_6_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for RX Data agent 6 . If implemented:";
+        dcr_dma_5_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for RX Data agent 5 . If implemented:";
+        dcr_dma_4_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for RX Data agent 4 . If implemented:";
+        dcr_dma_3_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for RX Data agent 3 . If implemented:";
+        dcr_dma_2_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for RX Data agent 2 . If implemented:";
+        dcr_dma_1_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for RX Data agent 1 . If implemented:";
+        dcr_dma_0_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for RX Data agent 0 . If implemented:";
+        dct_dma_7_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for TX Data agent 7";
+        dct_dma_6_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for TX Data agent 6";
+        dct_dma_5_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for TX Data agent 5";
+        dct_dma_4_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for TX Data agent 4";
+        dct_dma_3_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for TX Data agent 3";
+        dct_dma_2_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for TX Data agent 2";
+        dct_dma_1_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for TX Data agent 1";
+        dct_dma_0_en 1 rw1c type(dcr_dma_7_en_status) "DMA enable for TX Data agent 0";
+        _ 4 mbz;
+    };
+    
+    register slimbus_cmp_iv addr(base, 0x40) "Component IV field, used as lower 8 bits of the devices' Enumeration Address (EA[47:0]). Identical for all devices of the component." {
+        _ 24 mbz;
+        iv 8 rw "Device component's Instance Value (IV[7:0])";
+    };
+    
+    register slimbus_cmp_mi_pc addr(base, 0x44) "Component MI and PC fields, used as upper 32 bits of the devices' Enumeration Address (EA[47:0]). Identical for all devices of the component." {
+        pc 16 rw "Device component's Product Code (PC[15:0])";
+        mi 16 rw "Device component's Manufacturer Index (MI[15:0])";
+    };
+    
+    register slimbus_smt_info addr(base, 0x50) "IRQ status for Shared Message Transmit channel. Write 1 to a bit to clear it." {
+        _ 24 mbz;
+        abort 1 rw1c type(dcr_info_7_status1) "TX message was aborted before completion because of message sync loss.";
+        _ 1 mbz;
+        udef 1 rw1c type(dcr_info_7_status1) "TX message was UDEF'ed: undefined response, protocol error.";
+        nore 1 rw1c type(dcr_info_7_status1) "TX message was NORE'ed: no or all-zero message response";
+        nack 1 rw1c type(dcr_info_7_status1) "TX message was NACK'ed: at least one of the recipient devices requested message retransmission.";
+        pack 1 rw1c type(dcr_info_7_status1) "TX message was PACK'ed: all recipient devices accepted the message.";
+        overflow 1 rw1c type(dcr_info_7_status1) "Overflow in TX message FIFO: Software tried to write more bytes than available in the FIFO.";
+        mc_tx_col 1 rw1c type(dcr_info_7_status1) "Transmit collision in Message Channel (MC) during message transmission. Interface device class-specific information element (IE)";
+    };
+    
+    register slimbus_smt_message rw addr(base, 0x54) "Shared Message Transmit FIFO input" type(uint32);
+
+    constants message_enable_status width(1) "" {
+        MESSAGE_ENABLE_0_w = 0 "No effect";
+        MESSAGE_ENABLE_1_w = 1 "Request transmission of stored messages";
+        MESSAGE_ENABLE_1_r = 1 "Message transmission is ongoing";
+        MESSAGE_ENABLE_0_r = 0 "Message transmission is stopped / complete";
+    };
+    
+    register slimbus_smt_control addr(base, 0x58) "Control of Shared Message channel Transmission." {
+        _ 31 mbz;
+        message_enable 1 rw type(message_enable_status) "Enable the transmission of the message(s) previously written into the TX Message FIFO, with unlimited arbitration auto-retries. Self-cleared after either a message not get PACK'ed or the FIFO is empty.";
+    };
+
+    constants size_hi_status width(2) "" {
+        SIZE_HI_0 = 0 "16 bytes (minimum size)";
+        SIZE_HI_1 = 1 "32 bytes (recommended)";
+        SIZE_HI_3 = 3 "64 bytes (max size)";
+        SIZE_HI_2 = 2 "48 bytes (large messages)";
+    };
+
+    constants fifo_clear_status width(1) "" {
+        FIFO_CLEAR_0_w = 0 "No effect";
+        FIFO_CLEAR_1_w = 1 "Clear FIFO";
+        FIFO_CLEAR_1_r = 1 "Ongoing Clear. Completion requires the SLIMbus clock.";
+        FIFO_CLEAR_0_r = 0 "No event, last clear completed";
+    };
+    
+    register slimbus_smt_fifo_setup addr(base, 0x5C) "Shared Message Transmit channel configuration. To be kept static during operation. Note that message segment word size is 2 slots = 1 byte (= message size granularity) and that message FIFO base address is always 0x0." {
+        _ 24 mbz;
+        packing 1 rw type(autogatingdisable_status) "Packing enable control for TX message FIFO";
+        size_hi 2 rw type(size_hi_status) "(Upper bits of the) capacity of shared TX message FIFO, in bytes, minus one. To be set for largest supported (transmitted) message(s).";
+        size_lo 4 ro "(Lower bits of the) capacity of shared TX message FIFO, in bytes, minus one. Read-only, for reference only.";
+        fifo_clear 1 rw type(fifo_clear_status) "Returns FIFO to initial empty state.";
+    };
+
+    constants overflow_status width(1) "" {
+        OVERFLOW_0_w_1 = 0 "no action";
+        OVERFLOW_1_w_1 = 1 "clear event";
+        OVERFLOW_1_r_1 = 1 "event pending";
+        OVERFLOW_0_r_1 = 0 "no event pending";
+    };
+
+    constants received_message_status width(1) "" {
+        RECEIVED_MESSAGE_0_w = 0 "no action";
+        RECEIVED_MESSAGE_1_w = 1 "clear event, clear FIFO, allow further messages.";
+        RECEIVED_MESSAGE_1_r = 1 "event pending";
+        RECEIVED_MESSAGE_0_r = 0 "no event pending";
+    };
+    
+    register slimbus_smr_info addr(base, 0x60) "IRQ status for Shared Message Receive channel. Write 1 to a bit to clear it." {
+        _ 27 mbz;
+        overflow 1 rw1c type(overflow_status) "Overflow in RX message FIFO: received message is larger than the FIFO.";
+        received_reconfigure 1 rw1c type(overflow_status) "RECONFIGURE_NOW message received, available in RX message FIFO";
+        received_message 1 rw1c type(received_message_status) "Message available in the RX message FIFO. Clear bit to clear the FIFO and allow the reception of further messages (incoming messages will be NACK'ed until then).";
+        underflow 1 rw1c type(overflow_status) "Underflow in RX message FIFO: Software tried to read out more bytes than available.";
+        mc_tx_col 1 rw1c type(overflow_status) "Transmit collision in Message Channel (MC) during RX message during message reception. Interface device class-specific information element (IE)";
+    };
+    
+    register slimbus_smr_message ro addr(base, 0x64) "Shared Message Receive channel FIFO output." type(uint32);
+    
+    register slimbus_smr_control addr(base, 0x68) "Control of Shared Message channel Reception." {
+        _ 31 mbz;
+        message_disable 1 rw type(autogatingdisable_status) "Disables the reception of incoming messages (that is, broadcast or locally addressed) into the RX Message FIFO. Same effect for the same value than SMR_INFO[2] RECEIVED_MESSAGE, but this bit can be set to 1.";
+    };
+    
+    register slimbus_smr_fifo_setup addr(base, 0x6C) "Shared Message Receive channel setup. To be kept static during operation. Note that message segment word size is 2 slots = 1 byte (= message size granularity) and that message FIFO base address is always 0x0." {
+        _ 24 mbz;
+        packing 1 rw type(autogatingdisable_status) "Packing enable control for RX message FIFO";
+        size_hi 2 rw type(size_hi_status) "(Upper bits of the) capacity of shared RX message FIFO, in bytes, minus one. To be set for largest supported (received) message.";
+        size_lo 4 ro "(Lower bits of the) capacity of shared RX message FIFO, in bytes, minus one. Read-only, for reference only.";
+        fifo_clear 1 rw type(fifo_clear_status) "Returns message FIFO to initial empty state.";
+    };
+    
+    register slimbus_fl_info addr(base, 0x70) "Frame Layer IRQ status. Write 1 to a bit to clear it. Note: FS loss implies SFS loss, and SFS loss implies MS loss, but only the 'strongest' loss event is logged for a given event." {
+        _ 25 mbz;
+        reconfigured 1 rw1c type(dcr_info_7_status1) "Reconfiguration boundary crossed";
+        saw_bus_reset 1 rw1c type(dcr_info_7_status1) "Bus reset sequence detected on the bus: no activity on DATA line (all-zero) for 2 to 4 frames. Clock receiver FSM has returned to Reset state. Should trigger a local component reset (software sequence).";
+        _ 1 mbz;
+        found_ms 1 rw1c type(dcr_info_7_status1) "Message sync was acquired: operational state reached";
+        lost_ms 1 rw1c type(dcr_info_7_status1) "Message Synchronization was lost Interface device class-specific information element (IE) Note: Not asserted in case of FS or SFS loss.";
+        lost_sfs 1 rw1c type(dcr_info_7_status1) "Super Frame Synchronization was lost Interface device class-specific information element (IE) Note: Not asserted in case of FS loss.";
+        lost_fs 1 rw1c type(dcr_info_7_status1) "Frame Synchronization was lost Interface device class-specific information element (IE)";
+    };
+
+    constants validate_dcmap_status width(1) "" {
+        VALIDATE_DCMAP_0_w = 0 "No action";
+        VALIDATE_DCMAP_1_w = 1 "Validates all DCT_MAP / DCR_MAP values";
+    };
+
+    constants clear_reconfiguration_status width(1) "" {
+        CLEAR_RECONFIGURATION_0_w = 0 "No action";
+        CLEAR_RECONFIGURATION_1_w = 1 "Clear reconfiguration";
+    };
+
+    constants bus_shutdown_status width(1) "" {
+        BUS_SHUTDOWN_0_w = 0 "Cancel pending request (not used in normal operation) if any, otherwise no action";
+        BUS_SHUTDOWN_1_w = 1 "Assert request for next reconfiguration";
+        BUS_SHUTDOWN_1_r = 1 "Request pending for next reconfiguration";
+        BUS_SHUTDOWN_0_r = 0 "No request pending for next reconfiguration";
+    };
+
+    constants kill_fs_status width(1) "" {
+        KILL_FS_0_w = 0 "No action";
+        KILL_FS_1_w = 1 "Force frame sync loss";
+        KILL_FS_0_r = 0 "Always reads 0 because of immediate action.";
+    };
+
+    constants kill_sfs_status width(1) "" {
+        KILL_SFS_0_w = 0 "No action";
+        KILL_SFS_1_w = 1 "Schedule superframe sync loss";
+        KILL_SFS_1_r = 1 "Superframe sync loss pending";
+        KILL_SFS_0_r = 0 "No pending superframe sync loss";
+    };
+
+    constants kill_ms_status width(1) "" {
+        KILL_MS_0_w = 0 "No action";
+        KILL_MS_1_w = 1 "Force message sync loss";
+        KILL_MS_0_r = 0 "Always reads 0 because of immediate action.";
+    };
+
+    constants force_reconfigure_status width(1) "" {
+        FORCE_RECONFIGURE_0_w = 0 "Cancel pending request (not used in normal operation) if any, otherwise no action";
+        FORCE_RECONFIGURE_1_w = 1 "Assert reconfiguration request for next superframe boundary";
+        FORCE_RECONFIGURE_1_r = 1 "Reconfiguration request pending for next superframe boundary";
+        FORCE_RECONFIGURE_0_r = 0 "No request pending";
+    };
+
+    constants boot_status width(1) "" {
+        BOOT_0 = 0 "No action";
+        BOOT_1 = 1 "Enable clock receiver boot sequence";
+    };
+    
+    register slimbus_fl_control addr(base, 0x74) "Frame Layer control. (Self-cleared bits)" {
+        _ 23 mbz;
+        validate_dcmap 1 rw type(validate_dcmap_status) "Validates the mapping of data channels on devices: to be used after modifying the DC*_MAP* fields (DI and PN).";
+        clear_reconfiguration 1 rw type(clear_reconfiguration_status) "Clear all updates cumulated since the last reconfiguration, return reconfiguration fields to currently active value. Self-cleared immediately.";
+        bus_shutdown 1 rw type(bus_shutdown_status) "Sets both the clock source or the clock receiver FSMs back to 'Undefined' state at the next reconfiguration boundary. Executed (and bit self-cleared) on next reconfiguration (forced or not); also cleared by a 'clear_reconfiguration'.";
+        kill_fs 1 rw type(kill_fs_status) "Force immediate Frame Synchronization loss (implying as well message and superframe sync) When in 'Operational', 'SeekingMessageSync' or 'SeekingSuperFrameSync' states, component shall go to 'SeekingFrameSync' and start reaquiring frame sync. No effect otherwise. For debug use.";
+        kill_sfs 1 rw type(kill_sfs_status) "Force SuperFrame Synchronization loss at next reconfiguration boundary (implying as well message sync loss). When in 'Operational' or 'SeekingMessageSync' states, component shall go to 'SeekingSuperFrameSync' and start reaquiring superframe sync. No effect otherwise. Used by clock receiver component upon imcompletely received reconfiguration sequence.";
+        kill_ms 1 rw type(kill_ms_status) "Force an immediate Message Synchronization loss. When in 'Operational' state, component shall go to 'SeekingMessageSync' and start reaquiring message sync. No effect otherwise. For debug use.";
+        force_reconfigure 1 rw type(force_reconfigure_status) "Force a reconfiguration boundary at next superframe boundary, rather than wait for a RECONFIGURE_NOW() message.";
+        component_reset 1 rw type(bus_shutdown_status) "Component reset request control: Transitions clock receiver FSM to state 'Reset' (from any other state). Immediate action. Set upon reception of the RESET_DEVICE() message by the interface device, which requires a component-level reset. Note that a component-level reset is also required in case of bus reset, but the transition to 'Reset' state happens automatically in that case and this bit is not used.";
+        boot 1 rw type(boot_status) "Boot the component when not in active framer mode (don't care when in active framer mode). Transitions clock receiver FSM from state 'Undefined' to 'Reset'.";
+    };
+
+    constants sm_status width(5) "" {
+        SM_13 = 13 "CSW=3; SFL=8 (37.5% control)";
+        SM_21 = 21 "CSW=6; SFL=8 (75% control)";
+        SM_30 = 30 "reserved. Same effect than 0b00000";
+        SM_8 = 8 "CSW=2; SFL=6 (33.3% control)";
+        SM_5 = 5 "CSW=1; SFL=8 (12.5% control)";
+        SM_27 = 27 "CSW=12; SFL=32 (37.5% control)";
+        SM_2 = 2 "reserved. Same as 0x00";
+        SM_4 = 4 "CSW=1; SFL=6 (16.7% control)";
+        SM_6 = 6 "CSW=1; SFL=24 (4.17% control)";
+        SM_1 = 1 "reserved. Same as 0x05";
+        SM_29 = 29 "CSW=16; SFL=32 (50% control)";
+        SM_0 = 0 "CSW=8; SFL=8 (100% control vs. 0% data)";
+        SM_11 = 11 "CSW=2; SFL=32 (6.25% control)";
+        SM_3 = 3 "reserved. Same as 0x07";
+        SM_23 = 23 "CSW=6; SFL=32 (18.8% control)";
+        SM_17 = 17 "CSW=4; SFL=8 (50% control)";
+        SM_10 = 10 "CSW=2; SFL=24 (8.33% control)";
+        SM_9 = 9 "CSW=2; SFL=8 (25% control)";
+        SM_16 = 16 "CSW=4; SFL=6 (66.7% control)";
+        SM_18 = 18 "CSW=4; SFL=24 (16.7% control)";
+        SM_19 = 19 "CSW=4; SFL=32 (12.5% control)";
+        SM_24 = 24 "CSW=8; SFL=24 (33.3% control)";
+        SM_20 = 20 "reserved. Same as 0x00";
+        SM_14 = 14 "CSW=3; SFL=24 (12.5% control)";
+        SM_22 = 22 "CSW=6; SFL=24 (25% control)";
+        SM_28 = 28 "CSW=16; SFL=24 (66.7% control)";
+        SM_7 = 7 "CSW=1; SFL=32 (3.13% control)";
+        SM_25 = 25 "CSW=8; SFL=32 (25% control)";
+        SM_31 = 31 "CSW=24; SFL=32 (75% control)";
+        SM_26 = 26 "CSW=12; SFL=24 (50% control)";
+        SM_15 = 15 "CSW=3; SFL=32 (9.38% control)";
+        SM_12 = 12 "CSW=3; SFL=6 (50% control)";
+    };
+    
+    register slimbus_fl_sm addr(base, 0x78) "Subframe mode (SM: defines control vs. data space partition) control and status Software must write in values : a) to use when booting in active framer mode. b) extracted from NEXT_SUBFRAME_MODE(SM), to use at following reconfiguration boundary. Hardware-updated upon superframe sync acquisition, when booting in clock receiver mode." {
+        _ 27 mbz;
+        sm 5 rw type(sm_status) "Subframe Mode, which sets Control Space Width (CSW) and Subframe Length (SFL), both expressed in slots. Note that we always have CSW &amp;lt;= SFL since the control is included in the subframe.";
+    };
+
+    constants cg_status width(4) "" {
+        CG_6 = 6 "Ratio to root frequency: 16";
+        CG_1 = 1 "Ratio to root frequency: 512";
+        CG_10 = 10 "Ratio to root frequency: 1 (undivided)";
+        CG_7 = 7 "Ratio to root frequency: 8";
+        CG_3 = 3 "Ratio to root frequency: 128";
+        CG_2 = 2 "Ratio to root frequency: 256";
+        CG_8 = 8 "Ratio to root frequency: 4";
+        CG_9 = 9 "Ratio to root frequency: 2";
+        CG_5 = 5 "Ratio to root frequency: 32";
+        CG_4 = 4 "Ratio to root frequency: 64";
+    };
+    
+    register slimbus_fl_cg addr(base, 0x7C) "Clock Gear (CG) control and status Software must write in values : a) to use when booting in active framer mode. b) extracted from NEXT_CLOCK_GEAR(CG), to use at following reconfiguration boundary. Hardware-updated upon superframe sync acquisition, when booting in clock receiver mode." {
+        _ 28 mbz;
+        cg 4 rw type(cg_status) "Clock Gear (CG) to be used after the next reconfiguration boundary. Root / SLIMbus frequency ratio is defined as 2";
+    };
+
+    constants rf_status width(4) "" {
+        RF_6 = 6 "24 MHz";
+        RF_1 = 1 "24.576 MHz";
+        RF_7 = 7 "25 MHz";
+        RF_0 = 0 "Root frequency not indicated";
+        RF_2 = 2 "22.5792 MHz";
+        RF_8 = 8 "26 MHz";
+        RF_9 = 9 "27 MHz";
+        RF_4 = 4 "16.8 MHz";
+        RF_5 = 5 "19.2 MHz";
+        RF_3 = 3 "15.36 MHz";
+    };
+    
+    register slimbus_fl_rf addr(base, 0x80) "Root frequency (RF = SLIMbus clock frequency when in gear 10) control and status Software must write in values : a) to use when booting in active framer mode. b) extracted from NEXT_ROOT_FREQUENCY(RF), to use at following reconfiguration boundary. Hardware-updated upon superframe sync acquisition, when booting in clock receiver mode." {
+        _ 28 mbz;
+        rf 4 rw type(rf_status) "Root frequency";
+    };
+    
+    register slimbus_fr_info addr(base, 0x90) "Framer device status (when active). Write 1 to a bit to clear it." {
+        _ 26 mbz;
+        clock_restart 1 rw1c type(received_message_status) "Clock restart request event detected (that is, asynchronous DATA line transition during clock pause)";
+        framer_unactivated 1 rw1c type(received_message_status) "Framer has left clock source operational state. Set on ACTIVE_FRAMER information element deassertion. (framer device class-specific IE)";
+        framer_activated 1 rw1c type(received_message_status) "Framer has reached clock source operational state. Set on ACTIVE_FRAMER information element assertion. (framer device class-specific IE)";
+        gc_tx_col 1 rw1c type(received_message_status) "Collision during guide byte transmit (Guide Channel) Framer device class-specific information element (IE)";
+        fi_tx_col 1 rw1c type(received_message_status) "Collision during Framing Information transmit (framing channel) Framer device class-specific information element (IE)";
+        fs_tx_col 1 rw1c type(received_message_status) "Collision during Frame Sync symbol transmit (framing channel) Framer device class-specific information element (IE)";
+    };
+
+    constants clksel_status width(3) "" {
+        CLKSEL_0 = 0 "FCLK1";
+        CLKSEL_1 = 1 "FCLK2";
+        CLKSEL_2 = 2 "FCLK3";
+    };
+
+    constants clkdiv_status width(4) "" {
+        CLKDIV_6 = 6 "Ratio is 2";
+        CLKDIV_1 = 1 "Ratio is 1/16: Gears 7 to 10 forbidden";
+        CLKDIV_10 = 10 "Ratio is 32";
+        CLKDIV_7 = 7 "Ratio is 4";
+        CLKDIV_0 = 0 "Ratio is 1/32: Gears 6 to 10 forbidden";
+        CLKDIV_2 = 2 "Ratio is 1/8: Gears 8 to 10 forbidden";
+        CLKDIV_8 = 8 "Ratio is 8";
+        CLKDIV_9 = 9 "Ratio is 16";
+        CLKDIV_4 = 4 "Ratio is 1/2: Gear 10 forbidden.";
+        CLKDIV_5 = 5 "Ratio is 1 (root freq. = input freq.)";
+        CLKDIV_3 = 3 "Ratio is 1/4: Gears 9-10 forbidden";
+    };
+    
+    register slimbus_fr_clock_source addr(base, 0x94) "Root clock configuration for active framer mode, used at next reconfiguration boundary. Unused when not active framer." {
+        _ 25 mbz;
+        clksel 3 rw type(clksel_status) "SLIMbus clock selection";
+        clkdiv 4 rw type(clkdiv_status) "Root divider ratio, applied on clock input to obtain root clock, to be used at next reconfiguration boundary. Input/ root frequency ratio is defined as 2 With CG the SLIMbus clock gear, Input / SLIMbus frequency ratio is therefore 2 WARNING: that last ratio has to be 1 or greater, to be implementable by the actual clock divider.";
+    };
+    
+    register slimbus_fr_control addr(base, 0x98) "Framer Device control. Unused when not active framer. (Self-cleared bits)" {
+        _ 30 mbz;
+        bus_reset 1 rw type(bus_shutdown_status) "Bus reset request control, when framer is already active. Set upon reception of the NEXT_RESET_BUS() message. Transitions clock source FSM to state 'StartingClock' (from 'Operational').";
+        boot 1 rw type(bus_shutdown_status) "Initiate an active framer (clock source) boot sequence for the component, that is, when component is default active framer. Transitions clock source FSM from state 'Undefined' to 'CheckingDataLine'. Transitions clock receiver FSM from state 'Undefined' to 'Reset'. No effect if bus has already booted.";
+    };
+
+    constants handover_enable_status width(1) "" {
+        HANDOVER_ENABLE_0 = 0 "No framer handover";
+        HANDOVER_ENABLE_1 = 1 "Framer handover at next configuration boundary.";
+    };
+    
+    register slimbus_fr_framer_handover addr(base, 0x9C) "Framer handover control (outgoing if currently active, incoming if currently inactive)" {
+        _ 19 mbz;
+        handover_enable 1 rw type(handover_enable_status) "Enable framer handover, upon NEXT_ACTIVE_FRAMER(NCi,NCo) reception. Self-cleared upon handover, that is, at next reconfiguration boundary.";
+        nco_nci 12 rw "NCo[11:0] / NCi[11:0] for outgoing / incoming framer respectively, as extracted from NEXT_ACTIVE_FRAMER(NCi,NCo) Used on framer handover at next reconfiguration boundary.";
+    };
+
+    constants rt_hi_status width(6) "" {
+        RT_HI_0_r = 0 "Only legal, unreserved value.";
+    };
+
+    constants rt_status width(2) "" {
+        RT_0 = 0 "Fast recovery (less than 4 cells)";
+        RT_1 = 1 "Constant-phase recovery (superframe phase preserved)";
+        RT_2 = 2 "Unspecified recovery delay";
+    };
+    
+    register slimbus_fr_clock_pause addr(base, 0xA0) "Clock and pause restart control. Applied at following reconfiguration boundary, that is, where the clock is paused. Note that programming is indentical for an active framer (clock source) and a clock receiver." {
+        _ 23 mbz;
+        rt_hi 6 ro type(rt_hi_status) "MSBs of 8-bit SLIMbus parameter. Constant.";
+        rt 2 rw type(rt_status) "Restart Time (RT) for recovery after clock pause, as extracted from NEXT_PAUSE_CLOCK(RT) LSBs of 8-bit SLIMbus parameter. Unused when not active framer.";
+        clock_pause 1 rw type(autogatingdisable_status) "Control clock pause / restart. Self-cleared upon restart.";
+    };
+
+    constants ea_enable_status width(1) "" {
+        EA_ENABLE_0 = 0 "EA is not valid";
+        EA_ENABLE_1 = 1 "EA is used for message reception";
+    };
+
+    constants la_enable_status width(1) "" {
+        LA_ENABLE_0 = 0 "LA is not valid";
+        LA_ENABLE_1 = 1 "LA valid, to be used for message reception";
+    };
+
+    constants la_status width(8) "" {
+        LA_255 = 255 "active manager device address";
+    };
+    
+    register slimbus_dev_la_i_0 addr(base, 0x100) "Device Logical Address control" {
+        _ 22 mbz;
+        ea_enable 1 rw type(ea_enable_status) "Enables the reception of 'long-header' messages to the device's hardwired Enumeration Address (EA). Don't care if LA_ENABLE is 1.";
+        la_enable 1 rw type(la_enable_status) "Enables the reception of 'short-header' messages to the device's Logical Address (LA).";
+        la 8 rw type(la_status) "Device Logical Address, assigned by manager device at enumeration (0x00 through 0xEF). The active manager device itself has address 0xFF by default.";
+    };
+    
+    register slimbus_dev_la_i_1 addr(base, 0x110) "Device Logical Address control" {
+        _ 22 mbz;
+        ea_enable 1 rw type(ea_enable_status) "Enables the reception of 'long-header' messages to the device's hardwired Enumeration Address (EA). Don't care if LA_ENABLE is 1.";
+        la_enable 1 rw type(la_enable_status) "Enables the reception of 'short-header' messages to the device's Logical Address (LA).";
+        la 8 rw type(la_status) "Device Logical Address, assigned by manager device at enumeration (0x00 through 0xEF). The active manager device itself has address 0xFF by default.";
+    };
+    
+    register slimbus_dev_la_i_2 addr(base, 0x120) "Device Logical Address control" {
+        _ 22 mbz;
+        ea_enable 1 rw type(ea_enable_status) "Enables the reception of 'long-header' messages to the device's hardwired Enumeration Address (EA). Don't care if LA_ENABLE is 1.";
+        la_enable 1 rw type(la_enable_status) "Enables the reception of 'short-header' messages to the device's Logical Address (LA).";
+        la 8 rw type(la_status) "Device Logical Address, assigned by manager device at enumeration (0x00 through 0xEF). The active manager device itself has address 0xFF by default.";
+    };
+    
+    register slimbus_dev_la_i_3 addr(base, 0x130) "Device Logical Address control" {
+        _ 22 mbz;
+        ea_enable 1 rw type(ea_enable_status) "Enables the reception of 'long-header' messages to the device's hardwired Enumeration Address (EA). Don't care if LA_ENABLE is 1.";
+        la_enable 1 rw type(la_enable_status) "Enables the reception of 'short-header' messages to the device's Logical Address (LA).";
+        la 8 rw type(la_status) "Device Logical Address, assigned by manager device at enumeration (0x00 through 0xEF). The active manager device itself has address 0xFF by default.";
+    };
+    
+    register slimbus_dev_la_i_4 addr(base, 0x140) "Device Logical Address control" {
+        _ 22 mbz;
+        ea_enable 1 rw type(ea_enable_status) "Enables the reception of 'long-header' messages to the device's hardwired Enumeration Address (EA). Don't care if LA_ENABLE is 1.";
+        la_enable 1 rw type(la_enable_status) "Enables the reception of 'short-header' messages to the device's Logical Address (LA).";
+        la 8 rw type(la_status) "Device Logical Address, assigned by manager device at enumeration (0x00 through 0xEF). The active manager device itself has address 0xFF by default.";
+    };
+    
+    register slimbus_dev_la_i_5 addr(base, 0x150) "Device Logical Address control" {
+        _ 22 mbz;
+        ea_enable 1 rw type(ea_enable_status) "Enables the reception of 'long-header' messages to the device's hardwired Enumeration Address (EA). Don't care if LA_ENABLE is 1.";
+        la_enable 1 rw type(la_enable_status) "Enables the reception of 'short-header' messages to the device's Logical Address (LA).";
+        la 8 rw type(la_status) "Device Logical Address, assigned by manager device at enumeration (0x00 through 0xEF). The active manager device itself has address 0xFF by default.";
+    };
+    
+    register slimbus_dev_la_i_6 addr(base, 0x160) "Device Logical Address control" {
+        _ 22 mbz;
+        ea_enable 1 rw type(ea_enable_status) "Enables the reception of 'long-header' messages to the device's hardwired Enumeration Address (EA). Don't care if LA_ENABLE is 1.";
+        la_enable 1 rw type(la_enable_status) "Enables the reception of 'short-header' messages to the device's Logical Address (LA).";
+        la 8 rw type(la_status) "Device Logical Address, assigned by manager device at enumeration (0x00 through 0xEF). The active manager device itself has address 0xFF by default.";
+    };
+    
+    register slimbus_dev_ea_lo_i_0 addr(base, 0x104) "Device's Enumeration Address (EA[47:0]), lower 32 bits. For reference." {
+        ea_pc 16 ro "Product Code (PC[15:0]), shared by all devices of the component";
+        ea_di 8 ro "Device Index (DI[15:0]), hardcoded from 0 upwards (0x00,0x01,0x02, etc...) each device of the component. WARNING: value is incorrectly given as 0x00 for all indexes.";
+        ea_iv 8 ro "Component's Instance Value (IV[7:0]), shared by all devices of the component";
+    };
+    
+    register slimbus_dev_ea_lo_i_1 addr(base, 0x114) "Device's Enumeration Address (EA[47:0]), lower 32 bits. For reference." {
+        ea_pc 16 ro "Product Code (PC[15:0]), shared by all devices of the component";
+        ea_di 8 ro "Device Index (DI[15:0]), hardcoded from 0 upwards (0x00,0x01,0x02, etc...) each device of the component. WARNING: value is incorrectly given as 0x00 for all indexes.";
+        ea_iv 8 ro "Component's Instance Value (IV[7:0]), shared by all devices of the component";
+    };
+    
+    register slimbus_dev_ea_lo_i_2 addr(base, 0x124) "Device's Enumeration Address (EA[47:0]), lower 32 bits. For reference." {
+        ea_pc 16 ro "Product Code (PC[15:0]), shared by all devices of the component";
+        ea_di 8 ro "Device Index (DI[15:0]), hardcoded from 0 upwards (0x00,0x01,0x02, etc...) each device of the component. WARNING: value is incorrectly given as 0x00 for all indexes.";
+        ea_iv 8 ro "Component's Instance Value (IV[7:0]), shared by all devices of the component";
+    };
+    
+    register slimbus_dev_ea_lo_i_3 addr(base, 0x134) "Device's Enumeration Address (EA[47:0]), lower 32 bits. For reference." {
+        ea_pc 16 ro "Product Code (PC[15:0]), shared by all devices of the component";
+        ea_di 8 ro "Device Index (DI[15:0]), hardcoded from 0 upwards (0x00,0x01,0x02, etc...) each device of the component. WARNING: value is incorrectly given as 0x00 for all indexes.";
+        ea_iv 8 ro "Component's Instance Value (IV[7:0]), shared by all devices of the component";
+    };
+    
+    register slimbus_dev_ea_lo_i_4 addr(base, 0x144) "Device's Enumeration Address (EA[47:0]), lower 32 bits. For reference." {
+        ea_pc 16 ro "Product Code (PC[15:0]), shared by all devices of the component";
+        ea_di 8 ro "Device Index (DI[15:0]), hardcoded from 0 upwards (0x00,0x01,0x02, etc...) each device of the component. WARNING: value is incorrectly given as 0x00 for all indexes.";
+        ea_iv 8 ro "Component's Instance Value (IV[7:0]), shared by all devices of the component";
+    };
+    
+    register slimbus_dev_ea_lo_i_5 addr(base, 0x154) "Device's Enumeration Address (EA[47:0]), lower 32 bits. For reference." {
+        ea_pc 16 ro "Product Code (PC[15:0]), shared by all devices of the component";
+        ea_di 8 ro "Device Index (DI[15:0]), hardcoded from 0 upwards (0x00,0x01,0x02, etc...) each device of the component. WARNING: value is incorrectly given as 0x00 for all indexes.";
+        ea_iv 8 ro "Component's Instance Value (IV[7:0]), shared by all devices of the component";
+    };
+    
+    register slimbus_dev_ea_lo_i_6 addr(base, 0x164) "Device's Enumeration Address (EA[47:0]), lower 32 bits. For reference." {
+        ea_pc 16 ro "Product Code (PC[15:0]), shared by all devices of the component";
+        ea_di 8 ro "Device Index (DI[15:0]), hardcoded from 0 upwards (0x00,0x01,0x02, etc...) each device of the component. WARNING: value is incorrectly given as 0x00 for all indexes.";
+        ea_iv 8 ro "Component's Instance Value (IV[7:0]), shared by all devices of the component";
+    };
+    
+    register slimbus_dev_ea_hi_i_0 addr(base, 0x108) "Device's Enumeration Address (EA[47:0]), upper 16 bits. For reference." {
+        _ 16 mbz;
+        ea_mi 16 ro "Manufacturer Index (MI[15:0]), shared by all devices";
+    };
+    
+    register slimbus_dev_ea_hi_i_1 addr(base, 0x118) "Device's Enumeration Address (EA[47:0]), upper 16 bits. For reference." {
+        _ 16 mbz;
+        ea_mi 16 ro "Manufacturer Index (MI[15:0]), shared by all devices";
+    };
+    
+    register slimbus_dev_ea_hi_i_2 addr(base, 0x128) "Device's Enumeration Address (EA[47:0]), upper 16 bits. For reference." {
+        _ 16 mbz;
+        ea_mi 16 ro "Manufacturer Index (MI[15:0]), shared by all devices";
+    };
+    
+    register slimbus_dev_ea_hi_i_3 addr(base, 0x138) "Device's Enumeration Address (EA[47:0]), upper 16 bits. For reference." {
+        _ 16 mbz;
+        ea_mi 16 ro "Manufacturer Index (MI[15:0]), shared by all devices";
+    };
+    
+    register slimbus_dev_ea_hi_i_4 addr(base, 0x148) "Device's Enumeration Address (EA[47:0]), upper 16 bits. For reference." {
+        _ 16 mbz;
+        ea_mi 16 ro "Manufacturer Index (MI[15:0]), shared by all devices";
+    };
+    
+    register slimbus_dev_ea_hi_i_5 addr(base, 0x158) "Device's Enumeration Address (EA[47:0]), upper 16 bits. For reference." {
+        _ 16 mbz;
+        ea_mi 16 ro "Manufacturer Index (MI[15:0]), shared by all devices";
+    };
+    
+    register slimbus_dev_ea_hi_i_6 addr(base, 0x168) "Device's Enumeration Address (EA[47:0]), upper 16 bits. For reference." {
+        _ 16 mbz;
+        ea_mi 16 ro "Manufacturer Index (MI[15:0]), shared by all devices";
+    };
+    
+    register slimbus_dct_info_j_0 addr(base, 0x200) "TX data agent status. Write 1 to a bit to clear it." {
+        _ 28 mbz;
+        lolevel 1 rw1c type(dcr_info_7_status1) "Write level of TX data agent FIFO has gone above DMA threshold (that is, writes required to fill FIFO) Note: Defaults to 0 (even though FIFO is then empty) as it sets to 1 only when read-only status bit DCT_FIFO_STATUS.LOLEVEL transitions from 0 to 1, that is, when threshold is actually crossed downward.";
+        underflow 1 rw1c type(dcr_info_7_status1) "Underflow in TX data agent FIFO. Note: never asserted in pushed or async TPs, by construction.";
+        overflow 1 rw1c type(dcr_info_7_status1) "Overflow in TX data agent FIFO.";
+        data_tx_col 1 rw1c type(dcr_info_7_status1) "TX collision in TX data agent. Core information element (IE).";
+    };
+    
+    register slimbus_dct_info_j_1 addr(base, 0x220) "TX data agent status. Write 1 to a bit to clear it." {
+        _ 28 mbz;
+        lolevel 1 rw1c type(dcr_info_7_status1) "Write level of TX data agent FIFO has gone above DMA threshold (that is, writes required to fill FIFO) Note: Defaults to 0 (even though FIFO is then empty) as it sets to 1 only when read-only status bit DCT_FIFO_STATUS.LOLEVEL transitions from 0 to 1, that is, when threshold is actually crossed downward.";
+        underflow 1 rw1c type(dcr_info_7_status1) "Underflow in TX data agent FIFO. Note: never asserted in pushed or async TPs, by construction.";
+        overflow 1 rw1c type(dcr_info_7_status1) "Overflow in TX data agent FIFO.";
+        data_tx_col 1 rw1c type(dcr_info_7_status1) "TX collision in TX data agent. Core information element (IE).";
+    };
+    
+    register slimbus_dct_info_j_2 addr(base, 0x240) "TX data agent status. Write 1 to a bit to clear it." {
+        _ 28 mbz;
+        lolevel 1 rw1c type(dcr_info_7_status1) "Write level of TX data agent FIFO has gone above DMA threshold (that is, writes required to fill FIFO) Note: Defaults to 0 (even though FIFO is then empty) as it sets to 1 only when read-only status bit DCT_FIFO_STATUS.LOLEVEL transitions from 0 to 1, that is, when threshold is actually crossed downward.";
+        underflow 1 rw1c type(dcr_info_7_status1) "Underflow in TX data agent FIFO. Note: never asserted in pushed or async TPs, by construction.";
+        overflow 1 rw1c type(dcr_info_7_status1) "Overflow in TX data agent FIFO.";
+        data_tx_col 1 rw1c type(dcr_info_7_status1) "TX collision in TX data agent. Core information element (IE).";
+    };
+    
+    register slimbus_dct_info_j_3 addr(base, 0x260) "TX data agent status. Write 1 to a bit to clear it." {
+        _ 28 mbz;
+        lolevel 1 rw1c type(dcr_info_7_status1) "Write level of TX data agent FIFO has gone above DMA threshold (that is, writes required to fill FIFO) Note: Defaults to 0 (even though FIFO is then empty) as it sets to 1 only when read-only status bit DCT_FIFO_STATUS.LOLEVEL transitions from 0 to 1, that is, when threshold is actually crossed downward.";
+        underflow 1 rw1c type(dcr_info_7_status1) "Underflow in TX data agent FIFO. Note: never asserted in pushed or async TPs, by construction.";
+        overflow 1 rw1c type(dcr_info_7_status1) "Overflow in TX data agent FIFO.";
+        data_tx_col 1 rw1c type(dcr_info_7_status1) "TX collision in TX data agent. Core information element (IE).";
+    };
+
+    constants dma_req_size_status width(4) "" {
+        DMA_REQ_SIZE_15 = 15 "16 accesses per DMA request";
+        DMA_REQ_SIZE_0 = 0 "1 access per DMA request";
+    };
+    
+    register slimbus_dct_fifo_setup1_j_0 addr(base, 0x204) "TX data agent FIFO setup. To be kept static during channel operation." {
+        _ 19 mbz;
+        base_addr 8 rw "TX data agent FIFO base address within shared TX RAM. (physical address of the 32-bit wide RAM array)";
+        dma_req_size 4 rw type(dma_req_size_status) "DMA request size minus 1, in write accesses. In counting (packet) mode, last request may be smaller. Only applicable in precise DMA mode.";
+        fifo_clear 1 rw type(fifo_clear_status) "Returns FIFO to initial empty state.";
+    };
+    
+    register slimbus_dct_fifo_setup1_j_1 addr(base, 0x224) "TX data agent FIFO setup. To be kept static during channel operation." {
+        _ 19 mbz;
+        base_addr 8 rw "TX data agent FIFO base address within shared TX RAM. (physical address of the 32-bit wide RAM array)";
+        dma_req_size 4 rw type(dma_req_size_status) "DMA request size minus 1, in write accesses. In counting (packet) mode, last request may be smaller. Only applicable in precise DMA mode.";
+        fifo_clear 1 rw type(fifo_clear_status) "Returns FIFO to initial empty state.";
+    };
+    
+    register slimbus_dct_fifo_setup1_j_2 addr(base, 0x244) "TX data agent FIFO setup. To be kept static during channel operation." {
+        _ 19 mbz;
+        base_addr 8 rw "TX data agent FIFO base address within shared TX RAM. (physical address of the 32-bit wide RAM array)";
+        dma_req_size 4 rw type(dma_req_size_status) "DMA request size minus 1, in write accesses. In counting (packet) mode, last request may be smaller. Only applicable in precise DMA mode.";
+        fifo_clear 1 rw type(fifo_clear_status) "Returns FIFO to initial empty state.";
+    };
+    
+    register slimbus_dct_fifo_setup1_j_3 addr(base, 0x264) "TX data agent FIFO setup. To be kept static during channel operation." {
+        _ 19 mbz;
+        base_addr 8 rw "TX data agent FIFO base address within shared TX RAM. (physical address of the 32-bit wide RAM array)";
+        dma_req_size 4 rw type(dma_req_size_status) "DMA request size minus 1, in write accesses. In counting (packet) mode, last request may be smaller. Only applicable in precise DMA mode.";
+        fifo_clear 1 rw type(fifo_clear_status) "Returns FIFO to initial empty state.";
+    };
+
+    constants msb_aligned_status width(1) "" {
+        MSB_ALIGNED_0 = 0 "Input data is LSB-aligned";
+        MSB_ALIGNED_1 = 1 "Input data is MSB-aligned";
+    };
+
+    constants dma_threshold_status width(8) "" {
+        DMA_THRESHOLD_255 = 255 "DMA writes requested whenever FIFO is empty (assuming maximum FIFO size)";
+        DMA_THRESHOLD_0 = 0 "DMA writes requested whenever FIFO is not full";
+    };
+
+    constants sb_threshold_status width(8) "" {
+        SB_THRESHOLD_255 = 255 "Threshold condition = FIFO is full (assuming maximum FIFO size)";
+        SB_THRESHOLD_0 = 0 "Threshold condition = FIFO is not empty";
+    };
+
+    constants size_status width(8) "" {
+        SIZE_255 = 255 "Maximum FIFO size";
+        SIZE_0 = 0 "FIFO is 1-word deep (not recommended)";
+        SIZE_3 = 3 "FIFO is 4-word deep. Recommended minimum setting (SLIMbus protocol).";
+    };
+    
+    register slimbus_dct_fifo_setup2_j_0 addr(base, 0x208) "TX data agent FIFO setup, continued. To be kept static during channel operation." {
+        packing 1 rw type(autogatingdisable_status) "Packing enable control";
+        msb_aligned 1 rw type(msb_aligned_status) "PLACEHOLDER, NO EFFECT: DATA ALWAYS LSB-aligned LSB/MSB-alignment of FIFO input (write) TX data.";
+        _ 6 mbz;
+        dma_threshold 8 rw type(dma_threshold_status) "SW-side TX data agent FIFO threshold. DMA write requests get (re-)asserted when WR_LEVEL is above threshold. Range: 0 to SIZE field value (included).";
+        sb_threshold 8 rw type(sb_threshold_status) "SLIMbus-side TX data agent FIFO threshold, used for SLIMbus transmission.";
+        size 8 rw type(size_status) "Capacity of FIFO in segment words, minus one.";
+    };
+    
+    register slimbus_dct_fifo_setup2_j_1 addr(base, 0x228) "TX data agent FIFO setup, continued. To be kept static during channel operation." {
+        packing 1 rw type(autogatingdisable_status) "Packing enable control";
+        msb_aligned 1 rw type(msb_aligned_status) "PLACEHOLDER, NO EFFECT: DATA ALWAYS LSB-aligned LSB/MSB-alignment of FIFO input (write) TX data.";
+        _ 6 mbz;
+        dma_threshold 8 rw type(dma_threshold_status) "SW-side TX data agent FIFO threshold. DMA write requests get (re-)asserted when WR_LEVEL is above threshold. Range: 0 to SIZE field value (included).";
+        sb_threshold 8 rw type(sb_threshold_status) "SLIMbus-side TX data agent FIFO threshold, used for SLIMbus transmission.";
+        size 8 rw type(size_status) "Capacity of FIFO in segment words, minus one.";
+    };
+    
+    register slimbus_dct_fifo_setup2_j_2 addr(base, 0x248) "TX data agent FIFO setup, continued. To be kept static during channel operation." {
+        packing 1 rw type(autogatingdisable_status) "Packing enable control";
+        msb_aligned 1 rw type(msb_aligned_status) "PLACEHOLDER, NO EFFECT: DATA ALWAYS LSB-aligned LSB/MSB-alignment of FIFO input (write) TX data.";
+        _ 6 mbz;
+        dma_threshold 8 rw type(dma_threshold_status) "SW-side TX data agent FIFO threshold. DMA write requests get (re-)asserted when WR_LEVEL is above threshold. Range: 0 to SIZE field value (included).";
+        sb_threshold 8 rw type(sb_threshold_status) "SLIMbus-side TX data agent FIFO threshold, used for SLIMbus transmission.";
+        size 8 rw type(size_status) "Capacity of FIFO in segment words, minus one.";
+    };
+    
+    register slimbus_dct_fifo_setup2_j_3 addr(base, 0x268) "TX data agent FIFO setup, continued. To be kept static during channel operation." {
+        packing 1 rw type(autogatingdisable_status) "Packing enable control";
+        msb_aligned 1 rw type(msb_aligned_status) "PLACEHOLDER, NO EFFECT: DATA ALWAYS LSB-aligned LSB/MSB-alignment of FIFO input (write) TX data.";
+        _ 6 mbz;
+        dma_threshold 8 rw type(dma_threshold_status) "SW-side TX data agent FIFO threshold. DMA write requests get (re-)asserted when WR_LEVEL is above threshold. Range: 0 to SIZE field value (included).";
+        sb_threshold 8 rw type(sb_threshold_status) "SLIMbus-side TX data agent FIFO threshold, used for SLIMbus transmission.";
+        size 8 rw type(size_status) "Capacity of FIFO in segment words, minus one.";
+    };
+
+    constants count_en_status width(1) "" {
+        COUNT_EN_0_w = 0 "Disable down-counter mode. Should typically be used only when ACC_CNT = 0. If ACC_CNT &gt; 0, DMA request gets deasserted immediately.";
+        COUNT_EN_1_w = 1 "Enable down-counter mode. ACC_CNT is typically set to the desired value in the same write access.";
+        COUNT_EN_1_r = 1 "Down-counter mode is enabled. DMA request can only be active when ACC_CNT &gt; 0";
+        COUNT_EN_0_r = 0 "Down-counter mode is disabled: DMA request follows FIFO level, and is active during no-tx periods.";
+    };
+
+    constants acc_cnt_status width(15) "" {
+        ACC_CNT_0_w = 0 "Deasserts current DMA request by forcing the count to zero (not typical operation)";
+        ACC_CNT_127_w = 127 "Set largest packet size (in accesses) to transfer before DMA request deassertion. Any lower value is also valid to enter.";
+        ACC_CNT_127_r = 127 "Maximum number of accesses still to be transferred before DMA deassertion. Unless interrupted, counter shall go through all values down to zero.";
+        ACC_CNT_0_r = 0 "No access left to transfer, DMA request currently inactive.";
+    };
+
+    constants imprecise_en_status width(1) "" {
+        IMPRECISE_EN_0 = 0 "DMA request contains a precise number of accesses";
+        IMPRECISE_EN_1 = 1 "DMA request is not expected to trigger a fixed number of accesses";
+    };
+
+    constants wr_level_status width(9) "" {
+        WR_LEVEL_256_r = 256 "FIFO is empty and entirely available for writes (assuming maximum FIFO size)";
+        WR_LEVEL_0_r = 0 "FIFO is full and cannot be written to";
+    };
+
+    constants lolevel_status width(1) "" {
+        LOLEVEL_1_r_4 = 1 "WR_LEVEL &gt; DMA_THRESHOLD";
+        LOLEVEL_0_r_4 = 0 "WR_LEVEL &lt;= DMA_THRESHOLD";
+    };
+
+    constants full_status width(1) "" {
+        FULL_1_r = 1 "no space left in FIFO to write a word (WR_LEVEL = 0)";
+        FULL_0_r = 0 "some space left in FIFO to write at least one word (WR_LEVEL &gt; 0)";
+    };
+    
+    register slimbus_dct_fifo_status_j_0 addr(base, 0x20C) "TX data agent FIFO status, for software (non-DMA) FIFO management." {
+        count_en 1 rw type(count_en_status) "Down-counter mode control. Only applicable in precise DMA mode.";
+        acc_cnt 15 rw type(acc_cnt_status) "'Packet mode' down-counter of segment words, decremented on DCT_DATA write accesses. In that mode, DMA request shall deassert when ACC_CNT = 0 (that is, packet fully transmitted / stored in TX FIFO).";
+        imprecise_en 1 rw type(imprecise_en_status) "Precise vs. Imprecise DMA requesting mode control. (A DMA request is a single assertion-deassertion cycle.)";
+        _ 4 mbz;
+        wr_level 9 ro type(wr_level_status) "Number of free segment words in FIFO, that could be filled by writes.";
+        lolevel 1 ro type(lolevel_status) "Indicator of write level (WR_LEVEL: number of free words in FIFO) with respect to (write) threshold (DMA_threshold). Activates DMA write requests when high.";
+        full 1 ro type(full_status) "FIFO full indicator";
+    };
+    
+    register slimbus_dct_fifo_status_j_1 addr(base, 0x22C) "TX data agent FIFO status, for software (non-DMA) FIFO management." {
+        count_en 1 rw type(count_en_status) "Down-counter mode control. Only applicable in precise DMA mode.";
+        acc_cnt 15 rw type(acc_cnt_status) "'Packet mode' down-counter of segment words, decremented on DCT_DATA write accesses. In that mode, DMA request shall deassert when ACC_CNT = 0 (that is, packet fully transmitted / stored in TX FIFO).";
+        imprecise_en 1 rw type(imprecise_en_status) "Precise vs. Imprecise DMA requesting mode control. (A DMA request is a single assertion-deassertion cycle.)";
+        _ 4 mbz;
+        wr_level 9 ro type(wr_level_status) "Number of free segment words in FIFO, that could be filled by writes.";
+        lolevel 1 ro type(lolevel_status) "Indicator of write level (WR_LEVEL: number of free words in FIFO) with respect to (write) threshold (DMA_threshold). Activates DMA write requests when high.";
+        full 1 ro type(full_status) "FIFO full indicator";
+    };
+    
+    register slimbus_dct_fifo_status_j_2 addr(base, 0x24C) "TX data agent FIFO status, for software (non-DMA) FIFO management." {
+        count_en 1 rw type(count_en_status) "Down-counter mode control. Only applicable in precise DMA mode.";
+        acc_cnt 15 rw type(acc_cnt_status) "'Packet mode' down-counter of segment words, decremented on DCT_DATA write accesses. In that mode, DMA request shall deassert when ACC_CNT = 0 (that is, packet fully transmitted / stored in TX FIFO).";
+        imprecise_en 1 rw type(imprecise_en_status) "Precise vs. Imprecise DMA requesting mode control. (A DMA request is a single assertion-deassertion cycle.)";
+        _ 4 mbz;
+        wr_level 9 ro type(wr_level_status) "Number of free segment words in FIFO, that could be filled by writes.";
+        lolevel 1 ro type(lolevel_status) "Indicator of write level (WR_LEVEL: number of free words in FIFO) with respect to (write) threshold (DMA_threshold). Activates DMA write requests when high.";
+        full 1 ro type(full_status) "FIFO full indicator";
+    };
+    
+    register slimbus_dct_fifo_status_j_3 addr(base, 0x26C) "TX data agent FIFO status, for software (non-DMA) FIFO management." {
+        count_en 1 rw type(count_en_status) "Down-counter mode control. Only applicable in precise DMA mode.";
+        acc_cnt 15 rw type(acc_cnt_status) "'Packet mode' down-counter of segment words, decremented on DCT_DATA write accesses. In that mode, DMA request shall deassert when ACC_CNT = 0 (that is, packet fully transmitted / stored in TX FIFO).";
+        imprecise_en 1 rw type(imprecise_en_status) "Precise vs. Imprecise DMA requesting mode control. (A DMA request is a single assertion-deassertion cycle.)";
+        _ 4 mbz;
+        wr_level 9 ro type(wr_level_status) "Number of free segment words in FIFO, that could be filled by writes.";
+        lolevel 1 ro type(lolevel_status) "Indicator of write level (WR_LEVEL: number of free words in FIFO) with respect to (write) threshold (DMA_threshold). Activates DMA write requests when high.";
+        full 1 ro type(full_status) "FIFO full indicator";
+    };
+    
+    register slimbus_dct_map_j_0 addr(base, 0x210) "Associates a device and port to the TX data agent. Write to field FL_CONTROL.validate_dcmap to validate changes." {
+        _ 18 mbz;
+        pn 6 rw "Port Number (PN), identifies the data channel's port for the device. Shall be unique within a device. Note that a half-duplex (bidirectional) port has 2 data agents with the same PN, 1 TX + 1 Rx.";
+        di 8 rw "Index (DI) of the device this data agent belongs to. Devices are hard-indexed from 0 upwards.";
+    };
+    
+    register slimbus_dct_map_j_1 addr(base, 0x230) "Associates a device and port to the TX data agent. Write to field FL_CONTROL.validate_dcmap to validate changes." {
+        _ 18 mbz;
+        pn 6 rw "Port Number (PN), identifies the data channel's port for the device. Shall be unique within a device. Note that a half-duplex (bidirectional) port has 2 data agents with the same PN, 1 TX + 1 Rx.";
+        di 8 rw "Index (DI) of the device this data agent belongs to. Devices are hard-indexed from 0 upwards.";
+    };
+    
+    register slimbus_dct_map_j_2 addr(base, 0x250) "Associates a device and port to the TX data agent. Write to field FL_CONTROL.validate_dcmap to validate changes." {
+        _ 18 mbz;
+        pn 6 rw "Port Number (PN), identifies the data channel's port for the device. Shall be unique within a device. Note that a half-duplex (bidirectional) port has 2 data agents with the same PN, 1 TX + 1 Rx.";
+        di 8 rw "Index (DI) of the device this data agent belongs to. Devices are hard-indexed from 0 upwards.";
+    };
+    
+    register slimbus_dct_map_j_3 addr(base, 0x270) "Associates a device and port to the TX data agent. Write to field FL_CONTROL.validate_dcmap to validate changes." {
+        _ 18 mbz;
+        pn 6 rw "Port Number (PN), identifies the data channel's port for the device. Shall be unique within a device. Note that a half-duplex (bidirectional) port has 2 data agents with the same PN, 1 TX + 1 Rx.";
+        di 8 rw "Index (DI) of the device this data agent belongs to. Devices are hard-indexed from 0 upwards.";
+    };
+
+    constants enable_status width(1) "" {
+        ENABLE_1_r = 1 "Data agent is enabled";
+        ENABLE_0_r = 0 "Data agent is disabled";
+    };
+
+    constants cts_last_value_status width(1) "" {
+        CTS_LAST_VALUE_1_r = 1 "Local sink signals TAG.CTS=1 that is, it can receive data (and remote source can transmit some)";
+        CTS_LAST_VALUE_0_r = 0 "Local sink signals TAG.CTS=0 that is, it cannot receive any data (and remote source shall not transmit any)";
+    };
+
+    constants dt_lpcm_status width(1) "" {
+        DT_LPCM_0 = 0 "DT!=0x1: encoding disabled";
+        DT_LPCM_1 = 1 "DT=0x1: encoding enabled";
+    };
+
+    constants af_status width(4) "" {
+        AF_15 = 15 "User-defined 8-bit AUX (2 AUX slot per segment)";
+        AF_0 = 0 "No AUX information (0 AUX slots per segment)";
+        AF_1 = 1 "ZCUV for tunneling IEC60958 (1 AUX slot per segment)";
+        AF_11 = 11 "User-defined 4-bit AUX (1 AUX slot per segment)";
+    };
+
+    constants dl_status width(5) "" {
+        DL_6 = 6 "6 slots (24 bits)";
+        DL_1 = 1 "1 slot (4 bits)";
+        DL_7 = 7 "7 slots (28 bits), requiring at most 1 AUX slot to fit in max-size 32-bit segment word";
+        DL_0 = 0 "Length not indicated: Segment slots that are not TAG or AUX are DATA (that is, no unused slot)";
+        DL_2 = 2 "2 slots (8 bits)";
+        DL_8 = 8 "8 slots (32 bits), requiring zero AUX slot, to fit in a max-size 32-bit segment word";
+        DL_4 = 4 "4 slots (16 bits)";
+        DL_5 = 5 "5 slots (20 bits)";
+        DL_3 = 3 "3 slots (12 bits)";
+    };
+
+    constants sl_status width(5) "" {
+        SL_0 = 0 "Reseved value";
+    };
+
+    constants tp_qualifier_status width(1) "" {
+        TP_QUALIFIER_0 = 0 "1/2 duplex TPs: Local device is primary channel owner, uses T1 token";
+        TP_QUALIFIER_1 = 1 "1/2 duplex TPs: Local device is secondary channel owner, uses T2 token";
+    };
+
+    constants tp_status width(4) "" {
+        TP_6 = 6 "Extended asynchronous-half-duplex (unicast, 2-slot TAG)";
+        TP_1 = 1 "Pushed (multicast, 1-slot TAG)";
+        TP_7 = 7 "Extended asynchronous-simplex (unicast, 2-slot TAG)";
+        TP_0 = 0 "Isochronous (multicast, no TAG)";
+        TP_2 = 2 "Pulled (unicast, 1-slot TAG)";
+        TP_4 = 4 "Asynchronous-simplex (unicast, 1-slot TAG)";
+        TP_5 = 5 "Asynchronous-half-duplex (unicast, 1-slot TAG)";
+        TP_15 = 15 "User-defined protocol 2 NOT SUPPORTED, RESERVED VALUE";
+        TP_3 = 3 "Locked (multicast, no TAG) NOT SUPPORTED, RESERVED VALUE";
+        TP_14 = 14 "User-defined protocol 1 NOT SUPPORTED, RESERVED VALUE";
+    };
+    
+    register slimbus_dct_config1_j_0 addr(base, 0x214) "TX data agent configuration, applied at the next reconfiguration boundary" {
+        enable 1 rw type(enable_status) "Data agent enabling control. Auto-cleared upon frame or superframe sync loss.";
+        cts_last_value 1 ro type(cts_last_value_status) "Last received value of the CTS TAG bit. Only updated for asynchronous TP, when primary owner (that is, transmitter) of the channel.";
+        _ 1 mbz;
+        dt_lpcm 1 rw type(dt_lpcm_status) "Unsigned-to-OSAM encoding enable for Data Type (DT) = LPCM audio (0x1)";
+        _ 8 mbz;
+        af 4 rw type(af_status) "Auxillairy Format (AF) used in segment word size calculation. Non-zero values not supported in extended asynchronous TPs.";
+        cl 1 rw type(autogatingdisable_status) "Channel Link (CL) enable: Pairing up of current channel with previous one (that is, channel index below) Tied-0, read-only field for channel index 0, since there is no 'previous' channel in that case. TP and segment interval (encoded in SD) must be equal between the linked channels.";
+        dl 5 rw type(dl_status) "Segment Data Length (DL), in 4-bit slots (except when 0). AUX + DATA length shall fit in a segment word, that is, 1 to 32 bits. In extended async TPs, sets segment word size (0 and odd values illegal) instead.";
+        sl 5 rw type(sl_status) "total Segment Length (SL), in 4-bit slots. SL &amp;gt;= TAG length + AUX length + DATA length";
+        tp_qualifier 1 rw type(tp_qualifier_status) "Qualifier for plain/extended half-duplex asynchronous TPs (owner ID). Unused and don't care for other TPs.";
+        tp 4 rw type(tp_status) "Transport Protocol (TP) Determines also the TAG length (from 0 to 2 slots).";
+    };
+    
+    register slimbus_dct_config1_j_1 addr(base, 0x234) "TX data agent configuration, applied at the next reconfiguration boundary" {
+        enable 1 rw type(enable_status) "Data agent enabling control. Auto-cleared upon frame or superframe sync loss.";
+        cts_last_value 1 ro type(cts_last_value_status) "Last received value of the CTS TAG bit. Only updated for asynchronous TP, when primary owner (that is, transmitter) of the channel.";
+        _ 1 mbz;
+        dt_lpcm 1 rw type(dt_lpcm_status) "Unsigned-to-OSAM encoding enable for Data Type (DT) = LPCM audio (0x1)";
+        _ 8 mbz;
+        af 4 rw type(af_status) "Auxillairy Format (AF) used in segment word size calculation. Non-zero values not supported in extended asynchronous TPs.";
+        cl 1 rw type(autogatingdisable_status) "Channel Link (CL) enable: Pairing up of current channel with previous one (that is, channel index below) Tied-0, read-only field for channel index 0, since there is no 'previous' channel in that case. TP and segment interval (encoded in SD) must be equal between the linked channels.";
+        dl 5 rw type(dl_status) "Segment Data Length (DL), in 4-bit slots (except when 0). AUX + DATA length shall fit in a segment word, that is, 1 to 32 bits. In extended async TPs, sets segment word size (0 and odd values illegal) instead.";
+        sl 5 rw type(sl_status) "total Segment Length (SL), in 4-bit slots. SL &amp;gt;= TAG length + AUX length + DATA length";
+        tp_qualifier 1 rw type(tp_qualifier_status) "Qualifier for plain/extended half-duplex asynchronous TPs (owner ID). Unused and don't care for other TPs.";
+        tp 4 rw type(tp_status) "Transport Protocol (TP) Determines also the TAG length (from 0 to 2 slots).";
+    };
+    
+    register slimbus_dct_config1_j_2 addr(base, 0x254) "TX data agent configuration, applied at the next reconfiguration boundary" {
+        enable 1 rw type(enable_status) "Data agent enabling control. Auto-cleared upon frame or superframe sync loss.";
+        cts_last_value 1 ro type(cts_last_value_status) "Last received value of the CTS TAG bit. Only updated for asynchronous TP, when primary owner (that is, transmitter) of the channel.";
+        _ 1 mbz;
+        dt_lpcm 1 rw type(dt_lpcm_status) "Unsigned-to-OSAM encoding enable for Data Type (DT) = LPCM audio (0x1)";
+        _ 8 mbz;
+        af 4 rw type(af_status) "Auxillairy Format (AF) used in segment word size calculation. Non-zero values not supported in extended asynchronous TPs.";
+        cl 1 rw type(autogatingdisable_status) "Channel Link (CL) enable: Pairing up of current channel with previous one (that is, channel index below) Tied-0, read-only field for channel index 0, since there is no 'previous' channel in that case. TP and segment interval (encoded in SD) must be equal between the linked channels.";
+        dl 5 rw type(dl_status) "Segment Data Length (DL), in 4-bit slots (except when 0). AUX + DATA length shall fit in a segment word, that is, 1 to 32 bits. In extended async TPs, sets segment word size (0 and odd values illegal) instead.";
+        sl 5 rw type(sl_status) "total Segment Length (SL), in 4-bit slots. SL &amp;gt;= TAG length + AUX length + DATA length";
+        tp_qualifier 1 rw type(tp_qualifier_status) "Qualifier for plain/extended half-duplex asynchronous TPs (owner ID). Unused and don't care for other TPs.";
+        tp 4 rw type(tp_status) "Transport Protocol (TP) Determines also the TAG length (from 0 to 2 slots).";
+    };
+    
+    register slimbus_dct_config1_j_3 addr(base, 0x274) "TX data agent configuration, applied at the next reconfiguration boundary" {
+        enable 1 rw type(enable_status) "Data agent enabling control. Auto-cleared upon frame or superframe sync loss.";
+        cts_last_value 1 ro type(cts_last_value_status) "Last received value of the CTS TAG bit. Only updated for asynchronous TP, when primary owner (that is, transmitter) of the channel.";
+        _ 1 mbz;
+        dt_lpcm 1 rw type(dt_lpcm_status) "Unsigned-to-OSAM encoding enable for Data Type (DT) = LPCM audio (0x1)";
+        _ 8 mbz;
+        af 4 rw type(af_status) "Auxillairy Format (AF) used in segment word size calculation. Non-zero values not supported in extended asynchronous TPs.";
+        cl 1 rw type(autogatingdisable_status) "Channel Link (CL) enable: Pairing up of current channel with previous one (that is, channel index below) Tied-0, read-only field for channel index 0, since there is no 'previous' channel in that case. TP and segment interval (encoded in SD) must be equal between the linked channels.";
+        dl 5 rw type(dl_status) "Segment Data Length (DL), in 4-bit slots (except when 0). AUX + DATA length shall fit in a segment word, that is, 1 to 32 bits. In extended async TPs, sets segment word size (0 and odd values illegal) instead.";
+        sl 5 rw type(sl_status) "total Segment Length (SL), in 4-bit slots. SL &amp;gt;= TAG length + AUX length + DATA length";
+        tp_qualifier 1 rw type(tp_qualifier_status) "Qualifier for plain/extended half-duplex asynchronous TPs (owner ID). Unused and don't care for other TPs.";
+        tp 4 rw type(tp_status) "Transport Protocol (TP) Determines also the TAG length (from 0 to 2 slots).";
+    };
+    
+    register slimbus_dct_config2_j_0 addr(base, 0x218) "TX data agent configuration (continued), applied at the next reconfiguration boundary" {
+        _ 20 mbz;
+        sd 12 rw "Segment Distribution (see)";
+    };
+    
+    register slimbus_dct_config2_j_1 addr(base, 0x238) "TX data agent configuration (continued), applied at the next reconfiguration boundary" {
+        _ 20 mbz;
+        sd 12 rw "Segment Distribution (see)";
+    };
+    
+    register slimbus_dct_config2_j_2 addr(base, 0x258) "TX data agent configuration (continued), applied at the next reconfiguration boundary" {
+        _ 20 mbz;
+        sd 12 rw "Segment Distribution (see)";
+    };
+    
+    register slimbus_dct_config2_j_3 addr(base, 0x278) "TX data agent configuration (continued), applied at the next reconfiguration boundary" {
+        _ 20 mbz;
+        sd 12 rw "Segment Distribution (see)";
+    };
+    
+    register slimbus_dct_data_j_0 rw addr(base, 0x21C) "TX data agent DATA FIFO input. Reads have no effect on FIFO." type(uint32);
+    
+    register slimbus_dct_data_j_1 rw addr(base, 0x23C) "TX data agent DATA FIFO input. Reads have no effect on FIFO." type(uint32);
+    
+    register slimbus_dct_data_j_2 rw addr(base, 0x25C) "TX data agent DATA FIFO input. Reads have no effect on FIFO." type(uint32);
+    
+    register slimbus_dct_data_j_3 rw addr(base, 0x27C) "TX data agent DATA FIFO input. Reads have no effect on FIFO." type(uint32);
+    
+    register slimbus_dcr_info_j_0 addr(base, 0x280) "RX data agent status. Write 1 to a bit to clear it." {
+        _ 28 mbz;
+        hilevel 1 rw1c type(dcr_info_7_status1) "Read level of RX data agent FIFO has gone above DMA threshold (that is, reads required to empty FIFO)";
+        underflow 1 rw1c type(dcr_info_7_status1) "Underflow in RX data agent FIFO";
+        overflow 1 rw1c type(dcr_info_7_status1) "Overflow in RX data agent FIFO Note: never asserted in pulled or async TPs, by construction.";
+        data_tx_col 1 rw1c type(dcr_info_7_status1) "TX collision in RX data agent. Core information element (IE).";
+    };
+    
+    register slimbus_dcr_info_j_1 addr(base, 0x2A0) "RX data agent status. Write 1 to a bit to clear it." {
+        _ 28 mbz;
+        hilevel 1 rw1c type(dcr_info_7_status1) "Read level of RX data agent FIFO has gone above DMA threshold (that is, reads required to empty FIFO)";
+        underflow 1 rw1c type(dcr_info_7_status1) "Underflow in RX data agent FIFO";
+        overflow 1 rw1c type(dcr_info_7_status1) "Overflow in RX data agent FIFO Note: never asserted in pulled or async TPs, by construction.";
+        data_tx_col 1 rw1c type(dcr_info_7_status1) "TX collision in RX data agent. Core information element (IE).";
+    };
+    
+    register slimbus_dcr_info_j_2 addr(base, 0x2C0) "RX data agent status. Write 1 to a bit to clear it." {
+        _ 28 mbz;
+        hilevel 1 rw1c type(dcr_info_7_status1) "Read level of RX data agent FIFO has gone above DMA threshold (that is, reads required to empty FIFO)";
+        underflow 1 rw1c type(dcr_info_7_status1) "Underflow in RX data agent FIFO";
+        overflow 1 rw1c type(dcr_info_7_status1) "Overflow in RX data agent FIFO Note: never asserted in pulled or async TPs, by construction.";
+        data_tx_col 1 rw1c type(dcr_info_7_status1) "TX collision in RX data agent. Core information element (IE).";
+    };
+    
+    register slimbus_dcr_info_j_3 addr(base, 0x2E0) "RX data agent status. Write 1 to a bit to clear it." {
+        _ 28 mbz;
+        hilevel 1 rw1c type(dcr_info_7_status1) "Read level of RX data agent FIFO has gone above DMA threshold (that is, reads required to empty FIFO)";
+        underflow 1 rw1c type(dcr_info_7_status1) "Underflow in RX data agent FIFO";
+        overflow 1 rw1c type(dcr_info_7_status1) "Overflow in RX data agent FIFO Note: never asserted in pulled or async TPs, by construction.";
+        data_tx_col 1 rw1c type(dcr_info_7_status1) "TX collision in RX data agent. Core information element (IE).";
+    };
+    
+    register slimbus_dcr_fifo_setup1_j_0 addr(base, 0x284) "RX data agent FIFO setup. To be kept static during channel operation." {
+        _ 19 mbz;
+        base_addr 8 rw "RX data agent FIFO base address within shared RX RAM. (physical address of the 32-bit wide RAM array)";
+        dma_req_size 4 rw type(dma_req_size_status) "DMA request size minus 1, in read accesses. In counting (packet) mode, last request may be smaller. Only applicable in precise DMA mode.";
+        fifo_clear 1 rw type(fifo_clear_status) "Returns FIFO to initial empty state.";
+    };
+    
+    register slimbus_dcr_fifo_setup1_j_1 addr(base, 0x2A4) "RX data agent FIFO setup. To be kept static during channel operation." {
+        _ 19 mbz;
+        base_addr 8 rw "RX data agent FIFO base address within shared RX RAM. (physical address of the 32-bit wide RAM array)";
+        dma_req_size 4 rw type(dma_req_size_status) "DMA request size minus 1, in read accesses. In counting (packet) mode, last request may be smaller. Only applicable in precise DMA mode.";
+        fifo_clear 1 rw type(fifo_clear_status) "Returns FIFO to initial empty state.";
+    };
+    
+    register slimbus_dcr_fifo_setup1_j_2 addr(base, 0x2C4) "RX data agent FIFO setup. To be kept static during channel operation." {
+        _ 19 mbz;
+        base_addr 8 rw "RX data agent FIFO base address within shared RX RAM. (physical address of the 32-bit wide RAM array)";
+        dma_req_size 4 rw type(dma_req_size_status) "DMA request size minus 1, in read accesses. In counting (packet) mode, last request may be smaller. Only applicable in precise DMA mode.";
+        fifo_clear 1 rw type(fifo_clear_status) "Returns FIFO to initial empty state.";
+    };
+    
+    register slimbus_dcr_fifo_setup1_j_3 addr(base, 0x2E4) "RX data agent FIFO setup. To be kept static during channel operation." {
+        _ 19 mbz;
+        base_addr 8 rw "RX data agent FIFO base address within shared RX RAM. (physical address of the 32-bit wide RAM array)";
+        dma_req_size 4 rw type(dma_req_size_status) "DMA request size minus 1, in read accesses. In counting (packet) mode, last request may be smaller. Only applicable in precise DMA mode.";
+        fifo_clear 1 rw type(fifo_clear_status) "Returns FIFO to initial empty state.";
+    };
+
+    constants msb_aligned_status1 width(1) "" {
+        MSB_ALIGNED_0_4 = 0 "Output data is LSB-aligned";
+        MSB_ALIGNED_1_4 = 1 "Output data is MSB-aligned";
+    };
+    
+    register slimbus_dcr_fifo_setup2_j_0 addr(base, 0x288) "RX data agent FIFO setup, continued. To be kept static during channel operation." {
+        packing 1 rw type(autogatingdisable_status) "Packing enable control";
+        msb_aligned 1 rw type(msb_aligned_status1) "PLACEHOLDER, NO EFFECT: DATA ALWAYS LSB-aligned LSB/MSB-alignment of FIFO output (read) RX data.";
+        _ 6 mbz;
+        dma_threshold 8 rw type(dma_threshold_status) "SW-side RX data agent FIFO threshold. DMA read requests get (re-)asserted when RD_LEVEL is above threshold. Range: 0 to SIZE field value (included).";
+        sb_threshold 8 rw type(sb_threshold_status) "SLIMbus-side RX data agent FIFO threshold, used for SLIMbus reception.";
+        size 8 rw type(size_status) "Capacity of FIFO in segment words, minus one.";
+    };
+    
+    register slimbus_dcr_fifo_setup2_j_1 addr(base, 0x2A8) "RX data agent FIFO setup, continued. To be kept static during channel operation." {
+        packing 1 rw type(autogatingdisable_status) "Packing enable control";
+        msb_aligned 1 rw type(msb_aligned_status1) "PLACEHOLDER, NO EFFECT: DATA ALWAYS LSB-aligned LSB/MSB-alignment of FIFO output (read) RX data.";
+        _ 6 mbz;
+        dma_threshold 8 rw type(dma_threshold_status) "SW-side RX data agent FIFO threshold. DMA read requests get (re-)asserted when RD_LEVEL is above threshold. Range: 0 to SIZE field value (included).";
+        sb_threshold 8 rw type(sb_threshold_status) "SLIMbus-side RX data agent FIFO threshold, used for SLIMbus reception.";
+        size 8 rw type(size_status) "Capacity of FIFO in segment words, minus one.";
+    };
+    
+    register slimbus_dcr_fifo_setup2_j_2 addr(base, 0x2C8) "RX data agent FIFO setup, continued. To be kept static during channel operation." {
+        packing 1 rw type(autogatingdisable_status) "Packing enable control";
+        msb_aligned 1 rw type(msb_aligned_status1) "PLACEHOLDER, NO EFFECT: DATA ALWAYS LSB-aligned LSB/MSB-alignment of FIFO output (read) RX data.";
+        _ 6 mbz;
+        dma_threshold 8 rw type(dma_threshold_status) "SW-side RX data agent FIFO threshold. DMA read requests get (re-)asserted when RD_LEVEL is above threshold. Range: 0 to SIZE field value (included).";
+        sb_threshold 8 rw type(sb_threshold_status) "SLIMbus-side RX data agent FIFO threshold, used for SLIMbus reception.";
+        size 8 rw type(size_status) "Capacity of FIFO in segment words, minus one.";
+    };
+    
+    register slimbus_dcr_fifo_setup2_j_3 addr(base, 0x2E8) "RX data agent FIFO setup, continued. To be kept static during channel operation." {
+        packing 1 rw type(autogatingdisable_status) "Packing enable control";
+        msb_aligned 1 rw type(msb_aligned_status1) "PLACEHOLDER, NO EFFECT: DATA ALWAYS LSB-aligned LSB/MSB-alignment of FIFO output (read) RX data.";
+        _ 6 mbz;
+        dma_threshold 8 rw type(dma_threshold_status) "SW-side RX data agent FIFO threshold. DMA read requests get (re-)asserted when RD_LEVEL is above threshold. Range: 0 to SIZE field value (included).";
+        sb_threshold 8 rw type(sb_threshold_status) "SLIMbus-side RX data agent FIFO threshold, used for SLIMbus reception.";
+        size 8 rw type(size_status) "Capacity of FIFO in segment words, minus one.";
+    };
+
+    constants rd_level_status width(9) "" {
+        RD_LEVEL_256_r = 256 "FIFO is full of readable words (assuming maximum size)";
+        RD_LEVEL_0_r = 0 "FIFO contains no readable word";
+    };
+
+    constants hilevel_status width(1) "" {
+        HILEVEL_1_r_4 = 1 "RD_LEVEL &gt; DMA_THRESHOLD";
+        HILEVEL_0_r_4 = 0 "RD_LEVEL &lt;= DMA_THRESHOLD";
+    };
+
+    constants empty_status width(1) "" {
+        EMPTY_1_r = 1 "FIFO contains no readable word (RD_LEVEL = 0)";
+        EMPTY_0_r = 0 "FIFO contains at least one readable word (RD_LEVEL &gt; 0)";
+    };
+    
+    register slimbus_dcr_fifo_status_j_0 addr(base, 0x28C) "RX data agent FIFO status, for software (non-DMA) FIFO management." {
+        count_en 1 rw type(count_en_status) "Down-counter mode control. Only applicable in precise DMA mode.";
+        acc_cnt 15 rw type(acc_cnt_status) "'Packet mode' down-counter of segment words, decremented on DCR_DATA read accesses. In that mode, DMA request shall reassert when ACC_CNT = RD_LEVEL (that is, whole packet received).";
+        imprecise_en 1 rw type(imprecise_en_status) "Precise vs. Imprecise DMA requesting mode control. (A DMA request is a single assertion-deassertion cycle.)";
+        _ 4 mbz;
+        rd_level 9 ro type(rd_level_status) "Number of segment words stored in FIFO, that can be read out.";
+        hilevel 1 ro type(hilevel_status) "Indicator of read level (RD_LEVEL: number of readable segment words) with respect to (read) threshold (DMA_THRESHOLD). Activates DMA read requests when high.";
+        empty 1 ro type(empty_status) "FIFO empty indicator";
+    };
+    
+    register slimbus_dcr_fifo_status_j_1 addr(base, 0x2AC) "RX data agent FIFO status, for software (non-DMA) FIFO management." {
+        count_en 1 rw type(count_en_status) "Down-counter mode control. Only applicable in precise DMA mode.";
+        acc_cnt 15 rw type(acc_cnt_status) "'Packet mode' down-counter of segment words, decremented on DCR_DATA read accesses. In that mode, DMA request shall reassert when ACC_CNT = RD_LEVEL (that is, whole packet received).";
+        imprecise_en 1 rw type(imprecise_en_status) "Precise vs. Imprecise DMA requesting mode control. (A DMA request is a single assertion-deassertion cycle.)";
+        _ 4 mbz;
+        rd_level 9 ro type(rd_level_status) "Number of segment words stored in FIFO, that can be read out.";
+        hilevel 1 ro type(hilevel_status) "Indicator of read level (RD_LEVEL: number of readable segment words) with respect to (read) threshold (DMA_THRESHOLD). Activates DMA read requests when high.";
+        empty 1 ro type(empty_status) "FIFO empty indicator";
+    };
+    
+    register slimbus_dcr_fifo_status_j_2 addr(base, 0x2CC) "RX data agent FIFO status, for software (non-DMA) FIFO management." {
+        count_en 1 rw type(count_en_status) "Down-counter mode control. Only applicable in precise DMA mode.";
+        acc_cnt 15 rw type(acc_cnt_status) "'Packet mode' down-counter of segment words, decremented on DCR_DATA read accesses. In that mode, DMA request shall reassert when ACC_CNT = RD_LEVEL (that is, whole packet received).";
+        imprecise_en 1 rw type(imprecise_en_status) "Precise vs. Imprecise DMA requesting mode control. (A DMA request is a single assertion-deassertion cycle.)";
+        _ 4 mbz;
+        rd_level 9 ro type(rd_level_status) "Number of segment words stored in FIFO, that can be read out.";
+        hilevel 1 ro type(hilevel_status) "Indicator of read level (RD_LEVEL: number of readable segment words) with respect to (read) threshold (DMA_THRESHOLD). Activates DMA read requests when high.";
+        empty 1 ro type(empty_status) "FIFO empty indicator";
+    };
+    
+    register slimbus_dcr_fifo_status_j_3 addr(base, 0x2EC) "RX data agent FIFO status, for software (non-DMA) FIFO management." {
+        count_en 1 rw type(count_en_status) "Down-counter mode control. Only applicable in precise DMA mode.";
+        acc_cnt 15 rw type(acc_cnt_status) "'Packet mode' down-counter of segment words, decremented on DCR_DATA read accesses. In that mode, DMA request shall reassert when ACC_CNT = RD_LEVEL (that is, whole packet received).";
+        imprecise_en 1 rw type(imprecise_en_status) "Precise vs. Imprecise DMA requesting mode control. (A DMA request is a single assertion-deassertion cycle.)";
+        _ 4 mbz;
+        rd_level 9 ro type(rd_level_status) "Number of segment words stored in FIFO, that can be read out.";
+        hilevel 1 ro type(hilevel_status) "Indicator of read level (RD_LEVEL: number of readable segment words) with respect to (read) threshold (DMA_THRESHOLD). Activates DMA read requests when high.";
+        empty 1 ro type(empty_status) "FIFO empty indicator";
+    };
+    
+    register slimbus_dcr_map_j_0 addr(base, 0x290) "Associates a device and port to the RX data agent. Write to field FL_CONTROL[8] VALIDATE_DCMAP to validate changes." {
+        _ 18 mbz;
+        pn 6 rw "Port Number (PN), identifies the data channel's port for the device. Shall be unique within a device. Note that a half-duplex (bidirectional) port has 2 data agents with the same PN, 1 TX + 1 Rx.";
+        di 8 rw "Index (DI) of the device this data agent belongs to. Devices are hard-indexed from 0 upwards.";
+    };
+    
+    register slimbus_dcr_map_j_1 addr(base, 0x2B0) "Associates a device and port to the RX data agent. Write to field FL_CONTROL[8] VALIDATE_DCMAP to validate changes." {
+        _ 18 mbz;
+        pn 6 rw "Port Number (PN), identifies the data channel's port for the device. Shall be unique within a device. Note that a half-duplex (bidirectional) port has 2 data agents with the same PN, 1 TX + 1 Rx.";
+        di 8 rw "Index (DI) of the device this data agent belongs to. Devices are hard-indexed from 0 upwards.";
+    };
+    
+    register slimbus_dcr_map_j_2 addr(base, 0x2D0) "Associates a device and port to the RX data agent. Write to field FL_CONTROL[8] VALIDATE_DCMAP to validate changes." {
+        _ 18 mbz;
+        pn 6 rw "Port Number (PN), identifies the data channel's port for the device. Shall be unique within a device. Note that a half-duplex (bidirectional) port has 2 data agents with the same PN, 1 TX + 1 Rx.";
+        di 8 rw "Index (DI) of the device this data agent belongs to. Devices are hard-indexed from 0 upwards.";
+    };
+    
+    register slimbus_dcr_map_j_3 addr(base, 0x2F0) "Associates a device and port to the RX data agent. Write to field FL_CONTROL[8] VALIDATE_DCMAP to validate changes." {
+        _ 18 mbz;
+        pn 6 rw "Port Number (PN), identifies the data channel's port for the device. Shall be unique within a device. Note that a half-duplex (bidirectional) port has 2 data agents with the same PN, 1 TX + 1 Rx.";
+        di 8 rw "Index (DI) of the device this data agent belongs to. Devices are hard-indexed from 0 upwards.";
+    };
+
+    constants cts_force_en_status width(1) "" {
+        CTS_FORCE_EN_0 = 0 "CTS bit generated according to RX FIFO level";
+        CTS_FORCE_EN_1 = 1 "CTS bit forced to CTS_force_value";
+    };
+
+    constants dt_lpcm_status1 width(1) "" {
+        DT_LPCM_0_4 = 0 "DT!=0x1: decoding disabled";
+        DT_LPCM_1_4 = 1 "DT=0x1: decoding enabled";
+    };
+    
+    register slimbus_dcr_config1_j_0 addr(base, 0x294) "RX data agent configuration, applied at the next reconfiguration boundary" {
+        enable 1 rw type(enable_status) "Data agent enabling control. Auto-cleared upon frame or superframe sync loss.";
+        cts_force_value 1 rw type(cts_last_value_status) "Value to force the CTS TAG bit value when in asynchronous TP and secondary channel owner (that is, receiver) and CTS is forced (CTS_force_en=1) Don't care in all other cases. Warning: forcing CTS=1 can result in a FIFO overflow.";
+        cts_force_en 1 rw type(cts_force_en_status) "Forces the CTS TAG bit value when in an asynchronous TP and secondary owner (that is, receiver) of the channel. Don't care in other cases.";
+        dt_lpcm 1 rw type(dt_lpcm_status1) "OSAM-to-unsigned decoding enable for Data Type (DT) = LPCM audio (0x1)";
+        _ 8 mbz;
+        af 4 rw type(af_status) "Auxillairy Format (AF) used in segment word size calculation. Non-zero values not supported in extended asynchronous TPs.";
+        cl 1 rw type(autogatingdisable_status) "Channel Link (CL) enable: Pairing up of current channel with previous one (that is, channel index below) Channel index 0 should have CL=0, since there is no 'previous' channel in that case. TP and segment interval (encoded in SD) must be equal between the linked channels.";
+        dl 5 rw type(dl_status) "Segment Data Length (DL), in 4-bit slots (except when 0). AUX + DATA length shall fit in a segment word, that is, 1 to 32 bits. In extended async TPs, sets segment word size (0 and odd values illegal) instead.";
+        sl 5 rw type(sl_status) "total Segment Length (SL), in 4-bit slots. SL &amp;gt;= TAG length + AUX length + DATA length";
+        tp_qualifier 1 rw type(tp_qualifier_status) "Qualifier for plain/extended half-duplex asynchronous TPs (owner ID). Unused and don't care for other TPs";
+        tp 4 rw type(tp_status) "Transport Protocol (TP) Determines also the TAG length (from 0 to 2 slots).";
+    };
+    
+    register slimbus_dcr_config1_j_1 addr(base, 0x2B4) "RX data agent configuration, applied at the next reconfiguration boundary" {
+        enable 1 rw type(enable_status) "Data agent enabling control. Auto-cleared upon frame or superframe sync loss.";
+        cts_force_value 1 rw type(cts_last_value_status) "Value to force the CTS TAG bit value when in asynchronous TP and secondary channel owner (that is, receiver) and CTS is forced (CTS_force_en=1) Don't care in all other cases. Warning: forcing CTS=1 can result in a FIFO overflow.";
+        cts_force_en 1 rw type(cts_force_en_status) "Forces the CTS TAG bit value when in an asynchronous TP and secondary owner (that is, receiver) of the channel. Don't care in other cases.";
+        dt_lpcm 1 rw type(dt_lpcm_status1) "OSAM-to-unsigned decoding enable for Data Type (DT) = LPCM audio (0x1)";
+        _ 8 mbz;
+        af 4 rw type(af_status) "Auxillairy Format (AF) used in segment word size calculation. Non-zero values not supported in extended asynchronous TPs.";
+        cl 1 rw type(autogatingdisable_status) "Channel Link (CL) enable: Pairing up of current channel with previous one (that is, channel index below) Channel index 0 should have CL=0, since there is no 'previous' channel in that case. TP and segment interval (encoded in SD) must be equal between the linked channels.";
+        dl 5 rw type(dl_status) "Segment Data Length (DL), in 4-bit slots (except when 0). AUX + DATA length shall fit in a segment word, that is, 1 to 32 bits. In extended async TPs, sets segment word size (0 and odd values illegal) instead.";
+        sl 5 rw type(sl_status) "total Segment Length (SL), in 4-bit slots. SL &amp;gt;= TAG length + AUX length + DATA length";
+        tp_qualifier 1 rw type(tp_qualifier_status) "Qualifier for plain/extended half-duplex asynchronous TPs (owner ID). Unused and don't care for other TPs";
+        tp 4 rw type(tp_status) "Transport Protocol (TP) Determines also the TAG length (from 0 to 2 slots).";
+    };
+    
+    register slimbus_dcr_config1_j_2 addr(base, 0x2D4) "RX data agent configuration, applied at the next reconfiguration boundary" {
+        enable 1 rw type(enable_status) "Data agent enabling control. Auto-cleared upon frame or superframe sync loss.";
+        cts_force_value 1 rw type(cts_last_value_status) "Value to force the CTS TAG bit value when in asynchronous TP and secondary channel owner (that is, receiver) and CTS is forced (CTS_force_en=1) Don't care in all other cases. Warning: forcing CTS=1 can result in a FIFO overflow.";
+        cts_force_en 1 rw type(cts_force_en_status) "Forces the CTS TAG bit value when in an asynchronous TP and secondary owner (that is, receiver) of the channel. Don't care in other cases.";
+        dt_lpcm 1 rw type(dt_lpcm_status1) "OSAM-to-unsigned decoding enable for Data Type (DT) = LPCM audio (0x1)";
+        _ 8 mbz;
+        af 4 rw type(af_status) "Auxillairy Format (AF) used in segment word size calculation. Non-zero values not supported in extended asynchronous TPs.";
+        cl 1 rw type(autogatingdisable_status) "Channel Link (CL) enable: Pairing up of current channel with previous one (that is, channel index below) Channel index 0 should have CL=0, since there is no 'previous' channel in that case. TP and segment interval (encoded in SD) must be equal between the linked channels.";
+        dl 5 rw type(dl_status) "Segment Data Length (DL), in 4-bit slots (except when 0). AUX + DATA length shall fit in a segment word, that is, 1 to 32 bits. In extended async TPs, sets segment word size (0 and odd values illegal) instead.";
+        sl 5 rw type(sl_status) "total Segment Length (SL), in 4-bit slots. SL &amp;gt;= TAG length + AUX length + DATA length";
+        tp_qualifier 1 rw type(tp_qualifier_status) "Qualifier for plain/extended half-duplex asynchronous TPs (owner ID). Unused and don't care for other TPs";
+        tp 4 rw type(tp_status) "Transport Protocol (TP) Determines also the TAG length (from 0 to 2 slots).";
+    };
+    
+    register slimbus_dcr_config1_j_3 addr(base, 0x2F4) "RX data agent configuration, applied at the next reconfiguration boundary" {
+        enable 1 rw type(enable_status) "Data agent enabling control. Auto-cleared upon frame or superframe sync loss.";
+        cts_force_value 1 rw type(cts_last_value_status) "Value to force the CTS TAG bit value when in asynchronous TP and secondary channel owner (that is, receiver) and CTS is forced (CTS_force_en=1) Don't care in all other cases. Warning: forcing CTS=1 can result in a FIFO overflow.";
+        cts_force_en 1 rw type(cts_force_en_status) "Forces the CTS TAG bit value when in an asynchronous TP and secondary owner (that is, receiver) of the channel. Don't care in other cases.";
+        dt_lpcm 1 rw type(dt_lpcm_status1) "OSAM-to-unsigned decoding enable for Data Type (DT) = LPCM audio (0x1)";
+        _ 8 mbz;
+        af 4 rw type(af_status) "Auxillairy Format (AF) used in segment word size calculation. Non-zero values not supported in extended asynchronous TPs.";
+        cl 1 rw type(autogatingdisable_status) "Channel Link (CL) enable: Pairing up of current channel with previous one (that is, channel index below) Channel index 0 should have CL=0, since there is no 'previous' channel in that case. TP and segment interval (encoded in SD) must be equal between the linked channels.";
+        dl 5 rw type(dl_status) "Segment Data Length (DL), in 4-bit slots (except when 0). AUX + DATA length shall fit in a segment word, that is, 1 to 32 bits. In extended async TPs, sets segment word size (0 and odd values illegal) instead.";
+        sl 5 rw type(sl_status) "total Segment Length (SL), in 4-bit slots. SL &amp;gt;= TAG length + AUX length + DATA length";
+        tp_qualifier 1 rw type(tp_qualifier_status) "Qualifier for plain/extended half-duplex asynchronous TPs (owner ID). Unused and don't care for other TPs";
+        tp 4 rw type(tp_status) "Transport Protocol (TP) Determines also the TAG length (from 0 to 2 slots).";
+    };
+    
+    register slimbus_dcr_config2_j_0 addr(base, 0x298) "RX data agent configuration (continued), applied at the next reconfiguration boundary" {
+        _ 20 mbz;
+        sd 12 rw "Segment Distribution";
+    };
+    
+    register slimbus_dcr_config2_j_1 addr(base, 0x2B8) "RX data agent configuration (continued), applied at the next reconfiguration boundary" {
+        _ 20 mbz;
+        sd 12 rw "Segment Distribution";
+    };
+    
+    register slimbus_dcr_config2_j_2 addr(base, 0x2D8) "RX data agent configuration (continued), applied at the next reconfiguration boundary" {
+        _ 20 mbz;
+        sd 12 rw "Segment Distribution";
+    };
+    
+    register slimbus_dcr_config2_j_3 addr(base, 0x2F8) "RX data agent configuration (continued), applied at the next reconfiguration boundary" {
+        _ 20 mbz;
+        sd 12 rw "Segment Distribution";
+    };
+    
+    register slimbus_dcr_data_j_0 ro addr(base, 0x29C) "RX data agent DATA FIFO output. Writes have no effect on FIFO." type(uint32);
+    
+    register slimbus_dcr_data_j_1 ro addr(base, 0x2BC) "RX data agent DATA FIFO output. Writes have no effect on FIFO." type(uint32);
+    
+    register slimbus_dcr_data_j_2 ro addr(base, 0x2DC) "RX data agent DATA FIFO output. Writes have no effect on FIFO." type(uint32);
+    
+    register slimbus_dcr_data_j_3 ro addr(base, 0x2FC) "RX data agent DATA FIFO output. Writes have no effect on FIFO." type(uint32);
+};

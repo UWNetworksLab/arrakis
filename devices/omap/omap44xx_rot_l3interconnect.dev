@@ -1,0 +1,88 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_rot_l3interconnect.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_rot_l3interconnect msbfirst ( addr base ) "" {
+    
+    
+    register rot_revision ro addr(base, 0x0) "Module revision" type(uint32);
+    
+    register rot_ctrl addr(base, 0x4) "Control" {
+        _ 16 mbz;
+        busy 1 ro "Idle/busy status (read-only) 0 = Idle, 1 = Busy";
+        _ 14 mbz;
+        en 1 wo "Module enable, writing 1 starts the module; always reads as 0.";
+    };
+    
+    register rot_cfg addr(base, 0x8) "Configuration" {
+        _ 16 mbz;
+        nblks 4 rw "Number of blocks minus 1 0: 1 block, 1: 2 blocks, etc.";
+        _ 2 mbz;
+        autogating 1 rw "Internal interconnect and functional clock gating 0: Interconnect and functional clocks are free-running. 1: Automatic clock gating is applied, based on the interface activity for the interface clock, and on the functional activity for the functional clocks.";
+        trig_src 1 rw "Trigger source 0 = MMR write 1 = Hardware start signal";
+        _ 1 mbz;
+        fmt 3 rw "Data format 0 = 8-bit data 1 = 16-bit data 2 = 32-bit data 3 = YUV4:2:2 data 4 = YUV4:2:0 data";
+        _ 1 mbz;
+        op 3 rw "Operation 0 = Rotate 0 degree 1 = Rotate 90 degrees 2 = Rotate 180 degrees 3 = Rotate 270 degrees 4 = Data shift (FMT = 0) 5 = Horizontal circular (FMT = 0) shift";
+    };
+    
+    register rot_blksz addr(base, 0xC) "Block size" {
+        _ 4 mbz;
+        blkh 12 rw "Block height, in pixels (YUV4:2:0/4:2:2) or number of rows (8-/16-/32-bit). Should be a multiple of 8, and at least 8, for rotation. Should be at least 1 for data shifting.";
+        _ 4 mbz;
+        blkw 12 rw "Block width, in pixels (YUV4:2:0/4:2:2) or data units (8-/16-/32-bit). Should be a multiple of 8, and at least 8, for rotation. Should be at least 4 for data shifting.";
+    };
+    
+    register rot_src_start1 addr(base, 0x10) "Source starting address" {
+        _ 18 mbz;
+        addr 14 rw "Byte address Should be a multiple of 8 for rotation. No constraint for data shifting.";
+    };
+    
+    register rot_src_lofst addr(base, 0x14) "Source line offset" {
+        _ 16 mbz;
+        lofst 16 rw "Line offset in bytes Should be a multiple of 8 for rotation and normal data shifting. Should be a power of 2 and at least 32 for horizontal circular shifting.";
+    };
+    
+    register rot_dst_start1 addr(base, 0x18) "Destination starting address" {
+        _ 18 mbz;
+        addr 14 rw "Byte address Should be a multiple of 8 for rotation. No constraint for data shifting.";
+    };
+    
+    register rot_dst_lofst addr(base, 0x1C) "Destination line offset" {
+        _ 16 mbz;
+        lofst 16 rw "Line offset in bytes Should be a multiple of 8 for rotation and normal data shifting. Should be a power of 2 and at least 32 for horizontal circular shifting.";
+    };
+    
+    register rot_src_start2 addr(base, 0x20) "Source starting address 2 (only form YUV4:2:0 FMT = 2)" {
+        _ 18 mbz;
+        addr 14 rw "Byte address, should be a multiple of 8.";
+    };
+    
+    register rot_dst_start2 addr(base, 0x24) "Destination starting address 2 (only form YUV4:2:0 FMT = 2)" {
+        _ 18 mbz;
+        addr 14 rw "Byte address, should be a multiple of 8.";
+    };
+};

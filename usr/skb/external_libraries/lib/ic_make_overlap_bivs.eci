@@ -1,0 +1,7 @@
+:- module(ic_make_overlap_bivs).
+:- export make_overlap_bivs / 5.
+:- comment(summary, "Probe Search").
+:- comment(author, "Mark Wallace, Hani El Sakkout").
+:- comment(date, "$Date: 2006/09/23 01:53:47 $").
+:- comment(copyright, "Cisco Systems, INc.").
+:- comment(make_overlap_bivs / 5, [summary : "Make a set of overlap bivalued variables for a set of tasks.\nIntroduce a set of 'bivalued sum' variables, equal to the sum of the binaries at\nan overlap.  The bivalued sum variables represent the total resources needed", amode : make_overlap_bivs(+, -, -, ++, ++), args : ["Tasks" : "A list of task structures - see library(ic_probe_support)", "BivLists" : "A list of lists of integer variables", "BivSums" : "A list of integer variables, each one the sum of a list \n                      of binaries", "Resource" : "An integer quantity of resource available", "Options" : "An options structure"], resat : no, see_also : [probe_cstr_sched / 7, add_con / 3], desc : html("<P>\n    Based on the tentative assignments, <B>probe_search</B> finds a task\n    start time where the resources are not sufficient to make the\n    tentative assignment feasible.  In case a bottleneck task has a\n    variable resource requirement, this is reduced to its minimum\n    possible value. Otherwise, <B>probe_search</B> chooses a bivalued\n    'overlap' variable at this bottleneck and using <B>add_con</B> it adds \n    a constraint trying to eliminate the overlap.\n</P>\n")]).

@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2011, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * fat16_bootsector.dev
+ *
+ * DESCRIPTION: FAT16 file system boot sector.
+ *
+ * This always starts at offset 0xb and is documented as such in Microsoft
+ * documentation [1], so put the first entry at offset 0xb too, allowing the
+ * initialize function to be called with the regular base address.
+ *
+ * [1] http://support.microsoft.com/kb/140418
+ */
+
+device fat_bpb msbfirst (addr b) "FAT BIOS Parameter Block (BPB)" {
+
+    register bps  rw addr(b,0x0b) "Bytes per sector (must be 512, 1024, 2048 or 4096)" type(uint16);
+
+    register spc  rw addr(b,0x0d) "Sectors per cluster, must be power of 2" type(uint8);
+
+    register rsvs rw addr(b,0x0e) "Reserved sectors from the start of the volume" type(uint16);
+
+    register fatc rw addr(b,0x10) "Number of FAT copies" type(uint8);
+
+    register rtc  rw addr(b,0x11) "Maximum number of root entries" type(uint16);
+
+    register ssc  rw addr(b,0x13) "Small sector count, used when volume is smaller than 32 MB" type(uint16);
+
+    register mdes rw addr(b,0x15) "Media descriptor" type(uint8);
+
+    register spf  rw addr(b,0x16) "Sectors per FAT" type(uint16);
+
+    register spt  rw addr(b,0x18) "Sectors per track" type(uint16);
+
+    register heds rw addr(b,0x1a) "Number of heads" type(uint16);
+
+    register hids rw addr(b,0x1c) "Hidden sectors (preceding volume start)" type(uint32);
+
+    register lsc  rw addr(b,0x20) "Large sector count, when volume is larger than 32 MB" type(uint32);
+
+};

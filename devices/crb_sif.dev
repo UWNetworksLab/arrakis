@@ -1,0 +1,95 @@
+/*
+ * Copyright (c) 2008, 2009, 2010, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * crb_sif.dev
+ *
+ * DESCRIPTION: RockCreek Copperridge System Interface
+ */
+
+device crb_sif lsbfirst (addr base) "RockCreek Copperridge System Interface" {
+  register dcsr1 ro addr(base, 0x0) "Device Control Status" {
+    _	   	    8;
+    buildversion    8  "Build version";
+    datapathwidth   8  "Data path width";
+    fpgafamily	    8  "FPGA Family";
+  };
+
+  register ddmacr ro addr(base, 0x4) "Device DMA Control Status" type(uint32);
+  register wdmatlpa ro addr(base, 0x8) "Write DMA TLP Address" type(uint32);
+  register wdmatlps ro addr(base, 0xc) "Write DMA TLP Size" type(uint32);
+  register wdmatlpc ro addr(base, 0x10) "Write DMA TLP Count" type(uint32);
+  register wdmatlpp ro addr(base, 0x14) "Write DMA TLP Data Pattern" type(uint32);
+  register rdmatlpp ro addr(base, 0x18) "Read DMA TLP Expected Pattern" type(uint32);
+  register rdmatlpa ro addr(base, 0x1c) "Read DMA TLP Address" type(uint32);
+  register rdmatlps ro addr(base, 0x20) "Read DMA TLP Size" type(uint32);
+  register rdmatlpc ro addr(base, 0x24) "Read DMA TLP Count" type(uint32);
+  register wdmaperf ro addr(base, 0x28) "Write DMA Performance" type(uint32);
+  register rdmaperf ro addr(base, 0x2c) "Read DMA Performance" type(uint32);
+  register rdmastat ro addr(base, 0x30) "Read DMA Status" type(uint32);
+  register nrdcomp ro addr(base, 0x34) "Number of Rad Completion w/ data" type(uint32);
+  register rcompdsizw ro addr(base, 0x38) "Read Completion Data Size" type(uint32);
+
+  register dlwstat ro addr(base, 0x3c) "Device Link Width Status" {
+    capmaxwidth	   6  "cap. max width";
+    _		   2;
+    negmaxwidth	   6  "neg. max width";
+    _		   18;
+  };
+
+  register dltrsstat ro addr(base, 0x40) "Device Link Transaction Size Status" {
+    capmaxsize	   3  "cap. max size";
+    _		   5;
+    progmaxsize	   3  "prog. max size";
+    _		   5;
+    maxrdreqsize   3  "max. rd req size";
+    _		   13;
+  };
+
+  register dmisccont ro addr(base, 0x44) "Device Miscellaneous Control" type(uint32);
+
+  register id0 ro addr(base, 0x300) "BitSID" type(uint32);
+  register id1 rw addr(base, 0x304) "GRBTest" type(uint32);
+  register id2 rw addr(base, 0x308) "GRBTest" type(uint32);
+
+  register trnct0 ro addr(base, 0x30c) "BAR Win 0" type(uint32);
+  register trnct1 ro addr(base, 0x310) "BAR Win 1" type(uint32);
+  register trnct2 ro addr(base, 0x314) "BAR Win 2" type(uint32);
+  register trnct3 ro addr(base, 0x318) "BAR Win 3" type(uint32);
+
+  register trnct4 ro addr(base, 0x31c) "MIP/MOP" {
+    mopfifolvl	  15 "MOP FIFO level";
+    moperror	  1  "MOP Error";
+    mipfifolvl	  15 "MIP FIFO level";
+    miperror	  1  "MIP Error";
+  };
+
+  register trnct5 ro addr(base, 0x320) "Init" {
+    init   	  1  "Init";
+    trncte	  1  "TRNCTE";
+    _		  30;
+  };
+
+  register config ro addr(base, 0x324) "Config" {
+    softreset	  1  "Soft reset";
+    gen_memcomp	  1  "Gen Memcomp";
+    drop_memcomp  1  "Drop Memcomp";
+    rcinitdone	  1  "RC init done";
+    _		  28;
+  };
+
+  register debug ro addr(base, 0x328) "Debug" {
+    mipdisablerd    1  "MIP disable RD";
+    scemiloopback   1  "SCEMI loopback";
+    miprdtrig	    1  "MIP rd trig";
+    _		    29;
+  };
+
+  register scemidata0 ro addr(base, 0x32c) type(uint32);
+  register scemidata1 ro addr(base, 0x330) type(uint32);
+};

@@ -1,0 +1,222 @@
+\section{Supported PC hardware%
+  \label{supported-pc-hardware}%
+}
+
+Barrelfish supports following PC hardware :
+%
+\begin{quote}
+%
+\begin{itemize}
+
+\item x86 CPUs in either IA-32 or AMD64 mode. The following are known to work:
+%
+\begin{itemize}
+
+\item Intel Xeon Clovertown, Gainestown, Beckton (X5355, E5520, X7560, L5520,
+L7555)
+
+\item AMD Opteron Santa Rosa, Barcelona, Shanghai, Istanbul, Magny Cours
+(2220, 8350, 8374, 8380, 8431, 6174)
+
+\end{itemize}
+
+\end{itemize}
+
+\end{quote}
+
+The biggest compatibility problems are likely to be in the PCI/ACPI code. We
+usually discover new quirks (or missing functionality in the ACPI glue code)
+on each new machine we test. The following systems are known to work:
+%
+\begin{quote}
+%
+\begin{itemize}
+
+\item Intel x5000XVN
+
+\item Tyan n6650W and S4985
+
+\item Supermicro H8QM3-2
+
+\item Dell PowerEdge R610 and R905
+
+\item Sun Fire X2270 and X4440
+
+\item Intel/Quanta QSSC-S4R
+
+\item Lenovo X200 and X301 laptops
+
+\item ASUS Eee PC 1015PEM netbooks
+
+\end{itemize}
+
+\end{quote}
+
+The e1000n driver should work with most recent Intel gigabit ethernet
+controllers (see the list in devices/e1000.dev). We've mostly used the
+82572EI (PCI device ID 0x1082).
+
+You should also be able to boot Barrelfish on a recent version of QEMU (0.14);
+note that the e1000 device emulated by QEMU is not supported by our driver.
+
+
+\section{Required Tools%
+  \label{required-tools}%
+}
+
+The following are required to build Barrelfish and its tools:
+%
+\begin{quote}
+%
+\begin{itemize}
+
+\item GCC 4.x
+%
+\begin{itemize}
+
+\item 4.4.5, and 4.5.2 are known to work
+
+\item cross-compiling between i386 and x86\_64 works (requires libc6-dev-i386
+to build 32 bit on 64 bit machine)
+
+\item for the ARM port, we recommend the EABI tools available from \href{http://www.codesourcery.com/sgpp/lite/arm}{CodeSourcery}.
+
+\end{itemize}
+
+\item GNU binutils (2.19 is known to work)
+
+\item GNU make
+
+\item GHC v7.4 and Parsec 3.1
+- older versions of the tree supported v6.10 or v6.12.2 with Parsec 2.1
+- GHC v6.12.1 has a known bug and is unable to build our tools
+- earlier versions of GHC are unsupported
+
+\end{itemize}
+
+\end{quote}
+
+Our build system may not be very portable; if in doubt, try building on a
+recent Debian or Ubuntu system, as these are what we use.
+
+
+\section{Building%
+  \label{building}%
+}
+\newcounter{listcnt0}
+\begin{list}{\arabic{listcnt0}.}
+{
+\usecounter{listcnt0}
+\setlength{\rightmargin}{\leftmargin}
+}
+
+\item Assuming you have already unpacked the sources, create a build directory
+%
+\begin{quote}{\ttfamily \raggedright \noindent
+\$~mkdir~build~\&\&~cd~build
+}
+\end{quote}
+\end{list}
+
+1. Run \texttt{hake.sh}, giving it the path to the source directory and target
+architecture(s)
+%
+\begin{quote}{\ttfamily \raggedright \noindent
+\$~../hake/hake.sh~-s~../~-a~x86\_64
+}
+\end{quote}
+
+This will configure the build directory and use GHC to compile and then run
+hake, a tool used to generate the \texttt{Makefile}.
+
+3. Optionally, edit the configuration parameters in \texttt{hake/Config.hs} and
+run \texttt{make rehake} to apply them.
+\setcounter{listcnt0}{0}
+\begin{list}{\arabic{listcnt0}.}
+{
+\usecounter{listcnt0}
+\addtocounter{listcnt0}{3}
+\setlength{\rightmargin}{\leftmargin}
+}
+
+\item Run make, and wait
+%
+\begin{quote}{\ttfamily \raggedright \noindent
+\$~make
+}
+\end{quote}
+
+\item If everything worked, you should now be able to run Barrelfish inside QEMU
+%
+\begin{quote}{\ttfamily \raggedright \noindent
+\$~make~sim
+}
+\end{quote}
+\end{list}
+
+
+\section{Installing and Booting%
+  \label{installing-and-booting}%
+}
+
+Barrelfish requires a Multiboot-compliant bootloader that is capable of loading
+an ELF64 image. At the time of writing, this doesn't include the default GRUB.
+Your options are either:
+%
+\begin{quote}
+%
+\begin{itemize}
+
+\item use the pre-loader ``elver'' that can be found in the tools directory
+
+\item patch GRUB to support a 64-bit kernel image, using this \href{http://savannah.gnu.org/bugs/?17963}{patch}.
+
+\end{itemize}
+
+\end{quote}
+
+``Installing'' Barrelfish currently consists of copying the ELF files for the CPU
+driver and user programs to a location that the target machine can boot from,
+and writing a suitable menu.lst file that instructs the bootloader (GRUB) which
+programs to load and the arguments to pass them.
+
+If you specify an appropriate INSTALL\_PREFIX, \texttt{make install} will copy the
+binaries to the right place for you, eg
+%
+\begin{quote}{\ttfamily \raggedright \noindent
+\$~make~install~INSTALL\_PREFIX=/tftpboot/barrelfish
+}
+\end{quote}
+
+We usually boot Barrelfish via PXE/TFTP, although loading from a local disk
+also works. Instructions for setting up GRUB to do this are beyond the scope of
+this document. Assuming you have such a setup, here is a sample menu.lst file
+for a basic diskless boot that doesn't do anything useful beyond probing the
+PCI buses and starting a basic shell
+%
+\begin{quote}{\ttfamily \raggedright \noindent
+title~~~Barrelfish\\
+root~~~~(nd)\\
+kernel~/barrelfish/x86\_64/sbin/elver\\
+module~/barrelfish/x86\_64/sbin/cpu\\
+module~/barrelfish/x86\_64/sbin/init\\
+module~/barrelfish/x86\_64/sbin/mem\_serv\\
+module~/barrelfish/x86\_64/sbin/monitor\\
+module~/barrelfish/x86\_64/sbin/ramfsd~boot\\
+module~/barrelfish/x86\_64/sbin/skb~boot\\
+modulenounzip~/barrelfish/skb\_ramfs.cpio.gz~nospawn\\
+module~/barrelfish/x86\_64/sbin/acpi~boot\\
+module~/barrelfish/x86\_64/sbin/pci~boot\\
+module~/barrelfish/x86\_64/sbin/spawnd~boot\\
+module~/barrelfish/x86\_64/sbin/serial\\
+module~/barrelfish/x86\_64/sbin/fish
+}
+\end{quote}
+
+There are many other programs you can load (take a look around the usr tree for
+examples). To start a program on a core other than the BSP core, pass
+\texttt{core=N} as its first argument.
+
+If things work, you should see output on both the VGA console and COM1.
+
+

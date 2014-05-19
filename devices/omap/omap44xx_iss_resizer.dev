@@ -1,0 +1,665 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_resizer.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_resizer msbfirst ( addr base ) "" {
+    
+    
+    register rsz_revision ro addr(base, 0x0) "IP Revision Identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants rszb_clk_en_status width(1) "" {
+        RSZB_CLK_EN_0 = 0 "off";
+        RSZB_CLK_EN_1 = 1 "on";
+    };
+
+    constants autogating_status width(1) "" {
+        AUTOGATING_0 = 0 "Clocks are free running";
+        AUTOGATING_1 = 1 "Automatic clock gating strategy.";
+    };
+    
+    register rsz_sysconfig addr(base, 0x4) "SYSTEM CONFIGURATION REGISTER This register is not shadowed. There is no standalone software reset for the resizer module." {
+        _ 22 mbz;
+        rszb_clk_en 1 rw type(rszb_clk_en_status) "Resizer B clock enable This bit enable to enable / disable the RESIZER B clock. Note that it is a second level clock enable. This bit has effect only if RSZ_GCK_SDR is set to 1.";
+        rsza_clk_en 1 rw type(rszb_clk_en_status) "Resizer A clock enable This bit enable to enable / disable the RESIZER A clock. Note that it is a second level clock enable. This bit has effect only if RSZ_GCK_SDR is set to 1.";
+        _ 7 mbz;
+        autogating 1 rw type(autogating_status) "Internal Clock Gating Strategy Enables or disables auto clock gating.";
+    };
+    
+    register rsz_in_fifo_ctrl addr(base, 0xC) "INPUT DATA BUFFER CONTROL REGISTER This register is not shadowed" {
+        _ 3 mbz;
+        thrld_low 13 rw "WhenRSZ_IN_FIFO_CTRL.THRLD_HIGH = RSZ_IN_FIFO_CTRL.THRLD_LOW, the rsz_stall_input is not asserted. The only purpose of the RSZ_IN_FIFO_CTRL.THRLD_LOW register is to prevent rsz_stall_input signal assertion.";
+        _ 3 mbz;
+        thrld_high 13 rw "High threshold value. The rsz_stall_input signal is asserted if 2 lines of circular buffer are full and the third line has more pixels than RSZ_IN_FIFO_CTRL.THRLD_HIGH. The rsz_stall_input signal stays high as long as one full line is not free for receiving further data. THRLD_HIGH is in terms of line size and can at max be programmed equal to the input line size (RSZ_SRC_HSZ).";
+    };
+    
+    register rsz_gnc addr(base, 0x10) "GENERIC PARAMETER REGISTER" {
+        _ 3 mbz;
+        rszb_mem_line_size 13 ro "Resizer #B memory line size (pixels). The output image cannot exceed this size.";
+        _ 3 mbz;
+        rsza_mem_line_size 13 ro "Resizer #A memory line size (pixels). The output image cannot exceed this size.";
+    };
+    
+    register rsz_fracdiv addr(base, 0x14) "Fractional clock divider settings" {
+        _ 16 mbz;
+        rsz_fracdiv 16 rw "Fractional clock divider value. The fractional clock divider gates the read requests made to the input data buffer such that the input data buffer is read at an average frequency equal to FFCLK instead of FCLK. The value of FFCLK depends upon the upscaling ratios as well as the input pixel clock: see the functional spec. We have FFCLK = FCLK / FRACDIV MHz and RSZ_FRACDIV = 65536 / FRACDIV. When RSZ_ FRACDIV = 65536, we have: FFCLK = FCLK.";
+    };
+
+    constants en_status width(1) "" {
+        EN_0 = 0 "Disable";
+        EN_1 = 1 "Enable";
+    };
+    
+    register rsz_src_en addr(base, 0x20) "RESIZER ENABLE REGISTER This register is not shadowed" {
+        _ 31 mbz;
+        en 1 rw type(en_status) "Resizer module enable The start flag of the RESIZER module. When EN is set to 1, the RESIZER module starts the processing from the next rising edge of the VD pulse. If the processing mode of the RESIZER module is set to 'one shot', the EN bit is cleared to 0 after the end of the processing. One has to pay attention that when this bit is enabled and";
+    };
+
+    constants ost_status width(1) "" {
+        OST_0 = 0 "Free running";
+        OST_1 = 1 "One shot";
+    };
+    
+    register rsz_src_mode addr(base, 0x24) "This register is not shadowed" {
+        _ 30 mbz;
+        wrt 1 rw type(en_status) "Video port WEN signal selection This bit selects whether the WEN signal which is present on the IPIPE and IPIPEIF video port is used or not to select the input data. If WRT is 0, the RESIZER module ignores the WEN signal and processes all image frame while RESIZER is enabled. If WRT is 1, the RESIZER module only processes the lines that arrived while the WEN is high. HD is used to sample the WEN signal.";
+        ost 1 rw type(ost_status) "The processing mode selection of the RESIZER module. Value 0 indicates the mode of free run, value 1 indicates the mode of one shot.";
+    };
+
+    constants bypass_status width(1) "" {
+        BYPASS_0 = 0 "Pass through off = normal output mode, the input data buffer is used.";
+        BYPASS_1 = 1 "Pass through on = normal output mode, the input data buffer is bypassed.";
+    };
+
+    constants sel_status width(1) "" {
+        SEL_0 = 0 "IPIPE";
+        SEL_1 = 1 "IPIPEIF";
+    };
+    
+    register rsz_src_fmt0 addr(base, 0x28) "This register is not shadowed" {
+        _ 30 mbz;
+        bypass 1 rw type(bypass_status) "Pass Through This bit enables or disables the RESIZER module pass through mode. The pass through mode can transfer images which are 8K pixel wide. When it is enabled, the input data buffer and the resizer engines are bypassed.";
+        sel 1 rw type(sel_status) "Input selection This bit selects which of the two video port is selected to push data through the RESIZER module.";
+    };
+
+    constants col_status width(1) "" {
+        COL_0 = 0 "Y data is input";
+        COL_1 = 1 "Chroma data is input";
+    };
+
+    constants in420_status width(1) "" {
+        IN420_0 = 0 "YUV4:2:2 is input";
+        IN420_1 = 1 "YUV4:2:0 is input";
+    };
+
+    constants raw_status width(1) "" {
+        RAW_0 = 0 "Flipping preserves YCbCr format";
+        RAW_1 = 1 "Flipping preserves RAW format";
+    };
+    
+    register rsz_src_fmt1 addr(base, 0x2C) "" {
+        _ 29 mbz;
+        col 1 rw type(col_status) "Y/C selection This bit is valid only if the input data is YUV4:2:0 (IN420 = 1). It enables to specify where the data which is input to the RESIZER module is luma or chroma data.";
+        in420 1 rw type(in420_status) "Chroma Format Selection This bit sets the chroma undersampling when YUV data is input to the RESIZER module.";
+        raw 1 rw type(raw_status) "Pass-through mode input data format selection This bit affects the horizontal reversal (flipping) process.";
+    };
+    
+    register rsz_src_vps addr(base, 0x30) "VERTICAL POSITION REGISTER This register is not shadowed" {
+        _ 16 mbz;
+        vps 16 rw "Vertical Start Position Sets the vertical position of the global frame from the rising edge of the VD. The RSZ module will start the image processing from the VPS'th line. This value can be odd or even whatever the input data format.";
+    };
+    
+    register rsz_src_vsz addr(base, 0x34) "VERTICAL SIZER REGISTER" {
+        _ 19 mbz;
+        vsz 13 rw "Vertical Processing Size Sets the vertical size of the processing area. The RSZ module will process (VSZ+1) lines. This value can be odd or even whatever the input data format.";
+    };
+    
+    register rsz_src_hps addr(base, 0x38) "HORIZONTAL POSITION REGISTER This register is not shadowed" {
+        _ 16 mbz;
+        hps 16 rw "Horizontal Start Position The RSZ_SRC_HPS register has two functions: The first function is to compensate for possible delay between the HD pulse and the first valid data. It is possible for this delay to be different than 0 when the RESIZER module gets its input data from the VP connected to the IPIPEIF module (the offset value can be odd or even). When data are coming from the IPIPE module, it is not required to resynchronize HD and the first valid data. The second function is to crop the data in the horizontal direction. When used for cropping, only RSZ_SRC_HPS must be even or null.";
+    };
+    
+    register rsz_src_hsz addr(base, 0x3C) "HORIZONTAL SIZE REGISTER The HSZ value is given by HSZ concatenated with HSZ_LSB" {
+        _ 19 mbz;
+        hsz 13 rw "Horizontal size Sets the horizontal size of the processing area. The RSZ module processes (HSZ+1) pixels. (HSZ+1) must be even for YUV4:2:2 and RAW data. The valid available values for HSZ are 1~xxxx.";
+    };
+    
+    register rsz_dma_rza addr(base, 0x40) "RESIZER A - MEMORY REQUEST MINIMUM INTERVAL REGISTER" {
+        _ 16 mbz;
+        rza 16 rw "Sets the minimum interval btw two consecutive memory request for resizer #A. Specified in number of interface clock cycles. Values of 0, 1, and 2 are used as a condition to keep the bandwidth limiter off. When this function is enabled, this value must be greater than 10 cycles.";
+    };
+    
+    register rsz_dma_rzb addr(base, 0x44) "RESIZER B - MEMORY REQUEST MINIMUM INTERVAL REGISTER" {
+        _ 16 mbz;
+        rzb 16 rw "Sets the minimum interval btw two consecutive memory request for resizer #B. Specified in number of interface clock cycles. Values of 0, 1, and 2 are used as a condition to keep the bandwidth limiter off. When this function is enabled, this value must be greater than 10 cycles.";
+    };
+
+    constants status_status width(1) "" {
+        STATUS_1_r = 1 "Active";
+        STATUS_0_r = 0 "Not active";
+    };
+    
+    register rsz_dma_sta addr(base, 0x48) "RESIZER STATUS REGISTER" {
+        _ 31 mbz;
+        status 1 ro type(status_status) "Resizer process status This bit is set in the time window from rsz_int_reg to rsz_int_dma.";
+    };
+
+    constants mmr_status width(1) "" {
+        MMR_0 = 0 "Off";
+        MMR_1 = 1 "On";
+    };
+    
+    register rsz_gck_mmr addr(base, 0x4C) "MMR CLOCK CONTROL REGISTER This register is not shadowed" {
+        _ 31 mbz;
+        mmr 1 rw type(mmr_status) "The on/off selection of the MMR interface clock which is used for MMR register access.";
+    };
+
+    constants core_status width(1) "" {
+        CORE_0 = 0 "Resizer core clock disabled. Resizer in bypass mode if .BYPASS = 0 Resizer in pass-through if .BYPASS = 1";
+        CORE_1 = 1 "Resizer core clock enabled. Resizer in rescaling mode if .BYPASS = 0 Resizer in pass-through if .BYPASS = 1";
+    };
+    
+    register rsz_gck_sdr addr(base, 0x54) "CORE CLOCK CONTROL REGISTER This register is not shadowed" {
+        _ 31 mbz;
+        core 1 rw type(core_status) "RSZ Core Clock Enable. This bit enables or disables the resizer core functional clock. When this bit is off, the resizer core (interpolator) is automatically bypassed (resizer-bypass mode of pass-through mode is selected depending on RSZ_SRC_FMT0 value). In resizer-bypass mode or pass-through mode, no up-scaling or downscaling process is operated.";
+    };
+    
+    register rsz_irq_rza addr(base, 0x58) "RESIZER A - CIRCULAR BUFFER INTERRUPT INTERVAL REGISTER" {
+        _ 19 mbz;
+        rza 13 rw "Resizer A circular buffer interval Sets the circular buffer interval for Resizer A. The interrupt is triggered every time (RZA+1) lines are written to the circular buffer (Y buffer). The range goes from 1 to 8192 lines. Usually, the circular buffer vertical size should be a multiple of RZA.";
+    };
+    
+    register rsz_irq_rzb addr(base, 0x5C) "RESIZER B - CIRCULAR BUFFER INTERRUPT INTERVAL REGISTER" {
+        _ 19 mbz;
+        rzb 13 rw "Resizer B circular buffer interval Sets the circular buffer interval for Resizer B. The interrupt is triggered every time (RZB+1) lines are written to the circular buffer (Y buffer). The range goes from 1 to 8192 lines. Usually, the circular buffer vertical size should be a multiple of RZB.";
+    };
+    
+    register rsz_yuv_y_min addr(base, 0x60) "LUMINANCE SATURATION REGISTER" {
+        _ 24 mbz;
+        min 8 rw "The minimum value of Luminance (8bits unsigned). If the value of the Luminance is smaller than VAL, it will be clipped to VAL. This bit field must be set to its default values when the resizer is set in pass-though mode.";
+    };
+    
+    register rsz_yuv_y_max addr(base, 0x64) "LUMINANCE SATURATION REGISTER" {
+        _ 24 mbz;
+        max 8 rw "The maximum value of Luminance (8bits unsigned). If the value of the Luminance is larger than VAL, it will be clipped to VAL. This bit field must be set to its default values when the resizer is set in pass-through mode.";
+    };
+    
+    register rsz_yuv_c_min addr(base, 0x68) "CHROMINANCE SATURATION REGISTER" {
+        _ 24 mbz;
+        min 8 rw "The minimum value of Chrominance (8bits unsigned). If the value of the Chrominance is smaller than VAL, it will be clipped to VAL. This bit field must be set to its default values when the resizer is set in pass-though mode.";
+    };
+    
+    register rsz_yuv_c_max addr(base, 0x6C) "CHROMINANCE SATURATION REGISTER" {
+        _ 24 mbz;
+        max 8 rw "The maximum value of Chrominance (8bits unsigned). If the value of the Chrominance is larger than VAL, it will be clipped to VAL. This bit field must be set to its default values when the resizer is set in pass-through mode.";
+    };
+
+    constants pos_status width(1) "" {
+        POS_0 = 0 "Same position with Luminance: cosited";
+        POS_1 = 1 "The middle of the luminance: centered";
+    };
+    
+    register rsz_yuv_phs addr(base, 0x70) "The phase position of the output of the Chrominance" {
+        _ 31 mbz;
+        pos 1 rw type(pos_status) "The phase position of the output of the chrominance. The RESIZER module does not change the relative position of the chroma samples vs. the luma samples between the input and output and the chroma position at the output of the IPIPE module and at the output of the RESIZER module must be identical. In other words, we must have RSZ_YUV_PHS.POS = IPIPE_YUV_PHS.POS.";
+    };
+
+    constants crv_status width(1) "" {
+        CRV_0 = 0 "Chroma sampling point is not changed";
+        CRV_1 = 1 "Chroma sampling point is changed from odd-numbered pixels to even-number pixels. The pixel at the left end is removed and the pixel at the right end is duplicated.";
+    };
+    
+    register rsz_seq addr(base, 0x74) "" {
+        _ 27 mbz;
+        crv 1 rw type(crv_status) "Chroma sampling point change";
+        vrvb 1 rw type(bypass_status) "Resizer B - Vertical reversal of output image";
+        hrvb 1 rw type(bypass_status) "Resizer B -Horizontal reversal of output image";
+        vrva 1 rw type(bypass_status) "Resizer A - Vertical reversal of output image";
+        hrva 1 rw type(bypass_status) "Resizer A - Horizontal reversal of output image";
+    };
+    
+    register rza_en addr(base, 0x78) "RESIZER A - ENABLE REGISTER" {
+        _ 31 mbz;
+        en 1 rw type(en_status) "Enable resizer #A This bit is latched on video port VD input. The reason is that the resizer must only starts the processing on a clean frame boundary. In one-shot mode, this bit is negated on VD.";
+    };
+
+    constants mode_status width(1) "" {
+        MODE_0 = 0 "Free run";
+        MODE_1 = 1 "One shot";
+    };
+    
+    register rza_mode addr(base, 0x7C) "RESIZER #A MODE REGISTER" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select 'Free Run mode' or 'One Shot Mode'";
+    };
+
+    constants cen_status width(1) "" {
+        CEN_0 = 0 "C output disable";
+        CEN_1 = 1 "C output enable and 422to420 conversion enabled";
+    };
+
+    constants yen_status width(1) "" {
+        YEN_0 = 0 "Y output disable";
+        YEN_1 = 1 "Y output enable and 422to420 conversion enabled";
+    };
+    
+    register rza_420 addr(base, 0x80) "YEN/CEN: 0/0: in = YUV4:2:2 input, out = YUV4:2:2 output 0/1: in = YUV4:2:2 input, out = Chrominance of YUV4:2:0 output 1/0: in = YUV4:2:2 input, out = Luminance of YUV4:2:0 output 1/1: in = YUV4:2:2 input, out = YUV4:2:0 output" {
+        _ 30 mbz;
+        cen 1 rw type(cen_status) "Output Enable for Chrominance This bit is valid in 422 input mode. When CEN=0 and YEN=0, output is 422";
+        yen 1 rw type(yen_status) "Output Enable for Luminance. This bit is valid in 422 input mode. When CEN=0 and YEN=0, output is 422";
+    };
+    
+    register rza_i_vps addr(base, 0x84) "RESIZER A - INPUT VERTICAL START REGISTER The height of the image after the second-level crop must be 2 or larger." {
+        _ 19 mbz;
+        vps 13 rw "Input Vertical Position Sets the vertical start position of the input image within the global frame. It enables to crop data into the global frame. After SRC_VPS, the Vps'th line is processed as the first line in each image. After the second-level crop, the height of the image area must be two lines or larger, that is, a one-line image is not allowed. (RSZ_SRC_VSZ - RZA_I_VPS &amp;gt; 0).";
+    };
+    
+    register rza_i_hps addr(base, 0x88) "RESIZER A - INPUT HORIZONTAL START REGISTER" {
+        _ 19 mbz;
+        hps 13 rw "Input Horizontal Position Sets the horizontal position of the first pixel for each line within the global frame. After SRC_HPS, the pixel at the VAL'th position is processed as the first pixel. This value must be even.";
+    };
+    
+    register rza_o_vsz addr(base, 0x8C) "RESIZER A - OUTPUT VERTICAL SIZER REGISTER" {
+        _ 19 mbz;
+        vsz 13 rw "The target output size of the resized image. The number of output lines is (VSZ+1). Set 479, when 480 lines of output is required.";
+    };
+    
+    register rza_o_hsz addr(base, 0x90) "RESIZER A - OUTPUT HORIZONTAL SIZE REGISTER" {
+        _ 19 mbz;
+        hsz 12 rw "The horizontal size of output image. The number of pixel in each line is (HSZ+1). Set 479, when 480 pixels are required. This value must be lower than the max memory line size supported by the resizer engine, except in RAW pass through mode. Note that the LSB of the 13-bit HSZ value is fixed to 1 such that the horizontal size is always even.";
+        hsz_lsb 1 ro "The least significant bit of HSZ is forced to 1.";
+    };
+    
+    register rza_v_phs_y addr(base, 0x94) "RESIZER A - INITIAL LUMINANCE PHASE OF VERTICAL RESIZING PROCESS When YUV4:2:2 data are output, the phase values for luma and chroma should typically be equal, that is, RZX_V_PHS_Y= RZX_V_PHS_C. The following constraints apply when setting the initial vertical phases ABS(RZX_V_PHS_Y - RZX_V_PHS_C) RZX_V_DIF. This constraint means that at most the distance between the initial phases for luminance and chrominance is not expected to exceed the distance between two luma pixels. Note that the absolute value is used, hence, the initial luma phase can be greater than the initial chroma phase or the other way around. As a reminder, the distance between two output pixels for luma is given by RZX_V_DIF." {
+        _ 18 mbz;
+        y 14 rw "The initial value for the luma phase in vertical resizing process. This value is in U14Q8 fractional format.";
+    };
+    
+    register rza_v_phs_c addr(base, 0x98) "RESIZER A - INITIAL CHROMINANCE PHASE OF VERTICAL RESIZING PROCESS When YUV4:2:2 data are output, the phase values for luma and chroma should typically be equal, that is, RZX_V_PHS_Y= RZX_V_PHS_C. The following constraints apply when setting the initial vertical phases ABS(RZX_V_PHS_Y - RZX_V_PHS_C) RZX_V_DIF. This constraint means that at most the distance between the initial phases for luminance and chrominance is not expected to exceed the distance between two luma pixels. Note that the absolute value is used, hence, the initial luma phase can be greater than the initial chroma phase or the other way around. As a reminder, the distance between two output pixels for luma is given by RZX_V_DIF." {
+        _ 18 mbz;
+        c 14 rw "The initial value for the chroma phase in vertical resizing process. This value is in U14Q8 fractional format.";
+    };
+    
+    register rza_v_dif addr(base, 0x9C) "RESIZER A - VERTICAL RESIZER REGISTER" {
+        _ 18 mbz;
+        v 14 rw "The parameter for vertical resize. The actual resizing ratio is 256/RZA_V_DIF. In normal mode: 16 &amp;lt;= RZA_V_DIF &amp;lt;= 4096. In down-scale mode: 256 &amp;lt;= RZA_V_DIF &amp;lt;= 4096.";
+    };
+
+    constants c_status width(1) "" {
+        C_0 = 0 "4-tap cubic convolution (default)";
+        C_1 = 1 "2-tap linear interpolation";
+    };
+    
+    register rza_v_typ addr(base, 0xA0) "RESIZER A - INTERPOLATION METHOD FOR VERTICAL RESIZING" {
+        _ 30 mbz;
+        c 1 rw type(c_status) "Selection of resizing method for chrominance: vertical";
+        y 1 rw type(c_status) "Selection of resizing method for luminance: vertical";
+    };
+    
+    register rza_v_lpf addr(base, 0xA4) "RESIZER A - VERTICAL LPF INTENSITY REGISTER" {
+        _ 20 mbz;
+        c 6 rw "The intensity parameter for chroma vertical low pass filtering.";
+        y 6 rw "The intensity parameter for luma vertical low pass filtering.";
+    };
+    
+    register rza_h_phs addr(base, 0xA8) "RESIZER A - INITIAL PHASE OF HORIZONTAL RESIZING PROCESS" {
+        _ 18 mbz;
+        phs 14 rw "Initial value for the phase in horizontal resizing process, that is, the sampling position is shifted. This value is in U14Q8 fractional format. Example: If RZX_H_PHS = 128, the first output pixel is sampled at the center of the first two valid input pixels. If RZX_I_HPS=100 and RZX_H_PHS=128, the first output pixel is resampled at the center of the 100-th and the 101-st input pixels.";
+    };
+    
+    register rza_h_phs_adj addr(base, 0xAC) "RESIZER A - LUMINANCE HORIZONTAL PHASE ADJUSTMENT The register enables to adjust the horizontal phase for the luma component when averaging is enabled (the horizontal averaging disrupts the relative sampling point between luminance and chrominance when YUV4:2:2 cosited data is input), that is, the relative phase between luma and chroma is different before and after the horizontal averager." {
+        _ 23 mbz;
+        adj 9 rw "Horizontal phase adjustment value. This value is in U9Q8 fractional format. This value is expected to be equal to zero if the averager is disabled or if input chroma is centered.";
+    };
+    
+    register rza_h_dif addr(base, 0xB0) "RESIZER A - HORIZONTAL RESIZER REGISTER" {
+        _ 18 mbz;
+        h 14 rw "The parameter for horizontal resizing process. The actual resizing ratio is 256/VAL. In normal mode 16 &amp;lt;= RSZ_RZA_H_DIF&amp;lt;=4096 In down-scale mode 256&amp;lt;=RSZ_RZA_H_DIF&amp;lt;=4096";
+    };
+    
+    register rza_h_typ addr(base, 0xB4) "Resize-A" {
+        _ 30 mbz;
+        c 1 rw type(c_status) "Selection of resizing method for chrominance: horizontal";
+        y 1 rw type(c_status) "Selection of resizing method for luminance: horizontal";
+    };
+    
+    register rza_h_lpf addr(base, 0xB8) "RESIZER A - HORIZONTAL LPF INTENSITY REGISTER" {
+        _ 20 mbz;
+        c 6 rw "Horizontal LPF Intensity for Chrominance";
+        y 6 rw "Selection of resizing method for Luminance in horizontal direction";
+    };
+
+    constants dwn_en_status width(1) "" {
+        DWN_EN_0 = 0 "Off. Normal operation: upscale and downscale are allowed.";
+        DWN_EN_1 = 1 "On. Downscale mode.";
+    };
+    
+    register rza_dwn_en addr(base, 0xBC) "RESIZER #A - DOWNSCALE ENABLE REGISTER" {
+        _ 31 mbz;
+        dwn_en 1 rw type(dwn_en_status) "Resizer downscale enable";
+    };
+    
+    register rza_dwn_av addr(base, 0xC0) "Resize-A" {
+        _ 26 mbz;
+        v 3 rw "Vertical averaging size : 1/2 The range goes from 1/2 to 1/256 in power of two. 0:_DIV2 1/2 down scale 1:_DIV4 1/4 down scale 2:_DIV8 1/8 down scale 3:_DIV16 1/16 down scale 4:_DIV32 1/32 down scale 5:_DIV64 1/64 down scale 6:_DIV128 1/128 down scale 7:_DIV256 1/256 down scale";
+        h 3 rw "Horizontal averaging size : 1/2 The range goes from 1/2 to 1/256 in power of two. 0:_DIV2 1/2 down scale 1:_DIV4 1/4 down scale 2:_DIV8 1/8 down scale 3:_DIV16 1/16 down scale 4:_DIV32 1/32 down scale 5:_DIV64 1/64 down scale 6:_DIV128 1/128 down scale 7:_DIV256 1/256 down scale";
+    };
+
+    constants rgb_en_status width(1) "" {
+        RGB_EN_0 = 0 "Off (YCbCr output)";
+        RGB_EN_1 = 1 "On (RGB output)";
+    };
+    
+    register rza_rgb_en addr(base, 0xC4) "RESIZER #A - RGB OUTPUT ENABLE" {
+        _ 31 mbz;
+        rgb_en 1 rw type(rgb_en_status) "Enable of RGB output In pass through mode, this register must be 0. This bit can only be set to 1 when YUV4:2:2 data are output. YUV4:2:2 data output is selected when SRC_FMT1.IN420 = 0 and RZA_420.YEN = RZA_420.CEN = 0";
+    };
+
+    constants msk1_status width(1) "" {
+        MSK1_0 = 0 "output the last 2 pixels";
+        MSK1_1 = 1 "mask the last 2 pixels (Resizer do not output them.)";
+    };
+
+    constants msk0_status width(1) "" {
+        MSK0_0 = 0 "output the first 2 pixels";
+        MSK0_1 = 1 "mask the first 2 pixels (Resizer do not output them.)";
+    };
+
+    constants typ_status width(1) "" {
+        TYP_0 = 0 "32-bit output: alpha + R + G + B (8 bit each) This mode comes with performance degradation. The maximum input frequency in this mode is 160 MHz. This due to the fact that the output is 4 bytes / pixel.";
+        TYP_1 = 1 "16-bit output: R(5 bit) + G (6 bit) + B (5 bit)";
+    };
+    
+    register rza_rgb_typ addr(base, 0xC8) "RESIZER A - RGB OUTPUT CONTROL REGISTER" {
+        _ 29 mbz;
+        msk1 1 rw type(msk1_status) "Enables masking of the last 2 pixels This bit is used to mask the 2 last pixels at the image boundary which are affected by the YUV4:2:2 to YUV4:4:4 conversion.";
+        msk0 1 rw type(msk0_status) "Enables masking of the first 2 pixels This bit is used to mask the 2 first pixels at the image boundary which are affected by the YUV4:2:2 to YUV4:4:4 conversion.";
+        typ 1 rw type(typ_status) "16bit/32bit output selection";
+    };
+    
+    register rza_rgb_bld addr(base, 0xCC) "RESIZER A - RGB BLEND REGISTER" {
+        _ 24 mbz;
+        bld 8 rw "The alpha value used in 32-bit RGBA output mode";
+    };
+    
+    register rza_sdr_y_bad_h addr(base, 0xD0) "RESIZER A - OUTPUT MEMORY BASE ADDRESS REGISTER (HIGH) This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0, RGB5:6:5, RGBA. RAW: RAW data is written to this address YUV4:2:2: YUV data is written to this address YUV4:2:0: Y data is written to this address RGB5:6:5: 16-bit RGB data is written to this address RGBA: 32-bit RGBA data is written to this address" {
+        _ 16 mbz;
+        y_bad_h 16 rw "Memory Base Address Sets the 16 upper bits of the 32-bit base address of the circular buffer in memory.";
+    };
+    
+    register rza_sdr_y_bad_l addr(base, 0xD4) "RESIZER A - OUTPUT MEMORY BASE ADDRESS REGISTER (LOW) This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0, RGB5:6:5, RGBA. RAW: RAW data is written to this address YUV4:2:2: YUV data is written to this address YUV4:2:0: Y data is written to this address RGB5:6:5: 16-bit RGB data is written to this address RGBA: 32-bit RGBA data is written to this address" {
+        _ 16 mbz;
+        y_bad_l 16 rw "Memory Base Address Sets the 16 lower bits of the 32-bit base address of the circular buffer in memory. It is a byte address. YUV4:2:0 format (output data on 8 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on. RAW, RGB5:6:5 and YUV4:2:2 formats (output data on 16 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on. RGBA format (output data on 32 bits): The three least significant bits must be set to '000' when horizontal reversal mode is off. The three least significant bits must be set to '111' when horizontal reversal mode is on.";
+    };
+    
+    register rza_sdr_y_sad_h addr(base, 0xD8) "RESIZER A - OUTPUT MEMORY START ADDRESS REGISTER (HIGH) This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0, RGB5:6:5, RGBA. RAW: RAW data is written to this address YUV4:2:2: YUV data is written to this address YUV4:2:0: Y data is written to this address RGB5:6:5: 16-bit RGB data is written to this address RGBA: 32-bit RGBA data is written to this address" {
+        _ 16 mbz;
+        y_sad_h 16 rw "Memory Start Address Sets the 16 upper bits of the 32-bit start address in memory.";
+    };
+    
+    register rza_sdr_y_sad_l addr(base, 0xDC) "RESIZER A - OUTPUT MEMORY START ADDRESS REGISTER (LOW) This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0, RGB5:6:5, RGBA. RAW: RAW data is written to this address YUV4:2:2: YUV data is written to this address YUV4:2:0: Y data is written to this address RGB5:6:5: 16-bit RGB data is written to this address RGBA: 32-bit RGBA data is written to this address" {
+        _ 16 mbz;
+        y_sad_l 16 rw "Memory Start Address Sets 16 lower bits of the 32-bit start address in memory. It is a byte address. For every frame, the first line of data will be written to this address. We have: SAD = BAD + (PTR_S x OFT) and PTR_S &amp;lt; PTR_E If the first line must be written at the beginning of the circular buffer memory then SAD = BAD and PTR_S = 0. YUV4:2:0 format (output data on 8 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on. RAW, RGB5:6:5 and YUV4:2:2 formats (output data on 16 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on. RGBA format (output data on 32 bits): The three least significant bits must be set to '000' when horizontal reversal mode is off. The three least significant bits must be set to '111' when horizontal reversal mode is on.";
+    };
+    
+    register rza_sdr_y_oft addr(base, 0xE0) "RESIZER A - OUTPUT MEMORY OFFSET REGISTER This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0 or RGBA." {
+        _ 15 mbz;
+        y_oft 17 rw "Memory Line Offset Sets the size of each line in the circular buffer. It is expressed in bytes and unsigned. Note that OFT does not necessary corresponds to the size of a line in a frame, it can be much bigger. The line offset must be a multiple of 128 bytes (bits [6:0] of RZX_SDR_Y_OFT and RZX_SDR_C_OFT must be set to 0). Example: line 0 address = SAD line 1 address = SAD + 1 x OFT line 2 address = SAD + 2 x OFT";
+    };
+    
+    register rza_sdr_y_ptr_s addr(base, 0xE4) "RESIZER A - OUTPUT MEMORY START ADDRESS REGISTER This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0 or RGBA." {
+        _ 19 mbz;
+        y_ptr_s 13 rw "Start Line of Memory Pointer Sets the vertical position of the first output line in the output memory space. This value is expressed in number of lines. The hardware uses it to set up the initial value of the circular buffer. It must be set up such as PTR_S = (SAD - BAD) / OFT. This value must be set to 0 when RSZ_RZA_SDR_Y_BAD = RSZ_RZA_SDR_Y_SAD.";
+    };
+    
+    register rza_sdr_y_ptr_e addr(base, 0xE8) "RESIZER A - OUTPUT MEMORY END ADDRESS REGISTER This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0 or RGBA." {
+        _ 19 mbz;
+        y_ptr_e 13 rw "End Line of Memory Pointer Sets the maximum number of lines to be stored in the output memory space. This value is expressed in number of lines. When the number of output lines exceeds this value, the address restarts from the first address in the output memory space (BAD).";
+    };
+    
+    register rza_sdr_c_bad_h addr(base, 0xEC) "RESIZER A - OUTPUT MEMORY BASE ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0. U and V data are written into this buffer." {
+        _ 16 mbz;
+        c_bad_h 16 rw "Memory Base Address Sets the 16 higher bits of the 32-bit base address of the circular buffer in memory.";
+    };
+    
+    register rza_sdr_c_bad_l addr(base, 0xF0) "RESIZER A - OUTPUT MEMORY BASE ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0. U and V data are written into this buffer." {
+        _ 16 mbz;
+        c_bad_l 16 rw "Memory Base Address Sets the 16 lower bits of the 32-bit base address of the circular buffer in memory. It is a byte address. YUV4:2:0 format (output data on 8 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on.";
+    };
+    
+    register rza_sdr_c_sad_h addr(base, 0xF4) "RESIZER A - OUTPUT MEMORY START ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0. U and V data are written into this buffer." {
+        _ 16 mbz;
+        c_sad_h 16 rw "Memory Base Address Sets the 16 higher bits of the 32-bit start address in memory.";
+    };
+    
+    register rza_sdr_c_sad_l addr(base, 0xF8) "RESIZER A - OUTPUT MEMORY START ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0. U and V data are written into this buffer." {
+        _ 16 mbz;
+        c_sad_l 16 rw "Memory Base Address Sets the 16 lower bits of the 32-bit start address in memory. It is a byte address. For every frame, the first line of data will be written to this address. We have: SAD = BAD + (PTR_S x OFT) and PTR_S &amp;lt; PTR_E If the first line must be written at the beginning of the circular buffer memory then SAD = BAD and PTR_S = 0. YUV4:2:0 format (output data on 8 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on.";
+    };
+    
+    register rza_sdr_c_oft addr(base, 0xFC) "RESIZER A - OUTPUT MEMORY OFFSET REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0" {
+        _ 15 mbz;
+        c_oft 17 rw "Memory Line Offset Sets the size of each line in the circular buffer. It is expressed in bytes and unsigned. Note that OFT does not necessary corresponds to the size of a line in a frame, it can be much bigger. The line offset must be a multiple of 128 bytes (bits [6:0] of RZX_SDR_Y_OFT and RZX_SDR_C_OFT must be set to 0). Example: line 0 address = SAD line 1 address = SAD + 1 x OFT line 2 address = SAD + 2 x OFT";
+    };
+    
+    register rza_sdr_c_ptr_s addr(base, 0x100) "RESIZER A - OUTPUT MEMORY START ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0" {
+        _ 19 mbz;
+        c_ptr_s 13 rw "Start Line of Memory Pointer Sets the vertical position of the first output line in the output memory space. This value is expressed in number of lines. The hardware uses it to set up the initial value of the circular buffer. It must be set up such as PTR_S = (SAD - BAD) / OFT. This value must be set to 0 when RSZ_RZA_SDR_C_BAD = RSZ_RZA_SDR_C_SAD.";
+    };
+    
+    register rza_sdr_c_ptr_e addr(base, 0x104) "RESIZER A - OUTPUT MEMORY END ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0" {
+        _ 19 mbz;
+        c_ptr_e 13 rw "End Line of Memory Pointer Sets the maximum number of lines to be stored in the output memory space. This value is expressed in number of lines. When the number of output lines exceeds this value, the address restarts from the first address in the output memory space (BAD).";
+    };
+    
+    register rzb_en addr(base, 0x108) "RESIZER B - ENABLE REGISTER" {
+        _ 31 mbz;
+        en 1 rw type(en_status) "Enable resizer #A This bit is latched on the video port VD input signal. The reason is that the resizer must only starts the processing on a clean frame boundary. In one-shot mode, this bit is negated on VD.";
+    };
+    
+    register rzb_mode addr(base, 0x10C) "RESIZER B MODE REGISTER" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select 'Free Run mode' or 'One Shot Mode'";
+    };
+    
+    register rzb_420 addr(base, 0x110) "YEN/CEN: 0/0: in = YUV4:2:2 input, out = YUV4:2:2 output 0/1: in = YUV4:2:2 input, out = Chrominance of YUV4:2:0 output 1/0: in = YUV4:2:2 input, out = Luminance of YUV4:2:0 output 1/1: in = YUV4:2:2 input, out = YUV4:2:0 output" {
+        _ 30 mbz;
+        cen 1 rw type(cen_status) "Output Enable for Chrominance This bit is valid in 422 input mode. When CEN=0 and YEN=0, output is 422";
+        yen 1 rw type(yen_status) "Output Enable for Luminance. This bit is valid in 422 input mode. When CEN=0 and YEN=0, output is 422";
+    };
+    
+    register rzb_i_vps addr(base, 0x114) "RESIZER B - INPUT VERTICAL START REGISTER The height of the image after the second-level crop must be 2 or larger." {
+        _ 19 mbz;
+        vps 13 rw "Input Vertical Position Sets the vertical start position of the input image within the global frame. It enables to crop data into the global frame. After SRC_VPS, the Vps'th line is processed as the first line in each image. After the second-level crop, the height of the image area must be two lines or larger, that is, a one-line image is not allowed. (RSZ_SRC_VSZ - RZB_I_VPS &amp;gt; 0).";
+    };
+    
+    register rzb_i_hps addr(base, 0x118) "RESIZER B - INPUT HORIZONTAL START REGISTER" {
+        _ 19 mbz;
+        hps 13 rw "Input Horizontal Position Sets the horizontal position of the first pixel for each line within the global frame. After SRC_HPS, the pixel at the VAL'th position is processed as the first pixel. This value must be even.";
+    };
+    
+    register rzb_o_vsz addr(base, 0x11C) "RESIZER B - OUTPUT VERTICAL SIZER REGISTER" {
+        _ 19 mbz;
+        vsz 13 rw "The target output size of the resized image. The number of output lines is (VSZ+1). Set 479, when 480 lines of output is required.";
+    };
+    
+    register rzb_o_hsz addr(base, 0x120) "RESIZER B - OUTPUT HORIZONTAL SIZE REGISTER" {
+        _ 19 mbz;
+        hsz 12 rw "The horizontal size of output image. The number of pixel in each line is (HSZ+1). Set 479, when 480 pixels are required. This value must be lower than the max memory line size supported by the resizer engine, except in RAW pass through mode. Note that the LSB of the 13-bit HSZ value is fixed to 1 such that the horizontal size is always even.";
+        hsz_lsb 1 ro "The least significant bit of HSZ is forced to 1.";
+    };
+    
+    register rzb_v_phs_y addr(base, 0x124) "RESIZER B - INITIAL LUMINANCE PHASE OF VERTICAL RESIZING PROCESS When YUV4:2:2 data are output, the phase values for luma and chroma should typically be equal, that is, RZX_V_PHS_Y= RZX_V_PHS_C. The following constraints apply when setting the initial vertical phases ABS(RZX_V_PHS_Y - RZX_V_PHS_C) RZX_V_DIF. This constraint means that at most the distance between the initial phases for luminance and chrominance is not expected to exceed the distance between two luma pixels. Note that the absolute value is used, hence, the initial luma phase can be greater than the initial chroma phase or the other way around. As a reminder, the distance between two output pixels for luma is given by RZX_V_DIF." {
+        _ 18 mbz;
+        y 14 rw "The initial value for the luma phase in vertical resizing process. This value is in U14Q8 fractional format.";
+    };
+    
+    register rzb_v_phs_c addr(base, 0x128) "RESIZER B - INITIAL CHROMINANCE PHASE OF VERTICAL RESIZING PROCESS When YUV4:2:2 data are output, the phase values for luma and chroma should typically be equal, that is, RZX_V_PHS_Y= RZX_V_PHS_C. The following constraints apply when setting the initial vertical phases ABS(RZX_V_PHS_Y - RZX_V_PHS_C) RZX_V_DIF. This constraint means that at most the distance between the initial phases for luminance and chrominance is not expected to exceed the distance between two luma pixels. Note that the absolute value is used, hence, the initial luma phase can be greater than the initial chroma phase or the other way around. As a reminder, the distance between two output pixels for luma is given by RZX_V_DIF." {
+        _ 18 mbz;
+        c 14 rw "The initial value for the chroma phase in vertical resizing process. This value is in U14Q8 fractional format.";
+    };
+    
+    register rzb_v_dif addr(base, 0x12C) "RESIZER B - VERTICAL RESIZER REGISTERR" {
+        _ 18 mbz;
+        v 14 rw "The parameter for vertical resize. The actual resizing ratio is 256/RZB_V_DIF. In normal mode: 16 &amp;lt;= RZB_V_DIF &amp;lt;= 4096. In down-scale mode: 256 &amp;lt;= RZB_V_DIF &amp;lt;= 4096.";
+    };
+    
+    register rzb_v_typ addr(base, 0x130) "RESIZER B - INTERPOLATION METHOD FOR VERTICAL RESIZING" {
+        _ 30 mbz;
+        c 1 rw type(c_status) "Selection of resizing method for chrominance: vertical";
+        y 1 rw type(c_status) "Selection of resizing method for luminance: vertical";
+    };
+    
+    register rzb_v_lpf addr(base, 0x134) "RESIZER B - VERTICAL LPF INTENSITY REGISTER" {
+        _ 20 mbz;
+        c 6 rw "The intensity parameter for chroma vertical low pass filtering.";
+        y 6 rw "The intensity parameter for luma vertical low pass filtering.";
+    };
+    
+    register rzb_h_phs addr(base, 0x138) "RESIZER B - INITIAL PHASE OF HORIZONTAL RESIZING PROCESS" {
+        _ 18 mbz;
+        phs 14 rw "Initial value for the phase in horizontal resizing process, that is, the sampling position is shifted. This value is in U14Q8 fractional format. Example: If RZX_H_PHS = 128, the first output pixel is sampled at the center of the first two valid input pixels. If RZX_I_HPS=100 and RZX_H_PHS=128, the first output pixel is resampled at the center of the 100-th and the 101-st input pixels.";
+    };
+    
+    register rzb_h_phs_adj addr(base, 0x13C) "RESIZER B - LUMINANCE HORIZONTAL PHASE ADJUSTMENT The register enables to adjust the horizontal phase for the luma component when averaging is enabled (the horizontal averaging disrupts the relative sampling point between luminance and chrominance when YUV4:2:2 cosited data is input), that is, the relative phase between luma and chroma is different before and after the horizontal averager." {
+        _ 23 mbz;
+        adj 9 rw "Horizontal phase adjustment value. This value is in U9Q8 fractional format. This value is expected to be equal to zero if the averager is disabled or if input chroma is centered.";
+    };
+    
+    register rzb_h_dif addr(base, 0x140) "RESIZER B - HORIZONTAL RESIZER REGISTER" {
+        _ 18 mbz;
+        h 14 rw "The parameter for horizontal resizing process. The actual resizing ratio is 256/VAL. In normal mode 16 &amp;lt;= RSZ_RZA_H_DIF&amp;lt;=4096 In down-scale mode 256&amp;lt;=RSZ_RZA_H_DIF&amp;lt;=4096";
+    };
+    
+    register rzb_h_typ addr(base, 0x144) "RESIZER B" {
+        _ 30 mbz;
+        c 1 rw type(c_status) "Selection of resizing method for chrominance: horizontal";
+        y 1 rw type(c_status) "Selection of resizing method for luminance: horizontal";
+    };
+    
+    register rzb_h_lpf addr(base, 0x148) "RESIZER B - HORIZONTAL LPF INTENSITY REGISTER" {
+        _ 20 mbz;
+        c 6 rw "Horizontal LPF Intensity for Chrominance";
+        y 6 rw "Selection of resizing method for Luminance in horizontal direction";
+    };
+    
+    register rzb_dwn_en addr(base, 0x14C) "RESIZER B - DOWNSCALE ENABLE REGISTER" {
+        _ 31 mbz;
+        dwn_en 1 rw type(dwn_en_status) "Resizer downscale enable";
+    };
+    
+    register rzb_dwn_av addr(base, 0x150) "RESIZER B" {
+        _ 26 mbz;
+        v 3 rw "Vertical averaging size : 1/2 The range goes from 1/2 to 1/256 in power of two. 0:_DIV2 1/2 down scale 1:_DIV4 1/4 down scale 2:_DIV8 1/8 down scale 3:_DIV16 1/16 down scale 4:_DIV32 1/32 down scale 5:_DIV64 1/64 down scale 6:_DIV128 1/128 down scale 7:_DIV256 1/256 down scale";
+        h 3 rw "Horizontal averaging size : 1/2 The range goes from 1/2 to 1/256 in power of two. 0:_DIV2 1/2 down scale 1:_DIV4 1/4 down scale 2:_DIV8 1/8 down scale 3:_DIV16 1/16 down scale 4:_DIV32 1/32 down scale 5:_DIV64 1/64 down scale 6:_DIV128 1/128 down scale 7:_DIV256 1/256 down scale";
+    };
+    
+    register rzb_rgb_en addr(base, 0x154) "RESIZER B - RGB OUTPUT ENABLE" {
+        _ 31 mbz;
+        rgb_en 1 rw type(rgb_en_status) "Enable of RGB output In pass through mode, this register must be 0. This bit can only be set to 1 when YUV4:2:2 data are output. YUV4:2:2 data output is selected when SRC_FMT1.IN420 = 0 and RZB_420.YEN = RZB_420.CEN = 0";
+    };
+    
+    register rzb_rgb_typ addr(base, 0x158) "RESIZER B - RGB OUTPUT CONTROL REGISTER" {
+        _ 29 mbz;
+        msk1 1 rw type(msk1_status) "Enables masking of the last 2 pixels This bit is used to mask the 2 last pixels at the image boundary which are affected by the YUV4:2:2 to YUV4:4:4 conversion.";
+        msk0 1 rw type(msk0_status) "Enables masking of the first 2 pixels This bit is used to mask the 2 first pixels at the image boundary which are affected by the YUV4:2:2 to YUV4:4:4 conversion.";
+        typ 1 rw type(typ_status) "16bit/32bit output selection";
+    };
+    
+    register rzb_rgb_bld addr(base, 0x15C) "RESIZER B - RGB BLEND REGISTER" {
+        _ 24 mbz;
+        bld 8 rw "The alpha value used in 32-bit RGBA output mode";
+    };
+    
+    register rzb_sdr_y_bad_h addr(base, 0x160) "RESIZER B - OUTPUT MEMORY BASE ADDRESS REGISTER This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0, RGB5:6:5, RGBA. RAW: RAW data is written to this address YUV4:2:2: YUV data is written to this address YUV4:2:0: Y data is written to this address RGB5:6:5: 16-bit RGB data is written to this address RGBA: 32-bit RGBA data is written to this address" {
+        _ 16 mbz;
+        y_bad_h 16 rw "Memory Base Address Sets 16 upper bits of the 32-bit base address of the circular buffer in memory.";
+    };
+    
+    register rzb_sdr_y_bad_l addr(base, 0x164) "RESIZER B - OUTPUT MEMORY BASE ADDRESS REGISTER This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0, RGB5:6:5, RGBA. RAW: RAW data is written to this address YUV4:2:2: YUV data is written to this address YUV4:2:0: Y data is written to this address RGB5:6:5: 16-bit RGB data is written to this address RGBA: 32-bit RGBA data is written to this address" {
+        _ 16 mbz;
+        y_bad_l 16 rw "Memory Base Address Sets the 16 lower bits of the 32-bit base address of the circular buffer in memory. It is a byte address. YUV4:2:0 format (output data on 8 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on. RAW, RGB5:6:5 and YUV4:2:2 formats (output data on 16 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on. RGBA format (output data on 32 bits): The three least significant bits must be set to '000' when horizontal reversal mode is off. The three least significant bits must be set to '111' when horizontal reversal mode is on.";
+    };
+    
+    register rzb_sdr_y_sad_h addr(base, 0x168) "RESIZER B - OUTPUT MEMORY START ADDRESS REGISTER This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0, RGB5:6:5, RGBA. RAW: RAW data is written to this address YUV4:2:2: YUV data is written to this address YUV4:2:0: Y data is written to this address RGB5:6:5: 16-bit RGB data is written to this address RGBA: 32-bit RGBA data is written to this address" {
+        _ 16 mbz;
+        y_sad_h 16 rw "Memory Start Address Sets 16 upper bits of the 32-bit start address in memory.";
+    };
+    
+    register rzb_sdr_y_sad_l addr(base, 0x16C) "RESIZER B - OUTPUT MEMORY START ADDRESS REGISTER This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0, RGB5:6:5, RGBA. RAW: RAW data is written to this address YUV4:2:2: YUV data is written to this address YUV4:2:0: Y data is written to this address RGB5:6:5: 16-bit RGB data is written to this address RGBA: 32-bit RGBA data is written to this address" {
+        _ 16 mbz;
+        y_sad_l 16 rw "Memory Start Address Sets the 16 lower bits of the 32-bit start address in memory. It is a byte address. For every frame, the first line of data will be written to this address. We have: SAD = BAD + (PTR_S x OFT) and PTR_S &amp;lt; PTR_E If the first line must be written at the beginning of the circular buffer memory then SAD = BAD and PTR_S = 0. YUV4:2:0 format (output data on 8 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on. RAW, RGB5:6:5 and YUV4:2:2 formats (output data on 16 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on. RGBA format (output data on 32 bits): The three least significant bits must be set to '000' when horizontal reversal mode is off. The three least significant bits must be set to '111' when horizontal reversal mode is on.";
+    };
+    
+    register rzb_sdr_y_oft addr(base, 0x170) "RESIZER B - OUTPUT MEMORY OFFSET REGISTER This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0 or RGBA." {
+        _ 15 mbz;
+        y_oft 17 rw "Memory Line Offset Sets the size of each line in the circular buffer. It is expressed in bytes and unsigned. Note that OFT does not necessary corresponds to the size of a line in a frame, it can be much bigger. The line offset must be a multiple of 128 bytes (bits [6:0] of RZX_SDR_Y_OFT and RZX_SDR_C_OFT must be set to 0). Example: line 0 address = SAD line 1 address = SAD + 1 x OFT line 2 address = SAD + 2 x OFT";
+    };
+    
+    register rzb_sdr_y_ptr_s addr(base, 0x174) "RESIZER B - OUTPUT MEMORY START ADDRESS REGISTER This register is used if the output data format is one of the following: RAW, YUV4;2:2, YUV4:2:0 or RGBA." {
+        _ 19 mbz;
+        y_ptr_s 13 rw "Start Line of Memory Pointer Sets the vertical position of the first output line in the output memory space. This value is expressed in number of lines. The hardware uses it to set up the initial value of the circular buffer. It must be set up such as PTR_S = (SAD - BAD) / OFT. This value must be set to 0 when RSZ_RZA_SDR_Y_BAD = RSZ_RZA_SDR_Y_SAD.";
+    };
+    
+    register rzb_sdr_y_ptr_e addr(base, 0x178) "RESIZER B - OUTPUT MEMORY END ADDRESS REGISTER This register is used if the output data format is one of the following: RAW, YUV4:2:2, YUV4:2:0 or RGBA." {
+        _ 19 mbz;
+        y_ptr_e 13 rw "End Line of Memory Pointer Sets the maximum number of lines to be stored in the output memory space. This value is expressed in number of lines. When the number of output lines exceeds this value, the address restarts from the first address in the output memory space (BAD).";
+    };
+    
+    register rzb_sdr_c_bad_h addr(base, 0x17C) "RESIZER B - OUTPUT MEMORY BASE ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0. U and V data are written into this buffer." {
+        _ 16 mbz;
+        c_bad_h 16 rw "Memory Base Address Sets the 16 upper bits of the 32-bit base address of the circular buffer in memory.";
+    };
+    
+    register rzb_sdr_c_bad_l addr(base, 0x180) "RESIZER B - OUTPUT MEMORY BASE ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0. U and V data are written into this buffer." {
+        _ 16 mbz;
+        c_bad_l 16 rw "Memory Base Address Sets the 16 lower bits of the 32-bit base address of the circular buffer in memory. It is a byte address. YUV4:2:0 format (output data on 8 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on.";
+    };
+    
+    register rzb_sdr_c_sad_h addr(base, 0x184) "RESIZER B - OUTPUT MEMORY START ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0. U and V data are written into this buffer." {
+        _ 16 mbz;
+        c_sad_h 16 rw "Memory Base Address Sets the 16 upper bits of the 32-bit start address in memory.";
+    };
+    
+    register rzb_sdr_c_sad_l addr(base, 0x188) "RESIZER B - OUTPUT MEMORY START ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0. U and V data are written into this buffer." {
+        _ 16 mbz;
+        c_sad_l 16 rw "Memory Base Address Sets the 16 lower bits of the 32-bit start address in memory. It is a byte address. For every frame, the first line of data will be written to this address (C_SAD_H/C_SAD_L). We have: SAD = BAD + (PTR_S x OFT) and PTR_S &amp;lt; PTR_E If the first line must be written at the beginning of the circular buffer memory then SAD = BAD and PTR_S = 0. YUV4:2:0 format (output data on 8 bits): The two least significant bits must be set to 00 when horizontal reversal mode is off. The two least significant bits must be set to 11 when horizontal reversal mode is on.";
+    };
+    
+    register rzb_sdr_c_oft addr(base, 0x18C) "RESIZER B - OUTPUT MEMORY OFFSET REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0" {
+        _ 15 mbz;
+        c_oft 17 rw "Memory Line Offset Sets the size of each line in the circular buffer. It is expressed in bytes and unsigned. Note that OFT does not necessary corresponds to the size of a line in a frame, it can be much bigger. The line offset must be a multiple of 128 bytes (bits [6:0] of RZX_SDR_Y_OFT and RZX_SDR_C_OFT must be set to 0). Example: line 0 address = SAD line 1 address = SAD + 1 x OFT line 2 address = SAD + 2 x OFT";
+    };
+    
+    register rzb_sdr_c_ptr_s addr(base, 0x190) "RESIZER B - OUTPUT MEMORY START ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0" {
+        _ 19 mbz;
+        c_ptr_s 13 rw "Start Line of Memory Pointer Sets the vertical position of the first output line in the output memory space. This value is expressed in number of lines. The hardware uses it to set up the initial value of the circular buffer. It must be set up such as PTR_S = (SAD - BAD) / OFT. This value must be set to 0 when RSZ_RZA_SDR_C_BAD = RSZ_RZA_SDR_C_SAD.";
+    };
+    
+    register rzb_sdr_c_ptr_e addr(base, 0x194) "RESIZER B - OUTPUT MEMORY END ADDRESS REGISTER FOR CHROMA DATA (YUV4:2:0) This register is used if the output data format is YUV4:2:0" {
+        _ 19 mbz;
+        c_ptr_e 13 rw "End Line of Memory Pointer Sets the maximum number of lines to be stored in the output memory space. This value is expressed in number of lines. When the number of output lines exceeds this value, the address restarts from the first address in the output memory space (BAD).";
+    };
+};

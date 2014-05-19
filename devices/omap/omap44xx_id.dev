@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_id.dev
+ *
+ * DESCRIPTION: OMAP44xx device identification
+ *
+ * This is derived from:
+ *
+ * OMAP4430 Multimedia Device Silicon Revision 2.x Technical Reference
+ * Manual Version O 
+ * OMAP4460 Multimedia Device Silicon Revision 1.x Technical Reference
+ * Manual Version Q
+ *
+ */
+
+device omap44xx_id msbfirst ( addr base ) "OMAP44xx device identification" {
+    
+    constants hkvals "Hawkeye field" {
+        omap4430_1 = 0xb852 "OMAP4430 ES1.0 and ES2.0";
+        omap4430_2 = 0xb95c "OMAP4430 ES2.1 and ES2.2";
+        omap4460   = 0xb94e "OMAP4460 ES1.0 and ES1.1";
+    };
+
+    constants mfcvals "Manufacturer code field" {
+        mfc_ti  = 0x17  "Texas Instruments";
+    };
+
+    // Global hex values for the contents of the ID code register"
+    constants codevals width(32) "Silicon type" {
+        c3010 = 0x0b85202f "TI OMAP4430 ES1.0";
+        c3020 = 0x1b85202f "TI OMAP4430 ES2.0";
+        c3021 = 0x3b95c02f "TI OMAP4430 ES2.1";
+        c3022 = 0x4b95c02f "TI OMAP4430 ES2.2";
+        c6010 = 0x0b94e02f "TI OMAP4460 ES1.0";
+        c6011 = 0x2b94e02f "TI OMAP4460 ES1.1";
+    };
+    register code ro addr(base, 0x204) "ID code" {
+        version         4       "Version";
+        hawkeye         16 type(hkvals)         "Hawkeye";
+        mnfctr          11 type(mfcvals)        "Manufacturer ID";
+        _               1 mb1;
+    };
+
+    register id0 ro addr(base, 0x200) "STD FUSE die id 0" type(uint32);
+    register id1 ro addr(base, 0x208) "STD FUSE die id 1" type(uint32);
+    register id2 ro addr(base, 0x20C) "STD FUSE die id 2" type(uint32);
+    register id3 ro addr(base, 0x210) "STD FUSE die id 3" type(uint32);
+
+    
+    register prod0 ro addr(base, 0x214) "STD FUSE PROD ID 0" {
+        _       24 mbz;
+        dt      8               "Device type";
+    };
+
+    constants stp "Silicon type" {
+        st0 = 0x00      "Default silicon type";
+        st1 = 0x01      "Standard performance (1.2 GHz)";
+        st2 = 0x02      "High performance (1.5 GHz)";
+    };
+
+    register prod1 ro addr(base, 0x218) "STD FUSE PROD ID 0" {
+        _       14 mbz;
+        st      2 type(stp)     "Silicon type";
+        _       16 mbz;
+    };
+
+};

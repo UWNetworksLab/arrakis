@@ -1,0 +1,69 @@
+/*
+ * Copyright (c) 2008, 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ht_config.dev
+ *
+ * DESCRIPTION: HyperTransport Configuration
+ *
+ * This is derived from the "BIOS and Kernel Developer's Guide (BKDG)
+ * for AMD Family 10h Processors", Chapter 3, "Registers".
+ */
+
+device ht_config lsbfirst ( pci base ) "HyperTransport Configuration" {
+       //
+       // Section 3.3: Function 0 HyperTransport Technology Configuration
+       // Registers
+       //
+
+       constants rtdest "Routing Destination" {
+       		 self		 = 0b1		"Route to this node";
+		 link0_0	 = 0b10	      	"Route to link 0, sublink 0";
+		 link1_0	 = 0b100      	"Route to link 1, sublink 0";
+		 link2_0	 = 0b1000     	"Route to link 2, sublink 0";
+		 link3_0	 = 0b10000    	"Route to link 3, sublink 0";
+		 link0_1	 = 0b100000   	"Route to link 0, sublink 1";
+		 link1_1	 = 0b1000000  	"Route to link 1, sublink 1";
+		 link2_1	 = 0b10000000 	"Route to link 2, sublink 1";
+		 link3_1	 = 0b100000000	"Route to link 3, sublink 1";
+       };
+
+       regtype rtnode "Routing Table" {
+       	       rqrte  9	       type(rtdest) "Request Route";
+	       rprte  9	       type(rtdest) "Response Route";
+	       bcrte  9	       type(rtdest) "Broadcast Route";
+	       _      5;
+       };
+
+       regarray rtnodes rw pci( base, 0x40 ) [8] "Routing Table Nodes" type(rtnode);
+
+       register nodeid rw pci( base, 0x60 ) "Node ID" {
+       		nodeid 	  3     "This Node ID";
+		_      	  1;
+		nodecnt	  3	"Node Count";
+		_	  1;
+		sbnode	  3	"HyperTransport I/O Hub Node ID";
+		_	  1;
+		lknode	  3 	"Lock Controller Node ID";
+		_	  1;
+		cpucnt	  5	"CPU Count";
+		_	  3	mbz;
+		_	  8;
+       };
+
+       register unitid rw pci( base, 0x64 ) "Unit ID" {
+       		cpuunit   2    "CPU Unit ID";
+		_	  2;
+		mctunit	  2    "Memory Controller Unit ID";
+		hbunit	  2    "Host Bridge Unit ID";
+		sblink	  3    "Southbridge I/O Hub Link ID";
+		_	  21;
+       };
+
+       // ...
+};

@@ -1,0 +1,570 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_l4per_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_l4per_prm msbfirst ( addr base ) "" {
+    
+
+    constants nonretained_bank_onstate_status width(2) "" {
+        NONRETAINED_BANK_ONSTATE_3_r = 3 "Memory bank is on when the domain is ON.";
+    };
+
+    constants nonretained_bank_retstate_status width(1) "" {
+        NONRETAINED_BANK_RETSTATE_0_r = 0 "Memory bank is off when the domain is in the RETENTION state.";
+    };
+
+    constants retained_bank_retstate_status width(1) "" {
+        RETAINED_BANK_RETSTATE_1_r = 1 "Memory bank is retained when domain is in RETENTION state.";
+    };
+
+    constants lowpowerstatechange_status width(1) "" {
+        LOWPOWERSTATECHANGE_0 = 0 "Do not request a low power state change.";
+        LOWPOWERSTATECHANGE_1 = 1 "Request a low power state change. This bit is automatically cleared when the power state is effectively changed or when power state is ON.";
+    };
+
+    constants logicretstate_status width(1) "" {
+        LOGICRETSTATE_0 = 0 "Only retention registers are retained and remaing logic is off when the domain is in RETENTION state.";
+        LOGICRETSTATE_1 = 1 "Whole logic is retained when domain is in RETENTION state.";
+    };
+
+    constants powerstate_status width(2) "" {
+        POWERSTATE_0 = 0 "Reserved";
+        POWERSTATE_1 = 1 "RETENTION state";
+        POWERSTATE_2 = 2 "INACTIVE state";
+        POWERSTATE_3 = 3 "ON State";
+    };
+    
+    register pm_l4per_pwrstctrl addr(base, 0x0) "This register controls the L4PER power state to reach upon a domain sleep transition" {
+        _ 12 mbz;
+        nonretained_bank_onstate 2 ro type(nonretained_bank_onstate_status) "NONRETAINED_BANK state when domain is ON.";
+        retained_bank_onstate 2 ro type(nonretained_bank_onstate_status) "RETAINED_BANK state when domain is ON.";
+        _ 6 mbz;
+        nonretained_bank_retstate 1 ro type(nonretained_bank_retstate_status) "NONRETAINED_BANK state when domain is RETENTION.";
+        retained_bank_retstate 1 ro type(retained_bank_retstate_status) "RETAINED_BANK state when domain is RETENTION.";
+        _ 3 mbz;
+        lowpowerstatechange 1 rw type(lowpowerstatechange_status) "Power state change request when domain has already performed a sleep transition. Allows going into deeper low power state without waking up the power domain.";
+        _ 1 mbz;
+        logicretstate 1 rw type(logicretstate_status) "Logic state when power domain is RETENTION";
+        powerstate 2 rw type(powerstate_status) "Power state control";
+    };
+
+    constants lastpowerstateentered_status width(2) "" {
+        LASTPOWERSTATEENTERED_3_r = 3 "Power domain was previously ON-ACTIVE";
+        LASTPOWERSTATEENTERED_2_r = 2 "Power domain was previously ON-INACTIVE";
+        LASTPOWERSTATEENTERED_1_r = 1 "Power domain was previously in RETENTION";
+        LASTPOWERSTATEENTERED_0_r = 0 "Power domain was previously OFF";
+    };
+
+    constants intransition_status width(1) "" {
+        INTRANSITION_0_r = 0 "No ongoing transition on power domain";
+        INTRANSITION_1_r = 1 "Power domain transition is in progress.";
+    };
+
+    constants nonretained_bank_statest_status width(2) "" {
+        NONRETAINED_BANK_STATEST_0_r = 0 "Memory is OFF";
+        NONRETAINED_BANK_STATEST_1_r = 1 "Reserved";
+        NONRETAINED_BANK_STATEST_2_r = 2 "Reserved";
+        NONRETAINED_BANK_STATEST_3_r = 3 "Memory is ON";
+    };
+
+    constants retained_bank_statest_status width(2) "" {
+        RETAINED_BANK_STATEST_0_r = 0 "Memory is OFF";
+        RETAINED_BANK_STATEST_1_r = 1 "Memory is RETENTION";
+        RETAINED_BANK_STATEST_2_r = 2 "Reserved";
+        RETAINED_BANK_STATEST_3_r = 3 "Memory is ON";
+    };
+
+    constants logicstatest_status width(1) "" {
+        LOGICSTATEST_0_r = 0 "Logic in domain is OFF";
+        LOGICSTATEST_1_r = 1 "Logic in domain is ON";
+    };
+
+    constants powerstatest_status width(2) "" {
+        POWERSTATEST_0_r = 0 "Reserved";
+        POWERSTATEST_1_r = 1 "Power domain is in RETENTION";
+        POWERSTATEST_2_r = 2 "Power domain is ON-INACTIVE";
+        POWERSTATEST_3_r = 3 "Power domain is ON-ACTIVE";
+    };
+    
+    register pm_l4per_pwrstst addr(base, 0x4) "This register provides a status on the current L4PER power domain state. [warm reset insensitive]" {
+        _ 6 mbz;
+        lastpowerstateentered 2 rw type(lastpowerstateentered_status) "Last low power state entered. Set to 0x3 upon write of the same only. This register is intended for debug purpose only.";
+        _ 3 mbz;
+        intransition 1 ro type(intransition_status) "Domain transition status";
+        _ 12 mbz;
+        nonretained_bank_statest 2 ro type(nonretained_bank_statest_status) "NONRETAINED_BANK state status";
+        retained_bank_statest 2 ro type(retained_bank_statest_status) "RETAINED_BANK state status";
+        _ 1 mbz;
+        logicstatest 1 ro type(logicstatest_status) "Logic state status";
+        powerstatest 2 ro type(powerstatest_status) "Current power state status";
+    };
+
+    constants wkupdep_dmtimer10_mpu_status width(1) "" {
+        WKUPDEP_DMTIMER10_MPU_1_r = 1 "Dependency is enabled";
+    };
+    
+    register pm_l4per_gptimer10_wkdep addr(base, 0x28) "This register controls wakeup dependency based on DMTIMER10 service requests." {
+        _ 31 mbz;
+        wkupdep_dmtimer10_mpu 1 ro type(wkupdep_dmtimer10_mpu_status) "Wakeup dependency from DMTIMER10 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+
+    constants lostcontext_dff_status width(1) "" {
+        LOSTCONTEXT_DFF_0 = 0 "Context has been maintained";
+        LOSTCONTEXT_DFF_1 = 1 "Context has been lost";
+    };
+    
+    register rm_l4per_gptimer10_context addr(base, 0x2C) "This register contains dedicated DMTIMER10 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+
+    constants wkupdep_dmtimer11_mpu_m3_status width(1) "" {
+        WKUPDEP_DMTIMER11_MPU_M3_0 = 0 "Dependency is disabled";
+        WKUPDEP_DMTIMER11_MPU_M3_1 = 1 "Dependency is enabled";
+    };
+    
+    register pm_l4per_gptimer11_wkdep addr(base, 0x30) "This register controls wakeup dependency based on DMTIMER11 service requests." {
+        _ 30 mbz;
+        wkupdep_dmtimer11_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from DMTIMER11 module (softwareakeup signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_dmtimer11_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from DMTIMER11 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_gptimer11_context addr(base, 0x34) "This register contains dedicated DMTIMER11 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_gptimer2_wkdep addr(base, 0x38) "This register controls wakeup dependency based on DMTIMER2 service requests." {
+        _ 31 mbz;
+        wkupdep_dmtimer2_mpu 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from DMTIMER2 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_gptimer2_context addr(base, 0x3C) "This register contains dedicated DMTIMER2 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_gptimer3_wkdep addr(base, 0x40) "This register controls wakeup dependency based on DMTIMER3 service requests." {
+        _ 30 mbz;
+        wkupdep_dmtimer3_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from DMTIMER3 module (softwareakeup signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_dmtimer3_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from DMTIMER3 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_gptimer3_context addr(base, 0x44) "This register contains dedicated DMTIMER3 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_gptimer4_wkdep addr(base, 0x48) "This register controls wakeup dependency based on DMTIMER4 service requests." {
+        _ 30 mbz;
+        wkupdep_dmtimer4_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from DMTIMER4 module (softwareakeup signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_dmtimer4_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from DMTIMER4 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_gptimer4_context addr(base, 0x4C) "This register contains dedicated DMTIMER4 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_gptimer9_wkdep addr(base, 0x50) "This register controls wakeup dependency based on DMTIMER9 service requests." {
+        _ 30 mbz;
+        wkupdep_dmtimer9_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from DMTIMER9 module (softwareakeup signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_dmtimer9_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from DMTIMER9 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_gptimer9_context addr(base, 0x54) "This register contains dedicated DMTIMER9 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register rm_l4per_elm_context addr(base, 0x5C) "This register contains dedicated ELM context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_gpio2_wkdep addr(base, 0x60) "This register controls wakeup dependency based on GPIO2 service requests." {
+        _ 25 mbz;
+        wkupdep_gpio2_irq2_dsp 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO2 module (POINTRsoftwareAKEUP2 signal) towards DSP + L3_1 + L3_2 domains";
+        _ 4 mbz;
+        wkupdep_gpio2_irq1_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO2 module (POINTRsoftwareAKEUP1 signal) module towards MPU_A3 + L3_2 domains";
+        wkupdep_gpio2_irq1_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO2 module (POINTRsoftwareAKEUP1 signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_gpio2_context addr(base, 0x64) "This register contains dedicated GPIO2 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register pm_l4per_gpio3_wkdep addr(base, 0x68) "This register controls wakeup dependency based on GPIO3 service requests." {
+        _ 25 mbz;
+        wkupdep_gpio3_irq2_dsp 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO3 module (POINTRsoftwareAKEUP2 signal) towards DSP + L3_1 + L3_2 domains";
+        _ 5 mbz;
+        wkupdep_gpio3_irq1_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO3 module (POINTRsoftwareAKEUP1 signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_gpio3_context addr(base, 0x6C) "This register contains dedicated GPIO3 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register pm_l4per_gpio4_wkdep addr(base, 0x70) "This register controls wakeup dependency based on GPIO4 service requests." {
+        _ 25 mbz;
+        wkupdep_gpio4_irq2_dsp 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO4 module (POINTRsoftwareAKEUP2 signal) towards DSP + L3_1 + L3_2 domains";
+        _ 5 mbz;
+        wkupdep_gpio4_irq1_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO4 module (POINTRsoftwareAKEUP1 signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_gpio4_context addr(base, 0x74) "This register contains dedicated GPIO4 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register pm_l4per_gpio5_wkdep addr(base, 0x78) "This register controls wakeup dependency based on GPIO5 service requests." {
+        _ 25 mbz;
+        wkupdep_gpio5_irq2_dsp 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO5 module (POINTRsoftwareAKEUP2 signal) towards DSP + L3_1 + L3_2 domains";
+        _ 5 mbz;
+        wkupdep_gpio5_irq1_mpu 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO5 module (POINTRsoftwareAKEUP1 signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_gpio5_context addr(base, 0x7C) "This register contains dedicated GPIO5 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register pm_l4per_gpio6_wkdep addr(base, 0x80) "This register controls wakeup dependency based on GPIO6 service requests." {
+        _ 25 mbz;
+        wkupdep_gpio6_irq2_dsp 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO6 module (POINTRsoftwareAKEUP2 signal) towards DSP + L3_1 + L3_2 domains";
+        _ 5 mbz;
+        wkupdep_gpio6_irq1_mpu 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from GPIO6 module (POINTRsoftwareAKEUP1 signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_gpio6_context addr(base, 0x84) "This register contains dedicated GPIO6 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register rm_l4per_hdq1w_context addr(base, 0x8C) "This register contains dedicated HDQ1W context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_i2c1_wkdep addr(base, 0xA0) "This register controls wakeup dependency based on I2C1 service requests." {
+        _ 24 mbz;
+        wkupdep_i2c1_dma_sdma 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C1 module (softwareakeup_dma signal) towards SDMA + L3_2 domains";
+        _ 5 mbz;
+        wkupdep_i2c1_irq_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C1 module (softwareakeup_irq signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_i2c1_irq_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C1 module (softwareakeup_irq signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_i2c1_context addr(base, 0xA4) "This register contains dedicated I2C1 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register pm_l4per_i2c2_wkdep addr(base, 0xA8) "This register controls wakeup dependency based on I2C2 service requests." {
+        _ 24 mbz;
+        wkupdep_i2c2_dma_sdma 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C2 module (softwareakeup_dma signal) towards SDMA + L3_2 domains";
+        _ 5 mbz;
+        wkupdep_i2c2_irq_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C2 module (softwareakeup_irq signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_i2c2_irq_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C2 module (softwareakeup_irq signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_i2c2_context addr(base, 0xAC) "This register contains dedicated I2C2 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_i2c3_wkdep addr(base, 0xB0) "This register controls wakeup dependency based on I2C3 service requests." {
+        _ 24 mbz;
+        wkupdep_i2c3_dma_sdma 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C3 module (softwareakeup_dma signal) towards SDMA + L3_2 domains";
+        _ 5 mbz;
+        wkupdep_i2c3_irq_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C3 module (softwareakeup_irq signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_i2c3_irq_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C3 module (softwareakeup_irq signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_i2c3_context addr(base, 0xB4) "This register contains dedicated I2C3 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_i2c4_wkdep addr(base, 0xB8) "This register controls wakeup dependency based on I2C4 service requests." {
+        _ 24 mbz;
+        wkupdep_i2c4_dma_sdma 1 ro type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C4 module (softwareakeup_dma signal) towards SDMA + L3_2 domains";
+        _ 5 mbz;
+        wkupdep_i2c4_irq_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C4 module (softwareakeup_irq signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_i2c4_irq_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from I2C4 module (softwareakeup_irq signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_i2c4_context addr(base, 0xBC) "This register contains dedicated I2C4 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register rm_l4per_l4_per_context addr(base, 0xC0) "This register contains dedicated L4_PER context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_mcbsp4_wkdep addr(base, 0xE0) "This register controls wakeup dependency based on MCBSP4 service requests." {
+        _ 28 mbz;
+        wkupdep_mcbsp4_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCBSP4 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        wkupdep_mcbsp4_dsp 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCBSP4 module (softwareakeup signal) towards DSP + L3_1 + L3_2 domain";
+        _ 1 mbz;
+        wkupdep_mcbsp4_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCBSP4 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domain";
+    };
+    
+    register rm_l4per_mcbsp4_context addr(base, 0xE4) "This register contains dedicated MCBSP4 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_nonretained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in NONRETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_mcspi1_wkdep addr(base, 0xF0) "This register controls wakeup dependency based on MCSPI1 service requests." {
+        _ 28 mbz;
+        wkupdep_mcspi1_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI1 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        wkupdep_mcspi1_dsp 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI1 module (softwareakeup signal) towards DSP + L3_1 + L3_2 domains";
+        wkupdep_mcspi1_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI1 module (softwareakeup signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_mcspi1_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI1 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_mcspi1_context addr(base, 0xF4) "This register contains dedicated MCSPI1 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_mcspi2_wkdep addr(base, 0xF8) "This register controls wakeup dependency based on MCSPI2 service requests." {
+        _ 28 mbz;
+        wkupdep_mcspi2_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI2 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        _ 1 mbz;
+        wkupdep_mcspi2_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI2 module (softwareakeup signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_mcspi2_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI2 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_mcspi2_context addr(base, 0xFC) "This register contains dedicated MCSPI2 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_mcspi3_wkdep addr(base, 0x100) "This register controls wakeup dependency based on MCSPI3 service requests." {
+        _ 28 mbz;
+        wkupdep_mcspi3_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI3 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        _ 2 mbz;
+        wkupdep_mcspi3_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI3 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_mcspi3_context addr(base, 0x104) "This register contains dedicated MCSPI3 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_mcspi4_wkdep addr(base, 0x108) "This register controls wakeup dependency based on MCSPI4 service requests." {
+        _ 28 mbz;
+        wkupdep_mcspi4_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI4 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        _ 2 mbz;
+        wkupdep_mcspi4_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MCSPI4 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_mcspi4_context addr(base, 0x10C) "This register contains dedicated MCSPI4 context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_mmcsd3_wkdep addr(base, 0x120) "This register controls wakeup dependency based on MMCSD3 service requests." {
+        _ 28 mbz;
+        wkupdep_mmcsd3_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MMCSD3 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        _ 1 mbz;
+        wkupdep_mmcsd3_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MMCSD3 module (softwareakeup signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_mmcsd3_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MMCSD3 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_mmcsd3_context addr(base, 0x124) "This register contains dedicated MMCSD3 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_nonretained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in NONRETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_mmcsd4_wkdep addr(base, 0x128) "This register controls wakeup dependency based on MMCSD4 service requests." {
+        _ 28 mbz;
+        wkupdep_mmcsd4_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MMCSD4 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        _ 1 mbz;
+        wkupdep_mmcsd4_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MMCSD4 module (softwareakeup signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_mmcsd4_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MMCSD4 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_mmcsd4_context addr(base, 0x12C) "This register contains dedicated MMCSD4 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_nonretained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in NONRETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_slimbus2_wkdep addr(base, 0x138) "This register controls wakeup dependency based on SLIMBUS2 service requests." {
+        _ 24 mbz;
+        wkupdep_slimbus2_dma_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from SLIMBUS2 module (softwareakeup_dma signal) towards SDMA + L3_2 domains";
+        wkupdep_slimbus2_dma_dsp 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from SLIMBUS2 module (softwareakeup_dma signal) towards DSP + L3_1 + L3_2 domains";
+        _ 3 mbz;
+        wkupdep_slimbus2_irq_dsp 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from SLIMBUS2 module (softwareakeup_irq signal) towards DSP + L3_1 + L3_2 domains";
+        _ 1 mbz;
+        wkupdep_slimbus2_irq_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from SLIMBUS2 module (softwareakeup_irq signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_slimbus2_context addr(base, 0x13C) "This register contains dedicated SLIMBUS2 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_nonretained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in NONRETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register pm_l4per_uart1_wkdep addr(base, 0x140) "This register controls wakeup dependency based on UART1 service requests." {
+        _ 28 mbz;
+        wkupdep_uart1_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from UART1 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        _ 2 mbz;
+        wkupdep_uart1_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from UART1 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_uart1_context addr(base, 0x144) "This register contains dedicated UART1 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_retained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in RETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 6 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register pm_l4per_uart2_wkdep addr(base, 0x148) "This register controls wakeup dependency based on UART2 service requests." {
+        _ 28 mbz;
+        wkupdep_uart2_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from UART2 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        _ 2 mbz;
+        wkupdep_uart2_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from UART2 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_uart2_context addr(base, 0x14C) "This register contains dedicated UART2 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_retained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in RETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 6 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register pm_l4per_uart3_wkdep addr(base, 0x150) "This register controls wakeup dependency based on UART3 service requests." {
+        _ 28 mbz;
+        wkupdep_uart3_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from UART3 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        wkupdep_uart3_dsp 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from UART3 module (softwareakeup signal) towards DSP + L3_1 + L3_2 domains";
+        wkupdep_uart3_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from UART3 module (softwareakeup signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_uart3_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from UART3 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_uart3_context addr(base, 0x154) "This register contains dedicated UART3 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_retained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in RETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 6 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register pm_l4per_uart4_wkdep addr(base, 0x158) "This register controls wakeup dependency based on UART4 service requests." {
+        _ 28 mbz;
+        wkupdep_uart4_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from UART4 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        _ 2 mbz;
+        wkupdep_uart4_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from UART4 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_uart4_context addr(base, 0x15C) "This register contains dedicated UART4 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_retained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in RETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 6 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register pm_l4per_mmcsd5_wkdep addr(base, 0x160) "This register controls wakeup dependency based on MMCSD5 service requests." {
+        _ 28 mbz;
+        wkupdep_mmcsd5_sdma 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MMCSD5 module (softwareakeup signal) towards SDMA + L3_2 domains";
+        _ 1 mbz;
+        wkupdep_mmcsd5_mpu_m3 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MMCSD5 module (softwareakeup signal) towards MPU_A3 + L3_2 domains";
+        wkupdep_mmcsd5_mpu 1 rw type(wkupdep_dmtimer11_mpu_m3_status) "Wakeup dependency from MMCSD5 module (softwareakeup signal) towards MPU + L3_1 + L3_2 domains";
+    };
+    
+    register rm_l4per_mmcsd5_context addr(base, 0x164) "This register contains dedicated MMCSD5 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_nonretained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in NONRETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RST signal)";
+    };
+    
+    register rm_l4sec_aes1_context addr(base, 0x1A4) "This register contains dedicated AES1 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register rm_l4sec_aes2_context addr(base, 0x1AC) "This register contains dedicated AES2 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register rm_l4sec_des3des_context addr(base, 0x1B4) "This register contains dedicated DES3DES context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of L4_PER_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register rm_l4sec_pka_context addr(base, 0x1BC) "This register contains dedicated PKA context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_nonretained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in NONRETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_dff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source (set upon assertion of L4_PER_RST signal).";
+    };
+    
+    register rm_l4sec_rng_context addr(base, 0x1C4) "This register contains dedicated RNG context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source (set upon assertion of L4_PER_RET_RST signal).";
+        _ 1 mbz;
+    };
+    
+    register rm_l4sec_sha2md5_context addr(base, 0x1CC) "This register contains dedicated SHA2MD5 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source (set upon assertion of L4_PER_RET_RST signal).";
+        _ 1 mbz;
+    };
+    
+    register rm_l4sec_cryptodma_context addr(base, 0x1DC) "This register contains dedicated CRYPTODMA context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_retained_bank 1 rw1c type(lostcontext_dff_status) "Specify if memory-based context in RETAINED_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 6 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_dff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source (set upon assertion of L4_PER_RST signal).";
+        _ 1 mbz;
+    };
+};

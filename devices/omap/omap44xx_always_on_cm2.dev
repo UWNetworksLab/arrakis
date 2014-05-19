@@ -1,0 +1,104 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_always_on_cm2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_always_on_cm2 msbfirst ( addr base ) "" {
+    
+
+    constants clkactivity_core_alwon_32k_gfclk_status width(1) "" {
+        CLKACTIVITY_CORE_ALWON_32K_GFCLK_0_r = 0 "Corresponding clock is definitely gated.";
+        CLKACTIVITY_CORE_ALWON_32K_GFCLK_1_r = 1 "Corresponding clock is running or gating/ungating transition is ongoing.";
+    };
+
+    constants clkactivity_sr_core_sysclk_status width(1) "" {
+        CLKACTIVITY_SR_CORE_SYSCLK_0_r = 0 "Corresponding clock is definitely gated";
+        CLKACTIVITY_SR_CORE_SYSCLK_1_r = 1 "Corresponding clock is running or gating/ungating transition is ongoing";
+    };
+
+    constants clktrctrl_status width(2) "" {
+        CLKTRCTRL_0 = 0 "NO_SLEEP: Sleep transition cannot be initiated. Wakeup transition may however occur.";
+        CLKTRCTRL_1_r = 1 "Reserved";
+        CLKTRCTRL_2 = 2 "SW_WKUP: Start a software forced wake-up transition on the domain.";
+        CLKTRCTRL_3 = 3 "HW_AUTO: Automatic transition is enabled. Sleep and wakeup transition are based upon hardware conditions.";
+    };
+    
+    register cm_alwon_clkstctrl addr(base, 0x0) "This register enables the domain power state transition. It controls the hardware supervised domain power state transition between ON-ACTIVE and ON-INACTIVE states. It also holds 1 status bit per clock input of the domain." {
+        _ 19 mbz;
+        clkactivity_core_alwon_32k_gfclk 1 ro type(clkactivity_core_alwon_32k_gfclk_status) "This field indicates the state of the CORE_ALWON_32K_GFCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_sr_core_sysclk 1 ro type(clkactivity_sr_core_sysclk_status) "This field indicates the state of the SR_CORE_SYSCLK clock input of the domain. [warm reset insensitive]";
+        clkactivity_sr_iva_sysclk 1 ro type(clkactivity_sr_core_sysclk_status) "This field indicates the state of the SR_IVA_SYSCLK clock input of the domain. [warm reset insensitive]";
+        clkactivity_sr_mpu_sysclk 1 ro type(clkactivity_sr_core_sysclk_status) "This field indicates the state of the SR_MPU_SYSCLK clock input of the domain. [warm reset insensitive]";
+        clkactivity_l4_ao_iclk 1 ro type(clkactivity_sr_core_sysclk_status) "This field indicates the state of the L4_AO_ICLK clock of the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the clock state transition of the ALWONCORE clock domain.";
+    };
+
+    constants idlest_status width(2) "" {
+        IDLEST_0_r = 0 "Module is fully functional, including INTRCONN";
+        IDLEST_1_r = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_2_r = 2 "Module is in idle mode (only INTRCONN part). It is functional if using separate functional clock";
+        IDLEST_3_r = 3 "Module is disabled and cannot be accessed";
+    };
+
+    constants modulemode_status width(2) "" {
+        MODULEMODE_0 = 0 "Module is disable by software. Any INTRCONN access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1_r = 1 "Reserved";
+        MODULEMODE_2 = 2 "Module is explicitly enabled. Interface clock (if not used for functions) may be gated according to the clock domain state. Functional clocks are guarantied to stay present. As long as in this configuration, power domain sleep transition cannot happen.";
+        MODULEMODE_3_r = 3 "Reserved";
+    };
+    
+    register cm_alwon_sr_mpu_clkctrl addr(base, 0x28) "This register manages the SR_MPU clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_alwon_sr_iva_clkctrl addr(base, 0x30) "This register manages the SR_IVA clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_alwon_sr_core_clkctrl addr(base, 0x38) "This register manages the SR_CORE clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+
+    constants optfclken_clk32k_status width(1) "" {
+        OPTFCLKEN_CLK32K_0 = 0 "Optional functional clock is disabled";
+        OPTFCLKEN_CLK32K_1 = 1 "Optional functional clock is enabled";
+    };
+    
+    register cm_alwon_usbphy_clkctrl addr(base, 0x40) "This register manages the USB PHY 32KHz clock." {
+        _ 23 mbz;
+        optfclken_clk32k 1 rw type(optfclken_clk32k_status) "Optional functional clock control.";
+        _ 8 mbz;
+    };
+};

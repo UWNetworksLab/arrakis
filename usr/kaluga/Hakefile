@@ -1,0 +1,22 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/kaluga
+--
+--------------------------------------------------------------------------
+
+[ build application { target = "kaluga",
+                      cFiles = (find withSuffices [".c"]),
+          	          flounderDefs = [ "monitor" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderExtraDefs = [ ("monitor_blocking",["rpcclient"]) ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = libDeps [ "skb", "octopus", "vfs", 
+                                               "spawndomain", "elf", "mm", "lwip" ],
+                      architectures = [ "x86_64", "x86_32", "armv7" ] }
+]

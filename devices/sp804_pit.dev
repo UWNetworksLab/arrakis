@@ -1,0 +1,106 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * sp804_pit.dev
+ *
+ * DESCRIPTION: Dual-Timer Module SP804
+ *
+ * This is derived from:
+ *
+ * ARM Dual-Timer Module (SP804) Technical Reference Manual
+ * (DDI0271_sp804_timer_trm.pdf)
+ *
+ */
+ 
+ 
+device sp804_pit msbfirst ( addr base ) "Dual-Timer Module SP804" {
+ 	
+ 	constants prescale "Possible Prescale Values" {
+ 		prescale0	=	0b00	"0 stages of prescale, clock divided by 1";
+ 		prescale4	=	0b01	"4 stages of prescale, clock divided by 16";
+ 		prescale8	=	0b10	"8 stages of prescale, clock divided by 256";
+ 	};
+ 	
+ 	constants timer_size "Timer operation sizes" {
+ 		size_16bit	=	0b0		"16-bit counter";
+ 		size_32bit	=	0b1		"32-bit counter";
+ 	};
+ 	
+ 	constants timer_modes "Timer Running Mode" {
+	    free   = 0b0 "Counts once and then wraps to 0xffff";
+	    periodic = 0b1 "Reloads from load register at end of each count"; 
+	};
+ 	
+ 	
+ 	//
+ 	// timer 1
+ 	//
+ 	
+ 	register Timer1Load addr(base, 0x0) "Load Register" type(uint32);
+ 	
+ 	register Timer1Value ro addr(base, 0x4) "Current Value Register" type(uint32);
+ 	
+ 	register Timer1Control addr(base, 0x8) "Control Register" {
+ 		_				24	rsvd;
+ 		timer_en		1	rw		"Enable Bit";
+ 		timer_mode		1	rw		"Mode Bit";
+ 		int_enable		1	rw		"Interrupt Enable Bit";
+ 		_				1	rsvd;
+ 		timer_pre		2	rw		"Prescale Bits";
+ 		timer_size		1	rw		"Selects 16/32 bit mode";
+ 		one_shot		1	rw		"Selects one-shot or wrapping counter mode";	
+ 	};
+ 	
+ 	register Timer1IntClr wo addr(base, 0xc) "Interrupt Clear Register" type(uint32);
+ 	
+ 	register Timer1RIS ro addr(base, 0x10) "Raw Interrupt Status Register" {
+ 		_				31 	rsvd;
+ 		ri_status		1	ro		"Raw interrupt status from the counter";
+ 	};
+ 	
+ 	register Timer1MIS ro addr(base, 0x14) "Masked Interrupt Status Register" {
+ 		_				31 	rsvd;
+ 		mi_status		1	ro		"Masked interrupt status from the counter";
+ 	};
+ 	
+ 	register Timer1BGLoad addr(base, 0x18) "Background Load Register" type(uint32);
+ 	
+ 	//
+ 	// timer 2
+ 	//
+ 	
+ 	register Timer2Load addr(base, 0x20) "Load Register" type(uint32);
+ 	
+ 	register Timer2Value ro addr(base, 0x24) "Current Value Register" type(uint32);
+ 	
+ 	register Timer2Control addr(base, 0x28) "Control Register" {
+ 		_				24	rsvd;
+ 		timer_en		1	rw		"Enable Bit";
+ 		timer_mode		1	rw		"Mode Bit";
+ 		int_enable		1	rw		"Interrupt Enable Bit";
+ 		_				1	rsvd;
+ 		timer_pre		2	rw		"Prescale Bits";
+ 		timer_size		1	rw		"Selects 16/32 bit mode";
+ 		one_shot		1	rw		"Selects one-shot or wrapping counter mode";	
+ 	};
+ 	
+ 	register Timer2IntClr wo addr(base, 0x2c) "Interrupt Clear Register" type(uint32);
+ 	
+ 	register Timer2RIS ro addr(base, 0x30) "Raw Interrupt Status Register" {
+ 		_				31 	rsvd;
+ 		ri_status		1	ro		"Raw interrupt status from the counter";
+ 	};
+ 	
+ 	register Timer2MIS ro addr(base, 0x34) "Masked Interrupt Status Register" {
+ 		_				31 	rsvd;
+ 		mi_status		1	ro		"Masked interrupt status from the counter";
+ 	};
+ 	
+ 	register Timer2BGLoad addr(base, 0x38) "Background Load Register" type(uint32);
+ };

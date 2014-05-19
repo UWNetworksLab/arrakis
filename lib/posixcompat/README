@@ -1,0 +1,36 @@
+libposixcompat for Barrelfish
+
+INTRODUCTION
+
+libposixcompat strives to provide IEEE Std 1003.1 (POSIX) support in
+Barrelfish.
+
+Many things are still unimplemented, but a decent set of functionality
+exists. Features that are absent or do not work as expected shall be
+noted in this document, in the following section.
+
+
+CAVEATS
+
+errno reporting is very scarce. All functions will return the proper
+error return code on error (in genereal -1), but the errno variable is
+only set appropriately in very few cases.
+
+fork() and exec() are not existing. However, this has not been a huge
+problem so far.
+
+getpid() and getppid() will return fake IDs of 3 and 2, respectively,
+if they are not provided with IDs.
+
+
+CONVENTIONS
+
+The current working directory is stored and kept up-to-date in the
+environment variable CWD, which is also inherited to newly spawned
+programs.
+
+getppid() expects to find the parent process ID in the environment
+variable PPID. This variable can be inherited into the child upon
+spawning.
+
+getpid() uses the domain ID for the process ID, except if it's zero.

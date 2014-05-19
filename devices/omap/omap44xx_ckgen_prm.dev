@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_ckgen_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_ckgen_prm msbfirst ( addr base ) "" {
+    
+
+    constants clksel_status width(1) "" {
+        CLKSEL_0 = 0 "Select SYS_CLK divided by 1";
+        CLKSEL_1 = 1 "Select SYS_CLK divided by 2 Must be used for SYS_CLK &gt; 26 MHz";
+    };
+    
+    register cm_abe_dss_sys_clksel addr(base, 0x0) "Select the SYS CLK for ABE and DSS subsystems. [warm reset insensitive]" {
+        _ 31 mbz;
+        clksel 1 rw type(clksel_status) "Selects the divider value";
+    };
+
+    constants clksel_status1 width(1) "" {
+        CLKSEL_0_1 = 0 "Selects SYS_CLK for L4WKUP_ICLK Selects SYS_CLK for ABE_DPLL_BYPASS_CLK";
+        CLKSEL_1_1 = 1 "Selects ABE_LP_CLK for L4WKUP_ICLK Selects 32K_FCLK for ABE_DPLL_BYPASS_CLK";
+    };
+    
+    register cm_l4_wkup_clksel addr(base, 0x8) "Control the functional clock source of L4_WKUP, PRM and Smart Reflex functional clock." {
+        _ 31 mbz;
+        clksel 1 rw type(clksel_status1) "Select the clock source for L4WKUP_ICLK and for ABE_DPLL_BYPASS_CLK clocks.";
+    };
+
+    constants clksel_status2 width(1) "" {
+        CLKSEL_0_2 = 0 "Selects SYS_CLK";
+        CLKSEL_1_2 = 1 "Selects SYS_32K";
+    };
+    
+    register cm_abe_pll_ref_clksel addr(base, 0xC) "Control the source of the reference clock for DPLL_ABE" {
+        _ 31 mbz;
+        clksel 1 rw type(clksel_status2) "Select the source for the DPLL_ABE reference clock.";
+    };
+
+    constants sys_clksel_status width(3) "" {
+        SYS_CLKSEL_0 = 0 "Uninitialized";
+        SYS_CLKSEL_1 = 1 "Input clock is 12 MHz";
+        SYS_CLKSEL_2 = 2 "Reserved";
+        SYS_CLKSEL_3 = 3 "Input clock is 16.8 MHz";
+        SYS_CLKSEL_4 = 4 "Input clock is 19.2 MHz";
+        SYS_CLKSEL_5 = 5 "Input clock is 26 MHz";
+        SYS_CLKSEL_6 = 6 "Reserved";
+        SYS_CLKSEL_7 = 7 "Input clock is 38.4 MHz";
+    };
+    
+    register cm_sys_clksel addr(base, 0x10) "Software sets the SYS_CLK configuration corresponding to the frequency of SYS_CLK. [warm reset insensitive]" {
+        _ 29 mbz;
+        sys_clksel 3 rw type(sys_clksel_status) "System clock input selection.";
+    };
+};

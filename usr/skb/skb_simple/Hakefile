@@ -1,0 +1,22 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/skb/skb_simple
+--
+--------------------------------------------------------------------------
+
+[  build application { target = "skb",
+                       flounderBindings = [ "octopus" ],
+                       flounderDefs = [ "monitor", "monitor_blocking", "octopus" ],
+                       flounderExtraDefs = [ ("monitor_blocking", ["rpcclient"]) ],
+                       mackerelDevices = [ "acpi_ec", "lpc_ioapic" ],                      
+                       cFiles = [ "main.c", "octopus_stubs.c" ],
+                       addLibraries = [ "octopus_server", "octopus_parser" ],
+                       architectures = [ "armv5", "armv7","armv7-m", "xscale", "scc" ]
+   }
+]

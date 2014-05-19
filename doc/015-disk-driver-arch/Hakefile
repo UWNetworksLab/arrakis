@@ -1,0 +1,28 @@
+----------------------------------------------------------------------
+-- Copyright (c) 2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Universitaetstr. 6, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /doc/015-disk-driver-arch
+--
+----------------------------------------------------------------------
+
+let
+  svg_sources = [ "architecture", "blockdevfs_list",
+                  "cache_design", "dma_pool_design", "fat16_layout",
+                  "fat32_layout", "fillbench", "h2d_fis", "mmap",
+                  "pmem_overview", "rfis_area" ]
+
+  figoutput f = "/tmp/" ++ f ++ ".pdf"
+
+  -- Fix issues with modified LD_LIBRARY_PATH breaking inkscape, -SG, 9/1/13
+  inkscape f = [ Str "LD_LIBRARY_PATH=", Str "inkscape", Str "-D", Str "-A",
+                 Out "tools" (figoutput f), In SrcTree "src" ("figures/" ++ f ++ ".svg"), NL ]
+  in 
+ [ buildTechNoteWithDeps "disk-driver-report.tex" "TN-015-DiskDriverArchitecture.pdf" True True
+   [] (concat [ inkscape f | f <- svg_sources ])
+ ]
+

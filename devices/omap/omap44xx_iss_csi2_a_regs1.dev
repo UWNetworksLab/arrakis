@@ -1,0 +1,1131 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_csi2_a_regs1.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_csi2_a_regs1 msbfirst ( addr base ) "" {
+    
+    
+    register csi2_revision ro addr(base, 0x0) "IP Revision Identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants mstandby_mode_status width(2) "" {
+        MSTANDBY_MODE_0 = 0 "Force-standby. MStandby is only asserted when the module is disabled.";
+        MSTANDBY_MODE_1 = 1 "No-standby. MStandby is never asserted.";
+        MSTANDBY_MODE_2 = 2 "Smart-standby: MStandby is asserted based on the activity of the module. The module will try to go to standby during the vertical blanking period.";
+    };
+
+    constants soft_reset_status width(1) "" {
+        SOFT_RESET_0 = 0 "Normal mode.";
+        SOFT_RESET_1 = 1 "The module is reset Note: Before setting the software reset bit to 1 in register, the user must have access to a CSI2 receiver register.";
+    };
+
+    constants auto_idle_status width(1) "" {
+        AUTO_IDLE_0 = 0 "OCP clock is free-running.";
+        AUTO_IDLE_1 = 1 "Automatic OCP clock gating strategy is applied based on the OCP interface activity.";
+    };
+    
+    register csi2_sysconfig addr(base, 0x10) "SYSTEM CONFIGURATION REGISTER This register is the OCP-socket system configuration register." {
+        _ 18 mbz;
+        mstandby_mode 2 rw type(mstandby_mode_status) "Sets the behavior of the master port power management signals.";
+        _ 10 mbz;
+        soft_reset 1 rw type(soft_reset_status) "Software reset. Set the bit to 1 to trigger a module reset. The bit is automatically reset by the hardware. During reads return 0.";
+        auto_idle 1 rw type(auto_idle_status) "Internal OCP gating strategy";
+    };
+
+    constants reset_done_status width(1) "" {
+        RESET_DONE_1_r = 1 "Reset completed.";
+        RESET_DONE_0_r = 0 "Internal module reset is on going.";
+    };
+    
+    register csi2_sysstatus addr(base, 0x14) "SYSTEM STATUS REGISTER This register provides status information about the module, excluding the interrupt status register." {
+        _ 31 mbz;
+        reset_done 1 ro type(reset_done_status) "Internal reset monitoring";
+    };
+
+    constants ocp_err_irq_status width(1) "" {
+        OCP_ERR_IRQ_0 = 0 "READS: Event is false. WRITES: Status bit unchanged.";
+        OCP_ERR_IRQ_1 = 1 "READS: Event is true (pending). WRITES: Status bit is reset.";
+    };
+
+    constants complexio_err_irq_status width(1) "" {
+        COMPLEXIO_ERR_IRQ_1_r = 1 "READS: Event is true (pending).";
+        COMPLEXIO_ERR_IRQ_0_r = 0 "READS: Event is false.";
+    };
+    
+    register csi2_irqstatus addr(base, 0x18) "INTERRUPT STATUS REGISTER - All contexts This register associates one bit for each context in order to determine which context has generated the interrupt. The context shall be enabled for events to be generated on that context. If the context is disabled, the interrupt is not generated." {
+        _ 17 mbz;
+        ocp_err_irq 1 rw1c type(ocp_err_irq_status) "OCP Error Interrupt";
+        short_packet_irq 1 rw1c type(ocp_err_irq_status) "Short packet reception status (other than synch events: Line Start, Line End, Frame Start, and Frame End: data type between 0x8 and x0F only shall be considered).";
+        ecc_correction_irq 1 rw1c type(ocp_err_irq_status) "ECC has been used to do the correction of the only 1-bit error status (short packet only).";
+        ecc_no_correction_irq 1 rw1c type(ocp_err_irq_status) "ECC error status (short and long packets). No correction of the header because of more than 1-bit error.";
+        _ 1 mbz;
+        complexio_err_irq 1 ro type(complexio_err_irq_status) "Error signaling from complex I/O: status of the PHY errors received from the complex I/O (events are defined inCSI2_COMPLEXIO_IRQSTATUS for the complex I/O).";
+        fifo_ovf_irq 1 rw1c type(ocp_err_irq_status) "FIFO overflow error status.";
+        context7 1 ro type(complexio_err_irq_status) "Context 7";
+        context6 1 ro type(complexio_err_irq_status) "Context 6";
+        context5 1 ro type(complexio_err_irq_status) "Context 5";
+        context4 1 ro type(complexio_err_irq_status) "Context 4";
+        context3 1 ro type(complexio_err_irq_status) "Context 3";
+        context2 1 ro type(complexio_err_irq_status) "Context 2";
+        context1 1 ro type(complexio_err_irq_status) "Context 1";
+        context0 1 ro type(complexio_err_irq_status) "Context 0";
+    };
+
+    constants ocp_err_irq_status1 width(1) "" {
+        OCP_ERR_IRQ_0_1 = 0 "Event is masked";
+        OCP_ERR_IRQ_1_1 = 1 "Event generates an interrupt when it occurs";
+    };
+    
+    register csi2_irqenable addr(base, 0x1C) "INTERRUPT ENABLE REGISTER - All contexts This register associates one bit for each context in order to enable/disable each context individually." {
+        _ 17 mbz;
+        ocp_err_irq 1 rw type(ocp_err_irq_status1) "OCP Error Interrupt";
+        short_packet_irq 1 rw type(ocp_err_irq_status1) "Short packet reception (other than synch events: Line Start, Line End, Frame Start, and Frame End: data type between 0x8 and x0F only shall be considered).";
+        ecc_correction_irq 1 rw type(ocp_err_irq_status1) "ECC has been used to correct the only 1-bit error (short packet only).";
+        ecc_no_correction_irq 1 rw type(ocp_err_irq_status1) "ECC error (short and long packets). No correction of the header because of more than 1-bit error.";
+        _ 1 mbz;
+        complexio_err_irq 1 rw type(ocp_err_irq_status1) "Error signaling from complex I/O: the interrupt is triggered when any error is received from the complex I/O (events are defined inCSI2_COMPLEXIO_IRQSTATUS for the complex I/O).";
+        fifo_ovf_irq 1 rw type(ocp_err_irq_status1) "FIFO overflow enable";
+        context7 1 rw type(ocp_err_irq_status1) "Context 7";
+        context6 1 rw type(ocp_err_irq_status1) "Context 6";
+        context5 1 rw type(ocp_err_irq_status1) "Context 5";
+        context4 1 rw type(ocp_err_irq_status1) "Context 4";
+        context3 1 rw type(ocp_err_irq_status1) "Context 3";
+        context2 1 rw type(ocp_err_irq_status1) "Context 2";
+        context1 1 rw type(ocp_err_irq_status1) "Context 1";
+        context0 1 rw type(ocp_err_irq_status1) "Context 0";
+    };
+
+    constants burst_size_expand_status width(1) "" {
+        BURST_SIZE_EXPAND_0 = 0 "Use the burst size defined in the BURST_SIZE register";
+        BURST_SIZE_EXPAND_1 = 1 "Allow generation of 16x64-bit bursts";
+    };
+
+    constants vp_clk_en_status width(1) "" {
+        VP_CLK_EN_0 = 0 "The VP clock is disabled.";
+        VP_CLK_EN_1 = 1 "The VP clock is enabled.";
+    };
+
+    constants non_posted_write_status width(1) "" {
+        NON_POSTED_WRITE_0 = 0 "Disable";
+        NON_POSTED_WRITE_1 = 1 "Enable";
+    };
+
+    constants vp_only_en_status width(1) "" {
+        VP_ONLY_EN_0 = 0 "The VP is enabled and the OCP master port is enabled.";
+        VP_ONLY_EN_1 = 1 "The VP is enabled and the OCP master port is disabled.";
+    };
+
+    constants streaming_32_bit_status width(1) "" {
+        STREAMING_32_BIT_0 = 0 "64-bit streaming burst is used; byte enable pattern is 0xFF";
+        STREAMING_32_BIT_1 = 1 "32-bit streaming burst is used; byte enable pattern is 0x0F";
+    };
+
+    constants vp_out_ctrl_status width(2) "" {
+        VP_OUT_CTRL_0 = 0 "No division: VP_PCLK = OCPCLK.";
+        VP_OUT_CTRL_1 = 1 "Division by 2: VP_PCLK = OCPCLK / 2.";
+        VP_OUT_CTRL_3 = 3 "Division by 4: VP_PCLK = OCPCLK / 4.";
+        VP_OUT_CTRL_2 = 2 "Division by 3: VP_PCLK = OCPCLK / 3. Example scenarios: - Low VP_PCLK, Memory -&gt; VP: Same as typical memory -&gt; VP, but VP_PCLK = OCPCLK/2 - Typical sensor -&gt; VP: Autoidle enabled, FCLK at optimal rate, sensor provides DPCM compressed RAW12 data at 650 Mbps. Image timings VP_PCLK = (OCPCLK/2) and [31:15] FRACDIV = 0xD000 2600 active pixels/line, 128 blanking pixels, no vertical blanking. (This scenario corresponds to the OTF operation at maximum CCP2 speed.)";
+    };
+
+    constants burst_size_status width(2) "" {
+        BURST_SIZE_0 = 0 "1x64 OCP writes";
+        BURST_SIZE_1 = 1 "2x64 OCP writes";
+        BURST_SIZE_3 = 3 "8x64 OCP writes";
+        BURST_SIZE_2 = 2 "4x64 OCP writes";
+    };
+
+    constants endianness_status width(1) "" {
+        ENDIANNESS_0 = 0 "Use native MIPI CSI2 endianness: Little endian for all formats except for YUV4:2:2 8b and YUV4:2:0 Legacy which a big endian.";
+        ENDIANNESS_1 = 1 "Store all pixel formats little endian.";
+    };
+
+    constants frame_status width(1) "" {
+        FRAME_0 = 0 "If IF_EN = 0 the interface is disabled immediately.";
+        FRAME_1 = 1 "If IF_EN = 1 the interface is disabled after all FEC sync code have been received for the active contexts.";
+    };
+
+    constants ecc_en_status width(1) "" {
+        ECC_EN_0 = 0 "Disabled";
+        ECC_EN_1 = 1 "Enabled";
+    };
+
+    constants if_en_status width(1) "" {
+        IF_EN_0 = 0 "The interface is disabled. If FRAME = 0, it is disabled immediately. If FRAME = 1, it is disabled when each context has received the FEC sync code.";
+        IF_EN_1 = 1 "The interface is enabled immediately, the data acquisition starts on the next FSC sync code. Writing 1 to this register when the current value is 0 has the effect to clear the output FIFO. The pixel data of the following frame will be written in the PING buffer, that is, the CSI2_CTX_CTRL.PING_PONG bits are reset to 0 as well.";
+    };
+    
+    register csi2_ctrl addr(base, 0x40) "GLOBAL CONTROL REGISTER This register controls the CSI2 RECEIVER module. This register shall not be modified dynamically (except IF_EN bit field)." {
+        _ 15 mbz;
+        burst_size_expand 1 rw type(burst_size_expand_status) "Sets the DMA burst size on the L3 interconnect.";
+        vp_clk_en 1 rw type(vp_clk_en_status) "VP clock enable.";
+        _ 1 mbz;
+        non_posted_write 1 rw type(non_posted_write_status) "Not posted writes";
+        _ 1 mbz;
+        vp_only_en 1 rw type(vp_only_en_status) "VP only enable.";
+        streaming_32_bit 1 rw type(streaming_32_bit_status) "Indicates if 64-bit or 32-bit streaming burst is used. Valid only if CSI2_CTRL.STREAMING=1";
+        vp_out_ctrl 2 rw type(vp_out_ctrl_status) "VP_PCLK control. Sets the VP_PCLK as a function of the ISS interconnect interface clock (OCPCLK).";
+        dbg_en 1 rw type(non_posted_write_status) "Enables the debug mode.";
+        burst_size 2 rw type(burst_size_status) "Sets the DMA burst size on the L3 interconnect.";
+        endianness 1 rw type(endianness_status) "Select endianness for YUV4:2:2 8 bit and YUV4:2:0 legacy formats.";
+        frame 1 rw type(frame_status) "Set the modality in which IF_EN works.";
+        ecc_en 1 rw type(ecc_en_status) "Enables the Error Correction Code check for the received header (short and long packets for all virtual channel ids).";
+        _ 1 mbz;
+        if_en 1 rw type(if_en_status) "Enables the physical interface to the module.";
+    };
+    
+    register csi2_dbg_h wo addr(base, 0x44) "DEBUG REGISTER (Header) This register provides a way to debug the CSI2 RECEIVER module with no image sensor connected to the module. The debug mode is enabled by .DBG_EN. Only full 32-bit values shall be written. The register is used to write short packets and header of long packets." type(uint32);
+
+    constants reset_ctrl_status width(1) "" {
+        RESET_CTRL_0 = 0 "Complex I/O reset active.";
+        RESET_CTRL_1 = 1 "Complex I/O reset deasserted.";
+    };
+
+    constants reset_done_status1 width(1) "" {
+        RESET_DONE_1_r_1 = 1 "Reset completed.";
+        RESET_DONE_0_r_1 = 0 "Internal module reset is ongoing.";
+    };
+
+    constants pwr_cmd_status width(2) "" {
+        PWR_CMD_0 = 0 "Command to change to OFF state";
+        PWR_CMD_1 = 1 "Command to change to ON state";
+        PWR_CMD_2 = 2 "Command to change to Ultralow-Power state";
+    };
+
+    constants pwr_status_status width(2) "" {
+        PWR_STATUS_2_r = 2 "Complex I/O in Ultralow-Power state";
+        PWR_STATUS_1_r = 1 "Complex I/O in ON state";
+        PWR_STATUS_0_r = 0 "Complex I/O in OFF state";
+    };
+
+    constants data4_pol_status width(1) "" {
+        DATA4_POL_0 = 0 "+/- pin order";
+        DATA4_POL_1 = 1 "-/+ pin order";
+    };
+
+    constants data4_position_status width(3) "" {
+        DATA4_POSITION_0 = 0 "This data lane is not used.";
+        DATA4_POSITION_1 = 1 "Data lane 4 is at position 1. This position is not available to the CSI2-B receiver.";
+        DATA4_POSITION_2 = 2 "Data lane 4 is at position 2. This position is not available to the CSI2-B receiver.";
+        DATA4_POSITION_3 = 3 "Data lane 4 is at position 3. This position is not available to the CSI2-B receiver.";
+        DATA4_POSITION_4 = 4 "Data lane 4 is at position 4. This position is not available to the CSI2-B receiver.";
+        DATA4_POSITION_5 = 5 "Data lane 4 is at position 5. This position is not available to the CSI2-B receiver.";
+        DATA4_POSITION_6 = 6 "Reserved";
+        DATA4_POSITION_7 = 7 "Reserved";
+    };
+
+    constants data2_pol_status width(1) "" {
+        DATA2_POL_0 = 0 "+/- pin order (csi2_dx=+ and csi2_dy=-)";
+        DATA2_POL_1 = 1 "-/+ pin order (csi2_dx=- and csi2_dy=+)";
+    };
+
+    constants data2_position_status width(3) "" {
+        DATA2_POSITION_0 = 0 "This data lane is not used.";
+        DATA2_POSITION_1 = 1 "Data lane 2 is at position 1.";
+        DATA2_POSITION_2 = 2 "Data lane 2 is at position 2.";
+        DATA2_POSITION_3 = 3 "Data lane 2 is at position 3.";
+        DATA2_POSITION_4 = 4 "Data lane 2 is at position 4. This position is not available to the CSI2-B receiver.";
+        DATA2_POSITION_5 = 5 "Data lane 2 is at position 5. This position is not available to the CSI2-B receiver.";
+        DATA2_POSITION_6 = 6 "Reserved";
+        DATA2_POSITION_7 = 7 "Reserved";
+    };
+
+    constants data1_position_status width(3) "" {
+        DATA1_POSITION_0 = 0 "This data lane is not used.";
+        DATA1_POSITION_1 = 1 "Data lane 1 is at position 1.";
+        DATA1_POSITION_3 = 3 "Data lane 1 is at position 3.";
+        DATA1_POSITION_4 = 4 "Data lane 1 is at position 4. This position is not available to the CSI2-B receiver.";
+        DATA1_POSITION_5 = 5 "Data lane 1 is at position 5. This position is not available to the CSI2-B receiver.";
+        DATA1_POSITION_6 = 6 "Reserved";
+        DATA1_POSITION_7 = 7 "Reserved";
+    };
+
+    constants clock_position_status width(3) "" {
+        CLOCK_POSITION_0 = 0 "This data lane is not used.";
+        CLOCK_POSITION_1 = 1 "Clock lane is at position 1.";
+        CLOCK_POSITION_2 = 2 "Clock lane is at position 2.";
+        CLOCK_POSITION_3 = 3 "Clock lane is at position 3.";
+        CLOCK_POSITION_4 = 4 "Clock lane is at position 4. This position is not available to the CSI2-B receiver.";
+        CLOCK_POSITION_5 = 5 "Reserved";
+        CLOCK_POSITION_6 = 6 "Reserved";
+        CLOCK_POSITION_7 = 7 "Reserved";
+    };
+    
+    register csi2_complexio_cfg addr(base, 0x50) "COMPLEXIO CONFIGURATION REGISTER for the complex I/O This register contains the lane configuration for the order and position of the lanes (clock and data) and the polarity order for the control of the PHY differential signals in addition to the control bit for the power FSM." {
+        _ 1 mbz;
+        reset_ctrl 1 rw type(reset_ctrl_status) "Controls the reset of the complex I/O";
+        reset_done 1 ro type(reset_done_status1) "Internal reset monitoring of the power domain using the byte clock provided by the associated CSIPHY (see, .Caution: For the [29] RESET_DONE bit to be set to 0x1 (reset completed), the external sensor must to be active and sending the MIPI HS BYTECLK. .";
+        pwr_cmd 2 rw type(pwr_cmd_status) "Command for power control of the complex I/O";
+        pwr_status 2 ro type(pwr_status_status) "Status of the power control of the complex I/O";
+        pwr_auto 1 rw type(non_posted_write_status) "Automatic switch between ULP and ON states based on ULPM signals from complex I/O";
+        _ 4 mbz;
+        data4_pol 1 rw type(data4_pol_status) "+/- differential pin order of data lane 4.";
+        data4_position 3 rw type(data4_position_status) "Position and order of the data lane 4. The values 6 and 7 are reserved. This lane is not available for CSI2-B receiver.";
+        data3_pol 1 rw type(data4_pol_status) "+/- differential pin order of data lane 3.";
+        data3_position 3 rw type(data4_position_status) "Position and order of the data lane 3. The values 6 and 7 are reserved. This lane is not available for CSI2-B receiver.";
+        data2_pol 1 rw type(data2_pol_status) "+/- differential pin order of DATA lane 2.";
+        data2_position 3 rw type(data2_position_status) "Position and order of the data lane 2. The values 6 and 7 are reserved.";
+        data1_pol 1 rw type(data2_pol_status) "+/- differential pin order of data lane 1.";
+        data1_position 3 rw type(data1_position_status) "Position and order of the DATA lane 1. The values 6 and 7 are reserved. When CSI2 is used, the data lane 1 position must be different from 0, 6, or 7.x2: Data lane 1 is at position 2. .";
+        clock_pol 1 rw type(data2_pol_status) "+/- differential pin order of clock lane.";
+        clock_position 3 rw type(clock_position_status) "Position and order of the clock lane. The values 5, 6, and 7 are reserved. When CSI2 is used, the clock lane position must be different from 0, 5, 6, or 7.";
+    };
+    
+    register csi2_complexio_irqstatus addr(base, 0x54) "INTERRUPT STATUS REGISTER - All errors from complex I/O #1" {
+        _ 5 mbz;
+        stateallulpmexit 1 rw1c type(ocp_err_irq_status) "At least one of the active lanes has exit the ULPM";
+        stateallulpmenter 1 rw1c type(ocp_err_irq_status) "All active lanes are entering in ULPM.";
+        stateulpm5 1 rw1c type(ocp_err_irq_status) "Lane 5 in ULPM";
+        stateulpm4 1 rw1c type(ocp_err_irq_status) "Lane 4 in ULPM";
+        stateulpm3 1 rw1c type(ocp_err_irq_status) "Lane 3 in ULPM";
+        stateulpm2 1 rw1c type(ocp_err_irq_status) "Lane 2 in ULPM";
+        stateulpm1 1 rw1c type(ocp_err_irq_status) "Lane 1 in ULPM";
+        errcontrol5 1 rw1c type(ocp_err_irq_status) "Control error for lane 5";
+        errcontrol4 1 rw1c type(ocp_err_irq_status) "Control error for lane 4";
+        errcontrol3 1 rw1c type(ocp_err_irq_status) "Control error for lane 3";
+        errcontrol2 1 rw1c type(ocp_err_irq_status) "Control error for lane 2";
+        errcontrol1 1 rw1c type(ocp_err_irq_status) "Control error for lane 1";
+        erresc5 1 rw1c type(ocp_err_irq_status) "Escape entry error for lane 5";
+        erresc4 1 rw1c type(ocp_err_irq_status) "Escape entry error for lane 4";
+        erresc3 1 rw1c type(ocp_err_irq_status) "Escape entry error for lane 3";
+        erresc2 1 rw1c type(ocp_err_irq_status) "Escape entry error for lane 2";
+        erresc1 1 rw1c type(ocp_err_irq_status) "Escape entry error for lane 1";
+        errsotsynchs5 1 rw1c type(ocp_err_irq_status) "Start of transmission sync error for lane 5";
+        errsotsynchs4 1 rw1c type(ocp_err_irq_status) "Start of transmission sync error for lane 4";
+        errsotsynchs3 1 rw1c type(ocp_err_irq_status) "Start of transmission sync error for lane 3";
+        errsotsynchs2 1 rw1c type(ocp_err_irq_status) "Start of transmission sync error for lane 2";
+        errsotsynchs1 1 rw1c type(ocp_err_irq_status) "Start of transmission sync error for lane 1";
+        errsoths5 1 rw1c type(ocp_err_irq_status) "Start of transmission error for lane 5";
+        errsoths4 1 rw1c type(ocp_err_irq_status) "Start of transmission error for lane 4";
+        errsoths3 1 rw1c type(ocp_err_irq_status) "Start of transmission error for lane 3";
+        errsoths2 1 rw1c type(ocp_err_irq_status) "Start of transmission error for lane 2";
+        errsoths1 1 rw1c type(ocp_err_irq_status) "Start of transmission error for lane 1";
+    };
+    
+    register csi2_short_packet addr(base, 0x5C) "SHORT PACKET INFORMATION - This register sets the 24-bit DATA_ID + Short Packet Data Field when the data type is between 0x8 and x0F" {
+        _ 8 mbz;
+        short_packet 24 ro "Short Packet information: DATA ID + DATA FIELD";
+    };
+    
+    register csi2_complexio_irqenable addr(base, 0x60) "INTERRUPT ENABLE REGISTER - All errors from complex I/O" {
+        _ 5 mbz;
+        stateallulpmexit 1 rw type(ocp_err_irq_status1) "At least one of the active lanes has exit the ULPM";
+        stateallulpmenter 1 rw type(ocp_err_irq_status1) "All active lanes are entering in ULPM.";
+        stateulpm5 1 rw type(ocp_err_irq_status1) "Lane 5 in ULPM";
+        stateulpm4 1 rw type(ocp_err_irq_status1) "Lane 4 in ULPM";
+        stateulpm3 1 rw type(ocp_err_irq_status1) "Lane 3 in ULPM";
+        stateulpm2 1 rw type(ocp_err_irq_status1) "Lane 2 in ULPM";
+        stateulpm1 1 rw type(ocp_err_irq_status1) "Lane 1 in ULPM";
+        errcontrol5 1 rw type(ocp_err_irq_status1) "Control error for lane 5";
+        errcontrol4 1 rw type(ocp_err_irq_status1) "Control error for lane 4";
+        errcontrol3 1 rw type(ocp_err_irq_status1) "Control error for lane 3";
+        errcontrol2 1 rw type(ocp_err_irq_status1) "Control error for lane 2";
+        errcontrol1 1 rw type(ocp_err_irq_status1) "Control error for lane 1";
+        erresc5 1 rw type(ocp_err_irq_status1) "Escape entry error for lane 5";
+        erresc4 1 rw type(ocp_err_irq_status1) "Escape entry error for lane 4";
+        erresc3 1 rw type(ocp_err_irq_status1) "Escape entry error for lane 3";
+        erresc2 1 rw type(ocp_err_irq_status1) "Escape entry error for lane 2";
+        erresc1 1 rw type(ocp_err_irq_status1) "Escape entry error for lane 1";
+        errsotsynchs5 1 rw type(ocp_err_irq_status1) "Start of transmission sync error for lane 5";
+        errsotsynchs4 1 rw type(ocp_err_irq_status1) "Start of transmission sync error for lane 4";
+        errsotsynchs3 1 rw type(ocp_err_irq_status1) "Start of transmission sync error for lane 3";
+        errsotsynchs2 1 rw type(ocp_err_irq_status1) "Start of transmission sync error for lane 2";
+        errsotsynchs1 1 rw type(ocp_err_irq_status1) "Start of transmission sync error for lane 1";
+        errsoths5 1 rw type(ocp_err_irq_status1) "Start of transmission error for lane 5";
+        errsoths4 1 rw type(ocp_err_irq_status1) "Start of transmission error for lane 4";
+        errsoths3 1 rw type(ocp_err_irq_status1) "Start of transmission error for lane 3";
+        errsoths2 1 rw type(ocp_err_irq_status1) "Start of transmission error for lane 2";
+        errsoths1 1 rw type(ocp_err_irq_status1) "Start of transmission error for lane 1";
+    };
+    
+    register csi2_dbg_p wo addr(base, 0x68) "DEBUG REGISTER (Payload) This register provides a way to debug the CSI2 RECEIVER module with no image sensor connected to the module. The debug mode is enabled by .DBG_EN. Only full 32-bit values shall be written. The register is used to write payload of long packets." type(uint32);
+
+    constants force_rx_mode_io1_status width(1) "" {
+        FORCE_RX_MODE_IO1_0 = 0 "Deassertion of ForceRxMode. The hardware reset the bit at the end of the Force RX Mode assertion. The software can reset the bit in order to stop the assertion of the ForceRXMode signal prior to the completion of the period.";
+        FORCE_RX_MODE_IO1_1 = 1 "Assertion of ForceRxMode";
+    };
+
+    constants stop_state_x16_io1_status width(1) "" {
+        STOP_STATE_X16_IO1_0 = 0 "The number of L3 cycles defined in STOP_STATE _COUNTER is multiplied by 1x";
+        STOP_STATE_X16_IO1_1 = 1 "The number of L3 cycles defined in STOP_STATE _COUNTER is multiplied by 16x";
+    };
+    
+    register csi2_timing addr(base, 0x6C) "TIMING REGISTER This register controls the CSI2 RECEIVER module. This register shall not be modified while .IF_EN is set to 1. It is used to indicate the number of L3 cycles for the Stop State monitoring." {
+        _ 1 mbz;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 13 rsvd;
+        force_rx_mode_io1 1 rw type(force_rx_mode_io1_status) "Control of ForceRxMode signal";
+        stop_state_x16_io1 1 rw type(stop_state_x16_io1_status) "Multiplication factor for the number of L3 cycles defined in STOP_STATE_COUNTER bit field";
+        stop_state_x4_io1 1 rw type(stop_state_x16_io1_status) "Multiplication factor for the number of L3 cycles defined in STOP_STATE_COUNTER bit field";
+        stop_state_counter_io1 13 rw "Stop State counter for monitoring. It indicates the number of L3 to monitor for Stop State before deasserting ForceRxMode (complex I/O 1). The value is from 0 to 8191.";
+    };
+
+    constants generic_status width(1) "" {
+        GENERIC_0 = 0 "Disabled. Data is received according to CSI2_CTX_CTRL1.FORMAT and the long packet code transmitted in the MIPI stream is used.";
+        GENERIC_1 = 1 "Enabled. Data is received according to CSI2_CTX_CTRL1.FORMAT and the long packet code transmitted in the MIPI stream is ignored.";
+    };
+
+    constants transcode_status width(4) "" {
+        TRANSCODE_6 = 6 "Outputs uncompressed RAW10 data. Data in memory is organized as regular packed RAW10 data";
+        TRANSCODE_1 = 1 "Outputs DPCM compressed RAW10 data. After compression, pixels are coded on 8 bits. Data in memory is organized as regular RAW8 data";
+        TRANSCODE_7 = 7 "Outputs uncompressed RAW12 data. Data in memory is organized as regular RAW12+EXP16 data";
+        TRANSCODE_0 = 0 "Feature disabled.";
+        TRANSCODE_2 = 2 "Outputs DPCM compressed RAW12 data. After compression, pixels are coded on 8 bits. Data in memory is organized as regular RAW8 data";
+        TRANSCODE_8 = 8 "Outputs uncompressed RAW12 data. Data in memory is organized as regular packed RAW12 data";
+        TRANSCODE_9 = 9 "Outputs uncompressed RAW14 data.";
+        TRANSCODE_4 = 4 "Outputs uncompressed RAW8 data. Data in memory is organized as regular RAW8 data";
+        TRANSCODE_5 = 5 "Outputs uncompressed RAW10 data. Data in memory is organized as regular RAW10+EXP16 data";
+        TRANSCODE_3 = 3 "Outputs A-Law compressed RAW10 data. After compression, pixels are coded on 8 bits. Data in memory is organized as regular RAW8 data.";
+    };
+
+    constants count_unlock_status width(1) "" {
+        COUNT_UNLOCK_0_w = 0 "COUNT bit field is locked. Writes have no effect";
+        COUNT_UNLOCK_1_w = 1 "COUNT bit field is unlocked. Writes are possible.";
+    };
+
+    constants ping_pong_status width(1) "" {
+        PING_PONG_1_r = 1 "PONG buffer";
+        PING_PONG_0_r = 0 "PING buffer";
+    };
+
+    constants line_modulo_status width(1) "" {
+        LINE_MODULO_0 = 0 "CSI2_CTX_CTRL3.LINE_NUMBER is used once per frame for the generation of the LINE_NUMBER_IRQ.";
+        LINE_MODULO_1 = 1 "CSI2_CTX_CTRL3.LINE_NUMBER is used as a modulo number for the generation of the LINE_NUMBER_IRQ (multiple times the interrupt can be generated for each frame)";
+    };
+    
+    register csi2_ctx_ctrl1_i_0 addr(base, 0x70) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        byteswap 1 rw type(ecc_en_status) "Allows swapping bytes two by two in the payload data. It does not affect: - short packets - long packet header or footers - CRC calculation The purpose is to by swap data send to the OCP port and/or video port";
+        generic 1 rw type(generic_status) "Enables the generic mode.";
+        _ 1 mbz;
+        hscale 1 rw "Enable horizontal downscaling by a factor of two. Applies to RAW data when transcoding is enabled. 0x0: Disable 0x1: Enable";
+        transcode 4 rw type(transcode_status) "Enables image transcoding. When this features is enabled: - the data format from the camera is defined by the FORMAT register - the format after transcode is defined by the TRANSCODE register. The memory storage / video port formats is defined by the TRANSCODE register";
+        fec_number 8 rw "Number of FEC to receive between using swap of CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR for the calculation of the address in memory (must be used only in interlace mode, otherwise set to 1).";
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the FRAME_NUMBER_IRQ interrupt is triggered and CTX_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. During the same OCP write access, the bit field COUNT_UNLOCK shall be written in addition to COUNT bit field in order to change the COUNT value. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire";
+        eof_en 1 rw type(streaming_32_bit_status) "Indicates if the end of frame signal shall be asserted at the end of the line.";
+        eol_en 1 rw type(streaming_32_bit_status) "Indicates if the end of line signal shall be asserted at the end of the line.";
+        cs_en 1 rw type(ecc_en_status) "Enables the checksum check for the received payload (long packet only).";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CSI2_CTX_DAT_PING_ADDR or CSI2_CTX_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC_NUMBER FEC sync code received for the current context.";
+        vp_force 1 rw type(ecc_en_status) "Forces sending of the data to both VPORT and OCP. Only applies to formats that existing in two versions: - One sending data to OCP port only - One sending data to VPORT only (tagged with the +VP extension) The format version sending data only to OCP should be chosen.";
+        line_modulo 1 rw type(line_modulo_status) "Line modulo configuration";
+        ctx_en 1 rw type(ecc_en_status) "Enables the context";
+    };
+    
+    register csi2_ctx_ctrl1_i_1 addr(base, 0x90) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        byteswap 1 rw type(ecc_en_status) "Allows swapping bytes two by two in the payload data. It does not affect: - short packets - long packet header or footers - CRC calculation The purpose is to by swap data send to the OCP port and/or video port";
+        generic 1 rw type(generic_status) "Enables the generic mode.";
+        _ 1 mbz;
+        hscale 1 rw "Enable horizontal downscaling by a factor of two. Applies to RAW data when transcoding is enabled. 0x0: Disable 0x1: Enable";
+        transcode 4 rw type(transcode_status) "Enables image transcoding. When this features is enabled: - the data format from the camera is defined by the FORMAT register - the format after transcode is defined by the TRANSCODE register. The memory storage / video port formats is defined by the TRANSCODE register";
+        fec_number 8 rw "Number of FEC to receive between using swap of CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR for the calculation of the address in memory (must be used only in interlace mode, otherwise set to 1).";
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the FRAME_NUMBER_IRQ interrupt is triggered and CTX_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. During the same OCP write access, the bit field COUNT_UNLOCK shall be written in addition to COUNT bit field in order to change the COUNT value. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire";
+        eof_en 1 rw type(streaming_32_bit_status) "Indicates if the end of frame signal shall be asserted at the end of the line.";
+        eol_en 1 rw type(streaming_32_bit_status) "Indicates if the end of line signal shall be asserted at the end of the line.";
+        cs_en 1 rw type(ecc_en_status) "Enables the checksum check for the received payload (long packet only).";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CSI2_CTX_DAT_PING_ADDR or CSI2_CTX_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC_NUMBER FEC sync code received for the current context.";
+        vp_force 1 rw type(ecc_en_status) "Forces sending of the data to both VPORT and OCP. Only applies to formats that existing in two versions: - One sending data to OCP port only - One sending data to VPORT only (tagged with the +VP extension) The format version sending data only to OCP should be chosen.";
+        line_modulo 1 rw type(line_modulo_status) "Line modulo configuration";
+        ctx_en 1 rw type(ecc_en_status) "Enables the context";
+    };
+    
+    register csi2_ctx_ctrl1_i_2 addr(base, 0xB0) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        byteswap 1 rw type(ecc_en_status) "Allows swapping bytes two by two in the payload data. It does not affect: - short packets - long packet header or footers - CRC calculation The purpose is to by swap data send to the OCP port and/or video port";
+        generic 1 rw type(generic_status) "Enables the generic mode.";
+        _ 1 mbz;
+        hscale 1 rw "Enable horizontal downscaling by a factor of two. Applies to RAW data when transcoding is enabled. 0x0: Disable 0x1: Enable";
+        transcode 4 rw type(transcode_status) "Enables image transcoding. When this features is enabled: - the data format from the camera is defined by the FORMAT register - the format after transcode is defined by the TRANSCODE register. The memory storage / video port formats is defined by the TRANSCODE register";
+        fec_number 8 rw "Number of FEC to receive between using swap of CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR for the calculation of the address in memory (must be used only in interlace mode, otherwise set to 1).";
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the FRAME_NUMBER_IRQ interrupt is triggered and CTX_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. During the same OCP write access, the bit field COUNT_UNLOCK shall be written in addition to COUNT bit field in order to change the COUNT value. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire";
+        eof_en 1 rw type(streaming_32_bit_status) "Indicates if the end of frame signal shall be asserted at the end of the line.";
+        eol_en 1 rw type(streaming_32_bit_status) "Indicates if the end of line signal shall be asserted at the end of the line.";
+        cs_en 1 rw type(ecc_en_status) "Enables the checksum check for the received payload (long packet only).";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CSI2_CTX_DAT_PING_ADDR or CSI2_CTX_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC_NUMBER FEC sync code received for the current context.";
+        vp_force 1 rw type(ecc_en_status) "Forces sending of the data to both VPORT and OCP. Only applies to formats that existing in two versions: - One sending data to OCP port only - One sending data to VPORT only (tagged with the +VP extension) The format version sending data only to OCP should be chosen.";
+        line_modulo 1 rw type(line_modulo_status) "Line modulo configuration";
+        ctx_en 1 rw type(ecc_en_status) "Enables the context";
+    };
+    
+    register csi2_ctx_ctrl1_i_3 addr(base, 0xD0) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        byteswap 1 rw type(ecc_en_status) "Allows swapping bytes two by two in the payload data. It does not affect: - short packets - long packet header or footers - CRC calculation The purpose is to by swap data send to the OCP port and/or video port";
+        generic 1 rw type(generic_status) "Enables the generic mode.";
+        _ 1 mbz;
+        hscale 1 rw "Enable horizontal downscaling by a factor of two. Applies to RAW data when transcoding is enabled. 0x0: Disable 0x1: Enable";
+        transcode 4 rw type(transcode_status) "Enables image transcoding. When this features is enabled: - the data format from the camera is defined by the FORMAT register - the format after transcode is defined by the TRANSCODE register. The memory storage / video port formats is defined by the TRANSCODE register";
+        fec_number 8 rw "Number of FEC to receive between using swap of CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR for the calculation of the address in memory (must be used only in interlace mode, otherwise set to 1).";
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the FRAME_NUMBER_IRQ interrupt is triggered and CTX_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. During the same OCP write access, the bit field COUNT_UNLOCK shall be written in addition to COUNT bit field in order to change the COUNT value. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire";
+        eof_en 1 rw type(streaming_32_bit_status) "Indicates if the end of frame signal shall be asserted at the end of the line.";
+        eol_en 1 rw type(streaming_32_bit_status) "Indicates if the end of line signal shall be asserted at the end of the line.";
+        cs_en 1 rw type(ecc_en_status) "Enables the checksum check for the received payload (long packet only).";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CSI2_CTX_DAT_PING_ADDR or CSI2_CTX_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC_NUMBER FEC sync code received for the current context.";
+        vp_force 1 rw type(ecc_en_status) "Forces sending of the data to both VPORT and OCP. Only applies to formats that existing in two versions: - One sending data to OCP port only - One sending data to VPORT only (tagged with the +VP extension) The format version sending data only to OCP should be chosen.";
+        line_modulo 1 rw type(line_modulo_status) "Line modulo configuration";
+        ctx_en 1 rw type(ecc_en_status) "Enables the context";
+    };
+    
+    register csi2_ctx_ctrl1_i_4 addr(base, 0xF0) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        byteswap 1 rw type(ecc_en_status) "Allows swapping bytes two by two in the payload data. It does not affect: - short packets - long packet header or footers - CRC calculation The purpose is to by swap data send to the OCP port and/or video port";
+        generic 1 rw type(generic_status) "Enables the generic mode.";
+        _ 1 mbz;
+        hscale 1 rw "Enable horizontal downscaling by a factor of two. Applies to RAW data when transcoding is enabled. 0x0: Disable 0x1: Enable";
+        transcode 4 rw type(transcode_status) "Enables image transcoding. When this features is enabled: - the data format from the camera is defined by the FORMAT register - the format after transcode is defined by the TRANSCODE register. The memory storage / video port formats is defined by the TRANSCODE register";
+        fec_number 8 rw "Number of FEC to receive between using swap of CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR for the calculation of the address in memory (must be used only in interlace mode, otherwise set to 1).";
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the FRAME_NUMBER_IRQ interrupt is triggered and CTX_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. During the same OCP write access, the bit field COUNT_UNLOCK shall be written in addition to COUNT bit field in order to change the COUNT value. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire";
+        eof_en 1 rw type(streaming_32_bit_status) "Indicates if the end of frame signal shall be asserted at the end of the line.";
+        eol_en 1 rw type(streaming_32_bit_status) "Indicates if the end of line signal shall be asserted at the end of the line.";
+        cs_en 1 rw type(ecc_en_status) "Enables the checksum check for the received payload (long packet only).";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CSI2_CTX_DAT_PING_ADDR or CSI2_CTX_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC_NUMBER FEC sync code received for the current context.";
+        vp_force 1 rw type(ecc_en_status) "Forces sending of the data to both VPORT and OCP. Only applies to formats that existing in two versions: - One sending data to OCP port only - One sending data to VPORT only (tagged with the +VP extension) The format version sending data only to OCP should be chosen.";
+        line_modulo 1 rw type(line_modulo_status) "Line modulo configuration";
+        ctx_en 1 rw type(ecc_en_status) "Enables the context";
+    };
+    
+    register csi2_ctx_ctrl1_i_5 addr(base, 0x110) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        byteswap 1 rw type(ecc_en_status) "Allows swapping bytes two by two in the payload data. It does not affect: - short packets - long packet header or footers - CRC calculation The purpose is to by swap data send to the OCP port and/or video port";
+        generic 1 rw type(generic_status) "Enables the generic mode.";
+        _ 1 mbz;
+        hscale 1 rw "Enable horizontal downscaling by a factor of two. Applies to RAW data when transcoding is enabled. 0x0: Disable 0x1: Enable";
+        transcode 4 rw type(transcode_status) "Enables image transcoding. When this features is enabled: - the data format from the camera is defined by the FORMAT register - the format after transcode is defined by the TRANSCODE register. The memory storage / video port formats is defined by the TRANSCODE register";
+        fec_number 8 rw "Number of FEC to receive between using swap of CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR for the calculation of the address in memory (must be used only in interlace mode, otherwise set to 1).";
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the FRAME_NUMBER_IRQ interrupt is triggered and CTX_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. During the same OCP write access, the bit field COUNT_UNLOCK shall be written in addition to COUNT bit field in order to change the COUNT value. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire";
+        eof_en 1 rw type(streaming_32_bit_status) "Indicates if the end of frame signal shall be asserted at the end of the line.";
+        eol_en 1 rw type(streaming_32_bit_status) "Indicates if the end of line signal shall be asserted at the end of the line.";
+        cs_en 1 rw type(ecc_en_status) "Enables the checksum check for the received payload (long packet only).";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CSI2_CTX_DAT_PING_ADDR or CSI2_CTX_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC_NUMBER FEC sync code received for the current context.";
+        vp_force 1 rw type(ecc_en_status) "Forces sending of the data to both VPORT and OCP. Only applies to formats that existing in two versions: - One sending data to OCP port only - One sending data to VPORT only (tagged with the +VP extension) The format version sending data only to OCP should be chosen.";
+        line_modulo 1 rw type(line_modulo_status) "Line modulo configuration";
+        ctx_en 1 rw type(ecc_en_status) "Enables the context";
+    };
+    
+    register csi2_ctx_ctrl1_i_6 addr(base, 0x130) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        byteswap 1 rw type(ecc_en_status) "Allows swapping bytes two by two in the payload data. It does not affect: - short packets - long packet header or footers - CRC calculation The purpose is to by swap data send to the OCP port and/or video port";
+        generic 1 rw type(generic_status) "Enables the generic mode.";
+        _ 1 mbz;
+        hscale 1 rw "Enable horizontal downscaling by a factor of two. Applies to RAW data when transcoding is enabled. 0x0: Disable 0x1: Enable";
+        transcode 4 rw type(transcode_status) "Enables image transcoding. When this features is enabled: - the data format from the camera is defined by the FORMAT register - the format after transcode is defined by the TRANSCODE register. The memory storage / video port formats is defined by the TRANSCODE register";
+        fec_number 8 rw "Number of FEC to receive between using swap of CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR for the calculation of the address in memory (must be used only in interlace mode, otherwise set to 1).";
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the FRAME_NUMBER_IRQ interrupt is triggered and CTX_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. During the same OCP write access, the bit field COUNT_UNLOCK shall be written in addition to COUNT bit field in order to change the COUNT value. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire";
+        eof_en 1 rw type(streaming_32_bit_status) "Indicates if the end of frame signal shall be asserted at the end of the line.";
+        eol_en 1 rw type(streaming_32_bit_status) "Indicates if the end of line signal shall be asserted at the end of the line.";
+        cs_en 1 rw type(ecc_en_status) "Enables the checksum check for the received payload (long packet only).";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CSI2_CTX_DAT_PING_ADDR or CSI2_CTX_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC_NUMBER FEC sync code received for the current context.";
+        vp_force 1 rw type(ecc_en_status) "Forces sending of the data to both VPORT and OCP. Only applies to formats that existing in two versions: - One sending data to OCP port only - One sending data to VPORT only (tagged with the +VP extension) The format version sending data only to OCP should be chosen.";
+        line_modulo 1 rw type(line_modulo_status) "Line modulo configuration";
+        ctx_en 1 rw type(ecc_en_status) "Enables the context";
+    };
+    
+    register csi2_ctx_ctrl1_i_7 addr(base, 0x150) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        byteswap 1 rw type(ecc_en_status) "Allows swapping bytes two by two in the payload data. It does not affect: - short packets - long packet header or footers - CRC calculation The purpose is to by swap data send to the OCP port and/or video port";
+        generic 1 rw type(generic_status) "Enables the generic mode.";
+        _ 1 mbz;
+        hscale 1 rw "Enable horizontal downscaling by a factor of two. Applies to RAW data when transcoding is enabled. 0x0: Disable 0x1: Enable";
+        transcode 4 rw type(transcode_status) "Enables image transcoding. When this features is enabled: - the data format from the camera is defined by the FORMAT register - the format after transcode is defined by the TRANSCODE register. The memory storage / video port formats is defined by the TRANSCODE register";
+        fec_number 8 rw "Number of FEC to receive between using swap of CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR for the calculation of the address in memory (must be used only in interlace mode, otherwise set to 1).";
+        count 8 rw "Sets the number of frame to acquire. Once the frame acquisition starts, the COUNT value is decremented after every frame. When COUNT reaches 0, the FRAME_NUMBER_IRQ interrupt is triggered and CTX_EN is set to 0. Writes to this bit field are controlled by the COUNT_UNLOCK bit. During the same OCP write access, the bit field COUNT_UNLOCK shall be written in addition to COUNT bit field in order to change the COUNT value. COUNT can be overwritten dynamically with a new count value. 0: Infinite number of frames (no count). 1: 1 frame to acquire ... 255: 255 frames to acquire";
+        eof_en 1 rw type(streaming_32_bit_status) "Indicates if the end of frame signal shall be asserted at the end of the line.";
+        eol_en 1 rw type(streaming_32_bit_status) "Indicates if the end of line signal shall be asserted at the end of the line.";
+        cs_en 1 rw type(ecc_en_status) "Enables the checksum check for the received payload (long packet only).";
+        count_unlock 1 wo type(count_unlock_status) "Unlock writes to the COUNT bit field.";
+        ping_pong 1 ro type(ping_pong_status) "Indicates whether the PING or PONG destination address (CSI2_CTX_DAT_PING_ADDR or CSI2_CTX_DAT_PONG_ADDR) was used to write the last frame. This bit field toggles after every FEC_NUMBER FEC sync code received for the current context.";
+        vp_force 1 rw type(ecc_en_status) "Forces sending of the data to both VPORT and OCP. Only applies to formats that existing in two versions: - One sending data to OCP port only - One sending data to VPORT only (tagged with the +VP extension) The format version sending data only to OCP should be chosen.";
+        line_modulo 1 rw type(line_modulo_status) "Line modulo configuration";
+        ctx_en 1 rw type(ecc_en_status) "Enables the context";
+    };
+
+    constants user_def_mapping_status width(2) "" {
+        USER_DEF_MAPPING_0 = 0 "RAW6";
+        USER_DEF_MAPPING_1 = 1 "RAW7";
+        USER_DEF_MAPPING_2 = 2 "RAW8 (not valid if FORMAT is USER_DEFINED_8_BIT_DATA_TYPE_x_EXP8 with x from 1 to 8)";
+    };
+
+    constants virtual_id_status width(2) "" {
+        VIRTUAL_ID_0 = 0 "Virtual Channel ID 0";
+        VIRTUAL_ID_1 = 1 "Virtual Channel ID 1";
+        VIRTUAL_ID_3 = 3 "Virtual Channel ID 3";
+        VIRTUAL_ID_2 = 2 "Virtual Channel ID 2";
+    };
+
+    constants dpcm_pred_status width(1) "" {
+        DPCM_PRED_0 = 0 "The advanced predictor is used. Not supported for 10- 8- 10 algorithm. Performance limited to 1 pixel/cycle.";
+        DPCM_PRED_1 = 1 "The simple predictor is used.";
+    };
+
+    constants format_status width(10) "" {
+        FORMAT_937 = 937 "RAW7 DPCM12 + VP";
+        FORMAT_128 = 128 "USER_DEFINED_8_BIT_DATA_TYPE_1 + EXP8";
+        FORMAT_132 = 132 "USER_DEFINED_8_BIT_DATA_TYPE_5 + EXP8";
+        FORMAT_838 = 838 "USER_DEFINED_8_BIT_DATA_TYPE_7 + DPCM10 + VP";
+        FORMAT_29 = 29 "YUV4:2:0 10bit + CSPS";
+        FORMAT_710 = 710 "USER_DEFINED_8_BIT_DATA_TYPE_7 + DPCM10 + EXP16";
+        FORMAT_65 = 65 "USER_DEFINED_8_BIT_DATA_TYPE_2";
+        FORMAT_453 = 453 "USER_DEFINED_8_BIT_DATA_TYPE_6_DPCM12_EXP16";
+        FORMAT_172 = 172 "RAW12 + EXP16";
+        FORMAT_325 = 325 "USER_DEFINED_8_BIT_DATA_TYPE_6_DPCM12_VP";
+        FORMAT_18 = 18 "Embedded 8-bit nonimage data (that is, JPEG)";
+        FORMAT_70 = 70 "USER_DEFINED_8_BIT_DATA_TYPE_7";
+        FORMAT_131 = 131 "USER_DEFINED_8_BIT_DATA_TYPE_4 + EXP8";
+        FORMAT_43 = 43 "RAW10";
+        FORMAT_158 = 158 "YUV4:2:2 8bit + VP";
+        FORMAT_448 = 448 "USER_DEFINED_8_BIT_DATA_TYPE_1_DPCM12_EXP16";
+        FORMAT_320 = 320 "USER_DEFINED_8_BIT_DATA_TYPE_1_DPCM12_VP";
+        FORMAT_809 = 809 "RAW7 + DPCM10 + VP";
+        FORMAT_34 = 34 "RGB565";
+        FORMAT_104 = 104 "RAW6 + EXP8";
+        FORMAT_67 = 67 "USER_DEFINED_8_BIT_DATA_TYPE_4";
+        FORMAT_227 = 227 "RGB666 + EXP32";
+        FORMAT_455 = 455 "USER_DEFINED_8_BIT_DATA_TYPE_8_DPCM12_EXP16";
+        FORMAT_323 = 323 "USER_DEFINED_8_BIT_DATA_TYPE_4_DPCM12_VP";
+        FORMAT_160 = 160 "RGB444 + EXP16";
+        FORMAT_135 = 135 "USER_DEFINED_8_BIT_DATA_TYPE_8 + EXP8";
+        FORMAT_133 = 133 "USER_DEFINED_8_BIT_DATA_TYPE_6 + EXP8";
+        FORMAT_0 = 0 "OTHERS (except NULL and BLANKING packets)";
+        FORMAT_833 = 833 "USER_DEFINED_8_BIT_DATA_TYPE_2 + DPCM10 + VP";
+        FORMAT_173 = 173 "RAW14 + EXP16";
+        FORMAT_707 = 707 "USER_DEFINED_8_BIT_DATA_TYPE_4 + DPCM10 + EXP16";
+        FORMAT_228 = 228 "RGB888 + EXP32";
+        FORMAT_835 = 835 "USER_DEFINED_8_BIT_DATA_TYPE_4 + DPCM10 + VP";
+        FORMAT_872 = 872 "RAW6 DPCM12 + VP";
+        FORMAT_300 = 300 "RAW12 + VP";
+        FORMAT_66 = 66 "USER_DEFINED_8_BIT_DATA_TYPE_3";
+        FORMAT_161 = 161 "RGB555 + EXP16";
+        FORMAT_301 = 301 "RAW14 + VP";
+        FORMAT_324 = 324 "USER_DEFINED_8_BIT_DATA_TYPE_5_DPCM12_VP";
+        FORMAT_452 = 452 "USER_DEFINED_8_BIT_DATA_TYPE_5_DPCM12_EXP16";
+        FORMAT_42 = 42 "RAW8";
+        FORMAT_938 = 938 "RAW8 DPCM12 + VP";
+        FORMAT_705 = 705 "USER_DEFINED_8_BIT_DATA_TYPE_2 + DPCM10 + EXP16";
+        FORMAT_451 = 451 "USER_DEFINED_8_BIT_DATA_TYPE_4_DPCM12_EXP16";
+        FORMAT_834 = 834 "USER_DEFINED_8_BIT_DATA_TYPE_3 + DPCM10 + VP";
+        FORMAT_322 = 322 "USER_DEFINED_8_BIT_DATA_TYPE_3_DPCM12_VP";
+        FORMAT_26 = 26 "YUV4:2:0 8bit legacy";
+        FORMAT_874 = 874 "RAW8 DPCM12 + EXP16";
+        FORMAT_810 = 810 "RAW8 + DPCM10 + VP";
+        FORMAT_553 = 553 "RAW7 + DPCM10 + EXP16";
+        FORMAT_298 = 298 "RAW8 + VP";
+        FORMAT_40 = 40 "RAW6";
+        FORMAT_449 = 449 "USER_DEFINED_8_BIT_DATA_TYPE_2_DPCM12_EXP16";
+        FORMAT_680 = 680 "RAW6 + DPCM10 + EXP16";
+        FORMAT_69 = 69 "USER_DEFINED_8_BIT_DATA_TYPE_6";
+        FORMAT_222 = 222 "Same as YUV4:2:2 8bit + VP but data is send as 16-bit wide words to video port. Could be used together with the GENERIC and BYTESWAP features.";
+        FORMAT_832 = 832 "USER_DEFINED_8_BIT_DATA_TYPE_1 + DPCM10 + VP";
+        FORMAT_64 = 64 "USER_DEFINED_8_BIT_DATA_TYPE_1";
+        FORMAT_25 = 25 "YUV4:2:0 10 bit";
+        FORMAT_836 = 836 "USER_DEFINED_8_BIT_DATA_TYPE_5 + DPCM10 + VP";
+        FORMAT_706 = 706 "USER_DEFINED_8_BIT_DATA_TYPE_3 + DPCM10 + EXP16";
+        FORMAT_321 = 321 "USER_DEFINED_8_BIT_DATA_TYPE_2_DPCM12_VP";
+        FORMAT_873 = 873 "RAW7 DPCM12 + EXP16";
+        FORMAT_105 = 105 "RAW7 + EXP8";
+        FORMAT_708 = 708 "USER_DEFINED_8_BIT_DATA_TYPE_5 + DPCM10 + EXP16";
+        FORMAT_28 = 28 "YUV4:2:0 8 bit + CSPS";
+        FORMAT_839 = 839 "USER_DEFINED_8_BIT_DATA_TYPE_8 + DPCM10 + VP";
+        FORMAT_326 = 326 "USER_DEFINED_8_BIT_DATA_TYPE_7_DPCM12_VP";
+        FORMAT_130 = 130 "USER_DEFINED_8_BIT_DATA_TYPE_3 + EXP8";
+        FORMAT_71 = 71 "USER_DEFINED_8_BIT_DATA_TYPE_8";
+        FORMAT_682 = 682 "RAW8 + DPCM10 + EXP16";
+        FORMAT_30 = 30 "YUV4:2:2 8 bit";
+        FORMAT_51 = 51 "RGB666 + EXP32_24";
+        FORMAT_44 = 44 "RAW12";
+        FORMAT_711 = 711 "USER_DEFINED_8_BIT_DATA_TYPE_8 + DPCM10 + EXP16";
+        FORMAT_327 = 327 "USER_DEFINED_8_BIT_DATA_TYPE_8_DPCM12_VP";
+        FORMAT_129 = 129 "USER_DEFINED_8_BIT_DATA_TYPE_2 + EXP8";
+        FORMAT_36 = 36 "RGB888";
+        FORMAT_45 = 45 "RAW14";
+        FORMAT_837 = 837 "USER_DEFINED_8_BIT_DATA_TYPE_6 + DPCM10 + VP";
+        FORMAT_171 = 171 "RAW10 + EXP16";
+        FORMAT_936 = 936 "RAW6 DPCM12 + EXP16";
+        FORMAT_68 = 68 "USER_DEFINED_8_BIT_DATA_TYPE_5";
+        FORMAT_704 = 704 "USER_DEFINED_8_BIT_DATA_TYPE_1 + DPCM10 + EXP16";
+        FORMAT_24 = 24 "YUV4:2:0 8 bit";
+        FORMAT_303 = 303 "RAW10 + VP";
+        FORMAT_232 = 232 "RAW6 + DPCM10 + VP";
+        FORMAT_31 = 31 "YUV4:2:2 10 bit";
+        FORMAT_709 = 709 "USER_DEFINED_8_BIT_DATA_TYPE_6 + DPCM10 + EXP16";
+        FORMAT_450 = 450 "USER_DEFINED_8_BIT_DATA_TYPE_3_DPCM12_EXP16";
+        FORMAT_454 = 454 "USER_DEFINED_8_BIT_DATA_TYPE_7_DPCM12_EXP16";
+        FORMAT_41 = 41 "RAW7";
+        FORMAT_134 = 134 "USER_DEFINED_8_BIT_DATA_TYPE_7 + EXP8";
+    };
+    
+    register csi2_ctx_ctrl2_i_0 addr(base, 0x74) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code (except for VIRTUAL_ID and FORMAT fields). The change of VIRTUIAL_ID and FORMAT has to occur only when the context is disabled (CSI2_CTX_CTRL1.CTX_EN)." {
+        frame 16 ro "Frame number received";
+        _ 1 mbz;
+        user_def_mapping 2 rw type(user_def_mapping_status) "Selects the pixel format of USER_DEFINED in FORMAT";
+        virtual_id 2 rw type(virtual_id_status) "Virtual channel ID";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor.";
+        format 10 rw type(format_status) "Data format selection.";
+    };
+    
+    register csi2_ctx_ctrl2_i_1 addr(base, 0x94) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code (except for VIRTUAL_ID and FORMAT fields). The change of VIRTUIAL_ID and FORMAT has to occur only when the context is disabled (CSI2_CTX_CTRL1.CTX_EN)." {
+        frame 16 ro "Frame number received";
+        _ 1 mbz;
+        user_def_mapping 2 rw type(user_def_mapping_status) "Selects the pixel format of USER_DEFINED in FORMAT";
+        virtual_id 2 rw type(virtual_id_status) "Virtual channel ID";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor.";
+        format 10 rw type(format_status) "Data format selection.";
+    };
+    
+    register csi2_ctx_ctrl2_i_2 addr(base, 0xB4) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code (except for VIRTUAL_ID and FORMAT fields). The change of VIRTUIAL_ID and FORMAT has to occur only when the context is disabled (CSI2_CTX_CTRL1.CTX_EN)." {
+        frame 16 ro "Frame number received";
+        _ 1 mbz;
+        user_def_mapping 2 rw type(user_def_mapping_status) "Selects the pixel format of USER_DEFINED in FORMAT";
+        virtual_id 2 rw type(virtual_id_status) "Virtual channel ID";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor.";
+        format 10 rw type(format_status) "Data format selection.";
+    };
+    
+    register csi2_ctx_ctrl2_i_3 addr(base, 0xD4) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code (except for VIRTUAL_ID and FORMAT fields). The change of VIRTUIAL_ID and FORMAT has to occur only when the context is disabled (CSI2_CTX_CTRL1.CTX_EN)." {
+        frame 16 ro "Frame number received";
+        _ 1 mbz;
+        user_def_mapping 2 rw type(user_def_mapping_status) "Selects the pixel format of USER_DEFINED in FORMAT";
+        virtual_id 2 rw type(virtual_id_status) "Virtual channel ID";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor.";
+        format 10 rw type(format_status) "Data format selection.";
+    };
+    
+    register csi2_ctx_ctrl2_i_4 addr(base, 0xF4) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code (except for VIRTUAL_ID and FORMAT fields). The change of VIRTUIAL_ID and FORMAT has to occur only when the context is disabled (CSI2_CTX_CTRL1.CTX_EN)." {
+        frame 16 ro "Frame number received";
+        _ 1 mbz;
+        user_def_mapping 2 rw type(user_def_mapping_status) "Selects the pixel format of USER_DEFINED in FORMAT";
+        virtual_id 2 rw type(virtual_id_status) "Virtual channel ID";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor.";
+        format 10 rw type(format_status) "Data format selection.";
+    };
+    
+    register csi2_ctx_ctrl2_i_5 addr(base, 0x114) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code (except for VIRTUAL_ID and FORMAT fields). The change of VIRTUIAL_ID and FORMAT has to occur only when the context is disabled (CSI2_CTX_CTRL1.CTX_EN)." {
+        frame 16 ro "Frame number received";
+        _ 1 mbz;
+        user_def_mapping 2 rw type(user_def_mapping_status) "Selects the pixel format of USER_DEFINED in FORMAT";
+        virtual_id 2 rw type(virtual_id_status) "Virtual channel ID";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor.";
+        format 10 rw type(format_status) "Data format selection.";
+    };
+    
+    register csi2_ctx_ctrl2_i_6 addr(base, 0x134) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code (except for VIRTUAL_ID and FORMAT fields). The change of VIRTUIAL_ID and FORMAT has to occur only when the context is disabled (CSI2_CTX_CTRL1.CTX_EN)." {
+        frame 16 ro "Frame number received";
+        _ 1 mbz;
+        user_def_mapping 2 rw type(user_def_mapping_status) "Selects the pixel format of USER_DEFINED in FORMAT";
+        virtual_id 2 rw type(virtual_id_status) "Virtual channel ID";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor.";
+        format 10 rw type(format_status) "Data format selection.";
+    };
+    
+    register csi2_ctx_ctrl2_i_7 addr(base, 0x154) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code (except for VIRTUAL_ID and FORMAT fields). The change of VIRTUIAL_ID and FORMAT has to occur only when the context is disabled (CSI2_CTX_CTRL1.CTX_EN)." {
+        frame 16 ro "Frame number received";
+        _ 1 mbz;
+        user_def_mapping 2 rw type(user_def_mapping_status) "Selects the pixel format of USER_DEFINED in FORMAT";
+        virtual_id 2 rw type(virtual_id_status) "Virtual channel ID";
+        dpcm_pred 1 rw type(dpcm_pred_status) "Selects the DPCM predictor.";
+        format 10 rw type(format_status) "Data format selection.";
+    };
+    
+    register csi2_ctx_dat_ofst_i_0 addr(base, 0x78) "DATA MEM ADDRESS OFFSET REGISTER - Context This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        _ 15 mbz;
+        ofst 12 rw "Line offset programmed in bytes (signed value 2s complement). If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ofst_i_1 addr(base, 0x98) "DATA MEM ADDRESS OFFSET REGISTER - Context This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        _ 15 mbz;
+        ofst 12 rw "Line offset programmed in bytes (signed value 2s complement). If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ofst_i_2 addr(base, 0xB8) "DATA MEM ADDRESS OFFSET REGISTER - Context This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        _ 15 mbz;
+        ofst 12 rw "Line offset programmed in bytes (signed value 2s complement). If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ofst_i_3 addr(base, 0xD8) "DATA MEM ADDRESS OFFSET REGISTER - Context This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        _ 15 mbz;
+        ofst 12 rw "Line offset programmed in bytes (signed value 2s complement). If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ofst_i_4 addr(base, 0xF8) "DATA MEM ADDRESS OFFSET REGISTER - Context This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        _ 15 mbz;
+        ofst 12 rw "Line offset programmed in bytes (signed value 2s complement). If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ofst_i_5 addr(base, 0x118) "DATA MEM ADDRESS OFFSET REGISTER - Context This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        _ 15 mbz;
+        ofst 12 rw "Line offset programmed in bytes (signed value 2s complement). If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ofst_i_6 addr(base, 0x138) "DATA MEM ADDRESS OFFSET REGISTER - Context This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        _ 15 mbz;
+        ofst 12 rw "Line offset programmed in bytes (signed value 2s complement). If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ofst_i_7 addr(base, 0x158) "DATA MEM ADDRESS OFFSET REGISTER - Context This register sets the offset, which is applied on the destination address after each line is written to memory. This register applies for both CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR. For example, it enables to perform 2D data transfers of the pixel data into a frame buffer. In such case, the pixel data and frame buffer data shall have the same data format. The 5 LSBs are ignored: the offset shall be a multiple of 32 bytes. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        _ 15 mbz;
+        ofst 12 rw "Line offset programmed in bytes (signed value 2s complement). If OFST = 0, the data is written contiguously in memory. Otherwise, OFST sets the destination offset between the first pixel of the previous line and the first pixel of the current line.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ping_addr_i_0 addr(base, 0x7C) "DATA MEM PING ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ping_addr_i_1 addr(base, 0x9C) "DATA MEM PING ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ping_addr_i_2 addr(base, 0xBC) "DATA MEM PING ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ping_addr_i_3 addr(base, 0xDC) "DATA MEM PING ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ping_addr_i_4 addr(base, 0xFC) "DATA MEM PING ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ping_addr_i_5 addr(base, 0x11C) "DATA MEM PING ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ping_addr_i_6 addr(base, 0x13C) "DATA MEM PING ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_ping_addr_i_7 addr(base, 0x15C) "DATA MEM PING ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double buffered: this register sets the PING address. Double buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_pong_addr_i_0 addr(base, 0x80) "DATA MEM PONG ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double-buffered: this register sets the PONG address. Double-buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_pong_addr_i_1 addr(base, 0xA0) "DATA MEM PONG ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double-buffered: this register sets the PONG address. Double-buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_pong_addr_i_2 addr(base, 0xC0) "DATA MEM PONG ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double-buffered: this register sets the PONG address. Double-buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_pong_addr_i_3 addr(base, 0xE0) "DATA MEM PONG ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double-buffered: this register sets the PONG address. Double-buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_pong_addr_i_4 addr(base, 0x100) "DATA MEM PONG ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double-buffered: this register sets the PONG address. Double-buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_pong_addr_i_5 addr(base, 0x120) "DATA MEM PONG ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double-buffered: this register sets the PONG address. Double-buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_pong_addr_i_6 addr(base, 0x140) "DATA MEM PONG ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double-buffered: this register sets the PONG address. Double-buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_dat_pong_addr_i_7 addr(base, 0x160) "DATA MEM PONG ADDRESS REGISTER - Context This register sets the 32-bit memory address where the pixel data are stored. The destination is double-buffered: this register sets the PONG address. Double-buffering is enabled when the addresses CSI2_CTX_DAT_PING_ADDR and CSI2_CTX_DAT_PONG_ADDR are different. The 5 LSBs are ignored: the address shall be aligned on a 32-byte boundary. This register is shadowed: modifications are taken into account after the next FSC sync code. Only full 32-bit values shall be written." {
+        addr 27 rw "27 most-significant bits of the 32-bit address.";
+        _ 5 mbz;
+    };
+    
+    register csi2_ctx_irqenable_i_0 addr(base, 0x84) "INTERRUPT ENABLE REGISTER - Context This register regroups all the events related to context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw type(ocp_err_irq_status1) "Context - ECC has been used to correct the only 1-bit error (long packet only).";
+        line_number_irq 1 rw type(ocp_err_irq_status1) "Context - Line number is reached.";
+        frame_number_irq 1 rw type(ocp_err_irq_status1) "Context - Frame counter reached.";
+        cs_irq 1 rw type(ocp_err_irq_status1) "Context - Check-Sum of the payload mismatch detection";
+        _ 1 mbz;
+        le_irq 1 rw type(ocp_err_irq_status1) "Context - Line end sync code detection.";
+        ls_irq 1 rw type(ocp_err_irq_status1) "Context - Line start sync code detection.";
+        fe_irq 1 rw type(ocp_err_irq_status1) "Context - Frame end sync code detection.";
+        fs_irq 1 rw type(ocp_err_irq_status1) "Context - Frame start sync code detection.";
+    };
+    
+    register csi2_ctx_irqenable_i_1 addr(base, 0xA4) "INTERRUPT ENABLE REGISTER - Context This register regroups all the events related to context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw type(ocp_err_irq_status1) "Context - ECC has been used to correct the only 1-bit error (long packet only).";
+        line_number_irq 1 rw type(ocp_err_irq_status1) "Context - Line number is reached.";
+        frame_number_irq 1 rw type(ocp_err_irq_status1) "Context - Frame counter reached.";
+        cs_irq 1 rw type(ocp_err_irq_status1) "Context - Check-Sum of the payload mismatch detection";
+        _ 1 mbz;
+        le_irq 1 rw type(ocp_err_irq_status1) "Context - Line end sync code detection.";
+        ls_irq 1 rw type(ocp_err_irq_status1) "Context - Line start sync code detection.";
+        fe_irq 1 rw type(ocp_err_irq_status1) "Context - Frame end sync code detection.";
+        fs_irq 1 rw type(ocp_err_irq_status1) "Context - Frame start sync code detection.";
+    };
+    
+    register csi2_ctx_irqenable_i_2 addr(base, 0xC4) "INTERRUPT ENABLE REGISTER - Context This register regroups all the events related to context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw type(ocp_err_irq_status1) "Context - ECC has been used to correct the only 1-bit error (long packet only).";
+        line_number_irq 1 rw type(ocp_err_irq_status1) "Context - Line number is reached.";
+        frame_number_irq 1 rw type(ocp_err_irq_status1) "Context - Frame counter reached.";
+        cs_irq 1 rw type(ocp_err_irq_status1) "Context - Check-Sum of the payload mismatch detection";
+        _ 1 mbz;
+        le_irq 1 rw type(ocp_err_irq_status1) "Context - Line end sync code detection.";
+        ls_irq 1 rw type(ocp_err_irq_status1) "Context - Line start sync code detection.";
+        fe_irq 1 rw type(ocp_err_irq_status1) "Context - Frame end sync code detection.";
+        fs_irq 1 rw type(ocp_err_irq_status1) "Context - Frame start sync code detection.";
+    };
+    
+    register csi2_ctx_irqenable_i_3 addr(base, 0xE4) "INTERRUPT ENABLE REGISTER - Context This register regroups all the events related to context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw type(ocp_err_irq_status1) "Context - ECC has been used to correct the only 1-bit error (long packet only).";
+        line_number_irq 1 rw type(ocp_err_irq_status1) "Context - Line number is reached.";
+        frame_number_irq 1 rw type(ocp_err_irq_status1) "Context - Frame counter reached.";
+        cs_irq 1 rw type(ocp_err_irq_status1) "Context - Check-Sum of the payload mismatch detection";
+        _ 1 mbz;
+        le_irq 1 rw type(ocp_err_irq_status1) "Context - Line end sync code detection.";
+        ls_irq 1 rw type(ocp_err_irq_status1) "Context - Line start sync code detection.";
+        fe_irq 1 rw type(ocp_err_irq_status1) "Context - Frame end sync code detection.";
+        fs_irq 1 rw type(ocp_err_irq_status1) "Context - Frame start sync code detection.";
+    };
+    
+    register csi2_ctx_irqenable_i_4 addr(base, 0x104) "INTERRUPT ENABLE REGISTER - Context This register regroups all the events related to context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw type(ocp_err_irq_status1) "Context - ECC has been used to correct the only 1-bit error (long packet only).";
+        line_number_irq 1 rw type(ocp_err_irq_status1) "Context - Line number is reached.";
+        frame_number_irq 1 rw type(ocp_err_irq_status1) "Context - Frame counter reached.";
+        cs_irq 1 rw type(ocp_err_irq_status1) "Context - Check-Sum of the payload mismatch detection";
+        _ 1 mbz;
+        le_irq 1 rw type(ocp_err_irq_status1) "Context - Line end sync code detection.";
+        ls_irq 1 rw type(ocp_err_irq_status1) "Context - Line start sync code detection.";
+        fe_irq 1 rw type(ocp_err_irq_status1) "Context - Frame end sync code detection.";
+        fs_irq 1 rw type(ocp_err_irq_status1) "Context - Frame start sync code detection.";
+    };
+    
+    register csi2_ctx_irqenable_i_5 addr(base, 0x124) "INTERRUPT ENABLE REGISTER - Context This register regroups all the events related to context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw type(ocp_err_irq_status1) "Context - ECC has been used to correct the only 1-bit error (long packet only).";
+        line_number_irq 1 rw type(ocp_err_irq_status1) "Context - Line number is reached.";
+        frame_number_irq 1 rw type(ocp_err_irq_status1) "Context - Frame counter reached.";
+        cs_irq 1 rw type(ocp_err_irq_status1) "Context - Check-Sum of the payload mismatch detection";
+        _ 1 mbz;
+        le_irq 1 rw type(ocp_err_irq_status1) "Context - Line end sync code detection.";
+        ls_irq 1 rw type(ocp_err_irq_status1) "Context - Line start sync code detection.";
+        fe_irq 1 rw type(ocp_err_irq_status1) "Context - Frame end sync code detection.";
+        fs_irq 1 rw type(ocp_err_irq_status1) "Context - Frame start sync code detection.";
+    };
+    
+    register csi2_ctx_irqenable_i_6 addr(base, 0x144) "INTERRUPT ENABLE REGISTER - Context This register regroups all the events related to context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw type(ocp_err_irq_status1) "Context - ECC has been used to correct the only 1-bit error (long packet only).";
+        line_number_irq 1 rw type(ocp_err_irq_status1) "Context - Line number is reached.";
+        frame_number_irq 1 rw type(ocp_err_irq_status1) "Context - Frame counter reached.";
+        cs_irq 1 rw type(ocp_err_irq_status1) "Context - Check-Sum of the payload mismatch detection";
+        _ 1 mbz;
+        le_irq 1 rw type(ocp_err_irq_status1) "Context - Line end sync code detection.";
+        ls_irq 1 rw type(ocp_err_irq_status1) "Context - Line start sync code detection.";
+        fe_irq 1 rw type(ocp_err_irq_status1) "Context - Frame end sync code detection.";
+        fs_irq 1 rw type(ocp_err_irq_status1) "Context - Frame start sync code detection.";
+    };
+    
+    register csi2_ctx_irqenable_i_7 addr(base, 0x164) "INTERRUPT ENABLE REGISTER - Context This register regroups all the events related to context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw type(ocp_err_irq_status1) "Context - ECC has been used to correct the only 1-bit error (long packet only).";
+        line_number_irq 1 rw type(ocp_err_irq_status1) "Context - Line number is reached.";
+        frame_number_irq 1 rw type(ocp_err_irq_status1) "Context - Frame counter reached.";
+        cs_irq 1 rw type(ocp_err_irq_status1) "Context - Check-Sum of the payload mismatch detection";
+        _ 1 mbz;
+        le_irq 1 rw type(ocp_err_irq_status1) "Context - Line end sync code detection.";
+        ls_irq 1 rw type(ocp_err_irq_status1) "Context - Line start sync code detection.";
+        fe_irq 1 rw type(ocp_err_irq_status1) "Context - Frame end sync code detection.";
+        fs_irq 1 rw type(ocp_err_irq_status1) "Context - Frame start sync code detection.";
+    };
+    
+    register csi2_ctx_irqstatus_i_0 addr(base, 0x88) "INTERRUPT STATUS REGISTER - Context This register regroups all the events related to Context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw1c type(ocp_err_irq_status) "Context - ECC has been used to do the correction of the only 1-bit error status (long packet only).";
+        line_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Line number reached status.";
+        frame_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame counter reached status";
+        cs_irq 1 rw1c type(ocp_err_irq_status) "Context - Check-Sum mismatch status.";
+        _ 1 mbz;
+        le_irq 1 rw1c type(ocp_err_irq_status) "Context - Line end sync code detection status.";
+        ls_irq 1 rw1c type(ocp_err_irq_status) "Context - Line start sync code detection status.";
+        fe_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame end sync code detection status.";
+        fs_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame start sync code detection status.";
+    };
+    
+    register csi2_ctx_irqstatus_i_1 addr(base, 0xA8) "INTERRUPT STATUS REGISTER - Context This register regroups all the events related to Context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw1c type(ocp_err_irq_status) "Context - ECC has been used to do the correction of the only 1-bit error status (long packet only).";
+        line_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Line number reached status.";
+        frame_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame counter reached status";
+        cs_irq 1 rw1c type(ocp_err_irq_status) "Context - Check-Sum mismatch status.";
+        _ 1 mbz;
+        le_irq 1 rw1c type(ocp_err_irq_status) "Context - Line end sync code detection status.";
+        ls_irq 1 rw1c type(ocp_err_irq_status) "Context - Line start sync code detection status.";
+        fe_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame end sync code detection status.";
+        fs_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame start sync code detection status.";
+    };
+    
+    register csi2_ctx_irqstatus_i_2 addr(base, 0xC8) "INTERRUPT STATUS REGISTER - Context This register regroups all the events related to Context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw1c type(ocp_err_irq_status) "Context - ECC has been used to do the correction of the only 1-bit error status (long packet only).";
+        line_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Line number reached status.";
+        frame_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame counter reached status";
+        cs_irq 1 rw1c type(ocp_err_irq_status) "Context - Check-Sum mismatch status.";
+        _ 1 mbz;
+        le_irq 1 rw1c type(ocp_err_irq_status) "Context - Line end sync code detection status.";
+        ls_irq 1 rw1c type(ocp_err_irq_status) "Context - Line start sync code detection status.";
+        fe_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame end sync code detection status.";
+        fs_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame start sync code detection status.";
+    };
+    
+    register csi2_ctx_irqstatus_i_3 addr(base, 0xE8) "INTERRUPT STATUS REGISTER - Context This register regroups all the events related to Context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw1c type(ocp_err_irq_status) "Context - ECC has been used to do the correction of the only 1-bit error status (long packet only).";
+        line_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Line number reached status.";
+        frame_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame counter reached status";
+        cs_irq 1 rw1c type(ocp_err_irq_status) "Context - Check-Sum mismatch status.";
+        _ 1 mbz;
+        le_irq 1 rw1c type(ocp_err_irq_status) "Context - Line end sync code detection status.";
+        ls_irq 1 rw1c type(ocp_err_irq_status) "Context - Line start sync code detection status.";
+        fe_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame end sync code detection status.";
+        fs_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame start sync code detection status.";
+    };
+    
+    register csi2_ctx_irqstatus_i_4 addr(base, 0x108) "INTERRUPT STATUS REGISTER - Context This register regroups all the events related to Context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw1c type(ocp_err_irq_status) "Context - ECC has been used to do the correction of the only 1-bit error status (long packet only).";
+        line_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Line number reached status.";
+        frame_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame counter reached status";
+        cs_irq 1 rw1c type(ocp_err_irq_status) "Context - Check-Sum mismatch status.";
+        _ 1 mbz;
+        le_irq 1 rw1c type(ocp_err_irq_status) "Context - Line end sync code detection status.";
+        ls_irq 1 rw1c type(ocp_err_irq_status) "Context - Line start sync code detection status.";
+        fe_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame end sync code detection status.";
+        fs_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame start sync code detection status.";
+    };
+    
+    register csi2_ctx_irqstatus_i_5 addr(base, 0x128) "INTERRUPT STATUS REGISTER - Context This register regroups all the events related to Context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw1c type(ocp_err_irq_status) "Context - ECC has been used to do the correction of the only 1-bit error status (long packet only).";
+        line_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Line number reached status.";
+        frame_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame counter reached status";
+        cs_irq 1 rw1c type(ocp_err_irq_status) "Context - Check-Sum mismatch status.";
+        _ 1 mbz;
+        le_irq 1 rw1c type(ocp_err_irq_status) "Context - Line end sync code detection status.";
+        ls_irq 1 rw1c type(ocp_err_irq_status) "Context - Line start sync code detection status.";
+        fe_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame end sync code detection status.";
+        fs_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame start sync code detection status.";
+    };
+    
+    register csi2_ctx_irqstatus_i_6 addr(base, 0x148) "INTERRUPT STATUS REGISTER - Context This register regroups all the events related to Context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw1c type(ocp_err_irq_status) "Context - ECC has been used to do the correction of the only 1-bit error status (long packet only).";
+        line_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Line number reached status.";
+        frame_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame counter reached status";
+        cs_irq 1 rw1c type(ocp_err_irq_status) "Context - Check-Sum mismatch status.";
+        _ 1 mbz;
+        le_irq 1 rw1c type(ocp_err_irq_status) "Context - Line end sync code detection status.";
+        ls_irq 1 rw1c type(ocp_err_irq_status) "Context - Line start sync code detection status.";
+        fe_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame end sync code detection status.";
+        fs_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame start sync code detection status.";
+    };
+    
+    register csi2_ctx_irqstatus_i_7 addr(base, 0x168) "INTERRUPT STATUS REGISTER - Context This register regroups all the events related to Context." {
+        _ 23 mbz;
+        ecc_correction_irq 1 rw1c type(ocp_err_irq_status) "Context - ECC has been used to do the correction of the only 1-bit error status (long packet only).";
+        line_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Line number reached status.";
+        frame_number_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame counter reached status";
+        cs_irq 1 rw1c type(ocp_err_irq_status) "Context - Check-Sum mismatch status.";
+        _ 1 mbz;
+        le_irq 1 rw1c type(ocp_err_irq_status) "Context - Line end sync code detection status.";
+        ls_irq 1 rw1c type(ocp_err_irq_status) "Context - Line start sync code detection status.";
+        fe_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame end sync code detection status.";
+        fs_irq 1 rw1c type(ocp_err_irq_status) "Context - Frame start sync code detection status.";
+    };
+    
+    register csi2_ctx_ctrl3_i_0 addr(base, 0x8C) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 2 mbz;
+        alpha 14 rw "Alpha value for RGB888, RGB666 and RBG444.";
+        line_number 16 rw "Line number for the interrupt generation";
+    };
+    
+    register csi2_ctx_ctrl3_i_1 addr(base, 0xAC) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 2 mbz;
+        alpha 14 rw "Alpha value for RGB888, RGB666 and RBG444.";
+        line_number 16 rw "Line number for the interrupt generation";
+    };
+    
+    register csi2_ctx_ctrl3_i_2 addr(base, 0xCC) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 2 mbz;
+        alpha 14 rw "Alpha value for RGB888, RGB666 and RBG444.";
+        line_number 16 rw "Line number for the interrupt generation";
+    };
+    
+    register csi2_ctx_ctrl3_i_3 addr(base, 0xEC) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 2 mbz;
+        alpha 14 rw "Alpha value for RGB888, RGB666 and RBG444.";
+        line_number 16 rw "Line number for the interrupt generation";
+    };
+    
+    register csi2_ctx_ctrl3_i_4 addr(base, 0x10C) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 2 mbz;
+        alpha 14 rw "Alpha value for RGB888, RGB666 and RBG444.";
+        line_number 16 rw "Line number for the interrupt generation";
+    };
+    
+    register csi2_ctx_ctrl3_i_5 addr(base, 0x12C) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 2 mbz;
+        alpha 14 rw "Alpha value for RGB888, RGB666 and RBG444.";
+        line_number 16 rw "Line number for the interrupt generation";
+    };
+    
+    register csi2_ctx_ctrl3_i_6 addr(base, 0x14C) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 2 mbz;
+        alpha 14 rw "Alpha value for RGB888, RGB666 and RBG444.";
+        line_number 16 rw "Line number for the interrupt generation";
+    };
+    
+    register csi2_ctx_ctrl3_i_7 addr(base, 0x16C) "CONTROL REGISTER - Context This register controls the Context. This register is shadowed: modifications are taken into account after the next FSC sync code." {
+        _ 2 mbz;
+        alpha 14 rw "Alpha value for RGB888, RGB666 and RBG444.";
+        line_number 16 rw "Line number for the interrupt generation";
+    };
+};

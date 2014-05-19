@@ -1,0 +1,62 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_dct_l3interconnect.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_dct_l3interconnect msbfirst ( addr base ) "" {
+    
+    
+    register dct_version ro addr(base, 0x0) "IP Revision" type(uint32);
+    
+    register dct_ctrl addr(base, 0x4) "DCT control register" {
+        _ 16 mbz;
+        busy 1 ro "IDCT/busy status 0: Idle 1: Busy";
+        _ 14 mbz;
+        en 1 wo "Write 1 whenDCT_CFG[4] TRIG_SRC = 0 to start module operation. Read returns 0.";
+    };
+    
+    register dct_cfg addr(base, 0x8) "DCT configuration register" {
+        _ 18 mbz;
+        nmcus 6 rw "Number of MCUs (for FMT = 0, 1) or blocks (for FMT = 2) 0 = 1 MCU or block 1 = 2 MCUs or blocks ... 63 = 64 MCUs or blocks";
+        _ 2 mbz;
+        autogating 1 rw "Internal clock gating on interface and functional clocks 0: Clocks are free-running 1: Clocks are gated off in subblocks that are not required for operation.";
+        trig_src 1 rw "Trigger source 0: Memory mapper register 1: Hardware start signal";
+        inten 1 rw "0: Interrupt disabled 1: Interrupt enabled";
+        fmt 2 rw "Data format 0: YUV4:2:0 format 1: YUV4:2:2 format 2: Sequential blocks format 3: Reserved";
+        mode 1 rw "0: DCT 1: IDCT";
+    };
+    
+    register dct_sptr addr(base, 0xC) "Spatial-domain data pointer, byte address" {
+        _ 19 mbz;
+        addr 8 rw "Address in 256-bit words Intention is that software write a byte address into the register. Hardware ignores the lowest 5 bits and bits 12..5 specifies the 256-bit/word memory address..";
+        _ 5 mbz;
+    };
+    
+    register dct_fptr addr(base, 0x10) "Frequency-domain data pointer, byte address" {
+        _ 18 mbz;
+        addr 10 rw "Address in 128-bit words. Intention is that software write a byte address into the register. Hardware ignores the lowest 4 bits and bits 13..4 specifies the 128-bit/word memory address.";
+        _ 4 mbz;
+    };
+};

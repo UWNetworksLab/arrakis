@@ -1,0 +1,26 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, 2013, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/vmkitmon
+--
+--------------------------------------------------------------------------
+
+[ build application { target = "arrakismon",
+                      cFiles = [ "vmkitmon.c", "guest.c", "realmode.c",
+                                 "hdd.c", "keyboard.c", "console.c",
+                                 "apic.c", "lpc.c", "pc16550d.c", "pci.c",
+				 "pci_host.c", "pci_hostbridge.c", "ps.c" ],
+                      mackerelDevices = [ "amd_vmcb", "lpc_timer",
+                                          "pc16550d_mem", "pci_hdr0_mem" ],
+                      addLibraries = libDeps [ "spawndomain", "x86emu", "vfs", "elf", "timer", "lwip" ],
+                      flounderDefs = [ "monitor", "monitor_blocking", "arrakis" ],
+                      flounderExtraDefs = [ ("monitor_blocking",["rpcclient"]) ],
+  		      flounderBindings = [ "arrakis" ],
+                      architectures = ["x86_64"]
+                    }
+]

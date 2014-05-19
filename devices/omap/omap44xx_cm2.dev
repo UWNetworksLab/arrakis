@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_cm2.dev
+ *
+ * DESCRIPTION: Power Management Framework (PandaBoard)
+ *
+ * See:
+ * OMAP4430 Multimedia Device Silicon Revision 2.x Technical Reference Manual (Rev. 0)
+ * Chapter: 3.6.3.2.4 and 3.11.29 - 3.11.40
+ * Registers: Table 3-1286 on page 918
+ *
+ */
+ 
+device omap44xx_cm2 msbfirst (addr cm2_base, addr cm2_clkgen_base, addr l4per_base) "TI CM2 Clock Generator" {
+
+    /*
+     * Ignoring the remaining bits, since we don't use them .. 
+     * see table 3-1287, page 918                                   
+     * XXX need to add output for L{3,4}_ICLK to see if it is turned on
+     */
+    register CM_L3INIT_CLKSTCTRL addr(cm2_base, 0x0) "Enable power state transitions" {
+        _                             14;
+        CLKACTIVITY_INIT_HSMMC1_FCLK   1    ro     "State of functional clock for MMC1";
+        _                             15;
+        CLKTRCTRL                      2    rw     "Clock state transition of L3INIT clock domain";
+    };
+
+    register CM_L3INIT_HSMMC1_CLKCTRL addr(cm2_base, 0x28) "management of MMC1 clocks" {
+        _                              7;
+        CLKSEL                         1    rw    "Source of functional clock";
+        _                              5;
+        STBYST                         1    ro    "Standby status";
+        IDLEST                         2    ro    "Idel status";
+        _                             14;
+        MODULEMODE                     2    rw    "Clock management mode";
+    };
+
+    register CM_DIV_M4_DPLL_PER addr(cm2_clkgen_base, 0x58) "Control over CLKOUT1 of HSDIVIDER" {
+        _                             19;
+        HSDIVIDER_CLKOUT1_PWDN         1    rw    "Power control for M4 divider";
+        _                              2;
+        ST_HSDIVIDER_CLKOUT1           1    ro    "Status of HSDIVIDER CLKOUT1";
+        HSDIVIDER_CLKOUT1_GATE_CTRL    1    rw    "Control gating of HSDIVIDER CLKOUT1";
+        _                              2;
+        HSDIVIDER_CLKOUT1_DIVCHACK     1    ro    "Toggle on this status bit after changing CLKOUT1_DIV";
+        HSDIVIDER_CLKOUT1_DIV          5    rw    "DPLL M4 post-divider factor";
+    };
+
+    constants idlest "Idle Status" {
+        idlest_functional = 0b00 "Module is fully functional";
+        idlest_transition = 0b01 "Module is performing transition";
+        idlest_idle       = 0b10 "Module is in idle mode. It's functional when using separate FCLK.";
+        idlest_disabled   = 0b11 "Module is disabled";
+    };
+    constants modmode "Module mandatory clock control" {
+        modmode_swdisabled = 0b00 "Module is disabled by software";
+        modmode_swenabled  = 0b10 "Module is explicitly enabled"; 
+    };
+    regtype clkctrl "clock control" {
+        _ 14 rsvd;
+        idlest 2 type(idlest) "Module idle status";
+        _ 14 rsvd;
+        modulemode 2 type(modmode) "Mandatory clock control";
+    };
+    register l4per_i2c1_clkctrl addr(l4per_base, 0xa0) type(clkctrl);
+    register l4per_i2c2_clkctrl addr(l4per_base, 0xa8) type(clkctrl);
+    register l4per_i2c3_clkctrl addr(l4per_base, 0xb0) type(clkctrl);
+    register l4per_i2c4_clkctrl addr(l4per_base, 0xb8) type(clkctrl);
+};

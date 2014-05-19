@@ -1,0 +1,57 @@
+\section{ATA Messages}
+
+Since this lab project was geared towards designing and implementing a message
+passing interface to disk, only very few message types have been defined to
+showcase the interface. \ac{sata} supports a wider range of devices which can
+benefit from more aspects of the \ac{ata} command set, such as {\tt TRIM} on
+solid state drives. Adding further commands to the flounder-based approach is
+as simple as adding a further message definition.
+
+\section{Integration with the System Knowledge Base}
+
+As we have mainly focused on getting message passing to disk to work, we have
+taken a few shortcuts concerning the integration of our subsystem into
+Barrelfish as a whole. For instance, we do not really use the \acs{skb} to
+uniquely identify the disks attached to an \ac{ahci} controller.  Neither do we
+use the \acs{skb} to store additional data, e.g. serial number and size, of the
+attached disks. Adding that kind of data would simplify discovery of disks and
+acting appropriately, for example automatically mounting a volume or similar.
+
+\section{Handling multiple AHCI controllers at the same time}
+
+Currently our management daemon (see \longref{chap:ahcid}) successfully exits
+from the initialization code as soon as a \ac{ahci} controller has been found.
+It would be prefereable if on systems with multiple controllers attached all of
+these could be used. One consideration in this case would be whether to have
+one management daemon per controller or a global management daemon that
+controls all available \ac{ahci} controllers.
+
+\section{Support for advanced AHCI/SATA features}
+
+Some of the features of \ac{ahci}/\ac{sata} we did not look at are Port
+Multiplication and \ac{ncq}.
+
+However, our system design, including a management daemon that presents each
+port to the rest of the system as a separate entity, makes accomodating
+multiplied ports (multiplying ports is actually done in hardware and the
+\ac{ahci} host controller has a register for each port which contains the port
+multiplication status for that port) relatively easy as the only parts that
+have to be changed are the management daemon and libahci. Also, \ac{ncq} could
+be implemented almost entirely in libahci, if desired.
+
+We also do not handle hotplug of devices. Addition of devices could implemented
+relatively easy by extending ahcid's interrupt handler and performing the
+initialization steps once the link to the device has been established. Removal
+however is more challenging. Outstanding requests have to be completed with an
+error, the user notified and memory resources reclaimed.
+
+\section{Further Controllers}
+
+The modular nature of the Flounder-based approach allows to add additional
+backends for other controllers. Since this lab project only examined
+\ac{ahci}-compliant controllers, support is limited to realtively new
+controllers for \ac{sata}. In reality, there are still a lot of use cases where
+one might have to access \ac{pata}-based devices, such as older CDROM drives.
+Therefore, backends for more chipsets should be developed, most importantly one
+for a widespread \ac{pata} controller such as the \acs{piix} family or the
+\acs{ich} controllers before the introduction of \ac{ahci}.

@@ -1,0 +1,64 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_intrconn_socket_cm1.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_intrconn_socket_cm1 msbfirst ( addr base ) "" {
+    
+    
+    register revision_cm1 ro addr(base, 0x0) "This register contains the IP revision code for the CM1 part of the PRCM" type(uint32);
+
+    constants idlest_status width(2) "" {
+        IDLEST_0_r = 0 "Module is fully functional";
+        IDLEST_1_r = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_2_r = 2 "Module is in Idle";
+        IDLEST_3_r = 3 "Module is disabled";
+    };
+
+    constants modulemode_status width(2) "" {
+        MODULEMODE_0 = 0 "Module is disabled by software. INTRCONN configuration port is not accessible.";
+        MODULEMODE_1 = 1 "Module is managed automatically by hardware along with CM1 and EMU domain. INTRCONN configuration port is accessible only when EMU domain is on.";
+        MODULEMODE_2_r = 2 "Reserved";
+        MODULEMODE_3_r = 3 "Reserved";
+    };
+    
+    register cm_cm1_profiling_clkctrl addr(base, 0x40) "This register manages the CM1_PROFILING clock. [warm reset insensitive]" {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm1_debug_cfg addr(base, 0xF0) "This register is used to configure the CM1's 32-bit debug output. There is one 7-bit source select field for selecting from a shared set of 8-bit internal signal blocks per byte. [warm reset insensitive]" {
+        _ 1 mbz;
+        sel3 7 rw "Internal signal block select for debug word byte-3";
+        _ 1 mbz;
+        sel2 7 rw "Internal signal block select for debug word byte-2";
+        _ 1 mbz;
+        sel1 7 rw "Internal signal block select for debug word byte-1";
+        _ 1 mbz;
+        sel0 7 rw "Internal signal block select for debug word byte-0";
+    };
+};

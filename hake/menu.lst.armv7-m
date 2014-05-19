@@ -1,0 +1,32 @@
+timeout 0
+
+#
+# This script is used to describe the commands to start at
+# boot-time and the arguments they should receive.
+#
+
+title	Barrelfish
+#root	(nd)
+kernel	/armv7-m/sbin/cpu_omap44xx loglevel=4
+module	/armv7-m/sbin/cpu_omap44xx
+module	/armv7-m/sbin/init
+
+# Domains spawned by init
+module	/armv7-m/sbin/mem_serv
+module	/armv7-m/sbin/monitor
+
+# Special boot time domains spawned by monitor
+#module /armv7-m/sbin/chips boot
+module /armv7-m/sbin/ramfsd boot
+module /armv7-m/sbin/skb boot
+module /armv7-m/sbin/spawnd boot bootarm=0
+module /armv7-m/sbin/startd boot
+
+# General user domains
+#module	/armv7-m/sbin/serial
+#module	/armv7-m/sbin/fish
+
+module /armv7-m/sbin/memtest
+
+# start at 0x90000000, because 0xA0000000 is statically marked as no-execute
+mmap map 0x90000000 0x30000000 1

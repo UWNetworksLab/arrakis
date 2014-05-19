@@ -1,0 +1,134 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_id.dev
+ *
+ * DESCRIPTION: OMAP44xx device identification
+ *
+ * This is derived from:
+ *
+ * OMAP4430 Multimedia Device Silicon Revision 2.x Technical Reference
+ * Manual Version O 
+ * OMAP4460 Multimedia Device Silicon Revision 1.x Technical Reference
+ * Manual Version Q
+ * 
+ * Section numbers are from the latter. 
+ *
+ */
+
+device omap44xx_usbconf msbfirst ( addr base ) "OMAP44xx USB host subsystem" {
+
+    // 23.11.6.2.2
+
+    register revision ro addr(base, 0x0000) "Revision"
+	type(uint32);
+
+    register hwinfo ro addr(base, 0x0004) "Hardware info" {
+	_		24;
+	sar_cntx_size	8	"Save-and-Restore context size";
+    };
+
+
+    constants idle_mode width(2) "Slave interface power mode" {
+	idle_force = 0b00	"Force-Idle mode";
+	idle_no	   = 0b01	"No idle mode";
+	idle_smart = 0b10	"Smart-idle mode";
+    };	
+
+    register config rw addr(base, 0x0010) "Module configuration" {
+	_		23;
+	clock_act	1	"Enable autogating OCP-derived int. clks.";
+        _		3;
+	s_idle_mode	2 type(idle_mode) "Slave intf. power mgmt. ctrl";
+	ena_wakeup	1	"Asynchronous wake-up generation control";
+	soft_reset	1 wo	"Module software reset";
+	auto_idle	1	"Internal autogating control";
+    };
+
+    register status ro addr(base, 0x0014) "Module status" {
+	_		31;
+	reset_done	1	"Module has entirely come out of reset";
+    };
+
+    register irqstat rw1c addr(base, 0x0018) "IRQ status" {
+	_		29 rsvd;
+	access_error	1 	"Access error to ULPI register over OCP";
+	fclk_end	1	"Functional clock no longer requested";
+	fclk_start	1	"Functional clock requested for USB clocking";
+    };
+
+    register irqenable rw addr(base, 0x001c) "IRQ enable" {
+	_		29 rsvd;
+	access_error	1 	"Access error to ULPI register over OCP";
+	fclk_end	1	"Functional clock no longer requested";
+	fclk_start	1	"Functional clock requested for USB clocking";
+    };
+
+    register shared_conf rw addr(base, 0x0030) "Shared configuration" {
+	_		30 rsvd;
+	fclk_req	1	"Functional clock request";
+	fclk_is_on	1	"Status of the functional clock input";
+    };
+
+    constants line_state width(2) "Line state" {
+	se0 = 0b00	"Single-ended 0";
+	fsj = 0b01	"Full-Speed J = differential 1";
+	fsk = 0b10	"Full-Speed K = differential 0";
+	se1 = 0b11	"Single-ended 1 (illegal in USB)";
+    };
+
+    constants si_mode width(4) "Serial interface mode" {
+	si_u6ps = 0x0	"6-pin unidirectional PHY i/f. Tx encoding Dat/Se0";
+	si_u6pd = 0x1	"6-pin unidirectional PHY i/f. Tx encoding is Dp/Dm";
+	si_b3p	= 0x2   "3-pin bidirectional PHY i/f";
+	si_b4p  = 0x3	"4-pin bidirectional PHY i/f";
+	si_u6ts = 0x4	"6-pin unidirectional TLL. Tx encoding is Dat/Se0";
+	si_u6td = 0x5	"6-pin unidirectional TLL. Tx encoding is Dp/Dm";
+	si_b3t	= 0x6	"3-pin bidirectional TLL";
+	si_b4t  = 0x7	"4-pin bidirectional TLL";
+	si_b2ts	= 0xa	"2-pin bidirectional TLL. Encoding is Dat/Se0";
+	si_b2td = 0xb	"2-pin bidirectional TLL. Encoding is Dp/Dm";
+    };
+	
+    constants ch_mode width(2) "Main channel mode" {
+	ch_u2u	= 0b00	"UTMI-to-ULPI TLL mode (HS capable)";
+	ch_u2s  = 0b01  "UTMI-to-serial (FS/LS)";
+	ch_trans= 0b10	"Transparent UTMI mode: to UTMI PHY";
+	ch_none = 0b11	"No mode selected";
+    };
+
+    regarray channel_conf rw addr(base, 0x0040)[2] "Channel configuration" {
+	_		2 rsvd;
+	fslslinestate	2 type(line_state) "Line state for serial modes";
+	fslsmode	4 type(si_mode)	"Serial interface mode select";
+	_		3 rsvd;
+	testtxse0	1	"Force-Se0 tx override for mode test";
+	testtxdat	1	"Differential data tx override for mode test";
+	testtxen	1	"Differential data tx override for mode test";
+	testen		1	"Enable manual test override for Tx path";
+	drvvbus		1	"VBUS-drive for ChanMode = serial";
+	chrgvbus	1	"VBUS-charge for ChanMode = serial";
+	_		3 rsvd;
+	ulpinobitstuff	1	"Disable bitstuff emulation in ULPI TLL";
+	ulpiautoidle	1	"Allow ULPI output clock to idle";
+	utmiautoidle	1	"Allow UTMI clock to idle";
+	_		1 rsvd;
+	ulpioutclkmode	1 ro	"ULPI clocking mode select";
+	tllfullspeed	1	"PHY speed emul. in TLL (full/slow)";
+	tllconnect	1	"Emulate Full/Low-Speed connect";
+	tllattach	1	"Emulate cable attach/detach";
+	utmiisadev	1	"Select cable end seen by UTMI side of TLL";
+	chanmode	2	"Main channel mode selection";
+	chanen		1	"Active-high channel enable";
+    };
+
+    regarray sar_cntx rw addr(base, 0x0400)[7] 
+	"Save and restore context array" 
+	type(uint32);
+};

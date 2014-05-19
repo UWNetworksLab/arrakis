@@ -1,0 +1,7 @@
+if Config.libc == "newlib" then
+[ build library { 
+  target = "newlib_",
+  addLibraries = [ "newc", "m" ]
+   }
+]
+else []

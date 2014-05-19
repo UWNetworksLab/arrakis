@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_32ktimer.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_32ktimer msbfirst ( addr base ) "" {
+    
+    
+    register 32ksyncnt_rev ro addr(base, 0x0) "This register contains the sync counter IP revision code." type(uint32);
+    
+    register 32ksyncnt_sysconfig addr(base, 0x4) "This register is used for IDLE modes only." {
+        _ 27 mbz;
+        idlemode 2 rw "Power management REQ/ACK control";
+        _ 3 mbz;
+    };
+    
+    register 32ksyncnt_cr ro addr(base, 0x10) "This register contains the 32-kHz sync counter value." type(uint32);
+};

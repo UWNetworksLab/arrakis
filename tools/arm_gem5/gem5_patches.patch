@@ -1,0 +1,93 @@
+diff -rupN gem5-d45a02bd5391/src/arch/arm/linux/system.cc gem5/src/arch/arm/linux/system.cc
+--- gem5-d45a02bd5391/src/arch/arm/linux/system.cc	2012-05-19 13:32:25.000000000 +0200
++++ gem5/src/arch/arm/linux/system.cc	2012-06-22 12:18:15.243128313 +0200
+@@ -59,29 +59,11 @@ LinuxArmSystem::LinuxArmSystem(Params *p
+     : ArmSystem(p)
+ {
+ #ifndef NDEBUG
+-    kernelPanicEvent = addKernelFuncEvent<BreakPCEvent>("panic");
+-    if (!kernelPanicEvent)
+-        panic("could not find kernel symbol \'panic\'");
++   // kernelPanicEvent = addKernelFuncEvent<BreakPCEvent>("panic");
++   // if (!kernelPanicEvent)
++   //     panic("could not find kernel symbol \'panic\'");
+ #endif
+ 
+-    // With ARM udelay() is #defined to __udelay
+-    Addr addr = 0;
+-    if (kernelSymtab->findAddress("__udelay", addr)) {
+-        uDelaySkipEvent = new UDelayEvent(&pcEventQueue, "__udelay",
+-                fixFuncEventAddr(addr), 1000, 0);
+-    } else {
+-        panic("couldn't find kernel symbol \'udelay\'");
+-    }
+-
+-    // constant arguments to udelay() have some precomputation done ahead of
+-    // time. Constant comes from code.
+-    if (kernelSymtab->findAddress("__const_udelay", addr)) {
+-        constUDelaySkipEvent = new UDelayEvent(&pcEventQueue, "__const_udelay",
+-                fixFuncEventAddr(addr), 1000, 107374);
+-    } else {
+-        panic("couldn't find kernel symbol \'udelay\'");
+-    }
+-
+     secDataPtrAddr = 0;
+     secDataAddr = 0;
+     penReleaseAddr = 0;
+diff -rupN gem5-d45a02bd5391/src/dev/arm/gic.cc gem5/src/dev/arm/gic.cc
+--- gem5-d45a02bd5391/src/dev/arm/gic.cc	2012-05-19 13:32:25.000000000 +0200
++++ gem5/src/dev/arm/gic.cc	2012-06-22 12:18:07.419795269 +0200
+@@ -193,12 +193,12 @@ Gic::readDistributor(PacketPtr pkt)
+             pkt->set<uint8_t>(int_p[int_num]);
+             break;
+           case 2:
+-            assert((int_num + 1) < (SGI_MAX + PPI_MAX));
++            assert((int_num + 1) < (INT_LINES_MAX));
+             pkt->set<uint16_t>(int_p[int_num] |
+                                int_p[int_num+1] << 8);
+             break;
+           case 4:
+-            assert((int_num + 3) < (SGI_MAX + PPI_MAX));
++            assert((int_num + 3) < (INT_LINES_MAX));
+             pkt->set<uint32_t>(int_p[int_num] |
+                                int_p[int_num+1] << 8 |
+                                int_p[int_num+2] << 16 |
+diff -rupN gem5-d45a02bd5391/src/dev/arm/RealView.py gem5/src/dev/arm/RealView.py
+--- gem5-d45a02bd5391/src/dev/arm/RealView.py	2012-05-19 13:32:25.000000000 +0200
++++ gem5/src/dev/arm/RealView.py	2012-06-22 12:18:10.433128490 +0200
+@@ -320,7 +320,8 @@ class RealViewEB(RealView):
+ class VExpress_ELT(RealView):
+     max_mem_size = '2GB'
+     pci_cfg_base = 0xD0000000
+-    elba_uart = Pl011(pio_addr=0xE0009000, int_num=42)
++    uart0 = Pl011(pio_addr=0xE0009000, int_num=42)
++    uart1 = Pl011(pio_addr=0xE000A000, int_num=43)
+     uart = Pl011(pio_addr=0xFF009000, int_num=121)
+     realview_io = RealViewCtrl(proc_id0=0x0C000222, pio_addr=0xFF000000)
+     gic = Gic(dist_addr=0xE0201000, cpu_addr=0xE0200100)
+@@ -350,7 +351,6 @@ class VExpress_ELT(RealView):
+ 
+     l2x0_fake      = IsaFake(pio_addr=0xE0202000, pio_size=0xfff)
+     dmac_fake      = AmbaFake(pio_addr=0xE0020000)
+-    uart1_fake     = AmbaFake(pio_addr=0xE000A000)
+     uart2_fake     = AmbaFake(pio_addr=0xE000B000)
+     uart3_fake     = AmbaFake(pio_addr=0xE000C000)
+     smc_fake       = AmbaFake(pio_addr=0xEC000000)
+@@ -380,7 +380,8 @@ class VExpress_ELT(RealView):
+     # earlier, since the bus object itself is typically defined at the
+     # System level.
+     def attachIO(self, bus):
+-       self.elba_uart.pio       = bus.master
++       self.uart0.pio     		= bus.master
++       self.uart1.pio     		= bus.master
+        self.uart.pio            = bus.master
+        self.realview_io.pio     = bus.master
+        self.v2m_timer0.pio      = bus.master
+@@ -407,7 +408,6 @@ class VExpress_ELT(RealView):
+ 
+        self.l2x0_fake.pio       = bus.master
+        self.dmac_fake.pio       = bus.master
+-       self.uart1_fake.pio      = bus.master
+        self.uart2_fake.pio      = bus.master
+        self.uart3_fake.pio      = bus.master
+        self.smc_fake.pio        = bus.master

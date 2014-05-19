@@ -1,0 +1,385 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_bte.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_bte msbfirst ( addr base ) "" {
+    
+    
+    register bte_hl_revision ro addr(base, 0x0) "IP revision identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants respfifo_status width(3) "" {
+        RESPFIFO_3_r = 3 "64 x 128 bits";
+        RESPFIFO_4_r = 4 "128 x 128 bits";
+        RESPFIFO_2_r = 2 "32 x 128 bits";
+        RESPFIFO_0_r = 0 "Reserved";
+        RESPFIFO_6_r = 6 "Reserved";
+        RESPFIFO_1_r = 1 "16 x 128 bits";
+        RESPFIFO_7_r = 7 "Reserved";
+        RESPFIFO_5_r = 5 "Reserved";
+    };
+
+    constants contexts_status width(2) "" {
+        CONTEXTS_3_r = 3 "Reserved";
+        CONTEXTS_2_r = 2 "8 contexts";
+        CONTEXTS_1_r = 1 "4 contexts";
+        CONTEXTS_0_r = 0 "2 contexts";
+    };
+    
+    register bte_hl_hwinfo addr(base, 0x4) "Information about the hardware configuration of the IP module; that is, typically, the HDL generics (if any) of the module." {
+        _ 8 mbz;
+        respfifo 3 ro type(respfifo_status) "Response FIFO size";
+        contexts 2 ro type(contexts_status) "Number of contexts";
+        _ 19 rsvd;
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "An IDLE request is acknowledged unconditionally";
+        IDLEMODE_1 = 1 "An IDLE request is never acknowledged";
+        IDLEMODE_3 = 3 "Reserved. Do not use";
+        IDLEMODE_2 = 2 "Smart-idle mode. Acknowledgment to an IDLE request is given based on the internal activity of the module.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_w = 0 "No action";
+        SOFTRESET_1_w = 1 "Initiate software reset";
+        SOFTRESET_1_r = 1 "Reset (software or other) ongoing";
+        SOFTRESET_0_r = 0 "Reset done, no pending action";
+    };
+    
+    register bte_hl_sysconfig addr(base, 0x10) "Clock management configuration" {
+        _ 28 mbz;
+        idlemode 2 rw type(idlemode_status) "Configuration of the local target state management mode. By definition, target can handle read/write transaction as long as it is out of IDLE state.";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Software reset.";
+    };
+
+    constants irq_ctx3_err_status width(1) "" {
+        IRQ_CTX3_ERR_0_w = 0 "No action";
+        IRQ_CTX3_ERR_1_w = 1 "Set event (debug)";
+        IRQ_CTX3_ERR_1_r = 1 "Event pending";
+        IRQ_CTX3_ERR_0_r = 0 "No event pending";
+    };
+    
+    register bte_hl_irqstatus_raw addr(base, 0x20) "Per-event raw interrupt status vector Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 4 mbz;
+        irq_ctx3_err 1 rw type(irq_ctx3_err_status) "Read request received before sufficient data has been prefetched.";
+        irq_ctx2_err 1 rw type(irq_ctx3_err_status) "Read request received before sufficient data has been prefetched.";
+        irq_ctx1_err 1 rw type(irq_ctx3_err_status) "Read request received before sufficient data has been prefetched.";
+        irq_ctx0_err 1 rw type(irq_ctx3_err_status) "Read request received before sufficient data has been prefetched.";
+        _ 4 mbz;
+        irq_ctx3_invalid 1 rw type(irq_ctx3_err_status) "Invalid access.";
+        irq_ctx2_invalid 1 rw type(irq_ctx3_err_status) "Invalid access.";
+        irq_ctx1_invalid 1 rw type(irq_ctx3_err_status) "Invalid access.";
+        irq_ctx0_invalid 1 rw type(irq_ctx3_err_status) "Invalid access.";
+        _ 4 mbz;
+        irq_ctx3_done 1 rw type(irq_ctx3_err_status) "Context has been fully transferred to the TILER";
+        irq_ctx2_done 1 rw type(irq_ctx3_err_status) "Context has been fully transferred to the TILER";
+        irq_ctx1_done 1 rw type(irq_ctx3_err_status) "Context has been fully transferred to the TILER";
+        irq_ctx0_done 1 rw type(irq_ctx3_err_status) "Write mode: Context has been fully transferred to the TILER Read mode: Context prefetch has completed.";
+        _ 6 mbz;
+        irq_invalid 1 rw type(irq_ctx3_err_status) "Invalid access to the virtual space";
+        irq_ocp_err 1 rw type(irq_ctx3_err_status) "OCP error received from OCP master port.";
+    };
+
+    constants irq_ctx3_err_status1 width(1) "" {
+        IRQ_CTX3_ERR_0_w_1 = 0 "No action";
+        IRQ_CTX3_ERR_1_w_1 = 1 "Clear (raw) event";
+        IRQ_CTX3_ERR_1_r_1 = 1 "Event pending";
+        IRQ_CTX3_ERR_0_r_1 = 0 "No (enabled) event pending";
+    };
+    
+    register bte_hl_irqstatus addr(base, 0x24) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 4 mbz;
+        irq_ctx3_err 1 rw1c type(irq_ctx3_err_status1) "Read request received before sufficient data has been prefetched.";
+        irq_ctx2_err 1 rw1c type(irq_ctx3_err_status1) "Read request received before sufficient data has been prefetched.";
+        irq_ctx1_err 1 rw1c type(irq_ctx3_err_status1) "Read request received before sufficient data has been prefetched.";
+        irq_ctx0_err 1 rw1c type(irq_ctx3_err_status1) "Read request received before sufficient data has been prefetched.";
+        _ 4 mbz;
+        irq_ctx3_invalid 1 rw1c type(irq_ctx3_err_status1) "Invalid access.";
+        irq_ctx2_invalid 1 rw1c type(irq_ctx3_err_status1) "Invalid access.";
+        irq_ctx1_invalid 1 rw1c type(irq_ctx3_err_status1) "Invalid access.";
+        irq_ctx0_invalid 1 rw1c type(irq_ctx3_err_status1) "Invalid access.";
+        _ 4 mbz;
+        irq_ctx3_done 1 rw1c type(irq_ctx3_err_status1) "Context has been fully transferred to the TILER";
+        irq_ctx2_done 1 rw1c type(irq_ctx3_err_status1) "Context has been fully transferred to the TILER";
+        irq_ctx1_done 1 rw1c type(irq_ctx3_err_status1) "Context has been fully transferred to the TILER";
+        irq_ctx0_done 1 rw1c type(irq_ctx3_err_status1) "Write mode: Context has been fully transferred to the TILER Read mode: Context prefetch has completed.";
+        _ 6 mbz;
+        irq_invalid 1 rw1c type(irq_ctx3_err_status1) "Invalid access to the virtual space";
+        irq_ocp_err 1 rw1c type(irq_ctx3_err_status1) "OCP error received from OCP master port.";
+    };
+
+    constants irq_ctx3_err_status2 width(1) "" {
+        IRQ_CTX3_ERR_0_w_2 = 0 "No action";
+        IRQ_CTX3_ERR_1_w_2 = 1 "Enable interrupt";
+        IRQ_CTX3_ERR_1_r_2 = 1 "Interrupt enabled";
+        IRQ_CTX3_ERR_0_r_2 = 0 "Interrupt disabled (masked)";
+    };
+    
+    register bte_hl_irqenable_set addr(base, 0x28) "Per-event interrupt enable bit vector Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 4 mbz;
+        irq_ctx3_err 1 rw type(irq_ctx3_err_status2) "Read request received before sufficient data has been prefetched.";
+        irq_ctx2_err 1 rw type(irq_ctx3_err_status2) "Read request received before sufficient data has been prefetched.";
+        irq_ctx1_err 1 rw type(irq_ctx3_err_status2) "Read request received before sufficient data has been prefetched.";
+        irq_ctx0_err 1 rw type(irq_ctx3_err_status2) "Read request received before sufficient data has been prefetched.";
+        _ 4 mbz;
+        irq_ctx3_invalid 1 rw type(irq_ctx3_err_status2) "Invalid access.";
+        irq_ctx2_invalid 1 rw type(irq_ctx3_err_status2) "Invalid access.";
+        irq_ctx1_invalid 1 rw type(irq_ctx3_err_status2) "Invalid access.";
+        irq_ctx0_invalid 1 rw type(irq_ctx3_err_status2) "Invalid access.";
+        _ 4 mbz;
+        irq_ctx3_done 1 rw type(irq_ctx3_err_status2) "Context has been fully transferred to the TILER";
+        irq_ctx2_done 1 rw type(irq_ctx3_err_status2) "Context has been fully transferred to the TILER";
+        irq_ctx1_done 1 rw type(irq_ctx3_err_status2) "Context has been fully transferred to the TILER";
+        irq_ctx0_done 1 rw type(irq_ctx3_err_status2) "Write mode: Context has been fully transferred to the TILER Read mode: Context prefetch has completed.";
+        _ 6 mbz;
+        irq_invalid 1 rw type(irq_ctx3_err_status2) "Invalid access to the virtual space";
+        irq_ocp_err 1 rw type(irq_ctx3_err_status2) "OCP error received from OCP master port.";
+    };
+
+    constants irq_ctx3_err_status3 width(1) "" {
+        IRQ_CTX3_ERR_0_w_3 = 0 "No action";
+        IRQ_CTX3_ERR_1_w_3 = 1 "Disable interrupt";
+        IRQ_CTX3_ERR_1_r_3 = 1 "Interrupt enabled";
+        IRQ_CTX3_ERR_0_r_3 = 0 "Interrupt disabled (masked)";
+    };
+    
+    register bte_hl_irqenable_clr addr(base, 0x2C) "Per-event interrupt enable bit vector Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 4 mbz;
+        irq_ctx3_err 1 rw1c type(irq_ctx3_err_status3) "Read request received before sufficient data has been prefetched.";
+        irq_ctx2_err 1 rw1c type(irq_ctx3_err_status3) "Read request received before sufficient data has been prefetched.";
+        irq_ctx1_err 1 rw1c type(irq_ctx3_err_status3) "Read request received before sufficient data has been prefetched.";
+        irq_ctx0_err 1 rw1c type(irq_ctx3_err_status3) "Read request received before sufficient data has been prefetched.";
+        _ 4 mbz;
+        irq_ctx3_invalid 1 rw1c type(irq_ctx3_err_status3) "Invalid access.";
+        irq_ctx2_invalid 1 rw1c type(irq_ctx3_err_status3) "Invalid access.";
+        irq_ctx1_invalid 1 rw1c type(irq_ctx3_err_status3) "Invalid access.";
+        irq_ctx0_invalid 1 rw1c type(irq_ctx3_err_status3) "Invalid access.";
+        _ 4 mbz;
+        irq_ctx3_done 1 rw1c type(irq_ctx3_err_status3) "Context has been fully transferred to the TILER";
+        irq_ctx2_done 1 rw1c type(irq_ctx3_err_status3) "Context has been fully transferred to the TILER";
+        irq_ctx1_done 1 rw1c type(irq_ctx3_err_status3) "Context has been fully transferred to the TILER";
+        irq_ctx0_done 1 rw1c type(irq_ctx3_err_status3) "Write mode: Context has been fully transferred to the TILER Read mode: Context prefetch has completed.";
+        _ 6 mbz;
+        irq_invalid 1 rw1c type(irq_ctx3_err_status3) "Invalid access to the virtual space";
+        irq_ocp_err 1 rw1c type(irq_ctx3_err_status3) "OCP error received from OCP master port.";
+    };
+
+    constants posted_status width(1) "" {
+        POSTED_0 = 0 "Use non posted writes";
+        POSTED_1 = 1 "Use posted writes";
+    };
+    
+    register bte_ctrl addr(base, 0x30) "BTE control register" {
+        bw_limiter 10 rw "Minimum number of OCP cycles between two consecutive buffer flushing or prefetch requests. Used to limit the bandwidth used to fill/empty buffers. 0: Maximum speed. Up to 1 request every 8 cycles (3.2GB @ 200 MHz) 1: Up to 1 request every 9 cycles. 1023: Minimum speed. Up to 1 request every 1031 cycles (24MB @ 200 MHz)";
+        _ 10 mbz;
+        base 4 rw "Base address of the virtual space translated by the BTE. Start address = BASE*512MB End address = (BASE+1)*512MB - 1 For example: BASE=3 =&amp;gt; 0x 0 6000 0000 - 0x 0 7FFF FFFF";
+        _ 2 mbz;
+        posted 1 rw type(posted_status) "Select among posted and nonposted writes for translated requests.";
+        _ 1 mbz;
+        tag_cnt 4 rw "BTE could use up to TAG_CNT+1 tags on OCPO. There could only be one outstanding request per tag. TAG_CNT does not control the number of requests it could handle on OCPI. This register is internally shadowed. Modifications are taken into account when there are no outstanding transactions on OCPO. TAG ID 0 to TAG_CNT are used on OCPO.";
+    };
+    
+    register bte_ctrl1 addr(base, 0x34) "BTE control register" {
+        _ 25 mbz;
+        resp_fifo_thr 7 rw "The BTE stops accepting new requests from OCPI (on a clean burst boundary) when the response FIFO contains more than RESP_FIFO_THR words. The reset value is FIFO_SIZE - 16 - 1. FIFO_SIZE = 8 * 2";
+    };
+
+    constants autoflush_status width(1) "" {
+        AUTOFLUSH_0 = 0 "Disabled";
+        AUTOFLUSH_1 = 1 "Enabled";
+    };
+
+    constants oneshot_status width(1) "" {
+        ONESHOT_0 = 0 "The context is automatically re-enabled when its end is reached.";
+        ONESHOT_1 = 1 "The context is disabled when the end of a frame has been reached.";
+    };
+
+    constants grid_status width(2) "" {
+        GRID_0 = 0 "Stride = 16k Subtile = 4x4 bytes Tile = 32x32 bytes";
+        GRID_1 = 1 "Stride = 8k Subtile = 4x4 bytes Tile = 32x32 bytes";
+        GRID_3 = 3 "Stride = 16k Subtile = 8x2 bytes Tile = 64x16 bytes";
+        GRID_2 = 2 "Stride = 32k Subtile = 8x2 bytes Tile = 64x16 bytes";
+    };
+
+    constants mode_status width(2) "" {
+        MODE_0 = 0 "Write translation";
+        MODE_1 = 1 "Read translation";
+        MODE_3 = 3 "reserved";
+        MODE_2 = 2 "Direct access to local buffer";
+    };
+
+    constants flush_status width(1) "" {
+        FLUSH_0_w = 0 "No effect";
+        FLUSH_1_w = 1 "Flush";
+    };
+
+    constants stop_status width(1) "" {
+        STOP_0_w = 0 "No effect";
+        STOP_1_w = 1 "Stop the context";
+    };
+
+    constants start_status width(1) "" {
+        START_0_w = 0 "No effect";
+        START_1_w = 1 "Reset + Enable";
+    };
+    
+    register bte_context_ctrl_i_0 addr(base, 0x40) "Context control register" {
+        _ 2 mbz;
+        trigger 14 rw "Threshold used to trigger translated requests to OCPO. Unit: words or 16 bytes Valid range: 3 lines + 2 ... 4 lines WRITE: a 2D write is issued to OCPO when the internal buffer level (including masked accesses) is superior or equal to TRIGGER READ: a 2D read is issued to OCPO when the internal buffer level (including masked accesses) is inferior to TRIGGER.";
+        initsx 1 rw "Reset value to be used for SX__x. Check the section describing the local buffer management for details.";
+        initsy 2 rw "Reset value to be used for SY__x. Check the section describing the local buffer management for details. Must be 0 when ONESHOT = 0.";
+        addr32 1 rw "Controls the value of the OCP address bit 32 to be used for translated accesses";
+        autoflush 1 rw type(autoflush_status) "Controls automatic context flushing when an IDLE request is received";
+        oneshot 1 rw type(oneshot_status) "Selects one-shot or continuous mode";
+        grid 2 rw type(grid_status) "Grid used to access the TILER";
+        mode 2 rw type(mode_status) "Select the translation mode for the context";
+        _ 3 mbz;
+        flush 1 wo type(flush_status) "Flushes all remaining data of the context to the TILER.";
+        stop 1 wo type(stop_status) "Stops the context on a clean OCP transaction boundary.";
+        start 1 wo type(start_status) "Resets the contexts internal state and enables the context on a clean OCP transaction boundary.";
+    };
+    
+    register bte_context_ctrl_i_1 addr(base, 0x60) "Context control register" {
+        _ 2 mbz;
+        trigger 14 rw "Threshold used to trigger translated requests to OCPO. Unit: words or 16 bytes Valid range: 3 lines + 2 ... 4 lines WRITE: a 2D write is issued to OCPO when the internal buffer level (including masked accesses) is superior or equal to TRIGGER READ: a 2D read is issued to OCPO when the internal buffer level (including masked accesses) is inferior to TRIGGER.";
+        initsx 1 rw "Reset value to be used for SX__x. Check the section describing the local buffer management for details.";
+        initsy 2 rw "Reset value to be used for SY__x. Check the section describing the local buffer management for details. Must be 0 when ONESHOT = 0.";
+        addr32 1 rw "Controls the value of the OCP address bit 32 to be used for translated accesses";
+        autoflush 1 rw type(autoflush_status) "Controls automatic context flushing when an IDLE request is received";
+        oneshot 1 rw type(grid_status) "Selects one-shot or continuous mode";
+        grid 2 rw type(grid_status) "Grid used to access the TILER";
+        mode 2 rw type(mode_status) "Select the translation mode for the context";
+        _ 3 mbz;
+        flush 1 wo type(flush_status) "Flushes all remaining data of the context to the TILER.";
+        stop 1 wo type(stop_status) "Stops the context on a clean OCP transaction boundary.";
+        start 1 wo type(start_status) "Resets the contexts internal state and enables the context on a clean OCP transaction boundary.";
+    };
+    
+    register bte_context_ctrl_i_2 addr(base, 0x80) "Context control register" {
+        _ 2 mbz;
+        trigger 14 rw "Threshold used to trigger translated requests to OCPO. Unit: words or 16 bytes Valid range: 3 lines + 2 ... 4 lines WRITE: a 2D write is issued to OCPO when the internal buffer level (including masked accesses) is superior or equal to TRIGGER READ: a 2D read is issued to OCPO when the internal buffer level (including masked accesses) is inferior to TRIGGER.";
+        initsx 1 rw "Reset value to be used for SX__x. Check the section describing the local buffer management for details.";
+        initsy 2 rw "Reset value to be used for SY__x. Check the section describing the local buffer management for details. Must be 0 when ONESHOT = 0.";
+        addr32 1 rw "Controls the value of the OCP address bit 32 to be used for translated accesses";
+        autoflush 1 rw type(autoflush_status) "Controls automatic context flushing when an IDLE request is received";
+        oneshot 1 rw type(grid_status) "Selects one-shot or continuous mode";
+        grid 2 rw type(grid_status) "Grid used to access the TILER";
+        mode 2 rw type(mode_status) "Select the translation mode for the context";
+        _ 3 mbz;
+        flush 1 wo type(flush_status) "Flushes all remaining data of the context to the TILER.";
+        stop 1 wo type(stop_status) "Stops the context on a clean OCP transaction boundary.";
+        start 1 wo type(start_status) "Resets the contexts internal state and enables the context on a clean OCP transaction boundary.";
+    };
+    
+    register bte_context_ctrl_i_3 addr(base, 0xA0) "Context control register" {
+        _ 2 mbz;
+        trigger 14 rw "Threshold used to trigger translated requests to OCPO. Unit: words or 16 bytes Valid range: 3 lines + 2 ... 4 lines WRITE: a 2D write is issued to OCPO when the internal buffer level (including masked accesses) is superior or equal to TRIGGER READ: a 2D read is issued to OCPO when the internal buffer level (including masked accesses) is inferior to TRIGGER.";
+        initsx 1 rw "Reset value to be used for SX__x. Check the section describing the local buffer management for details.";
+        initsy 2 rw "Reset value to be used for SY__x. Check the section describing the local buffer management for details. Must be 0 when ONESHOT = 0.";
+        addr32 1 rw "Controls the value of the OCP address bit 32 to be used for translated accesses";
+        autoflush 1 rw type(autoflush_status) "Controls automatic context flushing when an IDLE request is received";
+        oneshot 1 rw type(grid_status) "Selects one-shot or continuous mode";
+        grid 2 rw type(grid_status) "Grid used to access the TILER";
+        mode 2 rw type(mode_status) "Select the translation mode for the context";
+        _ 3 mbz;
+        flush 1 wo type(flush_status) "Flushes all remaining data of the context to the TILER.";
+        stop 1 wo type(stop_status) "Stops the context on a clean OCP transaction boundary.";
+        start 1 wo type(start_status) "Resets the contexts internal state and enables the context on a clean OCP transaction boundary.";
+    };
+    
+    register bte_context_base_i_0 addr(base, 0x44) "Address of the frame buffer in the TILER address space." {
+        addr 27 rw "Address";
+        _ 5 mbz;
+    };
+    
+    register bte_context_base_i_1 addr(base, 0x64) "Address of the frame buffer in the TILER address space." {
+        addr 27 rw "Address";
+        _ 5 mbz;
+    };
+    
+    register bte_context_base_i_2 addr(base, 0x84) "Address of the frame buffer in the TILER address space." {
+        addr 27 rw "Address";
+        _ 5 mbz;
+    };
+    
+    register bte_context_base_i_3 addr(base, 0xA4) "Address of the frame buffer in the TILER address space." {
+        addr 27 rw "Address";
+        _ 5 mbz;
+    };
+    
+    register bte_context_start_i_0 addr(base, 0x48) "Top-left corner of the context." {
+        _ 16 mbz;
+        x 9 rw "Address, in 128-byte words";
+        _ 7 mbz;
+    };
+    
+    register bte_context_start_i_1 addr(base, 0x68) "Top-left corner of the context." {
+        _ 16 mbz;
+        x 9 rw "Address, in 128-byte words";
+        _ 7 mbz;
+    };
+    
+    register bte_context_start_i_2 addr(base, 0x88) "Top-left corner of the context." {
+        _ 16 mbz;
+        x 9 rw "Address, in 128-byte words";
+        _ 7 mbz;
+    };
+    
+    register bte_context_start_i_3 addr(base, 0xA8) "Top-left corner of the context." {
+        _ 16 mbz;
+        x 9 rw "Address, in 128-byte words";
+        _ 7 mbz;
+    };
+    
+    register bte_context_end_i_0 addr(base, 0x4C) "Bottom-right corner of the context." {
+        _ 3 mbz;
+        y 13 rw "Last line number for the context (0 corresponds to a context of 1 line) Must be 7 when ONESHOT = 0.";
+        x 12 rw "Address, in 128-bit words, of the last column of the context";
+        _ 4 mbz;
+    };
+    
+    register bte_context_end_i_1 addr(base, 0x6C) "Bottom-right corner of the context." {
+        _ 3 mbz;
+        y 13 rw "Last line number for the context (0 corresponds to a context of 1 line) Must be 7 when ONESHOT = 0.";
+        x 12 rw "Address, in 128-bit words, of the last column of the context";
+        _ 4 mbz;
+    };
+    
+    register bte_context_end_i_2 addr(base, 0x8C) "Bottom-right corner of the context." {
+        _ 3 mbz;
+        y 13 rw "Last line number for the context (0 corresponds to a context of 1 line) Must be 7 when ONESHOT = 0.";
+        x 12 rw "Address, in 128-bit words, of the last column of the context";
+        _ 4 mbz;
+    };
+    
+    register bte_context_end_i_3 addr(base, 0xAC) "Bottom-right corner of the context." {
+        _ 3 mbz;
+        y 13 rw "Last line number for the context (0 corresponds to a context of 1 line) Must be 7 when ONESHOT = 0.";
+        x 12 rw "Address, in 128-bit words, of the last column of the context";
+        _ 4 mbz;
+    };
+};

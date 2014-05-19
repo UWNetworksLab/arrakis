@@ -1,0 +1,113 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_usbphy.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_usbphy msbfirst ( addr base ) "" {
+    
+    
+    register usbphy_termination_control addr(base, 0x0) "Contains bits related to control of terminations in USBPHY" {
+        _ 3 mbz;
+        _ 1 mbz;
+        _ 6 rsvd;
+        use_rterm_rmx_reg 1 rw "Override termination resistor trim code with RTERM_RMX from this register";
+        rterm_rmx 7 rw "When read, this field returns the current termination resistor trim code. Read value is valid only if VDDLDO is on. The value written to this field is used as termination resistor trim code if USE_RTERM_RMX_REG is set to 1";
+        hs_code_sel 3 rw "HS Code selection control. A higher positive value (for example, 0x3 (+3)) reduces the termination resistance and improves the vertical eye opening.HS_CODE_SEL Offset Value Termination Calibrated Value . 0x0 0 ~1.5% . 0x1 +1 (default) 0% . 0x2 +2 ~-1.5% . 0x3 +3 ~-3% . 0x4 -1 3% . 0x5 -2 4.5% . 0x6 -3 6% . 0x7 -4 7.5% .";
+        _ 1 mbz;
+        _ 10 mbz;
+    };
+    
+    register usbphy_tx_test_chrg_det addr(base, 0x10) "TX test register and also charger detect register" {
+        _ 17 mbz;
+        _ 1 mbz;
+        _ 1 mbz;
+        _ 6 mbz;
+        rdppdchgdeten 1 rw "When set to 1 connects a 15K (+/- 30%) pulldown resistor on DP. Read value is valid only if VCHGLDO is on.";
+        rdmpdchgdeten 1 rw "When set to 1 connects a 15K (+/- 30%) pulldown resistor on DM. Read value is valid only if VCHGLDO is on.";
+        rdppuchgdeten 1 rw "When set to 1 connects a 150K (+/- 30%) pullup resistor on DP. Read value is valid only if VCHGLDO is on.";
+        rdmpuchgdeten 1 rw "When set to 1 connects a 150K (+/- 30%) pullup resistor on DM. Read value is valid only if VCHGLDO is on.";
+        use_chg_det_pu_reg 1 rw "Use bits [4:3] from this register";
+        use_chg_det_pd_reg 1 rw "Use bits [6:5] from this register";
+        _ 1 mbz;
+    };
+    
+    register usbphy_chrg_det addr(base, 0x14) "This is the charger detect register. This register is not used in the dead battery case." {
+        _ 2 mbz;
+        use_chg_det_reg 1 rw "Use bits 28:24 and 18:17 from this register";
+        dis_chg_det 1 rw "When read, returns current value of charger detect input. When USE_CHG_DET_REG = 1, the value written to this filed overrides the corresponding charger detect input.";
+        src_on_dm 1 rw "When read, returns current value of charger detect input. When USE_CHG_DET_REG = 1, the value written to this filed overrides the corresponding charger detect input.";
+        sink_on_dp 1 rw "When read, returns current value of charger detect input. When USE_CHG_DET_REG = 1, the value written to this filed overrides the corresponding charger detect input.";
+        chg_det_ext_ctl 1 rw "When read, returns current value of charger detect input. When USE_CHG_DET_REG = 1, the value written to this filed overrides the corresponding charger detect input.";
+        restart_chg_det 1 rw "Restart the charger detection protocol when this goes from 0 to 1";
+        chg_det_done 1 ro "Charger detect protocol has completed";
+        chg_detected 1 ro "Same signal as CE pin";
+        data_det 1 ro "Output of the data det comparator";
+        _ 2 mbz;
+        chg_isink_en 1 rw "When read, returns current value of charger detect input. When USE_CHG_DET_REG = 1, the value written to this filed overrides the corresponding charger detect input.";
+        chg_vsrc_en 1 rw "When read, returns current value of charger detect input. When USE_CHG_DET_REG = 1, the value written to this filed overrides the corresponding charger detect input.";
+        comp_dp 1 ro "Comparator on the DP line value";
+        comp_dm 1 ro "Comparator on the DM line value";
+        chg_det_osc_cntrl 2 rw "Charger detect osc control";
+        chg_det_timer 6 rw "Charger detect timer control.";
+        _ 2 mbz;
+        chg_det_ictrl 2 rw "Charger detect current control";
+        chg_det_vctrl 2 rw "Charger detect voltage buffer control";
+        for_ce 1 rw "Force CE = 1 when this bit is set";
+    };
+    
+    register usbphy_gpio addr(base, 0x30) "GPIO mode configurations and reads" {
+        usegpiomodereg 1 rw "When set to 1 use bits [31:24] from this register instead of primary inputs";
+        gpiomode 1 rw "Overrides the GPIO MODE primary input";
+        dpgpiogz 1 rw "Overrides the DP GPIO GZ primary input";
+        dmgpiogz 1 rw "Overrides the DM GPIO GZ primary input";
+        dpgpioa 1 rw "Overrides the DP GPIO A primary input";
+        dmgpioa 1 rw "Overrides the DM GPIO A primary input";
+        dpgpioy 1 ro "DP GPIO Y output status";
+        dmgpioy 1 ro "DM GPIO Y output status";
+        gpio1p8vconfig 1 rw "Overrides the GPIO 1P8V CONFIG primary input";
+        gpioconfig 3 rw "Used for configuring the GPIOs.";
+        dmgpiopipd 1 rw "GPIO mode DM pull-down enabled. Overrides the corresponding primary input";
+        dpgpiopipd 1 rw "GPIO mode DP pull-down enabled. Overrides the corresponding primary input";
+        _ 18 mbz;
+    };
+    
+    register usbphy_usb2phycm_trim addr(base, 0x38) "Contains trim bit overrides for the USBPHYCM" {
+        usebgtrim 1 rw "When set to 1 bits [30:16] are used as the trim value for the USBPHYCM bandgap";
+        bgtrim 15 rw "Override value for the BGTRIM value";
+        use_sw_trim 1 rw "Use bits [14:8] to override the switch cap trim value.";
+        swtrim 7 rw "Override value for the switch cap trim value.";
+        use_nwelltrim_reg 1 rw "Override NWELL resistor trim using NWELLTRIM_CODE";
+        nwelltrim_code 3 rw "NWELL resistor trim code.";
+        _ 4 mbz;
+    };
+    
+    register usbphy_ana_config2 addr(base, 0x54) "Used to configure and debug the analog blocks." {
+        _ 5 mbz;
+        reserved_ref_gen_test 7 rw "Reserved";
+        _ 2 mbz;
+        rterm_test 3 rw "0x0 is default 0x3 decreases the termination impedance by 2 to 3% (can be used to get 1 to 1.5% better eye vertical opening)";
+        _ 15 mbz;
+    };
+};

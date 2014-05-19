@@ -1,0 +1,62 @@
+\chapter{Future Work}
+\label{chap:future_work}
+\epigraph{Follow!  But! follow only if ye be men of valor, for the entrance
+  to this cave is guarded by a creature so foul, so cruel that no man
+  yet has fought with it and lived!  Bones of four fifty men lie strewn
+  about its lair. So, brave knights, if you do doubt your courage or
+  your strength, come no further, for death awaits you all with nasty
+  big pointy teeth.}{Monty Python}
+
+This is going to look like a brain dump, despite any effort to make it
+understandable by the Outside World.
+
+\begin{description}
+\item[Module import clean-up:] for historical reasons, some imports
+  might be completely useless now. Similarly, imports such as
+  |Debug.Trace| should disappear too ;
+\item[Paka terms with real holes:] in Section~\ref{sec:il_paka_paka},
+  we have seen that Paka terms are ignoring most of their holes by
+  using hard-coded values ;
+\item[More efficient redundant assignment optimizer:] in
+  Chapter~\ref{sec:il_paka_optimizer}, we have seen that the optimizer
+  is quite conservative, making it quite useless in practice ;
+\item[Supporting function pointers:] preventing Filet-o-Fish users to
+  abuse function pointers is a violation to Geneva convention. I do
+  not think that there is some deep technical difficulty to get
+  that. But printing the type of such pointer was a first trouble, if
+  I remember correctly ;
+\item[Implementing the interpreter in the Agda language:] this was
+  already one of my goal initially, but the NICTA people insisted that
+  without an in-theorem-prover semantics, the dependability argument is just
+  bullsh*t. Ha, these Australians\ldots ;
+\item[Code generator back-back-end:] following the steps of FoF and
+  Paka, we need a more principled back-back-end, generating (correct)
+  out of |FoFCode| ;
+\item[Hoopl-based optimization framework:] the
+  Hoopl~\cite{ramsey-hoopl} framework is a promising tool to implement
+  any kind of data-flow analysis and optimization. Instead of
+  developing our own crappy optimizer, we should use that stuff, when
+  the source is released. This is the reason why @IL.Paka.Optimizer@
+  is such a joke: it \emph{must} be dropped asap ;
+\item[Translation validation infrastructure:] because we claim
+  dependability but our compiler is such a tricky mess, we need a good
+  bodyguard. Translation validation~\cite{necula-tvi} is an affordable
+  technique that tells you, when you run your compiler, if it has
+  barfed (and where), or not. If it has not failed, then you know for
+  sure that the generated code is correct ;
+\item[More stringent syntactic tests:] it is very easy to build
+  ill-formed Filet-o-Fish terms, because the types of constructs have
+  not been engineered to ensure their invariants, and there is little
+  or no run-time checks. It is just a matter of putting more run-time
+  checks, a lot more ;
+\item[Compiling to macros:] that's an interesting topic: we are able
+  to generate C code. We might need to generate C macro at some
+  point. How would that fit into Filet-o-Fish?
+\item[Compiling with assertions:] assuming that Filet-o-Fish-generated
+  C code is correct, we are ensured that it must never failed at
+  run-time, except if it is provided with bogus input data. Being able
+  to specify what is a valid input data and translating that into
+  assertions might be useful. Similarly, when reading in an array, for
+  example, we probably want to ensure that we are not going out of
+  bounds, and an assert should fail if this is the case.
+\end{description}

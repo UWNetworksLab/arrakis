@@ -1,0 +1,959 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_elm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_elm msbfirst ( addr base ) "" {
+    
+    
+    register elm_revision ro addr(base, 0x0) "This register contains the IP revision code.(A write or reset of to this register has no effect.)" type(uint32);
+
+    constants clockactivityocp_status width(1) "" {
+        CLOCKACTIVITYOCP_0 = 0 "OCP Clock can be switch-off";
+        CLOCKACTIVITYOCP_1 = 1 "OCP Clock is maintained during wake up period";
+    };
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0 = 0 "FORCE Idle. IDLE request is acknowledged unconditionally and immediately(Default Dumb mode for safety)";
+        SIDLEMODE_1 = 1 "NO idle. IDLE request is never acknowledged.";
+        SIDLEMODE_2 = 2 "SMART Idle. The acknowledgment to an IDLE request is given based on the internal activity.";
+        SIDLEMODE_3 = 3 "Reserved - do not use";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "Normal mode";
+        SOFTRESET_1 = 1 "Start soft reset sequence.";
+    };
+
+    constants autogating_status width(1) "" {
+        AUTOGATING_0 = 0 "OCP clock is free-running";
+        AUTOGATING_1 = 1 "Automatic internal OCP clock gating strategy is applied based on the OCP interface activity.";
+    };
+    
+    register elm_sysconfig addr(base, 0x10) "This register allows controlling various parameters of the OCP interface." {
+        _ 23 mbz;
+        clockactivityocp 1 rw type(clockactivityocp_status) "OCP Clock activity when module is in IDLE mode (during wake up mode period)";
+        _ 3 mbz;
+        sidlemode 2 rw type(sidlemode_status) "Slave interface power management (IDLE req/ack control)";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Module software resetThis bit is automatically reset by hardware (During reads, it always returns 0.)It has same effect as the OCP hardware reset.";
+        autogating 1 rw type(autogating_status) "Internal OCP clock gating strategy(no module visible impact other than saving power)";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Reset is on-going";
+        RESETDONE_1_r = 1 "Reset is done (completed)";
+    };
+    
+    register elm_sysstatus addr(base, 0x14) "Internal reset monitoring (OCP domain)Undefined since:From hardware perspective, the reset state is 0.From software user perspective, when the accessible module is 1." {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal reset monitoring (OCP domain)Undefined since:From hardware perspective, the reset state is 0.From software user perspective, when the accessible module is 1.";
+    };
+    
+    register elm_irqstatus addr(base, 0x18) "Interrupt status. This register doubles as a status register for the error-location processes." {
+        _ 23 mbz;
+        page_valid 1 rw "Error-location status for a full page, based on the mask definitionRead 0x0: Error locations invalid for all polynomials enabled in the ECC_INTERRUPT_MASK registerRead 0x1: All error locations validWrite 0x0: No effectWrite 0x1: Clear interrupt";
+        loc_valid_7 1 rw1c "Error-location status for syndrome polynomial 7Read 0x0: No syndrome processed or process in progressRead 0x1: Error-location process completedWrite 0x0: No effectWrite 0x1: Clear interrupt";
+        loc_valid_6 1 rw1c "Error-location status for syndrome polynomial 6";
+        loc_valid_5 1 rw1c "Error-location status for syndrome polynomial 5";
+        loc_valid_4 1 rw1c "Error-location status for syndrome polynomial 4";
+        loc_valid_3 1 rw1c "Error-location status for syndrome polynomial 3";
+        loc_valid_2 1 rw1c "Error-location status for syndrome polynomial 2";
+        loc_valid_1 1 rw1c "Error-location status for syndrome polynomial 1";
+        loc_valid_0 1 rw1c "Error-location status for syndrome polynomial 0";
+    };
+    
+    register elm_irqenable addr(base, 0x1C) "Interrupt enable" {
+        _ 23 mbz;
+        page_mask 1 rw "Page interrupt mask bit0: Disable interrupt1: Enable interrupt";
+        location_mask_7 1 rw "Error-location interrupt mask bit for syndrome polynomial 7";
+        location_mask_6 1 rw "Error-location interrupt mask bit for syndrome polynomial 6";
+        location_mask_5 1 rw "Error-location interrupt mask bit for syndrome polynomial 5";
+        location_mask_4 1 rw "Error-location interrupt mask bit for syndrome polynomial 4";
+        location_mask_3 1 rw "Error-location interrupt mask bit for syndrome polynomial 3";
+        location_mask_2 1 rw "Error-location interrupt mask bit for syndrome polynomial 2";
+        location_mask_1 1 rw "Error-location interrupt mask bit for syndrome polynomial 1";
+        location_mask_0 1 rw "Error-location interrupt mask bit for syndrome polynomial 00: Disable interrupt1: Enable interrupt";
+    };
+    
+    register elm_location_config addr(base, 0x20) "ECC algorithm parameters" {
+        _ 5 mbz;
+        ecc_size 11 rw "Maximum size of the buffers for which the error-location engine is used, in number of nibbles (4-bits entities)";
+        _ 14 mbz;
+        ecc_bch_level 2 rw "Error correction level0x0: 4 bits0x1: 8 bits0x2: 16 bits0x3: Reserved";
+    };
+    
+    register elm_page_ctrl addr(base, 0x80) "Page definition" {
+        _ 24 mbz;
+        sector_7 1 rw "Set to 1 if syndrome polynomial 7 is part of the page in page mode. Must be 0 in continuous mode.";
+        sector_6 1 rw "Set to 1 if syndrome polynomial 6 is part of the page in page mode. Must be 0 in continuous mode.";
+        sector_5 1 rw "Set to 1 if syndrome polynomial 5 is part of the page in page mode. Must be 0 in continuous mode.";
+        sector_4 1 rw "Set to 1 if syndrome polynomial 4 is part of the page in page mode. Must be 0 in continuous mode.";
+        sector_3 1 rw "Set to 1 if syndrome polynomial 3 is part of the page in page mode. Must be 0 in continuous mode.";
+        sector_2 1 rw "Set to 1 if syndrome polynomial 2 is part of the page in page mode. Must be 0 in continuous mode.";
+        sector_1 1 rw "Set to 1 if syndrome polynomial 1 is part of the page in page mode. Must be 0 in continuous mode.";
+        sector_0 1 rw "Set to 1 if syndrome polynomial 0 is part of the page in page mode. Must be 0 in continuous mode.";
+    };
+    
+    register elm_syndrome_fragment_0_i_0 rw addr(base, 0x400) "Input syndrome polynomial bits 0 to 31." type(uint32);
+    
+    register elm_syndrome_fragment_0_i_1 rw addr(base, 0x440) "Input syndrome polynomial bits 0 to 31." type(uint32);
+    
+    register elm_syndrome_fragment_0_i_2 rw addr(base, 0x480) "Input syndrome polynomial bits 0 to 31." type(uint32);
+    
+    register elm_syndrome_fragment_0_i_3 rw addr(base, 0x4C0) "Input syndrome polynomial bits 0 to 31." type(uint32);
+    
+    register elm_syndrome_fragment_0_i_4 rw addr(base, 0x500) "Input syndrome polynomial bits 0 to 31." type(uint32);
+    
+    register elm_syndrome_fragment_0_i_5 rw addr(base, 0x540) "Input syndrome polynomial bits 0 to 31." type(uint32);
+    
+    register elm_syndrome_fragment_0_i_6 rw addr(base, 0x580) "Input syndrome polynomial bits 0 to 31." type(uint32);
+    
+    register elm_syndrome_fragment_0_i_7 rw addr(base, 0x5C0) "Input syndrome polynomial bits 0 to 31." type(uint32);
+    
+    register elm_syndrome_fragment_1_i_0 rw addr(base, 0x404) "Input syndrome polynomial bits 32 to 63." type(uint32);
+    
+    register elm_syndrome_fragment_1_i_1 rw addr(base, 0x444) "Input syndrome polynomial bits 32 to 63." type(uint32);
+    
+    register elm_syndrome_fragment_1_i_2 rw addr(base, 0x484) "Input syndrome polynomial bits 32 to 63." type(uint32);
+    
+    register elm_syndrome_fragment_1_i_3 rw addr(base, 0x4C4) "Input syndrome polynomial bits 32 to 63." type(uint32);
+    
+    register elm_syndrome_fragment_1_i_4 rw addr(base, 0x504) "Input syndrome polynomial bits 32 to 63." type(uint32);
+    
+    register elm_syndrome_fragment_1_i_5 rw addr(base, 0x544) "Input syndrome polynomial bits 32 to 63." type(uint32);
+    
+    register elm_syndrome_fragment_1_i_6 rw addr(base, 0x584) "Input syndrome polynomial bits 32 to 63." type(uint32);
+    
+    register elm_syndrome_fragment_1_i_7 rw addr(base, 0x5C4) "Input syndrome polynomial bits 32 to 63." type(uint32);
+    
+    register elm_syndrome_fragment_2_i_0 rw addr(base, 0x408) "Input syndrome polynomial bits 64 to 95." type(uint32);
+    
+    register elm_syndrome_fragment_2_i_1 rw addr(base, 0x448) "Input syndrome polynomial bits 64 to 95." type(uint32);
+    
+    register elm_syndrome_fragment_2_i_2 rw addr(base, 0x488) "Input syndrome polynomial bits 64 to 95." type(uint32);
+    
+    register elm_syndrome_fragment_2_i_3 rw addr(base, 0x4C8) "Input syndrome polynomial bits 64 to 95." type(uint32);
+    
+    register elm_syndrome_fragment_2_i_4 rw addr(base, 0x508) "Input syndrome polynomial bits 64 to 95." type(uint32);
+    
+    register elm_syndrome_fragment_2_i_5 rw addr(base, 0x548) "Input syndrome polynomial bits 64 to 95." type(uint32);
+    
+    register elm_syndrome_fragment_2_i_6 rw addr(base, 0x588) "Input syndrome polynomial bits 64 to 95." type(uint32);
+    
+    register elm_syndrome_fragment_2_i_7 rw addr(base, 0x5C8) "Input syndrome polynomial bits 64 to 95." type(uint32);
+    
+    register elm_syndrome_fragment_3_i_0 rw addr(base, 0x40C) "Input syndrome polynomial bits 96 to 127" type(uint32);
+    
+    register elm_syndrome_fragment_3_i_1 rw addr(base, 0x44C) "Input syndrome polynomial bits 96 to 127" type(uint32);
+    
+    register elm_syndrome_fragment_3_i_2 rw addr(base, 0x48C) "Input syndrome polynomial bits 96 to 127" type(uint32);
+    
+    register elm_syndrome_fragment_3_i_3 rw addr(base, 0x4CC) "Input syndrome polynomial bits 96 to 127" type(uint32);
+    
+    register elm_syndrome_fragment_3_i_4 rw addr(base, 0x50C) "Input syndrome polynomial bits 96 to 127" type(uint32);
+    
+    register elm_syndrome_fragment_3_i_5 rw addr(base, 0x54C) "Input syndrome polynomial bits 96 to 127" type(uint32);
+    
+    register elm_syndrome_fragment_3_i_6 rw addr(base, 0x58C) "Input syndrome polynomial bits 96 to 127" type(uint32);
+    
+    register elm_syndrome_fragment_3_i_7 rw addr(base, 0x5CC) "Input syndrome polynomial bits 96 to 127" type(uint32);
+    
+    register elm_syndrome_fragment_4_i_0 rw addr(base, 0x410) "Input syndrome polynomial bits 128 to 159." type(uint32);
+    
+    register elm_syndrome_fragment_4_i_1 rw addr(base, 0x450) "Input syndrome polynomial bits 128 to 159." type(uint32);
+    
+    register elm_syndrome_fragment_4_i_2 rw addr(base, 0x490) "Input syndrome polynomial bits 128 to 159." type(uint32);
+    
+    register elm_syndrome_fragment_4_i_3 rw addr(base, 0x4D0) "Input syndrome polynomial bits 128 to 159." type(uint32);
+    
+    register elm_syndrome_fragment_4_i_4 rw addr(base, 0x510) "Input syndrome polynomial bits 128 to 159." type(uint32);
+    
+    register elm_syndrome_fragment_4_i_5 rw addr(base, 0x550) "Input syndrome polynomial bits 128 to 159." type(uint32);
+    
+    register elm_syndrome_fragment_4_i_6 rw addr(base, 0x590) "Input syndrome polynomial bits 128 to 159." type(uint32);
+    
+    register elm_syndrome_fragment_4_i_7 rw addr(base, 0x5D0) "Input syndrome polynomial bits 128 to 159." type(uint32);
+    
+    register elm_syndrome_fragment_5_i_0 rw addr(base, 0x414) "Input syndrome polynomial bits 160 to 191." type(uint32);
+    
+    register elm_syndrome_fragment_5_i_1 rw addr(base, 0x454) "Input syndrome polynomial bits 160 to 191." type(uint32);
+    
+    register elm_syndrome_fragment_5_i_2 rw addr(base, 0x494) "Input syndrome polynomial bits 160 to 191." type(uint32);
+    
+    register elm_syndrome_fragment_5_i_3 rw addr(base, 0x4D4) "Input syndrome polynomial bits 160 to 191." type(uint32);
+    
+    register elm_syndrome_fragment_5_i_4 rw addr(base, 0x514) "Input syndrome polynomial bits 160 to 191." type(uint32);
+    
+    register elm_syndrome_fragment_5_i_5 rw addr(base, 0x554) "Input syndrome polynomial bits 160 to 191." type(uint32);
+    
+    register elm_syndrome_fragment_5_i_6 rw addr(base, 0x594) "Input syndrome polynomial bits 160 to 191." type(uint32);
+    
+    register elm_syndrome_fragment_5_i_7 rw addr(base, 0x5D4) "Input syndrome polynomial bits 160 to 191." type(uint32);
+    
+    register elm_syndrome_fragment_6_i_0 addr(base, 0x418) "Input syndrome polynomial bits 192 to 207." {
+        _ 15 mbz;
+        syndrome_valid 1 rw "Syndrome valid bit0x0: This syndrome polynomial should not be processed.0x1: This syndrome polynomial must be processed.";
+        syndrome_6 16 rw "Syndrome bits 192 to 207";
+    };
+    
+    register elm_syndrome_fragment_6_i_1 addr(base, 0x458) "Input syndrome polynomial bits 192 to 207." {
+        _ 15 mbz;
+        syndrome_valid 1 rw "Syndrome valid bit0x0: This syndrome polynomial should not be processed.0x1: This syndrome polynomial must be processed.";
+        syndrome_6 16 rw "Syndrome bits 192 to 207";
+    };
+    
+    register elm_syndrome_fragment_6_i_2 addr(base, 0x498) "Input syndrome polynomial bits 192 to 207." {
+        _ 15 mbz;
+        syndrome_valid 1 rw "Syndrome valid bit0x0: This syndrome polynomial should not be processed.0x1: This syndrome polynomial must be processed.";
+        syndrome_6 16 rw "Syndrome bits 192 to 207";
+    };
+    
+    register elm_syndrome_fragment_6_i_3 addr(base, 0x4D8) "Input syndrome polynomial bits 192 to 207." {
+        _ 15 mbz;
+        syndrome_valid 1 rw "Syndrome valid bit0x0: This syndrome polynomial should not be processed.0x1: This syndrome polynomial must be processed.";
+        syndrome_6 16 rw "Syndrome bits 192 to 207";
+    };
+    
+    register elm_syndrome_fragment_6_i_4 addr(base, 0x518) "Input syndrome polynomial bits 192 to 207." {
+        _ 15 mbz;
+        syndrome_valid 1 rw "Syndrome valid bit0x0: This syndrome polynomial should not be processed.0x1: This syndrome polynomial must be processed.";
+        syndrome_6 16 rw "Syndrome bits 192 to 207";
+    };
+    
+    register elm_syndrome_fragment_6_i_5 addr(base, 0x558) "Input syndrome polynomial bits 192 to 207." {
+        _ 15 mbz;
+        syndrome_valid 1 rw "Syndrome valid bit0x0: This syndrome polynomial should not be processed.0x1: This syndrome polynomial must be processed.";
+        syndrome_6 16 rw "Syndrome bits 192 to 207";
+    };
+    
+    register elm_syndrome_fragment_6_i_6 addr(base, 0x598) "Input syndrome polynomial bits 192 to 207." {
+        _ 15 mbz;
+        syndrome_valid 1 rw "Syndrome valid bit0x0: This syndrome polynomial should not be processed.0x1: This syndrome polynomial must be processed.";
+        syndrome_6 16 rw "Syndrome bits 192 to 207";
+    };
+    
+    register elm_syndrome_fragment_6_i_7 addr(base, 0x5D8) "Input syndrome polynomial bits 192 to 207." {
+        _ 15 mbz;
+        syndrome_valid 1 rw "Syndrome valid bit0x0: This syndrome polynomial should not be processed.0x1: This syndrome polynomial must be processed.";
+        syndrome_6 16 rw "Syndrome bits 192 to 207";
+    };
+    
+    register elm_location_status_i_0 addr(base, 0x800) "Exit status for the syndrome polynomial processing" {
+        _ 23 mbz;
+        ecc_correctable 1 ro "Error-location process exit status0x0: ECC error-location process failed. Number of errors and error locations are invalid.0x1: All errors were successfully located. Number of errors and error locations are valid.";
+        _ 3 mbz;
+        ecc_nb_errors 5 ro "Number of errors detected and located";
+    };
+    
+    register elm_location_status_i_1 addr(base, 0x900) "Exit status for the syndrome polynomial processing" {
+        _ 23 mbz;
+        ecc_correctable 1 ro "Error-location process exit status0x0: ECC error-location process failed. Number of errors and error locations are invalid.0x1: All errors were successfully located. Number of errors and error locations are valid.";
+        _ 3 mbz;
+        ecc_nb_errors 5 ro "Number of errors detected and located";
+    };
+    
+    register elm_location_status_i_2 addr(base, 0xA00) "Exit status for the syndrome polynomial processing" {
+        _ 23 mbz;
+        ecc_correctable 1 ro "Error-location process exit status0x0: ECC error-location process failed. Number of errors and error locations are invalid.0x1: All errors were successfully located. Number of errors and error locations are valid.";
+        _ 3 mbz;
+        ecc_nb_errors 5 ro "Number of errors detected and located";
+    };
+    
+    register elm_location_status_i_3 addr(base, 0xB00) "Exit status for the syndrome polynomial processing" {
+        _ 23 mbz;
+        ecc_correctable 1 ro "Error-location process exit status0x0: ECC error-location process failed. Number of errors and error locations are invalid.0x1: All errors were successfully located. Number of errors and error locations are valid.";
+        _ 3 mbz;
+        ecc_nb_errors 5 ro "Number of errors detected and located";
+    };
+    
+    register elm_location_status_i_4 addr(base, 0xC00) "Exit status for the syndrome polynomial processing" {
+        _ 23 mbz;
+        ecc_correctable 1 ro "Error-location process exit status0x0: ECC error-location process failed. Number of errors and error locations are invalid.0x1: All errors were successfully located. Number of errors and error locations are valid.";
+        _ 3 mbz;
+        ecc_nb_errors 5 ro "Number of errors detected and located";
+    };
+    
+    register elm_location_status_i_5 addr(base, 0xD00) "Exit status for the syndrome polynomial processing" {
+        _ 23 mbz;
+        ecc_correctable 1 ro "Error-location process exit status0x0: ECC error-location process failed. Number of errors and error locations are invalid.0x1: All errors were successfully located. Number of errors and error locations are valid.";
+        _ 3 mbz;
+        ecc_nb_errors 5 ro "Number of errors detected and located";
+    };
+    
+    register elm_location_status_i_6 addr(base, 0xE00) "Exit status for the syndrome polynomial processing" {
+        _ 23 mbz;
+        ecc_correctable 1 ro "Error-location process exit status0x0: ECC error-location process failed. Number of errors and error locations are invalid.0x1: All errors were successfully located. Number of errors and error locations are valid.";
+        _ 3 mbz;
+        ecc_nb_errors 5 ro "Number of errors detected and located";
+    };
+    
+    register elm_location_status_i_7 addr(base, 0xF00) "Exit status for the syndrome polynomial processing" {
+        _ 23 mbz;
+        ecc_correctable 1 ro "Error-location process exit status0x0: ECC error-location process failed. Number of errors and error locations are invalid.0x1: All errors were successfully located. Number of errors and error locations are valid.";
+        _ 3 mbz;
+        ecc_nb_errors 5 ro "Number of errors detected and located";
+    };
+    
+    register elm_error_location_0_i_0 addr(base, 0x880) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_0_i_1 addr(base, 0x980) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_0_i_2 addr(base, 0xA80) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_0_i_3 addr(base, 0xB80) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_0_i_4 addr(base, 0xC80) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_0_i_5 addr(base, 0xD80) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_0_i_6 addr(base, 0xE80) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_0_i_7 addr(base, 0xF80) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_1_i_0 addr(base, 0x884) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_1_i_1 addr(base, 0x984) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_1_i_2 addr(base, 0xA84) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_1_i_3 addr(base, 0xB84) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_1_i_4 addr(base, 0xC84) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_1_i_5 addr(base, 0xD84) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_1_i_6 addr(base, 0xE84) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_1_i_7 addr(base, 0xF84) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_2_i_0 addr(base, 0x888) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_2_i_1 addr(base, 0x988) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_2_i_2 addr(base, 0xA88) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_2_i_3 addr(base, 0xB88) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_2_i_4 addr(base, 0xC88) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_2_i_5 addr(base, 0xD88) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_2_i_6 addr(base, 0xE88) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_2_i_7 addr(base, 0xF88) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_3_i_0 addr(base, 0x88C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_3_i_1 addr(base, 0x98C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_3_i_2 addr(base, 0xA8C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_3_i_3 addr(base, 0xB8C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_3_i_4 addr(base, 0xC8C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_3_i_5 addr(base, 0xD8C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_3_i_6 addr(base, 0xE8C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_3_i_7 addr(base, 0xF8C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_4_i_0 addr(base, 0x890) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_4_i_1 addr(base, 0x990) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_4_i_2 addr(base, 0xA90) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_4_i_3 addr(base, 0xB90) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_4_i_4 addr(base, 0xC90) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_4_i_5 addr(base, 0xD90) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_4_i_6 addr(base, 0xE90) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_4_i_7 addr(base, 0xF90) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_5_i_0 addr(base, 0x894) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_5_i_1 addr(base, 0x994) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_5_i_2 addr(base, 0xA94) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_5_i_3 addr(base, 0xB94) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_5_i_4 addr(base, 0xC94) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_5_i_5 addr(base, 0xD94) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_5_i_6 addr(base, 0xE94) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_5_i_7 addr(base, 0xF94) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_6_i_0 addr(base, 0x898) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_6_i_1 addr(base, 0x998) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_6_i_2 addr(base, 0xA98) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_6_i_3 addr(base, 0xB98) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_6_i_4 addr(base, 0xC98) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_6_i_5 addr(base, 0xD98) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_6_i_6 addr(base, 0xE98) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_6_i_7 addr(base, 0xF98) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_7_i_0 addr(base, 0x89C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_7_i_1 addr(base, 0x99C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_7_i_2 addr(base, 0xA9C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_7_i_3 addr(base, 0xB9C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_7_i_4 addr(base, 0xC9C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_7_i_5 addr(base, 0xD9C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_7_i_6 addr(base, 0xE9C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_7_i_7 addr(base, 0xF9C) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_8_i_0 addr(base, 0x8A0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_8_i_1 addr(base, 0x9A0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_8_i_2 addr(base, 0xAA0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_8_i_3 addr(base, 0xBA0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_8_i_4 addr(base, 0xCA0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_8_i_5 addr(base, 0xDA0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_8_i_6 addr(base, 0xEA0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_8_i_7 addr(base, 0xFA0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_9_i_0 addr(base, 0x8A4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_9_i_1 addr(base, 0x9A4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_9_i_2 addr(base, 0xAA4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_9_i_3 addr(base, 0xBA4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_9_i_4 addr(base, 0xCA4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_9_i_5 addr(base, 0xDA4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_9_i_6 addr(base, 0xEA4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_9_i_7 addr(base, 0xFA4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_10_i_0 addr(base, 0x8A8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_10_i_1 addr(base, 0x9A8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_10_i_2 addr(base, 0xAA8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_10_i_3 addr(base, 0xBA8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_10_i_4 addr(base, 0xCA8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_10_i_5 addr(base, 0xDA8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_10_i_6 addr(base, 0xEA8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_10_i_7 addr(base, 0xFA8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_11_i_0 addr(base, 0x8AC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_11_i_1 addr(base, 0x9AC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_11_i_2 addr(base, 0xAAC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_11_i_3 addr(base, 0xBAC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_11_i_4 addr(base, 0xCAC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_11_i_5 addr(base, 0xDAC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_11_i_6 addr(base, 0xEAC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_11_i_7 addr(base, 0xFAC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_12_i_0 addr(base, 0x8B0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_12_i_1 addr(base, 0x9B0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_12_i_2 addr(base, 0xAB0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_12_i_3 addr(base, 0xBB0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_12_i_4 addr(base, 0xCB0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_12_i_5 addr(base, 0xDB0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_12_i_6 addr(base, 0xEB0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_12_i_7 addr(base, 0xFB0) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_13_i_0 addr(base, 0x8B4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_13_i_1 addr(base, 0x9B4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_13_i_2 addr(base, 0xAB4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_13_i_3 addr(base, 0xBB4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_13_i_4 addr(base, 0xCB4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_13_i_5 addr(base, 0xDB4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_13_i_6 addr(base, 0xEB4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_13_i_7 addr(base, 0xFB4) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_14_i_0 addr(base, 0x8B8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_14_i_1 addr(base, 0x9B8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_14_i_2 addr(base, 0xAB8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_14_i_3 addr(base, 0xBB8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_14_i_4 addr(base, 0xCB8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_14_i_5 addr(base, 0xDB8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_14_i_6 addr(base, 0xEB8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_14_i_7 addr(base, 0xFB8) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_15_i_0 addr(base, 0x8BC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_15_i_1 addr(base, 0x9BC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_15_i_2 addr(base, 0xABC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_15_i_3 addr(base, 0xBBC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_15_i_4 addr(base, 0xCBC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_15_i_5 addr(base, 0xDBC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_15_i_6 addr(base, 0xEBC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+    
+    register elm_error_location_15_i_7 addr(base, 0xFBC) "Error-location register" {
+        _ 19 mbz;
+        ecc_error_location 13 ro "Error-location bit address";
+    };
+};

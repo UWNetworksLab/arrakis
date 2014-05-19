@@ -1,0 +1,227 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_wdtimer3_dsp.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_wdtimer3_dsp msbfirst ( addr base ) "" {
+    
+    
+    register wdt_widr ro addr(base, 0x0) "IP revision identifier" type(uint32);
+
+    constants emufree_status width(1) "" {
+        EMUFREE_0 = 0 "Timer counter frozen in emulation";
+        EMUFREE_1 = 1 "Timer counter free-running in emulation";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle mode: local target IDLE state follows (acknowledges) the system idle requests unconditionally, that is, regardless of the IP module internal requirements. Backup mode, for debug only.";
+        IDLEMODE_1 = 1 "No-idle mode: local target never enters IDLE state. Backup mode, for debug only.";
+        IDLEMODE_2 = 2 "Smart-idle mode: local target IDLE state eventually follows (acknowledges) the system idle requests, depending on the IP module internal requirements. IP module should not generate (IRQ- or DMA-request-related) wake-up events.";
+        IDLEMODE_3 = 3 "Smart-idle wake-up-capable mode: local target IDLE state eventually follows (acknowledges) the system idle requests, depending on the IP module internal requirements. IP module may generate (IRQ- or DMA-request-related) wake-up events when in IDLE state. Mode is relevant only if the appropriate IP moduleswake-up output(s) is (are) implemented.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_r = 0 "Reset done, no pending action";
+        SOFTRESET_0_w = 0 "No action";
+        SOFTRESET_1_w = 1 "Initiate software reset.";
+        SOFTRESET_1_r = 1 "Reset (software or other) ongoing";
+    };
+    
+    register wdt_wdsc addr(base, 0x10) "This register controls the various parameters of the L4 interface." {
+        _ 26 mbz;
+        emufree 1 rw type(emufree_status) "Emulation mode";
+        idlemode 2 rw type(idlemode_status) "Configuration of the local target state management mode. By definition, target can handle read/write transaction as long as it is out of IDLE state.";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Software reset. (Optional)";
+        _ 1 mbz;
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Internal module reset is ongoing.";
+        RESETDONE_1_r = 1 "Reset completed";
+    };
+    
+    register wdt_wdst addr(base, 0x14) "This register provides status information about the module." {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal module reset monitoring";
+    };
+
+    constants dly_it_flag_status width(1) "" {
+        DLY_IT_FLAG_0_r = 0 "No delay interrupt pending";
+        DLY_IT_FLAG_0_w = 0 "Status unchanged";
+        DLY_IT_FLAG_1_w = 1 "Status bit cleared";
+        DLY_IT_FLAG_1_r = 1 "Delay interrupt pending";
+    };
+
+    constants ovf_it_flag_status width(1) "" {
+        OVF_IT_FLAG_0_r = 0 "No overflow interrupt pending";
+        OVF_IT_FLAG_0_w = 0 "Status unchanged";
+        OVF_IT_FLAG_1_w = 1 "Status bit cleared";
+        OVF_IT_FLAG_1_r = 1 "Overflow interrupt pending";
+    };
+    
+    register wdt_wisr addr(base, 0x18) "This register shows which interrupt events are pending inside the module." {
+        _ 30 mbz;
+        dly_it_flag 1 rw1c type(dly_it_flag_status) "Pending delay interrupt status.";
+        ovf_it_flag 1 rw1c type(ovf_it_flag_status) "Pending overflow interrupt status.";
+    };
+
+    constants dly_it_ena_status width(1) "" {
+        DLY_IT_ENA_0 = 0 "Disable delay interrupt.";
+        DLY_IT_ENA_1 = 1 "Enable delay interrupt.";
+    };
+
+    constants ovf_it_ena_status width(1) "" {
+        OVF_IT_ENA_0 = 0 "Disable overflow interrupt.";
+        OVF_IT_ENA_1 = 1 "Enable overflow interrupt.";
+    };
+    
+    register wdt_wier addr(base, 0x1C) "This register controls (enable/disable) the interrupt events." {
+        _ 30 mbz;
+        dly_it_ena 1 rw type(dly_it_ena_status) "Delay interrupt enable/disable";
+        ovf_it_ena 1 rw type(ovf_it_ena_status) "Overflow interrupt enable/disable";
+    };
+
+    constants dly_wk_ena_status width(1) "" {
+        DLY_WK_ENA_0 = 0 "Disable delay wakeup.";
+        DLY_WK_ENA_1 = 1 "Enable delay wakeup.";
+    };
+
+    constants ovf_wk_ena_status width(1) "" {
+        OVF_WK_ENA_0 = 0 "Disable overflow wakeup.";
+        OVF_WK_ENA_1 = 1 "Enable overflow wakeup.";
+    };
+    
+    register wdt_wwer addr(base, 0x20) "This register controls (enable/disable) the wake-up events." {
+        _ 30 mbz;
+        dly_wk_ena 1 rw type(dly_wk_ena_status) "Delay wake-up enable";
+        ovf_wk_ena 1 rw type(ovf_wk_ena_status) "Overflow wake-up enable";
+    };
+
+    constants pre_status width(1) "" {
+        PRE_0 = 0 "Prescaler disabled";
+        PRE_1 = 1 "Prescaler enabled";
+    };
+    
+    register wdt_wclr addr(base, 0x24) "This register controls the prescaler stage of the counter." {
+        _ 26 mbz;
+        pre 1 rw type(pre_status) "Prescaler enable/disable configuration";
+        ptv 3 rw "Prescaler value The timer counter is prescaled with the value: 2. Example: PTV = 3 -&amp;gt; counter increases value if started after 8 functional clock periods. On reset, it is loaded from PI_PTV_RESET_VALUE input port.";
+        _ 2 mbz;
+    };
+    
+    register wdt_wcrr rw addr(base, 0x28) "This register holds the value of the internal counter." type(uint32);
+    
+    register wdt_wldr rw addr(base, 0x2C) "This register holds the timer load value." type(uint32);
+    
+    register wdt_wtgr rw addr(base, 0x30) "Writing a different value than the one already written in this register does a watchdog counter reload." type(uint32);
+
+    constants w_pend_wdly_status width(1) "" {
+        W_PEND_WDLY_0_r = 0 "No register write pending";
+        W_PEND_WDLY_1_r = 1 "Register write pending";
+    };
+    
+    register wdt_wwps addr(base, 0x34) "This register contains the write posting bits for all writeable functional registers." {
+        _ 26 mbz;
+        w_pend_wdly 1 ro type(w_pend_wdly_status) "Write pending for register WDLY";
+        w_pend_wspr 1 ro type(w_pend_wdly_status) "Write pending for register WSPR";
+        w_pend_wtgr 1 ro type(w_pend_wdly_status) "Write pending for register WTGR";
+        w_pend_wldr 1 ro type(w_pend_wdly_status) "Write pending for register WLDR";
+        w_pend_wcrr 1 ro type(w_pend_wdly_status) "Write pending for register WCRR";
+        w_pend_wclr 1 ro type(w_pend_wdly_status) "Write pending for register WCLR";
+    };
+    
+    register wdt_wdly rw addr(base, 0x44) "This register holds the delay value that controls the internal pre-overflow event detection." type(uint32);
+    
+    register wdt_wspr rw addr(base, 0x48) "This register holds the start-stop value that controls the internal start-stop FSM." type(uint32);
+
+    constants event_dly_status width(1) "" {
+        EVENT_DLY_0_r = 0 "No event pending";
+        EVENT_DLY_0_w = 0 "No action";
+        EVENT_DLY_1_w = 1 "Set event (debug)";
+        EVENT_DLY_1_r = 1 "Event pending";
+    };
+    
+    register wdt_wirqstatraw addr(base, 0x54) "IRQ unmasked status, status set per-event raw interrupt status vector, line 0. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 30 mbz;
+        event_dly 1 rw type(event_dly_status) "Settable raw status for delay event";
+        event_ovf 1 rw type(event_dly_status) "Settable raw status for overflow event";
+    };
+
+    constants event_dly_status1 width(1) "" {
+        EVENT_DLY_0_r_1 = 0 "No (enabled) event pending";
+        EVENT_DLY_0_w_1 = 0 "No action";
+        EVENT_DLY_1_w_1 = 1 "Clear (raw) event";
+        EVENT_DLY_1_r_1 = 1 "Event pending";
+    };
+    
+    register wdt_wirqstat addr(base, 0x58) "IRQ masked status, status clear per-event enabled interrupt status vector, line 0. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 30 mbz;
+        event_dly 1 rw1c type(event_dly_status1) "Clearable, enabled status for delay event";
+        event_ovf 1 rw1c type(event_dly_status1) "Clearable, enabled status for overflow event";
+    };
+
+    constants enable_dly_status width(1) "" {
+        ENABLE_DLY_0_r = 0 "Interrupt disabled (masked)";
+        ENABLE_DLY_0_w = 0 "No action";
+        ENABLE_DLY_1_w = 1 "Enable interrupt.";
+        ENABLE_DLY_1_r = 1 "Interrupt enabled";
+    };
+    
+    register wdt_wirqenset addr(base, 0x5C) "IRQ enable set per-event interrupt enable bit vector, line 0. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 30 mbz;
+        enable_dly 1 rw type(enable_dly_status) "Enable for delay event";
+        enable_ovf 1 rw type(enable_dly_status) "Enable for overflow event";
+    };
+
+    constants enable_dly_status1 width(1) "" {
+        ENABLE_DLY_0_r_1 = 0 "Interrupt disabled (masked)";
+        ENABLE_DLY_0_w_1 = 0 "No action";
+        ENABLE_DLY_1_w_1 = 1 "Disable interrupt.";
+        ENABLE_DLY_1_r_1 = 1 "Interrupt enabled";
+    };
+    
+    register wdt_wirqenclr addr(base, 0x60) "IRQ enable clear per-event interrupt enable bit vector, line 0. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 30 mbz;
+        enable_dly 1 rw1c type(enable_dly_status1) "Enable for delay event";
+        enable_ovf 1 rw1c type(enable_dly_status1) "Enable for overflow event";
+    };
+
+    constants dly_wk_ena_status1 width(1) "" {
+        DLY_WK_ENA_0_1 = 0 "Disable delay wakeup";
+        DLY_WK_ENA_1_1 = 1 "Enable delay wakeup";
+    };
+
+    constants ovf_wk_ena_status1 width(1) "" {
+        OVF_WK_ENA_0_1 = 0 "Disable overflow wakeup";
+        OVF_WK_ENA_1_1 = 1 "Enable overflow wakeup";
+    };
+    
+    register wdt_wirqwakeen addr(base, 0x64) "This register controls (enable/disable) the wake-up events." {
+        _ 30 mbz;
+        dly_wk_ena 1 rw type(dly_wk_ena_status1) "Enable delay wake-up";
+        ovf_wk_ena 1 rw type(ovf_wk_ena_status1) "Enable overflow wakeup";
+    };
+};

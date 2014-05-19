@@ -1,0 +1,245 @@
+/*
+ * Copyright (c) 2011, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * e10k_q.dev
+ *
+ * DESCRIPTION: Intel 82599 10 GbE Controller Queues
+ *
+ * Numbers in comments refer to the Intel 82599 10 GbE Controller Datasheet
+ * 322429-007, Revison 2.6, December 2010
+ */
+
+device e10k_q lsbfirst () "Intel 82599 10 GbE Controller Queues" {
+
+  /************************************
+   * 7.1.5 - 7.1.6 Recieve Descriptors
+   ***********************************/
+
+  // 7.1.5
+  datatype rdesc_legacy "Legacy Receive Descriptor" {
+    buffer      64 "Buffer Address";
+    length      16 "Length Field";
+    checksum    16 "Fragment Checksum";
+
+    // Recieve Status
+    dd          1 "Descriptor Done";
+    eop         1 "End of Packet";
+    _           1 rsvd;
+    vp          1 "VLAN Packet";
+    udpcs       1 "UDP Checksum";
+    l4cs        1 "L4 Checksum";
+    ipcs        1 "Ipv4 Checksum";
+    pif         1 "Non Unicast Address";
+
+    // Error Field
+    rxe         1 "MAC error";
+    _           5 rsvd;
+    tcpe        1 "TCP/UDP Checksum Error";
+    ipe         1 "Ipv4 Checksum Error";
+
+    vlan_tag    16 "VLAN Tag";
+  };
+
+  // 7.1.6.1
+  datatype rdesc_adv_rd "Advanced Receive Descriptor (read)" {
+    buffer      64 "Packet Buffer Address";
+    hdr_buffer  64 "Header Buffer Address";
+  };
+
+  // 7.1.6.2
+  datatype rdesc_adv_wb "Advanced Receive Descriptor (write-back)" {
+    rss_type    4 "RSS type";
+
+    // Packet type
+    pt_ipv4     1 "IPv4 header present";
+    pt_ipv4e    1 "IPv4 with extensions";
+    pt_ipv6     1 "IPv6 header present";
+    pt_ipv6e    1 "IPv6 with extensions";
+    pt_tcp      1 "TCP header present";
+    pt_udp      1 "UDP header present";
+    pt_sctp     1 "SCTP header";
+    pt_nfs      1 "NFS header";
+    pt_isesp    1 "IPSec ESP - IPSec encapsulation";
+    pt_isah     1 "IPSec AH - IPSec encapsulation";
+    pt_linksec  1 "LinkSec encapsulation";
+    pt_l2packet 1 "L2 packet";
+    _           1;
+
+    rsccnt      4 "RSC Packet Count";
+    hdr_len     10 "Packet header length";
+    sph         1 "Split Header";
+    param       32 "RSS Hash/Fragement CS/Fdir Flt ID/...";
+
+    // Extended status
+    dd          1 "Descriptor Done Status";
+    eop         1 "End of Packet";
+    flm         1 "Flow director filter match";
+    vp          1 "VLAN Packet";
+    udpcs       1 "UDP Checksum";
+    l4i         1 "L4 Integrity";
+    ipcs        1 "IPv4 Checksum";
+    pif         1 "Non Unicast Address";
+    _           1;
+    vext        1 "Outer-VLAN found in double VLAN packet";
+    udpv        1 "UDP Checksum Valid";
+    llint       1 "Low Latency Interrupt";
+    _           4;
+    ts          1 "Time Stamp";
+    secp        1 "Security Processing bit";
+    lb          1 "Loopback status indication";
+    _           1;
+
+    // Extended error
+    fdirerr_len 3 "FDIRErr/FCERR";
+    hbo         1 "Header Buffer Overflow";
+    _           3;
+    secerr      2 "Security error indication (LinkSec, IPSec)";
+    rxe         1 "MAC error";
+    l4e         1 "L4 integrity error";
+    ipe         1 "IPv4 checksum error";
+
+    pkt_len     16 "Number of bytes posted to packet buffer";
+    vlan_tag    16 "VLAN Tag";
+  };
+
+  datatype rdesc_adv_wb_nl "Advanced Receive Descriptor (write-back) for non-last" {
+    _           17;
+    rsccnt      4 "RSC Packet Count";
+    _           43;
+
+    // Extended status
+    dd          1 "Descriptor Done Status";
+    eop         1 "End of Packet";
+    _           2;
+    nextp       16 "Next Descriptor Pointer";
+
+    // Extended error
+    _           12;
+
+    pkt_len     16 "Number of bytes posted to packet buffer";
+    _           16;
+  };
+
+  /************************************
+   * 7.2.3 Transmit Descriptors
+   ***********************************/
+
+  // 7.2.3.2.2
+  datatype tdesc_legacy "Legacy Transmit Descriptor Format" {
+    buffer      64 "Buffer Address";
+    length      16 "Length";
+    cso         8 "Checksum Offset";
+
+    // Command Byte
+    eop         1 "End of Packet";
+    ifcs        1 "Insert FCS";
+    ic          1 "Insert Checksum";
+    rs          1 "Report Status";
+    _           1 rsvd;
+    dext        1 "Descriptor extension";
+    vle         1 "VLAN Packet Enable";
+    _           1 rsvd;
+
+    // Status
+    dd          1 " Descriptor Done Status";
+    _           3 rsvd;
+
+    _           4 rsvd;
+    css         8 "Checksum Start";
+    vlan        16 "VLAN Field";
+  };
+
+  // 7.2.3.2.3
+  constants l4_type "L4 Packet type" {
+    udp         = 0b00 "UDP";
+    tcp         = 0b01 "TCP";
+    sctp        = 0b10 "SCTP";
+  };
+  datatype tdesc_adv_ctx "Advanced Transmit Context Descriptor (write-back)" {
+    iplen       9 "IP header length";
+    maclen      7 "MAC header length";
+    vlan        16 "VLAN tag to be inserted";
+    ipsec_saidx 10 "Ipsec SA IDX";
+    fcoef       6 "FCoEF";
+    _           16;
+    ips_esp_len 9 "Size of ESP trailer and ESP ICV (ipsec)";
+
+    // TUCMD
+    snap        1 "SNAP indication";
+    ipv4        1 "IPv4 Packet type (1=ipv4, 0=ipv6)";
+    l4t         2 type(l4_type) "L4 Packet type";
+    ipsec_type  1 "IPSEC_TYPE";
+    encryption  1 "ESP encryption offload";
+    fcoe        1 "FCoE";
+    _           4;
+
+    dtyp        4 type(tdesc_dtyp) "Descriptor type: adv_ctx";
+    _           5;
+    dext        1 "Descriptor Extension (must be 1)";
+    bcntlen     6 "Must be 0x3F for rate limited queues";
+    idx         1 "Index into the hardware context table";
+    _           3;
+    l4len       8 "L4 header length";
+    mss         16 "Maximum Segment Size";
+  };
+
+  // 7.2.3.2.4
+  datatype tdesc_adv_rd "Advanced Transmit Data Descriptor (read)" {
+    buffer      64 "Buffer Address";
+    dtalen      16 "Bytes to be fetched for this descriptor";
+
+    _           2;
+    mac_ilsec   1 "Apply LinkSec on packet";
+    mac_1588    1 "IEEE1588 time stamp packet";
+    dtyp        4 type(tdesc_dtyp) "Descriptor type: adv_data";
+
+    // DCMD
+    eop         1 "End of Packet";
+    ifcs        1 "Insert FCS";
+    _           1;
+    rs          1 "Report Status";
+    _           1;
+    dext        1 "Descriptor Extension (must be 1)";
+    vle         1 "VLAN Packet Enable";
+    tse         1 "Transmit Segmentation Enable";
+
+    // Status
+    dd          1 "Descriptor Done";
+    _           3;
+
+    idx         1 "Index into the hardware context table";
+    _           2;
+    cc          1 "Check Context bit";
+
+    // POPTS
+    ixsm        1 "Insert IP Checksum";
+    txsm        1 "Insert TCP/UDP Checksum";
+    ipsec       1 "Ipsec offload request";
+    _           3;
+
+    paylen      18 "Size in bytes of whole packet (only first descriptor)";
+  };
+
+  datatype tdesc_adv_wb "Advanced Transmit Data Descriptor (write-back)" {
+    _           64;
+    _           32;
+
+    // Status
+    dd          1;
+    _           3;
+
+    _           28;
+  };
+
+  constants tdesc_dtyp "TX Descriptor Type" {
+    adv_ctx     = 0b0010 "Advanced context descriptor";
+    adv_data    = 0b0011 "Advanced data descriptor";
+  };
+
+};

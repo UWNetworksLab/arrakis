@@ -1,0 +1,588 @@
+/*
+ * Copyright (c) 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * eMAC.dev
+ *
+ * DESCRIPTION: IP blocks from Xilinx.  Used as NIC in SCC board.
+ * 
+ * Numbers in comments refer to the 
+ * - 
+ * - sccKit140_UsersGuide_Part8.pdf  (By default, all numbers are from this doc)
+ *      https://wiki.netos.ethz.ch/BarrelFish/HWInfo?action=AttachFile&do=get&target=sccKit140_UsersGuide_Part8.pdf
+ * - Xlinx eMAC user guide.pdf (When referred as "Xilinx user guide")
+ *      https://wiki.netos.ethz.ch/BarrelFish/HWInfo?action=AttachFile&do=get&target=Xlinx+eMAC+user+guide.pdf
+ */
+
+device eMAC lsbfirst ( addr base ) "Xilinx IPblock" {
+/* Using MSB as it was used in rck.dev */
+/* FIXME: Either use absolute values 0x07000 or relative values 0x00000.
+        Find out which way is correct, and use it. */
+/* FIXME: Separate the definations in register and regtype */
+
+	space one_byte(idx) valuewise "Model specific register";
+
+    /******** IP Configuration registers *********/
+
+    /* Receiver Configuration(0) [31:0] R/W (see Xilinx eMAC user guide) */
+    /* Xilinx user guide: Table 4-2: Receiver Configuration Register (Word 0) */
+    regtype eMAC_receiver_conf_0 "Flow control Configuration register (0)" {
+        PAUSE_FRAME_ADDR_LOW    32      rw      "Pause Frame Ethernet MAC Address [31:0]. This address is used to match the Ethernet MAC against the destination address of any incoming flow control frames. It is also used by the flow control block as the source address for any outbound flow control frames. The address is ordered so the first byte transmitted/received is the lowest positioned byte in the register; for example, a MAC address of AA-BB-CC-DD-EE-FF is stored in address [47:0] as 0xFFEEDDCCBBAA.";
+    };
+
+
+    /* Receiver Configuration(1) [31:0] R/W (see Xilinx eMAC user guide) */
+    /* Xilinx user guide: Table 4-3: Receiver Configuration Register (Word 1) */
+    regtype eMAC_receiver_conf_1 "Flow control Configuration register (1)" {
+        PAUSE_FRAME_ADDR_LOW    16      rw      "Pause frame Ethernet MAC Address [47:32].";
+        _                       9      mbz     "Reserved";
+        LT_DIS                  1       rw      "Length/Type Check disable. When this bit is 1, it disables the Length/Type field check on the frame.";
+        HD                      1       rw      "Half-duplex mode. When this bit is 1, the receiver operates in half-duplex mode. When the bit is 0, the receiver operates in full-duplex mode.";
+        VLAN                    1       rw      "VLAN enable. When this bit is 1, the receiver accepts VLAN tagged frames. The maximum payload length increases by four bytes.";
+        RX                      1       rw      "Receive enable. When this bit is 1, the receiver block is enabled to operate. When the bit is 0, the receiver ignores activity on the physical interface receive port.";
+        FCS                     1       rw      "In-band FCS enable. When this bit is 1, the receiver passes the FCS field up to the client. When this bit is 0, the FCS field is not passed to the client. In either case, the FCS is verified on the frame.";
+        JUM                     1       rw      "Jumbo frame enable. When this bit is 1, the Ethernet MAC receiver accepts frames over the maximum length specified in IEEE Std 802.3-2002 specification. When this bit is 0, the receiver only accepts frames up to the specified maximum.";
+        RST                     1       rw      "Reset. When this bit is 1, the receiver is reset. The bit automatically reverts to 0. This reset also sets all of the receiver configuration registers to their default values.";
+    };
+
+
+    /* Transmiter configuration [31:0] R/W (see Xilinx eMAC user guide) */
+    /* Xilinx user guide: Table 4-4: Transmiter Configuration register */
+    regtype eMAC_transmiter_conf "eMAC Transmiter Configuration register" {
+        _          25      mbz     "Reserved";
+        IFG         1      rw      "IFG adjustment enable. When this bit is 1, the transmitter reads the value of CLIENTEMAC#TXIFGDELAY at the start of frame transmission and adjusts the IFG.";
+        HD          1      rw      "Half-duplex mode (applicable in 10/100 Mb/s mode only). When this bit is 1, the transmitter operates in half-duplex mode. When this bit is 0, the transmitter operates in full-duplex mode.";
+        VLAN        1      rw      "VLAN enable. When this bit is 1, the transmitter allows transmission of the VLAN tagged frames.";
+        TX          1      rw      "Transmit enable. When this bit is 1, the transmitter is enabled for operation.";
+        FCS         1      rw      "In-band FCS enable. When this bit is 1, the Ethernet MAC transmitter is ready for the FCS field from the client.";
+        JUM         1      rw      "Jumbo frame enable. When this bit is 1, the transmitter sends frames greater than the maximum length specified in IEEE Std 802.3-2002. When this bit is 0, it only sends frames less than the specified maximum length.";
+        RST         1      rw      "Reset. When this bit is 1, the transmitter is reset. The bit automatically reverts to 0. This reset also sets all of the transmitter configuration registers to their default values.";
+
+    };
+
+    /* Flow control configuration [31:0] R/W  (see Xilinx eMAC user guide) */
+    /* Xilinx user guide: Table 4-5: Flow control Configuration register */
+    regtype eMAC_flow_control_conf "Flow control Configuration register" {
+        _            29     mbz     "Reserved";
+        RX_FC_enable 1      rw      "Flow control enable (RX). When this bit is 1, the received flow control frames inhibit transmitter operation. When this bit is 0, the flow control frame is passed to the client.";
+        TX_FC_enable 1      rw      "Flow control enable (TX). When this bit is 1, the CLIENTEMAC#PAUSEREQ signal is asserted and a flow control frame is sent from the transmitter. When this bit is 0, the CLIENTEMAC#PAUSEREQ signal has no effect.";
+        _            1     mbz     "Reserved";
+    };
+
+    /* Ethernet MAC mode [31:0] R/W (see Xilinx eMAC user guide) */
+    /* Xilinx user guide: Table 4-6: Ethernet MAC Mode Configuration Register */
+    /* Attributes to Configure Fixed Mode for the Ethernet MAC */
+    regtype eMAC_ethernet_mac_conf "Ethernet MAC Mode Configuration register" {
+        _           24      mbz     "Reserved";
+        RX16         1      ro      "Receive 16-bit Client Interface enable. When this bit is 1, the receive data client interface is 16 bits wide. When this bit is 0, the receive data client interface is 8 bits wide. This bit is valid only when using 1000BASE-X PCS/PMA mode.";
+        TX16         1      ro      "Transmit 16-bit Client Interface enable. When this bit is 1, the transmit data client interface is 16 bits wide. When this bit is 0, the transmit data client interface is 8 bits wide. This bit is valid only when using 1000BASE-X PCS/PMA mode.";
+        HOST         1      ro      "Host Interface enable. When this bit is 1, the host interface is enabled. When this bit is 0, the host interface is disabled.";
+        GPCS         1      ro      "1000BASE-X mode enable. When this bit is 1, the Ethernet MAC is configured in 1000BASE-X mode.";
+        SGMII        1      ro      "SGMII mode enable. When this bit is 1, the Ethernet MAC is configured in SGMII mode.";
+        RGMII        1      ro      "RGMII mode enable. When this bit is 1, the Ethernet MAC is configured in RGMII mode.";
+        LINK_SPEED   2      rw      "Speed selection. The speed of the Ethernet MAC is defined by the following values: 10 = 1000 Mb/s, 01 = 100 Mb/s, 00 = 10 Mb/s, 11 = N/A";
+    };
+
+
+    /* Address Filter Mode [31:0] R/W (see Xilinx eMAC user guide) */
+    /* Xilinx user guide: Table 4-13: Address Filter Mode */
+    regtype eMAC_address_filter_mode "Address filter mode Configuration register" {
+        _           31      mbz     "Reserved";
+        PM          1      rw      "Promiscuous Mode enable. When this bit is 1, the Address Filter block is disabled. When this bit is 0, the Address Filter block is enabled.";
+    };
+
+
+    /*******  eMAC status registers ******/
+
+    regtype RX_frame_dropped "RX Frame Dropped Channel" {
+        status   1  rw        "Set when frame dropped due to RX buffer overflow in DDR3";
+        _       31  mbz       "Unused";
+    };
+
+    regtype TX_FIFO_buff_full "TX FIFO buffer full" {
+        status   1  ro        "Set in case of an overflow of TX fifo buffer in eMAC IP block";
+        _       31  mbz       "Unused";
+    };
+
+    regtype RX_FIFO_buff_full "RX FIFO buffer full" {
+        status   1  ro        "Set in case of an overflow of RX fifo buffer in eMAC IP block";
+        _       31  mbz       "Unused";
+    };
+    
+     regtype TX_EMAC_Not_Ready "TX EMAC not ready" {
+        status   1  ro        "eMAC does not accept frames";
+        _       31  mbz       "Unused";
+    };
+    
+     regtype RX_MAC_Addr_Err "RX MAC address error" {
+        status   1  ro        "MAC address not found in table";
+        _       31  mbz       "Unused";
+    };
+    
+    regtype RX_MAC_Lower "RX MAC address lower part" {
+        mac_low 32  ro        "Lower 32 bits of MAC address that has not been found";
+    };
+    
+    regtype RX_MAC_Higher "RX MAC address higher part" {
+        mac_high 16     ro      "Upper 16 bits of MAC address that has not been found";
+        _        16     mbz     "Unused"; // FIXME: Should these 16 bits be commented? as they were not mentioned in the doc
+    };
+
+
+
+    /***** eMAC General Configuration Registers ********/
+
+    regtype eMAC_MAC_base_addr_upper "eMAC config MAC base address (high)" {
+        mac_upper    16     rw      "Upper 16 bits of base MAC address";
+        _            16     mbz     "Unused";
+    };
+
+    regtype eMAC_MAC_base_addr_lower "eMAC config MAC base address (low)" {
+        mac_lower   32      rw      "Lower 32 bits of base MAC address";
+    };
+
+    regtype eMAC_start_IP_SCC_network "eMAC config Start IP Address of SCC network" {
+        ip          32      rw      "IP Address for SCC Core 0. IPs for other cores are assigned in order";
+    };
+
+    regtype eMAC_host_IP_addr "eMAC config Host IP Address" {
+        ip          32      rw      "IP Address of Host computer where /shared is mounted";
+    };
+
+    regtype eMAC_host_GW_addr "eMAC config Host gateway Address" {
+        ip          32      rw      "Gateway of Host computer";
+  };
+
+
+    /****** Registers for "RX Control Registers" ******/
+    regtype RX_Buffer_start_addr "RX control RX Buffer Start Address" {
+        ADDR    29  rw      "Upper 29 bit of physical start address [33:5] of memory buffer. Lower 5 bits are always 0 because access granularity to buffer will be always 32 bytes - one cache-line.";
+        _       3   mbz     "Unused";
+    };
+
+    regtype RX_Buffer_read_index "RX control RX Buffer Read Index" {
+        rid 16  rw      "Read index of RX buffer Points to 32 byte entry in the buffer.";
+        _   16  mbz     "Unused";
+    };
+
+    regtype RX_Buffer_write_index "RX control RX Buffer Write Index" {
+        wid 16  ro      "Write index of RX buffer Points to 32 byte entry in the buffer.";
+        _   16  mbz     "Unused";
+    };
+
+    regtype RX_Buffer_last_index "RX control RX Buffer Last Index" {
+        lid 16  rw      "Last valid index in buffer. .Buffer size = last index * 32 bytes";
+        _   16  mbz     "Unused";
+    };
+/*
+    regtype RX_Buffer_reserved "RX control reserved" {
+        _   32  mbz     "Unused";
+    };
+*/
+
+    regtype RX_routing "RX control RX routing related" {
+        broute  8   rw      "Route to the tile where the MC for this buffer is located";
+        bdest   3   rw      "Defines the port at which the MC is connected";
+        _       5   mbz     "Unused";
+        iroute  8   rw      "Route to the tile where the core for this buffer is located";
+        idest   3   rw      "Selects core 0 or core 1 in the tile";
+        _       5   mbz     "Unused";
+    };
+
+
+    regtype RX_net_port_MAC_high "RX Network Port MAC Address (high)" {
+        mac_hi  16      rw      "Higher 16 bits of MAC addresses";
+        _       16      mbz     "Unused";
+    };
+
+    regtype RX_net_port_MAC_low "RX Network Port MAC Address (low)" {
+        mac_lo     32      rw      "Lower 32 bits of MAC addresses";
+    };
+
+    regtype RX_net_port_enable "RX Network Port Enable" {
+        enable   1      rw      "1 - Enabled, 0 - Disabled";
+        _       31      mbz     "Unused";
+    };
+    
+    
+    
+    /****** register types for TX control registers *******/
+
+
+    regtype TX_Buffer_start_addr "TX control TX Buffer Start Address" {
+        ADDR    29  rw      "Upper 29 bit of physical start address [33:5] of memory buffer. Lower 5 bits are always 0 because access granularity to buffer will be always 32 bytes - one cache-line.";
+        _       3   mbz     "Unused";
+    };
+
+
+    regtype TX_Buffer_read_index "TX control TX Buffer Read Index" {
+        rid 16  ro      "Read index of TX buffer Points to 32 byte entry in the buffer.";
+        _   16  mbz     "Unused";
+    };
+
+
+    regtype TX_Buffer_write_index "TX control TX Buffer Write Index" {
+        wid 16  rw      "Write index of TX buffer Points to 32 byte entry in the buffer.";
+        _   16  mbz     "Unused";
+    };
+
+    regtype TX_Buffer_last_index "TX control TX Buffer Last Index" {
+        lid 16  rw      "Last valid index in buffer. .Buffer size = last index * 32 bytes";
+        _   16  mbz     "Unused";
+    };
+
+
+    regtype TX_routing "TX control RX routing related" {
+        broute  8   rw      "Route to the tile where the MC for this buffer is located";
+        bdest   3   rw      "Defines the port at which the MC is connected";
+        _       21   mbz     "Unused";
+    };
+
+
+    regtype TX_net_port_enable "TX Network Port Enable" {
+        enable   1      rw      "1 - Enabled, 0 - Disabled";
+        _       31      mbz     "Unused";
+    };
+    
+    
+
+    /* 8.3.5.1 eMAC#0 IP Configuration Registers (03200 to 03390) */
+    register eMAC0_receiver_conf_0       addr(base, 0x03200) type(eMAC_receiver_conf_0);
+    register eMAC0_receiver_conf_1       addr(base, 0x03240) type(eMAC_receiver_conf_1);
+    register eMAC0_transmiter_conf       addr(base, 0x03280) type(eMAC_transmiter_conf);
+    register eMAC0_flow_control_conf     addr(base, 0x032C0) type(eMAC_flow_control_conf);
+    register eMAC0_ethernet_mac_conf     addr(base, 0x03300) type(eMAC_ethernet_mac_conf);
+    register eMAC0_address_filter_mode   addr(base, 0x03900) type(eMAC_address_filter_mode);
+
+
+    /* 8.3.5.3 eMAC#1 IP Configuration Register (04200 to 04390) */
+    register eMAC1_receiver_conf_0       addr(base, 0x04200) type(eMAC_receiver_conf_0);
+    register eMAC1_receiver_conf_1       addr(base, 0x04240) type(eMAC_receiver_conf_1);
+    register eMAC1_transmiter_conf       addr(base, 0x04280) type(eMAC_transmiter_conf);
+    register eMAC1_flow_control_conf     addr(base, 0x042C0) type(eMAC_flow_control_conf);
+    register eMAC1_ethernet_mac_conf     addr(base, 0x04300) type(eMAC_ethernet_mac_conf);
+    register eMAC1_address_filter_mode   addr(base, 0x04900) type(eMAC_address_filter_mode);
+
+
+    /* 8.3.5.5 eMAC#2 IP Configuration Registers (05200 to 05390) */
+    register eMAC2_receiver_conf_0       addr(base, 0x05200) type(eMAC_receiver_conf_0);
+    register eMAC2_receiver_conf_1       addr(base, 0x05240) type(eMAC_receiver_conf_1);
+    register eMAC2_transmiter_conf       addr(base, 0x05280) type(eMAC_transmiter_conf);
+    register eMAC2_flow_control_conf     addr(base, 0x052C0) type(eMAC_flow_control_conf);
+    register eMAC2_ethernet_mac_conf     addr(base, 0x05300) type(eMAC_ethernet_mac_conf);
+    register eMAC2_address_filter_mode   addr(base, 0x05900) type(eMAC_address_filter_mode);
+
+
+    /* 8.3.5.7 eMAC#3 IP Configuration Registers (06200 to 06390) */
+    register eMAC3_receiver_conf_0       addr(base, 0x06200) type(eMAC_receiver_conf_0);
+    register eMAC3_receiver_conf_1       addr(base, 0x06240) type(eMAC_receiver_conf_1);
+    register eMAC3_transmiter_conf       addr(base, 0x06280) type(eMAC_transmiter_conf);
+    register eMAC3_flow_control_conf     addr(base, 0x062C0) type(eMAC_flow_control_conf);
+    register eMAC3_ethernet_mac_conf     addr(base, 0x06300) type(eMAC_ethernet_mac_conf);
+    register eMAC3_address_filter_mode   addr(base, 0x06900) type(eMAC_address_filter_mode);
+
+
+    /* 8.3.6.1 eMAC#0 status registers (0x07000 to 0x07044) */
+//    register eMAC0_RX_frame_dropped addr(base, 0x00000) type(RX_frame_dropped);
+//    register eMAC0_RX_frame_dropped one_byte(0x00000) type(RX_frame_dropped);
+    regarray eMAC0_RX_frame_dropped  one_byte(  0x07000)[47] type(RX_frame_dropped);
+    register eMAC0_TX_FIFO_BUFF_FULL addr(base, 0x07030) type(TX_FIFO_buff_full);
+    register eMAC0_RX_FIFO_BUFF_FULL addr(base, 0x07034) type(RX_FIFO_buff_full);
+    register eMAC0_TX_EMAC_NOT_READY addr(base, 0x07038) type(TX_EMAC_Not_Ready);
+    register eMAC0_RX_MAC_ADDR_ERR   addr(base, 0x0703C) type(RX_MAC_Addr_Err);
+    register eMAC0_RX_MAC_LOWER      addr(base, 0x07040) type(RX_MAC_Lower);
+    register eMAC0_RX_MAC_HIGHER     addr(base, 0x07044) type(RX_MAC_Higher);
+    
+    /* 8.3.6.2 eMAC#1 status registers (0x07100 to 0x07144) */
+    regarray eMAC1_RX_frame_dropped  one_byte(  0x07100)[47] type(RX_frame_dropped);
+    register eMAC1_TX_FIFO_BUFF_FULL addr(base, 0x07130) type(TX_FIFO_buff_full);
+    register eMAC1_RX_FIFO_BUFF_FULL addr(base, 0x07134) type(RX_FIFO_buff_full);
+    register eMAC1_TX_EMAC_NOT_READY addr(base, 0x07138) type(TX_EMAC_Not_Ready);
+    register eMAC1_RX_MAC_ADDR_ERR   addr(base, 0x0713C) type(RX_MAC_Addr_Err);
+    register eMAC1_RX_MAC_LOWER      addr(base, 0x07140) type(RX_MAC_Lower);
+    register eMAC1_RX_MAC_HIGHER     addr(base, 0x07144) type(RX_MAC_Higher);
+
+    /* 8.3.6.3 eMAC#2 status registers (0x07200 to 0x07244) */
+    regarray eMAC2_RX_frame_dropped  one_byte(  0x07200)[47] type(RX_frame_dropped);
+    register eMAC2_TX_FIFO_BUFF_FULL addr(base, 0x07230) type(TX_FIFO_buff_full);
+    register eMAC2_RX_FIFO_BUFF_FULL addr(base, 0x07234) type(RX_FIFO_buff_full);
+    register eMAC2_TX_EMAC_NOT_READY addr(base, 0x07238) type(TX_EMAC_Not_Ready);
+    register eMAC2_RX_MAC_ADDR_ERR   addr(base, 0x0723C) type(RX_MAC_Addr_Err);
+    register eMAC2_RX_MAC_LOWER      addr(base, 0x07240) type(RX_MAC_Lower);
+    register eMAC2_RX_MAC_HIGHER     addr(base, 0x07244) type(RX_MAC_Higher);
+
+    /* 8.3.6.4 eMAC#3 status registers (0x07300 to 0x07344) */
+    regarray eMAC3_RX_frame_dropped  one_byte(  0x07300)[47] type(RX_frame_dropped);
+    register eMAC3_TX_FIFO_BUFF_FULL addr(base, 0x07330) type(TX_FIFO_buff_full);
+    register eMAC3_RX_FIFO_BUFF_FULL addr(base, 0x07334) type(RX_FIFO_buff_full);
+    register eMAC3_TX_EMAC_NOT_READY addr(base, 0x07338) type(TX_EMAC_Not_Ready);
+    register eMAC3_RX_MAC_ADDR_ERR   addr(base, 0x0733C) type(RX_MAC_Addr_Err);
+    register eMAC3_RX_MAC_LOWER      addr(base, 0x07340) type(RX_MAC_Lower);
+    register eMAC3_RX_MAC_HIGHER     addr(base, 0x07344) type(RX_MAC_Higher);
+
+    /* 8.3.6.5 eMAC General Configuration Registers (0x07e00 to 0x07e10) */
+    register eMAC_MAC_base_addr_upper_reg addr(base, 0x07e00) type(eMAC_MAC_base_addr_upper);
+    register eMAC_MAC_base_addr_lower_reg addr(base, 0x07e04) type(eMAC_MAC_base_addr_lower);
+    register eMAC_start_IP_SCC_network_reg addr(base, 0x07e08) type(eMAC_start_IP_SCC_network);
+    register eMAC_host_IP_addr_reg addr(base, 0x07e0c) type(eMAC_host_IP_addr);
+    register eMAC_host_GW_addr_reg addr(base, 0x07e10) type(eMAC_host_GW_addr);
+
+
+    /* 8.3.6.6 eMAC#0 RX Control Registers (09000 to 098BC) */
+    regarray eMAC0_RX_Buffer_start_addr     addr(base, 0x09000)[48] type(RX_Buffer_start_addr);
+    regarray eMAC0_RX_Buffer_read_index     addr(base, 0x09100)[48] type(RX_Buffer_read_index);
+    regarray eMAC0_RX_Buffer_write_index    addr(base, 0x09200)[48] type(RX_Buffer_write_index);
+    regarray eMAC0_RX_Buffer_last_index     addr(base, 0x09300)[48] type(RX_Buffer_last_index);
+//    regarray eMAC0_RX_Buffer_reserved     addr(base, 0x09400)[48] type(RX_Buffer_reserved);
+    regarray eMAC0_RX_routing               addr(base, 0x09500)[48] type(RX_routing);
+    regarray eMAC0_RX_net_port_MAC_high     addr(base, 0x09600)[48] type(RX_net_port_MAC_high);
+    regarray eMAC0_RX_net_port_MAC_low      addr(base, 0x09700)[48] type(RX_net_port_MAC_low);
+    regarray eMAC0_RX_net_port_enable       addr(base, 0x09800)[48] type(RX_net_port_enable);
+    
+
+    /* 8.3.6.7  eMAC#0 TX Control Registers (09900 to 09EBC) */
+    regarray eMAC0_TX_Buffer_start_addr  addr(base, 0x09900)[48] type(TX_Buffer_start_addr);
+    regarray eMAC0_TX_Buffer_read_index  addr(base, 0x09A00)[48] type(TX_Buffer_read_index);
+    regarray eMAC0_TX_Buffer_write_index addr(base, 0x09B00)[48] type(TX_Buffer_write_index);
+    regarray eMAC0_TX_Buffer_last_index  addr(base, 0x09C00)[48] type(TX_Buffer_last_index);
+    regarray eMAC0_TX_routing            addr(base, 0x09D00)[48] type(TX_routing);
+    regarray eMAC0_TX_net_port_enable    addr(base, 0x09E00)[48] type(TX_net_port_enable);
+
+    /* 8.3.6.8 eMAC#1 RX Control Registers (0A000 to 0A8BC) */
+    regarray eMAC1_RX_Buffer_start_addr     addr(base, 0x0A000)[48] type(RX_Buffer_start_addr);
+    regarray eMAC1_RX_Buffer_read_index     addr(base, 0x0A100)[48] type(RX_Buffer_read_index);
+    regarray eMAC1_RX_Buffer_write_index    addr(base, 0x0A200)[48] type(RX_Buffer_write_index);
+    regarray eMAC1_RX_Buffer_last_index     addr(base, 0x0A300)[48] type(RX_Buffer_last_index);
+//    regarray eMAC1_RX_Buffer_reserved     addr(base, 0x0A400)[48] type(RX_Buffer_reserved);
+    regarray eMAC1_RX_routing               addr(base, 0x0A500)[48] type(RX_routing);
+    regarray eMAC1_RX_net_port_MAC_high     addr(base, 0x0A600)[48] type(RX_net_port_MAC_high);
+    regarray eMAC1_RX_net_port_MAC_low      addr(base, 0x0A700)[48] type(RX_net_port_MAC_low);
+    regarray eMAC1_RX_net_port_enable       addr(base, 0x0A800)[48] type(RX_net_port_enable);
+
+
+    /* 8.3.6.9  eMAC#1 TX Control Registers (0A900 to 0AEBC) */
+    regarray eMAC1_TX_Buffer_start_addr  addr(base, 0x0A900)[48] type(TX_Buffer_start_addr);
+    regarray eMAC1_TX_Buffer_read_index  addr(base, 0x0AA00)[48] type(TX_Buffer_read_index);
+    regarray eMAC1_TX_Buffer_write_index addr(base, 0x0AB00)[48] type(TX_Buffer_write_index);
+    regarray eMAC1_TX_Buffer_last_index  addr(base, 0x0AC00)[48] type(TX_Buffer_last_index);
+    regarray eMAC1_TX_routing            addr(base, 0x0AD00)[48] type(TX_routing);
+    regarray eMAC1_TX_net_port_enable    addr(base, 0x0AE00)[48] type(TX_net_port_enable);
+
+    /* 8.3.6.10 eMAC#2 RX Control Registers (0B000 to 0B8BC) */
+    regarray eMAC2_RX_Buffer_start_addr     addr(base, 0x0B000)[48] type(RX_Buffer_start_addr);
+    regarray eMAC2_RX_Buffer_read_index     addr(base, 0x0B100)[48] type(RX_Buffer_read_index);
+    regarray eMAC2_RX_Buffer_write_index    addr(base, 0x0B200)[48] type(RX_Buffer_write_index);
+    regarray eMAC2_RX_Buffer_last_index     addr(base, 0x0B300)[48] type(RX_Buffer_last_index);
+//    regarray eMAC2_RX_Buffer_reserved     addr(base, 0x0B400)[48] type(RX_Buffer_reserved);
+    regarray eMAC2_RX_routing               addr(base, 0x0B500)[48] type(RX_routing);
+    regarray eMAC2_RX_net_port_MAC_high     addr(base, 0x0B600)[48] type(RX_net_port_MAC_high);
+    regarray eMAC2_RX_net_port_MAC_low      addr(base, 0x0B700)[48] type(RX_net_port_MAC_low);
+    regarray eMAC2_RX_net_port_enable       addr(base, 0x0B800)[48] type(RX_net_port_enable);
+
+
+    /* 8.3.6.11  eMAC#2 TX Control Registers (0B900 to 0BEBC) */
+    regarray eMAC2_TX_Buffer_start_addr  addr(base, 0x0B900)[48] type(TX_Buffer_start_addr);
+    regarray eMAC2_TX_Buffer_read_index  addr(base, 0x0BA00)[48] type(TX_Buffer_read_index);
+    regarray eMAC2_TX_Buffer_write_index addr(base, 0x0BB00)[48] type(TX_Buffer_write_index);
+    regarray eMAC2_TX_Buffer_last_index  addr(base, 0x0BC00)[48] type(TX_Buffer_last_index);
+    regarray eMAC2_TX_routing            addr(base, 0x0BD00)[48] type(TX_routing);
+    regarray eMAC2_TX_net_port_enable    addr(base, 0x0BE00)[48] type(TX_net_port_enable);
+
+    /* 8.3.6.12 eMAC#3 RX Control Registers (0C000 to 0C8BC) */
+    regarray eMAC3_RX_Buffer_start_addr     addr(base, 0x0C000)[48] type(RX_Buffer_start_addr);
+    regarray eMAC3_RX_Buffer_read_index     addr(base, 0x0C100)[48] type(RX_Buffer_read_index);
+    regarray eMAC3_RX_Buffer_write_index    addr(base, 0x0C200)[48] type(RX_Buffer_write_index);
+    regarray eMAC3_RX_Buffer_last_index     addr(base, 0x0C300)[48] type(RX_Buffer_last_index);
+//    regarray eMAC3_RX_Buffer_reserved     addr(base, 0x0C400)[48] type(RX_Buffer_reserved);
+    regarray eMAC3_RX_routing               addr(base, 0x0C500)[48] type(RX_routing);
+    regarray eMAC3_RX_net_port_MAC_high     addr(base, 0x0C600)[48] type(RX_net_port_MAC_high);
+    regarray eMAC3_RX_net_port_MAC_low      addr(base, 0x0C700)[48] type(RX_net_port_MAC_low);
+    regarray eMAC3_RX_net_port_enable       addr(base, 0x0C800)[48] type(RX_net_port_enable);
+
+
+    /* 8.3.6.13  eMAC#3 TX Control Registers (0C900 to 0CEBC) */
+    regarray eMAC3_TX_Buffer_start_addr  addr(base, 0x0C900)[48] type(TX_Buffer_start_addr);
+    regarray eMAC3_TX_Buffer_read_index  addr(base, 0x0CA00)[48] type(TX_Buffer_read_index);
+    regarray eMAC3_TX_Buffer_write_index addr(base, 0x0CB00)[48] type(TX_Buffer_write_index);
+    regarray eMAC3_TX_Buffer_last_index  addr(base, 0x0CC00)[48] type(TX_Buffer_last_index);
+    regarray eMAC3_TX_routing            addr(base, 0x0CD00)[48] type(TX_routing);
+    regarray eMAC3_TX_net_port_enable    addr(base, 0x0CE00)[48] type(TX_net_port_enable);
+
+    // regtype irq_status "Interrupt Status" {
+    // 	       _	  5	     ro	     "Reserved";
+    // };
+
+    regarray PIC_irq_status addr(base, 0xd000)[48] type(uint64);
+    regarray PIC_irq_mask   addr(base, 0xd200)[48] type(uint64);
+    regarray PIC_irq_reset  addr(base, 0xd400)[48] type(uint64);
+    regarray PIC_ipi_request    addr(base, 0xd600)[48] type(uint64);
+
+/*
+    regarray PIC_irq_status	addr(base, 0xd000)[96] type(uint32);
+    regarray PIC_irq_mask	addr(base, 0xd200)[96] type(uint32);
+    regarray PIC_irq_reset	addr(base, 0xd400)[96] type(uint32);
+    regarray PIC_ipi_request	addr(base, 0xd600)[96] type(uint32);
+*/
+    regarray PIC_irq_config	addr(base, 0xd800)[48] type(uint32);
+
+    register PIC_irq_request_mcpc addr(base, 0xd900) type(uint64);
+
+}; /* end device: eMAC */
+
+
+/*
+// 8.3.6.1 eMAC#0 status registers (0x07000 to 0x07044)
+
+    regarray eMAC0_RX_frame_dropped  one_byte(  0x00000)[47] type(RX_frame_dropped);
+    register eMAC0_TX_FIFO_BUFF_FULL addr(base, 0x00030) type(TX_FIFO_buff_full);
+    register eMAC0_RX_FIFO_BUFF_FULL addr(base, 0x00034) type(RX_FIFO_buff_full);
+    register eMAC0_TX_EMAC_NOT_READY addr(base, 0x00038) type(TX_EMAC_Not_Ready);
+    register eMAC0_RX_MAC_ADDR_ERR   addr(base, 0x0003C) type(RX_MAC_Addr_Err);
+    register eMAC0_RX_MAC_LOWER      addr(base, 0x00040) type(RX_MAC_Lower);
+    register eMAC0_RX_MAC_HIGHER     addr(base, 0x00044) type(RX_MAC_Higher);
+
+
+// 8.3.6.2 eMAC#1 status registers (0x07100 to 0x07144)
+
+    regarray eMAC1_RX_frame_dropped  one_byte(  0x00100)[47] type(RX_frame_dropped);
+    register eMAC1_TX_FIFO_BUFF_FULL addr(base, 0x00130) type(TX_FIFO_buff_full);
+    register eMAC1_RX_FIFO_BUFF_FULL addr(base, 0x00134) type(RX_FIFO_buff_full);
+    register eMAC1_TX_EMAC_NOT_READY addr(base, 0x00138) type(TX_EMAC_Not_Ready);
+    register eMAC1_RX_MAC_ADDR_ERR   addr(base, 0x0013C) type(RX_MAC_Addr_Err);
+    register eMAC1_RX_MAC_LOWER      addr(base, 0x00140) type(RX_MAC_Lower);
+    register eMAC1_RX_MAC_HIGHER     addr(base, 0x00144) type(RX_MAC_Higher);
+
+
+// 8.3.6.3 eMAC#2 status registers (0x07200 to 0x07244)
+    regarray eMAC2_RX_frame_dropped  one_byte(  0x00200)[47] type(RX_frame_dropped);
+    register eMAC2_TX_FIFO_BUFF_FULL addr(base, 0x00230) type(TX_FIFO_buff_full);
+    register eMAC2_RX_FIFO_BUFF_FULL addr(base, 0x00234) type(RX_FIFO_buff_full);
+    register eMAC2_TX_EMAC_NOT_READY addr(base, 0x00238) type(TX_EMAC_Not_Ready);
+    register eMAC2_RX_MAC_ADDR_ERR   addr(base, 0x0023C) type(RX_MAC_Addr_Err);
+    register eMAC2_RX_MAC_LOWER      addr(base, 0x00240) type(RX_MAC_Lower);
+    register eMAC2_RX_MAC_HIGHER     addr(base, 0x00244) type(RX_MAC_Higher);
+
+
+// 8.3.6.4 eMAC#3 status registers (0x07300 to 0x07344)
+
+    regarray eMAC3_RX_frame_dropped  one_byte(  0x00300)[47] type(RX_frame_dropped);
+    register eMAC3_TX_FIFO_BUFF_FULL addr(base, 0x00330) type(TX_FIFO_buff_full);
+    register eMAC3_RX_FIFO_BUFF_FULL addr(base, 0x00334) type(RX_FIFO_buff_full);
+    register eMAC3_TX_EMAC_NOT_READY addr(base, 0x00338) type(TX_EMAC_Not_Ready);
+    register eMAC3_RX_MAC_ADDR_ERR   addr(base, 0x0033C) type(RX_MAC_Addr_Err);
+    register eMAC3_RX_MAC_LOWER      addr(base, 0x00340) type(RX_MAC_Lower);
+    register eMAC3_RX_MAC_HIGHER     addr(base, 0x00344) type(RX_MAC_Higher);
+
+
+// 8.3.6.5 eMAC General Configuration Registers (0x07e00 to 0x07e10)
+
+    register eMAC_MAC_base_addr_upper rw addr(base, 0x00e00) "eMAC config MAC base address (high)" {
+        _            16     mbz     "Unused";
+        mac_upper    16     rw      "Upper 16 bits of base MAC address";
+    };
+
+
+    register eMAC_MAC_base_addr_lower addr(base, 0x00e04) "eMAC config MAC base address (low)" {
+        mac_lower   32      rw      "Lower 32 bits of base MAC address";
+    };
+
+    register eMAC_start_IP_SCC_network addr(base, 0x00e08) "eMAC config Start IP Address of SCC network" {
+        ip          32      rw      "IP Address for SCC Core 0. IPs for other cores are assigned in order";
+    };
+
+    register eMAC_host_IP_addr addr(base, 0x00e0c) "eMAC config Host IP Address" {
+        ip          32      rw      "IP Address of Host computer where /shared is mounted";
+    };
+
+    register eMAC_host_GW_addr addr(base, 0x00e10) "eMAC config Host gateway Address" {
+        ip          32      rw      "Gateway of Host computer";
+  };
+
+
+// 8.3.6.6 eMAC#0 RX Control Registers (09000 to 098BC)
+    regarray eMAC0_RX_Buffer_start_addr     addr(base, 0x02000)[48] type(RX_Buffer_start_addr);
+    regarray eMAC0_RX_Buffer_read_index     addr(base, 0x02100)[48] type(RX_Buffer_read_index);
+    regarray eMAC0_RX_Buffer_write_index    addr(base, 0x02200)[48] type(RX_Buffer_write_index);
+    regarray eMAC0_RX_Buffer_last_index     addr(base, 0x02300)[48] type(RX_Buffer_last_index);
+//    regarray eMAC0_RX_Buffer_reserved     addr(base, 0x02400)[48] type(RX_Buffer_reserved);
+    regarray eMAC0_RX_routing               addr(base, 0x02500)[48] type(RX_routing);
+    regarray eMAC0_RX_net_port_MAC_high     addr(base, 0x02600)[48] type(RX_net_port_MAC_high);
+    regarray eMAC0_RX_net_port_MAC_low      addr(base, 0x02700)[48] type(RX_net_port_MAC_low);
+    regarray eMAC0_RX_net_port_enable       addr(base, 0x02800)[48] type(RX_net_port_enable);
+
+
+// 8.3.6.7  eMAC#0 TX Control Registers (09900 to 09EBC)
+    regarray eMAC0_TX_Buffer_start_addr  addr(base, 0x02900)[48] type(TX_Buffer_start_addr);
+    regarray eMAC0_TX_Buffer_read_index  addr(base, 0x02A00)[48] type(TX_Buffer_read_index);
+    regarray eMAC0_TX_Buffer_write_index addr(base, 0x02B00)[48] type(TX_Buffer_write_index);
+    regarray eMAC0_TX_Buffer_last_index  addr(base, 0x02C00)[48] type(TX_Buffer_last_index);
+    regarray eMAC0_TX_routing            addr(base, 0x02D00)[48] type(TX_routing);
+    regarray eMAC0_TX_net_port_enable    addr(base, 0x02E00)[48] type(TX_net_port_enable);
+
+
+// 8.3.6.8 eMAC#1 RX Control Registers (0A000 to 0A8BC)
+    regarray eMAC1_RX_Buffer_start_addr     addr(base, 0x03000)[48] type(RX_Buffer_start_addr);
+    regarray eMAC1_RX_Buffer_read_index     addr(base, 0x03100)[48] type(RX_Buffer_read_index);
+    regarray eMAC1_RX_Buffer_write_index    addr(base, 0x03200)[48] type(RX_Buffer_write_index);
+    regarray eMAC1_RX_Buffer_last_index     addr(base, 0x03300)[48] type(RX_Buffer_last_index);
+//    regarray eMAC1_RX_Buffer_reserved     addr(base, 0x03400)[48] type(RX_Buffer_reserved);
+    regarray eMAC1_RX_routing               addr(base, 0x03500)[48] type(RX_routing);
+    regarray eMAC1_RX_net_port_MAC_high     addr(base, 0x03600)[48] type(RX_net_port_MAC_high);
+    regarray eMAC1_RX_net_port_MAC_low      addr(base, 0x03700)[48] type(RX_net_port_MAC_low);
+    regarray eMAC1_RX_net_port_enable       addr(base, 0x03800)[48] type(RX_net_port_enable);
+
+
+// 8.3.6.9  eMAC#1 TX Control Registers (0A900 to 0AEBC)
+    regarray eMAC1_TX_Buffer_start_addr  addr(base, 0x03900)[48] type(TX_Buffer_start_addr);
+    regarray eMAC1_TX_Buffer_read_index  addr(base, 0x03A00)[48] type(TX_Buffer_read_index);
+    regarray eMAC1_TX_Buffer_write_index addr(base, 0x03B00)[48] type(TX_Buffer_write_index);
+    regarray eMAC1_TX_Buffer_last_index  addr(base, 0x03C00)[48] type(TX_Buffer_last_index);
+    regarray eMAC1_TX_routing            addr(base, 0x03D00)[48] type(TX_routing);
+    regarray eMAC1_TX_net_port_enable    addr(base, 0x03E00)[48] type(TX_net_port_enable);
+
+// 8.3.6.10 eMAC#2 RX Control Registers (0B000 to 0B8BC)
+    regarray eMAC2_RX_Buffer_start_addr     addr(base, 0x04000)[48] type(RX_Buffer_start_addr);
+    regarray eMAC2_RX_Buffer_read_index     addr(base, 0x04100)[48] type(RX_Buffer_read_index);
+    regarray eMAC2_RX_Buffer_write_index    addr(base, 0x04200)[48] type(RX_Buffer_write_index);
+    regarray eMAC2_RX_Buffer_last_index     addr(base, 0x04300)[48] type(RX_Buffer_last_index);
+//    regarray eMAC2_RX_Buffer_reserved     addr(base, 0x04400)[48] type(RX_Buffer_reserved);
+    regarray eMAC2_RX_routing               addr(base, 0x04500)[48] type(RX_routing);
+    regarray eMAC2_RX_net_port_MAC_high     addr(base, 0x04600)[48] type(RX_net_port_MAC_high);
+    regarray eMAC2_RX_net_port_MAC_low      addr(base, 0x04700)[48] type(RX_net_port_MAC_low);
+    regarray eMAC2_RX_net_port_enable       addr(base, 0x04800)[48] type(RX_net_port_enable);
+
+
+// 8.3.6.11  eMAC#2 TX Control Registers (0B900 to 0BEBC)
+    regarray eMAC2_TX_Buffer_start_addr  addr(base, 0x04900)[48] type(TX_Buffer_start_addr);
+    regarray eMAC2_TX_Buffer_read_index  addr(base, 0x04A00)[48] type(TX_Buffer_read_index);
+    regarray eMAC2_TX_Buffer_write_index addr(base, 0x04B00)[48] type(TX_Buffer_write_index);
+    regarray eMAC2_TX_Buffer_last_index  addr(base, 0x04C00)[48] type(TX_Buffer_last_index);
+    regarray eMAC2_TX_routing            addr(base, 0x04D00)[48] type(TX_routing);
+    regarray eMAC2_TX_net_port_enable    addr(base, 0x04E00)[48] type(TX_net_port_enable);
+
+// 8.3.6.12 eMAC#3 RX Control Registers (0C000 to 0C8BC)
+    regarray eMAC3_RX_Buffer_start_addr     addr(base, 0x05000)[48] type(RX_Buffer_start_addr);
+    regarray eMAC3_RX_Buffer_read_index     addr(base, 0x05100)[48] type(RX_Buffer_read_index);
+    regarray eMAC3_RX_Buffer_write_index    addr(base, 0x05200)[48] type(RX_Buffer_write_index);
+    regarray eMAC3_RX_Buffer_last_index     addr(base, 0x05300)[48] type(RX_Buffer_last_index);
+//    regarray eMAC3_RX_Buffer_reserved     addr(base, 0x05400)[48] type(RX_Buffer_reserved);
+    regarray eMAC3_RX_routing               addr(base, 0x05500)[48] type(RX_routing);
+    regarray eMAC3_RX_net_port_MAC_high     addr(base, 0x05600)[48] type(RX_net_port_MAC_high);
+    regarray eMAC3_RX_net_port_MAC_low      addr(base, 0x05700)[48] type(RX_net_port_MAC_low);
+    regarray eMAC3_RX_net_port_enable       addr(base, 0x05800)[48] type(RX_net_port_enable);
+
+
+// 8.3.6.13  eMAC#3 TX Control Registers (0C900 to 0CEBC)
+    regarray eMAC3_TX_Buffer_start_addr  addr(base, 0x05900)[48] type(TX_Buffer_start_addr);
+    regarray eMAC3_TX_Buffer_read_index  addr(base, 0x05A00)[48] type(TX_Buffer_read_index);
+    regarray eMAC3_TX_Buffer_write_index addr(base, 0x05B00)[48] type(TX_Buffer_write_index);
+    regarray eMAC3_TX_Buffer_last_index  addr(base, 0x05C00)[48] type(TX_Buffer_last_index);
+    regarray eMAC3_TX_routing            addr(base, 0x05D00)[48] type(TX_routing);
+    regarray eMAC3_TX_net_port_enable    addr(base, 0x05E00)[48] type(TX_net_port_enable);
+
+*/

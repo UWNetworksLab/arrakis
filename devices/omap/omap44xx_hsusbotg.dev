@@ -1,0 +1,105 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_hsusbotg.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_hsusbotg msbfirst ( addr base ) "" {
+    
+    
+    register otg_revision ro addr(base, 0x400) "OCP standard USB OTG HS core revision number" type(uint32);
+
+    constants midlemode_status width(2) "" {
+        MIDLEMODE_0 = 0 "Force standby mode. Mstandby asserted unconditionally";
+        MIDLEMODE_1 = 1 "No standby mode. Mstandby never asserted.";
+        MIDLEMODE_2 = 2 "Smart standby mode. Mstandby asserted when no more activity on the USB master.";
+    };
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0 = 0 "Force Idle mode. Sidleack asserted after Midlereq assertion";
+        SIDLEMODE_1 = 1 "No idle mode. Sidleack never asserted.";
+        SIDLEMODE_2 = 2 "SmartIdle mode. Sidleack asserted after Midlereq assertion when no more activity on the USB. Swakeup is not asserted in this mode.";
+        SIDLEMODE_3 = 3 "SmartIdle - Wakeup mode. Sidleack asserted after Midlereq assertion when no more activity on the USB. Swakeup is asserted in this mode if ENABLEWAKEUP is set.";
+    };
+
+    constants enablewakeup_status width(1) "" {
+        ENABLEWAKEUP_0 = 0 "Wakeup disabled";
+        ENABLEWAKEUP_1 = 1 "Wakeup enabled";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_1 = 1 "Starts softreset sequence.";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "Clock always runnning";
+        AUTOIDLE_1 = 1 "When no activity on OCP, clock is cut off.";
+    };
+    
+    register otg_sysconfig addr(base, 0x404) "OCP standard configuration" {
+        _ 18 mbz;
+        midlemode 2 rw type(midlemode_status) "Master interface power management control. Standby/wait control";
+        _ 7 mbz;
+        sidlemode 2 rw type(sidlemode_status) "Slave interface power management control. Req/ack control";
+        enablewakeup 1 rw type(enablewakeup_status) "Enable wakeup capability.";
+        softreset 1 rw type(softreset_status) "Software reset bit";
+        autoidle 1 rw type(autoidle_status) "Autoidle bit";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Reset is ongoing";
+        RESETDONE_1_r = 1 "Reset is finished.";
+    };
+    
+    register otg_sysstatus addr(base, 0x408) "OCP standard status" {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Reset done";
+    };
+
+    constants physel_status width(3) "" {
+        PHYSEL_0 = 0 "PHY interface is 8-bit, UTMI+ level 3";
+        PHYSEL_1 = 1 "PHY interface is 12-pin, 8-bit SDR ULPI";
+        PHYSEL_2 = 2 "PHY interface is 8-pin, 4-bit DDR ULPI (Non-functional mode in current implementation. Do not use.)";
+    };
+    
+    register otg_interfsel addr(base, 0x40C) "USB OTG HS interface selection. The interface selection has to be done before the PHY is activated and is not allowed to change when the PHY clock is already running." {
+        _ 29 mbz;
+        physel 3 rw type(physel_status) "PHY interface selection";
+    };
+    
+    register otg_simenable addr(base, 0x410) "Enable simulation acceleration features. WARNING: For simulations only, since those features have an impact on USB protocol." {
+        _ 31 mbz;
+        tm1 1 rw "Test Mode 1 enabling (timer shortcuts)";
+    };
+    
+    register otg_forcestdby addr(base, 0x414) "Enabling MSTANDBY in FORCESTANDBY mode. Programming this register will impact SmartStandby functionality." {
+        _ 31 mbz;
+        enableforce 1 rw "Enabling MSTANDBY to go high";
+    };
+    
+    register otg_bigendian addr(base, 0x418) "Enable BIG ENDIANESS for OCP MASTER" {
+        _ 31 mbz;
+        big_endian 1 rw "Enable BIG ENDIAN in OCP MASTER";
+    };
+};

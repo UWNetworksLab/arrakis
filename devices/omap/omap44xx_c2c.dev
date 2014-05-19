@@ -1,0 +1,454 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_c2c.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_c2c msbfirst ( addr base ) "" {
+    
+    
+    register c2c_revision ro addr(base, 0x0) "IP Revision identifier (X.Y.R) Used by software to track features, bugs, and compatibility" type(uint32);
+    
+    register c2c_sysconfig ro addr(base, 0x4) "System configuration register (not used)" type(uint32);
+    
+    register c2c_sysstatus ro addr(base, 0x8) "Reserved" type(uint32);
+
+    constants rx_width_status width(4) "" {
+        RX_WIDTH_1 = 1 "Bus width is set to 10 bits (possible only if TX = 8).";
+        RX_WIDTH_10 = 10 "Bus width is set to 16 bits.";
+    };
+
+    constants tx_width_status width(4) "" {
+        TX_WIDTH_1 = 1 "Bus width is set to 10 bits (possible only if RX = 8).";
+        TX_WIDTH_10 = 10 "Bus width is set to 16 bits (default mode).";
+    };
+    
+    register c2c_portconfig addr(base, 0xC) "This register defines the widths of the TX and RX buses on the C2C interface." {
+        _ 24 mbz;
+        rx_width 4 rw type(rx_width_status) "0000: Bus width is set to 8 bits (default mode).Other values are reserved, and should not be used. .";
+        tx_width 4 rw type(tx_width_status) "0000: Bus width is set to 8 bits.Other values are reserved, and shall not be used. .";
+    };
+
+    constants mirrormode_status width(1) "" {
+        MIRRORMODE_0 = 0 "Functional default mode";
+        MIRRORMODE_1 = 1 "Mirror mode for debug";
+    };
+    
+    register c2c_mirrormode addr(base, 0x10) "This register sets the C2C L3 in mirror mode. See debug section." {
+        _ 31 mbz;
+        mirrormode 1 rw type(mirrormode_status) "Mirror mode.";
+    };
+    
+    register c2c_irq_raw_status_0 addr(base, 0x14) "Interrupt status register (OCP-compliant IRQ line) for C2c_Sscm_Irq(0), regardless of enable settings" {
+        _ 28 mbz;
+        wait_irq 1 rw "Reading 1 indicates WAIT value in WAIT register has been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        wake_ack_irq 1 rw "Reading 1 indicates WAKE_ACK value in the WAKE_ACK register has been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        rx_max_freq_ack_irq 1 rw "Reading 1 indicates GPI is not turned on OR RX_MAX_FREQ_ACK value in the RX_MAX_FREQ_ACK register equal RX_MAX_FREQ value in the RX_MAX_FREQ register.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        tx_freq_irq 1 rw "Reading 1 indicates that the FCLK_FREQ value in the FCLK_FREQ register has been updated AND the SSCM has finished updating the new division for the TX clock.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+    };
+    
+    register c2c_irq_raw_status_1 addr(base, 0x18) "" {
+        geno_irq_31 1 rw "Reading 1 indicates C2c_Sscm_GENO (31) signal and GENO_31 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_30 1 rw "Reading 1 indicates C2c_Sscm_GENO (30) signal and GENO_30 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_29 1 rw "Reading 1 indicates C2c_Sscm_GENO (29) signal and GENO_29 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_28 1 rw "Reading 1 indicates C2c_Sscm_GENO (28) signal and GENO_28 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_27 1 rw "Reading 1 indicates C2c_Sscm_GENO (27) signal and GENO_27 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_26 1 rw "Reading 1 indicates C2c_Sscm_GENO (26) signal and GENO_26 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_25 1 rw "Reading 1 indicates C2c_Sscm_GENO (25) signal and GENO_25 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_24 1 rw "Reading 1 indicates C2c_Sscm_GENO (24) signal and GENO_24 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_23 1 rw "Reading 1 indicates C2c_Sscm_GENO (23) signal and GENO_23 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_22 1 rw "Reading 1 indicates C2c_Sscm_GENO (22) signal and GENO_22 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_21 1 rw "Reading 1 indicates C2c_Sscm_GENO (21) signal and GENO_21 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_20 1 rw "Reading 1 indicates C2c_Sscm_GENO (20) signal and GENO_20 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_19 1 rw "Reading 1 indicates C2c_Sscm_GENO (19) signal and GENO_19 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_18 1 rw "Reading 1 indicates C2c_Sscm_GENO (18) signal and GENO_18 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_17 1 rw "Reading 1 indicates C2c_Sscm_GENO (17) signal and GENO_17 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_16 1 rw "Reading 1 indicates C2c_Sscm_GENO (16) signal and GENO_16 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_15 1 rw "Reading 1 indicates C2c_Sscm_GENO (15) signal and GENO_15 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_14 1 rw "Reading 1 indicates C2c_Sscm_GENO (14) signal and GENO_14 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_13 1 rw "Reading 1 indicates C2c_Sscm_GENO (13) signal and GENO_13 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_12 1 rw "Reading 1 indicates C2c_Sscm_GENO (12) signal and GENO_12 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_11 1 rw "Reading 1 indicates C2c_Sscm_GENO (11) signal and GENO_11 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_10 1 rw "Reading 1 indicates C2c_Sscm_GENO (10) signal and GENO_10 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_9 1 rw "Reading 1 indicates C2c_Sscm_GENO (9) signal and GENO_9 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_8 1 rw "Reading 1 indicates C2c_Sscm_GENO (8) signal and GENO_8 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_7 1 rw "Reading 1 indicates C2c_Sscm_GENO (7) signal and GENO_7 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_6 1 rw "Reading 1 indicates C2c_Sscm_GENO (6) signal and GENO_6 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_5 1 rw "Reading 1 indicates C2c_Sscm_GENO (5) signal and GENO_5 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_4 1 rw "Reading 1 indicates C2c_Sscm_GENO (4) signal and GENO_4 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_3 1 rw "Reading 1 indicates C2c_Sscm_GENO (3) signal and GENO_3 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_2 1 rw "Reading 1 indicates C2c_Sscm_GENO (2) signal and GENO_2 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_1 1 rw "Reading 1 indicates C2c_Sscm_GENO (1) signal and GENO_1 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+        geno_irq_0 1 rw "Reading 1 indicates C2c_Sscm_GENO (0) signal and GENO_0 value in GENO_STATUS register have been modified by distant C2C.Writing 1 to this bit sets the bit. . Writing 0 has no effect. .";
+    };
+    
+    register c2c_irq_enable_status_0 addr(base, 0x1C) "" {
+        _ 28 mbz;
+        wait_irq 1 rw1c "Reading 1 indicates WAIT value in WAIT register has been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        wake_ack_irq 1 rw1c "Reading 1 indicates WAKE_ACK value in the WAKE_ACK register has been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        rx_max_freq_ack_irq 1 rw1c "Reading 1 indicates GPI is not turned on OR RX_MAX_FREQ_ACK value in the RX_MAX_FREQ_ACK register equal RX_MAX_FREQ value in the RX_MAX_FREQ register.";
+        tx_freq_irq 1 rw1c "Reading 1 indicates that the FCLK_FREQ value in the FCLK_FREQ register has been updated AND the SSCM has finished updating the new division for the Tx clock.";
+    };
+    
+    register c2c_irq_enable_status_1 addr(base, 0x20) "" {
+        geno_irq_31 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (31) signal and GENO_31 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_30 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (30) signal and GENO_30 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_29 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (29) signal and GENO_29 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_28 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (28) signal and GENO_28 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_27 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (27) signal and GENO_27 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_26 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (26) signal and GENO_26 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_25 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (25) signal and GENO_25 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_24 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (24) signal and GENO_24 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_23 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (23) signal and GENO_23 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_22 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (22) signal and GENO_22 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_21 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (21) signal and GENO_21 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_20 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (20) signal and GENO_20 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_19 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (19) signal and GENO_19 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_18 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (18) signal and GENO_18 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_17 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (17) signal and GENO_17 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_16 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (16) signal and GENO_16 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_15 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (15) signal and GENO_15 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_14 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (14) signal and GENO_14 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_13 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (13) signal and GENO_13 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_12 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (12) signal and GENO_12 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_11 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (11) signal and GENO_11 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_10 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (10) signal and GENO_10 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_9 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (9) signal and GENO_9 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_8 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (8) signal and GENO_8 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_7 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (7) signal and GENO_7 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_6 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (6) signal and GENO_6 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_5 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (5) signal and GENO_5 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_4 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (4) signal and GENO_4 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_3 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (3) signal and GENO_3 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_2 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (2) signal and GENO_2 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_1 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (1) signal and GENO_1 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_0 1 rw1c "Reading 1 indicates C2c_Sscm_GENO (0) signal and GENO_0 value in GENO_STATUS register have been modified by distant C2C and interrupt source is not masked. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+    };
+    
+    register c2c_irq_enable_set_0 addr(base, 0x24) "" {
+        _ 28 mbz;
+        wait_irq_en 1 rw "Interrupt enable for WAIT IRQ. Writing 1 to this bit sets the bit. Writing 0 has no effect.";
+        wake_ack_irq_en 1 rw "Interrupt enable for WAKE_ACK IRQ. Writing 1 to this bit sets the bit. Writing 0 has no effect.";
+        rx_max_freq_ack_irq_en 1 rw "Interrupt enable for RX_MAX_FREQ_ACK IRQ. Writing 1 to this bit sets the bit. Writing 0 has no effect.";
+        tx_freq_irq_en 1 rw "Interrupt enable for TX_FREQ IRQ. Writing 1 to this bit sets the bit. Writing 0 has no effect.";
+    };
+    
+    register c2c_irq_enable_set_1 addr(base, 0x28) "" {
+        geno_irq_31_en 1 rw "Interrupt enable for GENO_IRQ_31 IRQ.";
+        geno_irq_30_en 1 rw "Interrupt enable for GENO_IRQ_30 IRQ.";
+        geno_irq_29_en 1 rw "Interrupt enable for GENO_IRQ_29 IRQ.";
+        geno_irq_28_en 1 rw "Interrupt enable for GENO_IRQ_28 IRQ.";
+        geno_irq_27_en 1 rw "Interrupt enable for GENO_IRQ_27 IRQ.";
+        geno_irq_26_en 1 rw "Interrupt enable for GENO_IRQ_26 IRQ.";
+        geno_irq_25_en 1 rw "Interrupt enable for GENO_IRQ_25 IRQ.";
+        geno_irq_24_en 1 rw "Interrupt enable for GENO_IRQ_24 IRQ.";
+        geno_irq_23_en 1 rw "Interrupt enable for GENO_IRQ_23 IRQ.";
+        geno_irq_22_en 1 rw "Interrupt enable for GENO_IRQ_22 IRQ.";
+        geno_irq_21_en 1 rw "Interrupt enable for GENO_IRQ_21 IRQ.";
+        geno_irq_20_en 1 rw "Interrupt enable for GENO_IRQ_20 IRQ.";
+        geno_irq_19_en 1 rw "Interrupt enable for GENO_IRQ_19 IRQ.";
+        geno_irq_18_en 1 rw "Interrupt enable for GENO_IRQ_18 IRQ.";
+        geno_irq_17_en 1 rw "Interrupt enable for GENO_IRQ_17 IRQ.";
+        geno_irq_16_en 1 rw "Interrupt enable for GENO_IRQ_16 IRQ.";
+        geno_irq_15_en 1 rw "Interrupt enable for GENO_IRQ_15 IRQ.";
+        geno_irq_14_en 1 rw "Interrupt enable for GENO_IRQ_14 IRQ.";
+        geno_irq_13_en 1 rw "Interrupt enable for GENO_IRQ_13 IRQ.";
+        geno_irq_12_en 1 rw "Interrupt enable for GENO_IRQ_12 IRQ.";
+        geno_irq_11_en 1 rw "Interrupt enable for GENO_IRQ_11 IRQ.";
+        geno_irq_10_en 1 rw "Interrupt enable for GENO_IRQ_10 IRQ.";
+        geno_irq_9_en 1 rw "Interrupt enable for GENO_IRQ_9 IRQ.";
+        geno_irq_8_en 1 rw "Interrupt enable for GENO_IRQ_8 IRQ.";
+        geno_irq_7_en 1 rw "Interrupt enable for GENO_IRQ_7 IRQ.";
+        geno_irq_6_en 1 rw "Interrupt enable for GENO_IRQ_6 IRQ.";
+        geno_irq_5_en 1 rw "Interrupt enable for GENO_IRQ_5 IRQ.";
+        geno_irq_4_en 1 rw "Interrupt enable for GENO_IRQ_4 IRQ.";
+        geno_irq_3_en 1 rw "Interrupt enable for GENO_IRQ_3 IRQ.";
+        geno_irq_2_en 1 rw "Interrupt enable for GENO_IRQ_2 IRQ.";
+        geno_irq_1_en 1 rw "Interrupt enable for GENO_IRQ_1 IRQ.";
+        geno_irq_0_en 1 rw "Interrupt enable for GENO_IRQ_0 IRQ.";
+    };
+    
+    register c2c_irq_enable_clear_0 addr(base, 0x2C) "" {
+        _ 28 mbz;
+        wait_irq_en 1 rw1c "Interrupt enable for WAIT IRQ.";
+        wake_ack_irq_en 1 rw1c "Interrupt enable for WAKE_ACK IRQ.";
+        rx_max_freq_ack_irq_en 1 rw1c "Interrupt enable for RX_MAX_FREQ_ACK IRQ.";
+        tx_freq_irq_en 1 rw1c "Interrupt enable for TX_FREQ IRQ.";
+    };
+    
+    register c2c_irq_enable_clear_1 addr(base, 0x30) "" {
+        geno_irq_31_en 1 rw1c "Interrupt enable for GENO_IRQ_31 IRQ. Writing 1 to this bit clears the bit. Writing 0 has no effect.";
+        geno_irq_30_en 1 rw1c "Interrupt enable for GENO_IRQ_30 IRQ.";
+        geno_irq_29_en 1 rw1c "Interrupt enable for GENO_IRQ_29 IRQ.";
+        geno_irq_28_en 1 rw1c "Interrupt enable for GENO_IRQ_28 IRQ.";
+        geno_irq_27_en 1 rw1c "Interrupt enable for GENO_IRQ_27 IRQ.";
+        geno_irq_26_en 1 rw1c "Interrupt enable for GENO_IRQ_26 IRQ.";
+        geno_irq_25_en 1 rw1c "Interrupt enable for GENO_IRQ_25 IRQ.";
+        geno_irq_24_en 1 rw1c "Interrupt enable for GENO_IRQ_24 IRQ.";
+        geno_irq_23_en 1 rw1c "Interrupt enable for GENO_IRQ_23 IRQ.";
+        geno_irq_22_en 1 rw1c "Interrupt enable for GENO_IRQ_22 IRQ.";
+        geno_irq_21_en 1 rw1c "Interrupt enable for GENO_IRQ_21 IRQ.";
+        geno_irq_20_en 1 rw1c "Interrupt enable for GENO_IRQ_20 IRQ.";
+        geno_irq_19_en 1 rw1c "Interrupt enable for GENO_IRQ_19 IRQ.";
+        geno_irq_18_en 1 rw1c "Interrupt enable for GENO_IRQ_18 IRQ.";
+        geno_irq_17_en 1 rw1c "Interrupt enable for GENO_IRQ_17 IRQ.";
+        geno_irq_16_en 1 rw1c "Interrupt enable for GENO_IRQ_16 IRQ.";
+        geno_irq_15_en 1 rw1c "Interrupt enable for GENO_IRQ_15 IRQ.";
+        geno_irq_14_en 1 rw1c "Interrupt enable for GENO_IRQ_14 IRQ.";
+        geno_irq_13_en 1 rw1c "Interrupt enable for GENO_IRQ_13 IRQ.";
+        geno_irq_12_en 1 rw1c "Interrupt enable for GENO_IRQ_12 IRQ.";
+        geno_irq_11_en 1 rw1c "Interrupt enable for GENO_IRQ_11 IRQ.";
+        geno_irq_10_en 1 rw1c "Interrupt enable for GENO_IRQ_10 IRQ.";
+        geno_irq_9_en 1 rw1c "Interrupt enable for GENO_IRQ_9 IRQ.";
+        geno_irq_8_en 1 rw1c "Interrupt enable for GENO_IRQ_8 IRQ.";
+        geno_irq_7_en 1 rw1c "Interrupt enable for GENO_IRQ_7 IRQ.";
+        geno_irq_6_en 1 rw1c "Interrupt enable for GENO_IRQ_6 IRQ.";
+        geno_irq_5_en 1 rw1c "Interrupt enable for GENO_IRQ_5 IRQ.";
+        geno_irq_4_en 1 rw1c "Interrupt enable for GENO_IRQ_4 IRQ.";
+        geno_irq_3_en 1 rw1c "Interrupt enable for GENO_IRQ_3 IRQ.";
+        geno_irq_2_en 1 rw1c "Interrupt enable for GENO_IRQ_2 IRQ.";
+        geno_irq_1_en 1 rw1c "Interrupt enable for GENO_IRQ_1 IRQ.";
+        geno_irq_0_en 1 rw1c "Interrupt enable for GENO_IRQ_0 IRQ.";
+    };
+    
+    register c2c_fclk_freq addr(base, 0x40) "" {
+        _ 22 mbz;
+        fclk_freq 10 rw "Value of the Functional clock frequency according to OPP written by software. Default value is 400 (MHz).";
+    };
+    
+    register c2c_rx_max_freq addr(base, 0x44) "" {
+        _ 22 mbz;
+        rx_max_freq 10 rw "Value of the requested RX maximum clock frequency according to OPP written by software. Default value is 50 (MHz).";
+    };
+    
+    register c2c_tx_max_freq addr(base, 0x48) "" {
+        _ 22 mbz;
+        tx_max_freq 10 rw "Value of the requested TX maximum clock frequency set by distant C2C. Default value is 50 (MHz).";
+    };
+    
+    register c2c_rx_max_freq_ack addr(base, 0x4C) "" {
+        _ 22 mbz;
+        rx_max_freq_ack 10 rw "Acknowledged maximum Rx clock frequency. Set by distant C2C. Default value is 50 (MHz).";
+    };
+    
+    register c2c_wake_req addr(base, 0x50) "" {
+        _ 31 mbz;
+        wake_req 1 rw "Value of the WAKE_REQ set by software";
+    };
+    
+    register c2c_wake_ack addr(base, 0x54) "" {
+        _ 31 mbz;
+        wake_ack 1 rw "Value of the WAKE_ACK set by distant C2C";
+    };
+    
+    register c2c_standby addr(base, 0x60) "" {
+        _ 31 mbz;
+        standby 1 rw "Value of the STANDBY set by software";
+    };
+    
+    register c2c_standby_in addr(base, 0x64) "" {
+        _ 31 mbz;
+        standby 1 rw "Value of the STANDBY set by distant C2C";
+    };
+    
+    register c2c_wait addr(base, 0x68) "" {
+        _ 31 mbz;
+        wait 1 rw "Value of the WAIT set by distant C2C";
+    };
+    
+    register c2c_geni_control addr(base, 0x70) "" {
+        geni_31 1 rw "If GENI_MASK_31 in GENI_MASK register is reset, GENI_31 is the value of C2C_Sscm_GenI_31 and cannot be modified by software. (signal is not masked) If GENI_MASK_31 is set (signal is masked), GENI_31 can be modified by software.";
+        geni_30 1 rw "f GENI_MASK_30 in GENI_MASK register is reset, GENI_30 is the value of C2C_Sscm_GenI_30 and cannot be modified by software. (signal is not masked) If GENI_MASK_30 is set (signal is masked), GENI_30 can be modified by software.";
+        geni_29 1 rw "f GENI_MASK_29 in GENI_MASK register is reset, GENI_29 is the value of C2C_Sscm_GenI_29 and cannot be modified by software. (signal is not masked) If GENI_MASK_29 is set (signal is masked), GENI_29 can be modified by software.";
+        geni_28 1 rw "f GENI_MASK_28 in GENI_MASK register is reset, GENI_28 is the value of C2C_Sscm_GenI_28 and cannot be modified by software. (signal is not masked) If GENI_MASK_28 is set (signal is masked), GENI_28 can be modified by software.";
+        geni_27 1 rw "f GENI_MASK_27 in GENI_MASK register is reset, GENI_27 is the value of C2C_Sscm_GenI_27 and cannot be modified by software. (signal is not masked) If GENI_MASK_27 is set (signal is masked), GENI_27 can be modified by software.";
+        geni_26 1 rw "f GENI_MASK_26 in GENI_MASK register is reset, GENI_26 is the value of C2C_Sscm_GenI_26 and cannot be modified by software. (signal is not masked) If GENI_MASK_26 is set (signal is masked), GENI_26 can be modified by software.";
+        geni_25 1 rw "f GENI_MASK_25 in GENI_MASK register is reset, GENI_25 is the value of C2C_Sscm_GenI_25 and cannot be modified by software. (signal is not masked) If GENI_MASK_25 is set (signal is masked), GENI_25 can be modified by software.";
+        geni_24 1 rw "f GENI_MASK_24 in GENI_MASK register is reset, GENI_24 is the value of C2C_Sscm_GenI_24 and cannot be modified by software. (signal is not masked) If GENI_MASK_24 is set (signal is masked), GENI_24 can be modified by software.";
+        geni_23 1 rw "f GENI_MASK_23 in GENI_MASK register is reset, GENI_23 is the value of C2C_Sscm_GenI_23 and cannot be modified by software. (signal is not masked) If GENI_MASK_23 is set (signal is masked), GENI_23 can be modified by software.";
+        geni_22 1 rw "f GENI_MASK_22 in GENI_MASK register is reset, GENI_22 is the value of C2C_Sscm_GenI_22 and cannot be modified by software. (signal is not masked) If GENI_MASK_22 is set (signal is masked), GENI_22 can be modified by software.";
+        geni_21 1 rw "f GENI_MASK_21 in GENI_MASK register is reset, GENI_21 is the value of C2C_Sscm_GenI_31 and cannot be modified by software. (signal is not masked) If GENI_MASK_21 is set (signal is masked), GENI_21 can be modified by software.";
+        geni_20 1 rw "f GENI_MASK_20 in GENI_MASK register is reset, GENI_20 is the value of C2C_Sscm_GenI_20 and cannot be modified by software. (signal is not masked) If GENI_MASK_20 is set (signal is masked), GENI_20 can be modified by software.";
+        geni_19 1 rw "f GENI_MASK_19 in GENI_MASK register is reset, GENI_19 is the value of C2C_Sscm_GenI_19 and cannot be modified by software. (signal is not masked) If GENI_MASK_19 is set (signal is masked), GENI_19 can be modified by software.";
+        geni_18 1 rw "f GENI_MASK_18 in GENI_MASK register is reset, GENI_18 is the value of C2C_Sscm_GenI_31 and cannot be modified by software. (signal is not masked) If GENI_MASK_18 is set (signal is masked), GENI_18 can be modified by software.";
+        geni_17 1 rw "f GENI_MASK_17 in GENI_MASK register is reset, GENI_17 is the value of C2C_Sscm_GenI_31 and cannot be modified by software. (signal is not masked) If GENI_MASK_17 is set (signal is masked), GENI_17 can be modified by software.";
+        geni_16 1 rw "f GENI_MASK_16 in GENI_MASK register is reset, GENI_16 is the value of C2C_Sscm_GenI_16 and cannot be modified by software. (signal is not masked) If GENI_MASK_156is set (signal is masked), GENI_16 can be modified by software.";
+        geni_15 1 rw "f GENI_MASK_15 in GENI_MASK register is reset, GENI_15 is the value of C2C_Sscm_GenI_15 and cannot be modified by software. (signal is not masked) If GENI_MASK_15 is set (signal is masked), GENI_15 can be modified by software.";
+        geni_14 1 rw "f GENI_MASK_14 in GENI_MASK register is reset, GENI_14 is the value of C2C_Sscm_GenI_14 and cannot be modified by software. (signal is not masked) If GENI_MASK_14 is set (signal is masked), GENI_14 can be modified by software.";
+        geni_13 1 rw "f GENI_MASK_13 in GENI_MASK register is reset, GENI_13 is the value of C2C_Sscm_GenI_13 and cannot be modified by software. (signal is not masked) If GENI_MASK_13 is set (signal is masked), GENI_13 can be modified by software.";
+        geni_12 1 rw "f GENI_MASK_12 in GENI_MASK register is reset, GENI_12 is the value of C2C_Sscm_GenI_12 and cannot be modified by software. (signal is not masked) If GENI_MASK_12 is set (signal is masked), GENI_12 can be modified by software.";
+        geni_11 1 rw "f GENI_MASK_11 in GENI_MASK register is reset, GENI_11 is the value of C2C_Sscm_GenI_11 and cannot be modified by software. (signal is not masked) If GENI_MASK_11 is set (signal is masked), GENI_11 can be modified by software.";
+        geni_10 1 rw "f GENI_MASK_10 in GENI_MASK register is reset, GENI_10 is the value of C2C_Sscm_GenI_10 and cannot be modified by software. (signal is not masked) If GENI_MASK_10 is set (signal is masked), GENI_10 can be modified by software.";
+        geni_9 1 rw "f GENI_MASK_9 in GENI_MASK register is reset, GENI_9 is the value of C2C_Sscm_GenI_9 and cannot be modified by software. (signal is not masked) If GENI_MASK_9 is set (signal is masked), GENI_9 can be modified by software.";
+        geni_8 1 rw "f GENI_MASK_8 in GENI_MASK register is reset, GENI_8 is the value of C2C_Sscm_GenI_8 and cannot be modified by software. (signal is not masked) If GENI_MASK_8 is set (signal is masked), GENI_8 can be modified by software.";
+        geni_7 1 rw "f GENI_MASK_7 in GENI_MASK register is reset, GENI_7 is the value of C2C_Sscm_GenI_7 and cannot be modified by software. (signal is not masked) If GENI_MASK_7 is set (signal is masked), GENI_7 can be modified by software.";
+        geni_6 1 rw "f GENI_MASK_6 in GENI_MASK register is reset, GENI_6 is the value of C2C_Sscm_GenI_6 and cannot be modified by software. (signal is not masked) If GENI_MASK_6 is set (signal is masked), GENI_6 can be modified by software.";
+        geni_5 1 rw "f GENI_MASK_5 in GENI_MASK register is reset, GENI_5 is the value of C2C_Sscm_GenI_5 and cannot be modified by software. (signal is not masked) If GENI_MASK_5 is set (signal is masked), GENI_5 can be modified by software.";
+        geni_4 1 rw "f GENI_MASK_4 in GENI_MASK register is reset, GENI_4 is the value of C2C_Sscm_GenI_4 and cannot be modified by software. (signal is not masked) If GENI_MASK_4 is set (signal is masked), GENI_4 can be modified by software.";
+        geni_3 1 rw "f GENI_MASK_3 in GENI_MASK register is reset, GENI_3 is the value of C2C_Sscm_GenI_3 and cannot be modified by software. (signal is not masked) If GENI_MASK_3 is set (signal is masked), GENI_3 can be modified by software.";
+        geni_2 1 rw "f GENI_MASK_2 in GENI_MASK register is reset, GENI_2 is the value of C2C_Sscm_GenI_2 and cannot be modified by software. (signal is not masked) If GENI_MASK_2 is set (signal is masked), GENI_2 can be modified by software.";
+        geni_1 1 rw "f GENI_MASK_1 in GENI_MASK register is reset, GENI_1 is the value of C2C_Sscm_GenI_1 and cannot be modified by software. (signal is not masked) If GENI_MASK_1 is set (signal is masked), GENI_1 can be modified by software.";
+        geni_0 1 rw "f GENI_MASK_0 in GENI_MASK register is reset, GENI_0 is the value of C2C_Sscm_GenI_0 and cannot be modified by software. (signal is not masked) If GENI_MASK_0 is set (signal is masked), GENI_0 can be modified by software.";
+    };
+    
+    register c2c_geni_mask addr(base, 0x74) "" {
+        geni_mask_31 1 rw "If GENI_MASK_31 is reset, C2C_Sscm_GenI_31 signal is not masked If GENI_MASK_31 is set, signal is masked.";
+        geni_mask_30 1 rw "If GENI_MASK_30 is reset, C2C_Sscm_GenI_30 signal is not masked If GENI_MASK_30 is set, signal is masked.";
+        geni_mask_29 1 rw "If GENI_MASK_29 is reset, C2C_Sscm_GenI_29 signal is not masked If GENI_MASK_29 is set, signal is masked.";
+        geni_mask_28 1 rw "If GENI_MASK_28 is reset, C2C_Sscm_GenI_28 signal is not masked If GENI_MASK_28 is set, signal is masked.";
+        geni_mask_27 1 rw "If GENI_MASK_27 is reset, C2C_Sscm_GenI_27 signal is not masked If GENI_MASK_27 is set, signal is masked.";
+        geni_mask_26 1 rw "If GENI_MASK_26 is reset, C2C_Sscm_GenI_26 signal is not masked If GENI_MASK_26 is set, signal is masked.";
+        geni_mask_25 1 rw "If GENI_MASK_26 is reset, C2C_Sscm_GenI_25 signal is not masked If GENI_MASK_26 is set, signal is masked.";
+        geni_mask_24 1 rw "If GENI_MASK_24 is reset, C2C_Sscm_GenI_24 signal is not masked If GENI_MASK_24 is set, signal is masked.";
+        geni_mask_23 1 rw "If GENI_MASK_23 is reset, C2C_Sscm_GenI_23 signal is not masked If GENI_MASK_23 is set, signal is masked.";
+        geni_mask_22 1 rw "If GENI_MASK_22 is reset, C2C_Sscm_GenI_22 signal is not masked If GENI_MASK_22 is set, signal is masked.";
+        geni_mask_21 1 rw "If GENI_MASK_21 is reset, C2C_Sscm_GenI_21 signal is not masked If GENI_MASK_21 is set, signal is masked.";
+        geni_mask_20 1 rw "If GENI_MASK_20 is reset, C2C_Sscm_GenI_20 signal is not masked If GENI_MASK_20 is set, signal is masked.";
+        geni_mask_19 1 rw "If GENI_MASK_19 is reset, C2C_Sscm_GenI_19 signal is not masked If GENI_MASK_19 is set, signal is masked.";
+        geni_mask_18 1 rw "If GENI_MASK_18 is reset, C2C_Sscm_GenI_18 signal is not masked If GENI_MASK_18 is set, signal is masked.";
+        geni_mask_17 1 rw "If GENI_MASK_17 is reset, C2C_Sscm_GenI_17 signal is not masked If GENI_MASK_17 is set, signal is masked.";
+        geni_mask_16 1 rw "If GENI_MASK_16 is reset, C2C_Sscm_GenI_16 signal is not masked If GENI_MASK_16 is set, signal is masked.";
+        geni_mask_15 1 rw "If GENI_MASK_15 is reset, C2C_Sscm_GenI_15 signal is not masked If GENI_MASK_15 is set, signal is masked.";
+        geni_mask_14 1 rw "If GENI_MASK_14 is reset, C2C_Sscm_GenI_14 signal is not masked If GENI_MASK_14 is set, signal is masked.";
+        geni_mask_13 1 rw "If GENI_MASK_13 is reset, C2C_Sscm_GenI_13 signal is not masked If GENI_MASK_13 is set, signal is masked.";
+        geni_mask_12 1 rw "If GENI_MASK_12is reset, C2C_Sscm_GenI_12 signal is not masked If GENI_MASK_12 is set, signal is masked.";
+        geni_mask_11 1 rw "If GENI_MASK_11 is reset, C2C_Sscm_GenI_11 signal is not masked If GENI_MASK_11 is set, signal is masked.";
+        geni_mask_10 1 rw "If GENI_MASK_10 is reset, C2C_Sscm_GenI_10 signal is not masked If GENI_MASK_10 is set, signal is masked.";
+        geni_mask_9 1 rw "If GENI_MASK_9 is reset, C2C_Sscm_GenI_9 signal is not masked If GENI_MASK_9 is set, signal is masked.";
+        geni_mask_8 1 rw "If GENI_MASK_8 is reset, C2C_Sscm_GenI_8 signal is not masked If GENI_MASK_8 is set, signal is masked.";
+        geni_mask_7 1 rw "If GENI_MASK_7 is reset, C2C_Sscm_GenI_7 signal is not masked If GENI_MASK_7 is set, signal is masked.";
+        geni_mask_6 1 rw "If GENI_MASK_6 is reset, C2C_Sscm_GenI_6 signal is not masked If GENI_MASK_6 is set, signal is masked.";
+        geni_mask_5 1 rw "If GENI_MASK_5 is reset, C2C_Sscm_GenI_5 signal is not masked If GENI_MASK_5 is set, signal is masked.";
+        geni_mask_4 1 rw "If GENI_MASK_4 is reset, C2C_Sscm_GenI_4 signal is not masked If GENI_MASK_4 is set, signal is masked.";
+        geni_mask_3 1 rw "If GENI_MASK_3 is reset, C2C_Sscm_GenI_3 signal is not masked If GENI_MASK_3 is set, signal is masked.";
+        geni_mask_2 1 rw "If GENI_MASK_2 is reset, C2C_Sscm_GenI_2 signal is not masked If GENI_MASK_2 is set, signal is masked.";
+        geni_mask_1 1 rw "If GENI_MASK_1 is reset, C2C_Sscm_GenI_1 signal is not masked If GENI_MASK_1 is set, signal is masked.";
+        geni_mask_0 1 rw "If GENI_MASK_0 is reset, C2C_Sscm_GenI_0 signal is not masked If GENI_MASK_0 is set, signal is masked.";
+    };
+    
+    register c2c_geno_status addr(base, 0x80) "" {
+        geno_31 1 rw "GENO_31 is the value of C2C_Sscm_GenO_31 signal.";
+        geno_30 1 rw "GENO_30 is the value of C2C_Sscm_GenO_30 signal.";
+        geno_29 1 rw "GENO_29 is the value of C2C_Sscm_GenO_29 signal.";
+        geno_28 1 rw "GENO_28 is the value of C2C_Sscm_GenO_28 signal.";
+        geno_27 1 rw "GENO_27 is the value of C2C_Sscm_GenO_27 signal.";
+        geno_26 1 rw "GENO_26 is the value of C2C_Sscm_GenO_26 signal.";
+        geno_25 1 rw "GENO_25 is the value of C2C_Sscm_GenO_25 signal.";
+        geno_24 1 rw "GENO_24 is the value of C2C_Sscm_GenO_24 signal.";
+        geno_23 1 rw "GENO_23 is the value of C2C_Sscm_GenO_23 signal.";
+        geno_22 1 rw "GENO_22 is the value of C2C_Sscm_GenO_22 signal.";
+        geno_21 1 rw "GENO_21 is the value of C2C_Sscm_GenO_21 signal.";
+        geno_20 1 rw "GENO_20 is the value of C2C_Sscm_GenO_20 signal.";
+        geno_19 1 rw "GENO_19 is the value of C2C_Sscm_GenO_19 signal.";
+        geno_18 1 rw "GENO_18 is the value of C2C_Sscm_GenO_18 signal.";
+        geno_17 1 rw "GENO_17 is the value of C2C_Sscm_GenO_17 signal.";
+        geno_16 1 rw "GENO_16 is the value of C2C_Sscm_GenO_16 signal.";
+        geno_15 1 rw "GENO_15 is the value of C2C_Sscm_GenO_15 signal.";
+        geno_14 1 rw "GENO_14 is the value of C2C_Sscm_GenO_14 signal.";
+        geno_13 1 rw "GENO_13 is the value of C2C_Sscm_GenO_13 signal.";
+        geno_12 1 rw "GENO_12 is the value of C2C_Sscm_GenO_12 signal.";
+        geno_11 1 rw "GENO_11 is the value of C2C_Sscm_GenO_11 signal.";
+        geno_10 1 rw "GENO_10 is the value of C2C_Sscm_GenO_10 signal.";
+        geno_9 1 rw "GENO_9 is the value of C2C_Sscm_GenO_9 signal.";
+        geno_8 1 rw "GENO_8 is the value of C2C_Sscm_GenO_8 signal.";
+        geno_7 1 rw "GENO_7 is the value of C2C_Sscm_GenO_7 signal.";
+        geno_6 1 rw "GENO_6 is the value of C2C_Sscm_GenO_6 signal.";
+        geno_5 1 rw "GENO_5 is the value of C2C_Sscm_GenO_5 signal.";
+        geno_4 1 rw "GENO_4 is the value of C2C_Sscm_GenO_4 signal.";
+        geno_3 1 rw "GENO_3 is the value of C2C_Sscm_GenO_3 signal.";
+        geno_2 1 rw "GENO_2 is the value of C2C_Sscm_GenO_2 signal.";
+        geno_1 1 rw "GENO_1 is the value of C2C_Sscm_GenO_1 signal.";
+        geno_0 1 rw "GENO_0 is the value of C2C_Sscm_GenO_0 signal.";
+    };
+    
+    register c2c_geno_interrupt addr(base, 0x84) "" {
+        geno_int_31 1 rw "If GENO_INT_31=0, GENO_IRQ_31=1 when GENO_31 toggles; If GENO_INT_31=1: IF GENO_LEVEL_31=0, GENO_IRQ_31 =1 when GENO_31 toggles to 0. IF GENO_LEVEL_31=1, GENO_IRQ_31 =1 when GENO_31 toggles to 1.";
+        geno_int_30 1 rw "If GENO_INT_30=0, GENO_IRQ_30=1 when GENO_30 toggles; If GENO_INT_30=1: IF GENO_LEVEL_30=0, GENO_IRQ_30 =1 when GENO_30 toggles to 0. IF GENO_LEVEL_30=1, GENO_IRQ_30 =1 when GENO_30 toggles to 1.";
+        geno_int_29 1 rw "If GENO_INT_29=0, GENO_IRQ_29=1 when GENO_29 toggles; If GENO_INT_29=1: IF GENO_LEVEL_29=0, GENO_IRQ_29 =1 when GENO_29 toggles to 0. IF GENO_LEVEL_29=1, GENO_IRQ_29 =1 when GENO_29 toggles to 1.";
+        geno_int_28 1 rw "If GENO_INT_28=0, GENO_IRQ_28=1 when GENO_28 toggles; If GENO_INT_28=1: IF GENO_LEVEL_28=0, GENO_IRQ_28 =1 when GENO_28 toggles to 0. IF GENO_LEVEL_28=1, GENO_IRQ_28 =1 when GENO_28 toggles to 1.";
+        geno_int_27 1 rw "If GENO_INT_27=0, GENO_IRQ_27=1 when GENO_27 toggles; If GENO_INT_27=1: IF GENO_LEVEL_27=0, GENO_IRQ_27 =1 when GENO_27 toggles to 0. IF GENO_LEVEL_27=1, GENO_IRQ_27 =1 when GENO_27 toggles to 1.";
+        geno_int_26 1 rw "If GENO_INT_26=0, GENO_IRQ_26=1 when GENO_26 toggles; If GENO_INT_26=1: IF GENO_LEVEL_26=0, GENO_IRQ_26 =1 when GENO_26 toggles to 0. IF GENO_LEVEL_26=1, GENO_IRQ_26 =1 when GENO_26 toggles to 1.";
+        geno_int_25 1 rw "If GENO_INT_25=0, GENO_IRQ_25=1 when GENO_25 toggles; If GENO_INT_25=1: IF GENO_LEVEL_25=0, GENO_IRQ_25 =1 when GENO_25 toggles to 0. IF GENO_LEVEL_25=1, GENO_IRQ_25 =1 when GENO_25 toggles to 1.";
+        geno_int_24 1 rw "If GENO_INT_24=0, GENO_IRQ_24=1 when GENO_24 toggles; If GENO_INT_24=1: IF GENO_LEVEL_24=0, GENO_IRQ_24 =1 when GENO_24 toggles to 0. IF GENO_LEVEL_24=1, GENO_IRQ_24 =1 when GENO_24 toggles to 1.";
+        geno_int_23 1 rw "If GENO_INT_23=0, GENO_IRQ_23=1 when GENO_23 toggles; If GENO_INT_23=1: IF GENO_LEVEL_23=0, GENO_IRQ_23 =1 when GENO_23 toggles to 0. IF GENO_LEVEL_23=1, GENO_IRQ_23 =1 when GENO_23 toggles to 1.";
+        geno_int_22 1 rw "If GENO_INT_22=0, GENO_IRQ_22=1 when GENO_22 toggles; If GENO_INT_22=1: IF GENO_LEVEL_22=0, GENO_IRQ_22 =1 when GENO_22 toggles to 0. IF GENO_LEVEL_22=1, GENO_IRQ_22 =1 when GENO_22 toggles to 1.";
+        geno_int_21 1 rw "If GENO_INT_21=0, GENO_IRQ_21=1 when GENO_21 toggles; If GENO_INT_21=1: IF GENO_LEVEL_21=0, GENO_IRQ_21 =1 when GENO_21 toggles to 0. IF GENO_LEVEL_21=1, GENO_IRQ_21 =1 when GENO_21 toggles to 1.";
+        geno_int_20 1 rw "If GENO_INT_20=0, GENO_IRQ_20=1 when GENO_20 toggles; If GENO_INT_20=1: IF GENO_LEVEL_20=0, GENO_IRQ_20 =1 when GENO_20 toggles to 0. IF GENO_LEVEL_20=1, GENO_IRQ_20 =1 when GENO_20 toggles to 1.";
+        geno_int_19 1 rw "If GENO_INT_19=0, GENO_IRQ_19=1 when GENO_19 toggles; If GENO_INT_19=1: IF GENO_LEVEL_19=0, GENO_IRQ_19 =1 when GENO_19 toggles to 0. IF GENO_LEVEL_19=1, GENO_IRQ_19 =1 when GENO_19 toggles to 1.";
+        geno_int_18 1 rw "If GENO_INT_18=0, GENO_IRQ_18=1 when GENO_18 toggles; If GENO_INT_18=1: IF GENO_LEVEL_18=0, GENO_IRQ_18 =1 when GENO_18 toggles to 0. IF GENO_LEVEL_18=1, GENO_IRQ_18 =1 when GENO_18 toggles to 1.";
+        geno_int_17 1 rw "If GENO_INT_17=0, GENO_IRQ_17=1 when GENO_17 toggles; If GENO_INT_17=1: IF GENO_LEVEL_17=0, GENO_IRQ_17 =1 when GENO_17 toggles to 0. IF GENO_LEVEL_17=1, GENO_IRQ_17 =1 when GENO_17 toggles to 1.";
+        geno_int_16 1 rw "If GENO_INT_16=0, GENO_IRQ_16=1 when GENO_16 toggles; If GENO_INT_16=1: IF GENO_LEVEL_16=0, GENO_IRQ_16 =1 when GENO_16 toggles to 0. IF GENO_LEVEL_16=1, GENO_IRQ_16 =1 when GENO_16 toggles to 1.";
+        geno_int_15 1 rw "If GENO_INT_15=0, GENO_IRQ_15=1 when GENO_15 toggles; If GENO_INT_15=1: IF GENO_LEVEL_15=0, GENO_IRQ_15 =1 when GENO_15 toggles to 0. IF GENO_LEVEL_15=1, GENO_IRQ_15 =1 when GENO_15 toggles to 1.";
+        geno_int_14 1 rw "If GENO_INT_14=0, GENO_IRQ_14=1 when GENO_14 toggles; If GENO_INT_14=1: IF GENO_LEVEL_14=0, GENO_IRQ_14 =1 when GENO_14 toggles to 0. IF GENO_LEVEL_14=1, GENO_IRQ_14 =1 when GENO_14 toggles to 1.";
+        geno_int_13 1 rw "If GENO_INT_13=0, GENO_IRQ_13=1 when GENO_13 toggles; If GENO_INT_13=1: IF GENO_LEVEL_13=0, GENO_IRQ_13 =1 when GENO_13 toggles to 0. IF GENO_LEVEL_13=1, GENO_IRQ_13 =1 when GENO_13 toggles to 1.";
+        geno_int_12 1 rw "If GENO_INT_12=0, GENO_IRQ_12=1 when GENO_12 toggles; If GENO_INT_12=1: IF GENO_LEVEL_12=0, GENO_IRQ_12 =1 when GENO_12 toggles to 0. IF GENO_LEVEL_12=1, GENO_IRQ_12 =1 when GENO_12 toggles to 1.";
+        geno_int_11 1 rw "If GENO_INT_11=0, GENO_IRQ_11=1 when GENO_11 toggles; If GENO_INT_11=1: IF GENO_LEVEL_11=0, GENO_IRQ_11 =1 when GENO_11 toggles to 0. IF GENO_LEVEL_11=1, GENO_IRQ_11 =1 when GENO_11 toggles to 1.";
+        geno_int_10 1 rw "If GENO_INT_10=0, GENO_IRQ_10=1 when GENO_10 toggles; If GENO_INT_10=1: IF GENO_LEVEL_10=0, GENO_IRQ_10 =1 when GENO_10 toggles to 0. IF GENO_LEVEL_10=1, GENO_IRQ_10 =1 when GENO_10 toggles to 1.";
+        geno_int_9 1 rw "If GENO_INT_9=0, GENO_IRQ_9=1 when GENO_9 toggles; If GENO_INT_9=1: IF GENO_LEVEL_9=0, GENO_IRQ_9 =1 when GENO_9 toggles to 0. IF GENO_LEVEL_9=1, GENO_IRQ_9 =1 when GENO_9 toggles to 1.";
+        geno_int_8 1 rw "If GENO_INT_8=0, GENO_IRQ_8=1 when GENO_8 toggles; If GENO_INT_8=1: IF GENO_LEVEL_8=0, GENO_IRQ_8 =1 when GENO_8 toggles to 0. IF GENO_LEVEL_8=1, GENO_IRQ_8 =1 when GENO_8 toggles to 1.";
+        geno_int_7 1 rw "If GENO_INT_7=0, GENO_IRQ_7=1 when GENO_7 toggles; If GENO_INT_7=1: IF GENO_LEVEL_7=0, GENO_IRQ_7 =1 when GENO_7 toggles to 0. IF GENO_LEVEL_7=1, GENO_IRQ_7 =1 when GENO_7 toggles to 1.";
+        geno_int_6 1 rw "If GENO_INT_6=0, GENO_IRQ_6=1 when GENO_6 toggles; If GENO_INT_6=1: IF GENO_LEVEL_6=0, GENO_IRQ_6 =1 when GENO_6 toggles to 0. IF GENO_LEVEL_6=1, GENO_IRQ_6 =1 when GENO_6 toggles to 1.";
+        geno_int_5 1 rw "If GENO_INT_5=0, GENO_IRQ_5=1 when GENO_5 toggles; If GENO_INT_5=1: IF GENO_LEVEL_5=0, GENO_IRQ_5 =1 when GENO_5 toggles to 0. IF GENO_LEVEL_5=1, GENO_IRQ_5 =1 when GENO_5 toggles to 1.";
+        geno_int_4 1 rw "If GENO_INT_4=0, GENO_IRQ_4=1 when GENO_4 toggles; If GENO_INT_4=1: IF GENO_LEVEL_4=0, GENO_IRQ_4 =1 when GENO_4 toggles to 0. IF GENO_LEVEL_4=1, GENO_IRQ_4 =1 when GENO_4 toggles to 1.";
+        geno_int_3 1 rw "If GENO_INT_3=0, GENO_IRQ_3=1 when GENO_3 toggles; If GENO_INT_3=1: IF GENO_LEVEL_3=0, GENO_IRQ_3 =1 when GENO_3 toggles to 0. IF GENO_LEVEL_3=1, GENO_IRQ_3 =1 when GENO_3 toggles to 1.";
+        geno_int_2 1 rw "If GENO_INT_2=0, GENO_IRQ_2=1 when GENO_2 toggles; If GENO_INT_2=1: IF GENO_LEVEL_2=0, GENO_IRQ_2 =1 when GENO_2 toggles to 0. IF GENO_LEVEL_2=1, GENO_IRQ_2 =1 when GENO_2 toggles to 1.";
+        geno_int_1 1 rw "If GENO_INT_1=0, GENO_IRQ_1=1 when GENO_1 toggles; If GENO_INT_1=1: IF GENO_LEVEL_1=0, GENO_IRQ_1 =1 when GENO_1 toggles to 0. IF GENO_LEVEL_1=1, GENO_IRQ_1 =1 when GENO_1 toggles to 1.";
+        geno_int_0 1 rw "If GENO_INT_0=0, GENO_IRQ_0=1 when GENO_0 toggles; If GENO_INT_0=1: IF GENO_LEVEL_0=0, GENO_IRQ_0 =1 when GENO_0 toggles to 0. IF GENO_LEVEL_0=1, GENO_IRQ_0 =1 when GENO_0 toggles to 1.";
+    };
+    
+    register c2c_geno_level addr(base, 0x88) "" {
+        geno_level_31 1 rw "IF GENO_LEVEL_31=0, GENO_IRQ_31 =1 when GENO_31 toggles to 0. IF GENO_LEVEL_31=1, GENO_IRQ_31 =1 when GENO_31 toggles to 1.";
+        geno_level_30 1 rw "IF GENO_LEVEL_30=0, GENO_IRQ_30 =1 when GENO_30 toggles to 0. IF GENO_LEVEL_30=1, GENO_IRQ_30 =1 when GENO_30 toggles to 1.";
+        geno_level_29 1 rw "IF GENO_LEVEL_29=0, GENO_IRQ_29 =1 when GENO_29 toggles to 0. IF GENO_LEVEL_29=1, GENO_IRQ_29 =1 when GENO_29 toggles to 1.";
+        geno_level_28 1 rw "IF GENO_LEVEL_28=0, GENO_IRQ_28 =1 when GENO_28 toggles to 0. IF GENO_LEVEL_28=1, GENO_IRQ_28 =1 when GENO_28 toggles to 1.";
+        geno_level_27 1 rw "IF GENO_LEVEL_27=0, GENO_IRQ_27 =1 when GENO_27 toggles to 0. IF GENO_LEVEL_27=1, GENO_IRQ_27 =1 when GENO_27 toggles to 1.";
+        geno_level_26 1 rw "IF GENO_LEVEL_26=0, GENO_IRQ_26 =1 when GENO_26 toggles to 0. IF GENO_LEVEL_26=1, GENO_IRQ_26 =1 when GENO_26 toggles to 1.";
+        geno_level_25 1 rw "IF GENO_LEVEL_25=0, GENO_IRQ_25 =1 when GENO_25 toggles to 0. IF GENO_LEVEL_25=1, GENO_IRQ_25 =1 when GENO_25 toggles to 1.";
+        geno_level_24 1 rw "IF GENO_LEVEL_24=0, GENO_IRQ_24 =1 when GENO_24 toggles to 0. IF GENO_LEVEL_24=1, GENO_IRQ_24 =1 when GENO_24 toggles to 1.";
+        geno_level_23 1 rw "IF GENO_LEVEL_23=0, GENO_IRQ_23 =1 when GENO_23 toggles to 0. IF GENO_LEVEL_23=1, GENO_IRQ_23 =1 when GENO_23 toggles to 1.";
+        geno_level_22 1 rw "IF GENO_LEVEL_22=0, GENO_IRQ_22 =1 when GENO_22 toggles to 0. IF GENO_LEVEL_22=1, GENO_IRQ_22 =1 when GENO_22 toggles to 1.";
+        geno_level_21 1 rw "IF GENO_LEVEL_21=0, GENO_IRQ_21 =1 when GENO_21 toggles to 0. IF GENO_LEVEL_21=1, GENO_IRQ_21 =1 when GENO_21 toggles to 1.";
+        geno_level_20 1 rw "IF GENO_LEVEL_20=0, GENO_IRQ_20 =1 when GENO_20 toggles to 0. IF GENO_LEVEL_20=1, GENO_IRQ_20 =1 when GENO_20 toggles to 1.";
+        geno_level_19 1 rw "IF GENO_LEVEL_19=0, GENO_IRQ_19 =1 when GENO_19 toggles to 0. IF GENO_LEVEL_19=1, GENO_IRQ_19 =1 when GENO_19 toggles to 1.";
+        geno_level_18 1 rw "IF GENO_LEVEL_18=0, GENO_IRQ_18 =1 when GENO_18 toggles to 0. IF GENO_LEVEL_18=1, GENO_IRQ_18 =1 when GENO_18 toggles to 1.";
+        geno_level_17 1 rw "IF GENO_LEVEL_17=0, GENO_IRQ_17 =1 when GENO_17 toggles to 0. IF GENO_LEVEL_17=1, GENO_IRQ_17 =1 when GENO_17 toggles to 1.";
+        geno_level_16 1 rw "IF GENO_LEVEL_16=0, GENO_IRQ_16 =1 when GENO_16 toggles to 0. IF GENO_LEVEL_16=1, GENO_IRQ_16 =1 when GENO_16 toggles to 1.";
+        geno_level_15 1 rw "IF GENO_LEVEL_15=0, GENO_IRQ_15 =1 when GENO_15 toggles to 0. IF GENO_LEVEL_15=1, GENO_IRQ_15 =1 when GENO_15 toggles to 1.";
+        geno_level_14 1 rw "IF GENO_LEVEL_14=0, GENO_IRQ_14 =1 when GENO_14 toggles to 0. IF GENO_LEVEL_14=1, GENO_IRQ_14 =1 when GENO_14 toggles to 1.";
+        geno_level_13 1 rw "IF GENO_LEVEL_13=0, GENO_IRQ_13 =1 when GENO_13 toggles to 0. IF GENO_LEVEL_13=1, GENO_IRQ_13 =1 when GENO_13 toggles to 1.";
+        geno_level_12 1 rw "IF GENO_LEVEL_12=0, GENO_IRQ_12 =1 when GENO_12 toggles to 0. IF GENO_LEVEL_12=1, GENO_IRQ_12 =1 when GENO_12 toggles to 1.";
+        geno_level_11 1 rw "IF GENO_LEVEL_11=0, GENO_IRQ_11 =1 when GENO_11 toggles to 0. IF GENO_LEVEL_11=1, GENO_IRQ_11 =1 when GENO_11 toggles to 1.";
+        geno_level_10 1 rw "IF GENO_LEVEL_10=0, GENO_IRQ_10 =1 when GENO_10 toggles to 0. IF GENO_LEVEL_10=1, GENO_IRQ_10 =1 when GENO_10 toggles to 1.";
+        geno_level_9 1 rw "IF GENO_LEVEL_9=0, GENO_IRQ_9 =1 when GENO_9 toggles to 0. IF GENO_LEVEL_9=1, GENO_IRQ_9 =1 when GENO_9 toggles to 1.";
+        geno_level_8 1 rw "IF GENO_LEVEL_8=0, GENO_IRQ_8 =1 when GENO_8 toggles to 0. IF GENO_LEVEL_8=1, GENO_IRQ_8 =1 when GENO_8 toggles to 1.";
+        geno_level_7 1 rw "IF GENO_LEVEL_7=0, GENO_IRQ_7 =1 when GENO_7 toggles to 0. IF GENO_LEVEL_7=1, GENO_IRQ_7 =1 when GENO_7 toggles to 1.";
+        geno_level_6 1 rw "IF GENO_LEVEL_6=0, GENO_IRQ_6 =1 when GENO_6 toggles to 0. IF GENO_LEVEL_6=1, GENO_IRQ_6 =1 when GENO_6 toggles to 1.";
+        geno_level_5 1 rw "IF GENO_LEVEL_5=0, GENO_IRQ_5 =1 when GENO_5 toggles to 0. IF GENO_LEVEL_5=1, GENO_IRQ_5 =1 when GENO_5 toggles to 1.";
+        geno_level_4 1 rw "IF GENO_LEVEL_4=0, GENO_IRQ_4 =1 when GENO_4 toggles to 0. IF GENO_LEVEL_4=1, GENO_IRQ_4 =1 when GENO_4 toggles to 1.";
+        geno_level_3 1 rw "IF GENO_LEVEL_3=0, GENO_IRQ_3 =1 when GENO_3 toggles to 0. IF GENO_LEVEL_3=1, GENO_IRQ_3 =1 when GENO_3 toggles to 1.";
+        geno_level_2 1 rw "IF GENO_LEVEL_2=0, GENO_IRQ_2 =1 when GENO_2 toggles to 0. IF GENO_LEVEL_2=1, GENO_IRQ_2 =1 when GENO_2 toggles to 1.";
+        geno_level_1 1 rw "IF GENO_LEVEL_1=0, GENO_IRQ_1 =1 when GENO_1 toggles to 0. IF GENO_LEVEL_1=1, GENO_IRQ_1 =1 when GENO_1 toggles to 1.";
+        geno_level_0 1 rw "IF GENO_LEVEL_0=0, GENO_IRQ_0 =1 when GENO_0 toggles to 0. IF GENO_LEVEL_0=1, GENO_IRQ_0 =1 when GENO_0 toggles to 1.";
+    };
+};

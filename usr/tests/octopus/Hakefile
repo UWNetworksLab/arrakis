@@ -1,0 +1,113 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2011, 2012, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+-- Attn: Systems Group.
+--
+-- Hakefile for /usr/tests/octopus
+--
+--------------------------------------------------------------------------
+
+[ build application { target = "d2getset",
+                      cFiles = [ "d2getset.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+
+  build application { target = "d2getset_idcap",
+                      cFiles = [ "d2getset_idcap.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+
+  build application { target = "d2pubsub",
+                      cFiles = [ "d2pubsub.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+
+  
+  build application { target = "d2trigger",
+                      cFiles = [ "d2trigger.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+
+  build application { target = "d2barrier",
+                      cFiles = [ "d2barrier.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+                                        
+  build application { target = "d2locksimple",
+                      cFiles = [ "d2locksimple.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+
+  build application { target = "d2read",
+                      cFiles = [ "d2read.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+                    
+  build application { target = "d2sem",
+                      cFiles = [ "d2sem.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+                    
+  build application { target = "d2bench",
+                      cFiles = [ "d2bench.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc", "bench" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+
+  build application { target = "d2bench1",
+                      cFiles = [ "d2bench1.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc", "bench" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+                    
+  build application { target = "d2bench2",
+                      cFiles = [ "d2bench2.c" ],
+                      flounderDefs = [ "octopus" ],
+                      flounderBindings = [ "octopus" ],
+                      flounderTHCStubs = [ "octopus" ],
+                      addLibraries = [ "octopus", "octopus_parser", "thc", "bench" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    }    
+]

@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+#include <target/x86_32/offsets_target.h>
+
+OUTPUT_FORMAT("elf32-i386")
+OUTPUT_ARCH("i386")
+
+_start_kernel = X86_32_START_KERNEL_PHYS;
+
+SECTIONS {
+        . = ALIGN(4k);
+        .text X86_32_START_KERNEL_PHYS : ALIGN(4k)
+        {
+                *(.text);
+        }
+        _end_kernel_text = .;
+
+        . = ALIGN(4k);
+        .rodata . :
+        {
+                *(.rodata);
+        }
+
+        .bss . :
+        {
+                *(.bss);
+        }
+
+        _end_kernel = .;
+
+        /***** These sections get discarded *****/
+        /DISCARD/ :
+        {
+                /* Discard exception handler frames and headers -- we don't use em */
+                *(.eh_frame);
+                *(.eh_frame_hdr);
+		*(.note.gnu.build-id);
+                *(.interp);
+/*              *(.dynsym); */
+/*              *(.dynstr); */
+/*              *(.hash); */
+/*              *(.gnu.hash); */
+                *(.dynamic);
+        }
+}

@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2007-12 ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface net_ARP "ARP Table" {
+    alias ipv4addr uint32;
+
+    rpc ip_info(in uint32 iface,
+                out errval err,
+                out ipv4addr ip,
+                out ipv4addr gw,
+                out ipv4addr mask);
+
+    rpc ARP_lookup(in ipv4addr ip,
+                    in uint32 iface,
+                    in bool force,
+                    out errval err,
+                    out uint64 mac);
+};
+

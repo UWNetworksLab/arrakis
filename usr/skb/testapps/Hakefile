@@ -1,0 +1,51 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/skb/testapps
+--
+--------------------------------------------------------------------------
+
+[ build application { target = "matrix", 
+                      cFiles = [ "matrix.c" ],
+                      addLibraries = [ "skb" ]
+                    },
+  build application { target = "map", 
+                      cFiles = [ "map.c" ],
+                      flounderDefs = [ "skb_map" ],
+                      addLibraries = [ "skb" ]
+                    },
+
+  build application { target = "threadalloc", 
+                      cFiles = [ "threadalloc.c" ],
+                      addLibraries = [ "skb", "posixcompat" ]
+                    },
+
+  build application { target = "writemem", 
+                      cFiles = [ "writemem.c" ]
+                    },
+
+  build application { target = "cryptotest", 
+                      cFiles = [ "cryptotest.c" ],
+                      addLibraries = [ "crypto", "posixcompat" ],
+                      addIncludes = [ "openssl-1.0.0d/include" ]
+                    },
+
+  build application { target = "speed", 
+                      cFiles = [ "speed.c", "apps.c" ],
+                  omitCFlags = [ "-Werror", "-Wshadow",
+                                 "-Wstrict-prototypes",
+                                 "-Wold-style-definition",
+                                 "-Wmissing-prototypes",
+                                 "-Wmissing-declarations",
+                                 "-Wmissing-field-initializers",
+                                 "-Wredundant-decls", "-std=c99" ],
+                      addLibraries = [ "crypto", "posixcompat",
+                                       "vfs", "nfs", "timer", "lwip" ],
+                      addIncludes = [ "openssl" ]
+                    }
+]

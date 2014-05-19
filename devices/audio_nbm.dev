@@ -1,0 +1,168 @@
+/*
+ * Copyright (c) 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * audio_nbm.dev
+ *
+ * DESCRIPTION: Intel Native Audio Bus Master registers
+ * 
+ * Numbers in comments refer to the Intel 631xESB/632xESB I/O
+ *  Controller Hub Datasheet 
+ */
+
+device audio_nbm msbfirst ( io base ) "Native Audio Bus Master" {
+  
+  // 19.2.1
+  regtype bdbar "Buffer descriptor base address" {
+    a		29 "Address [31:3]";
+    _		3 mbz;
+  };
+  
+  // 19.2.4
+  regtype sr "Status" {
+    _		11;
+    fifoe	1 rwc "FIFO error";
+    bcis	1 rwc "Buffer completion interrupt status";
+    lvbci	1 rwc "Last valid buffer completion interrupt";
+    celv	1 ro  "Current equals last valid";
+    dch		1 ro  "DMA controller halted";
+  };
+  
+  // 19.2.7
+  regtype cr "Control" {
+    _		3;
+    ioce	1 "Interrupt on completion enable";
+    feie	1 "FIFO error interrupt enable";
+    lvbie	1 "Last valid buffer interrupt enable";
+    rr		1 "Reset registers";
+    rpbm	1 "Run/pause bus master";
+  };
+
+  // 19.2.8
+  constants pcm_om "PCM output mode" {
+    b16		= 0b00 "16 bit audio";
+    b20		= 0b01 "20 bit audio";
+  };
+  constants pcm_cm "PCM channel mode" {
+    c2		= 0b00 "2 channels";
+    c4		= 0b01 "4 channels";
+    c6		= 0b10 "6 channels";
+  };
+
+  register glob_cnt rw io(base, 0x2c) "Global control" {
+    ssm		2  "S/PDIF slot map";
+    _		6;
+    pom		2 type(pcm_om) "PCM out mode";
+    pcm46	2 type(pcm_cm) "PCM channel mode";
+    _		13;
+    s2ie	1 "ACZ_SDIN2 interrupt enable";
+    s1ie	1 "ACZ_SDIN1 interrupt enable";
+    s0ie	1 "ACZ_SDIN0 interrupt enable";
+    ldo		1 "AC-LINK shut off";
+    awr		1 "AC97 warm reset";
+    acr		1 "AC97 cold reset";
+    gie		1 "GPI interrupt enable";
+  };
+
+
+  // 19.2.9
+  register glob_sta io(base, 0x30) "Global status" {
+    _		2;
+    s2ri	1 rwc "ACZ_SDIN2 resume interrupt";
+    s2cr	1 ro  "ACZ_SDIN2 codec ready";
+    bcs		1 ro  "Bit clock stopped";
+    spint	1 ro  "S/PDIF interrupt";
+    p2int	1 ro  "PCM in 2 interrupt";
+    m2int	1 ro  "Microphone 2 in interrupt";
+    scap	2 ro  "Sample capabilities";
+    mcap	2 ro  "Multichannel capabilities";
+    _		2;
+    md3		1 rw  "Power down semaphore for modem";
+    ad3		1 rw  "Power down semaphore for audio";
+    rcs		1 rwc "Read completion status";
+    slot12	3 ro  "Display bits 1-3 of most recent slot 12";
+    s1ri	1 rwc "ACZ_SDIN1 resume interrupt";
+    s0ri	1 rwc "ACZ_SDIN0 resume interrupt";
+    s1cr	1 ro  "ACZ_SDIN1 codec ready";
+    s0cr	1 ro  "ACZ_SDIN0 codec ready";
+    mint	1 ro  "Microphone in interrupt";
+    point	1 ro  "PCM out interrupt";
+    piint	1 ro  "PCM in interrupt";
+    _		2;
+    moint	1 ro  "Modem out interrupt";
+    miint	1 ro  "Modem in interrupt";
+    gsci	1 rwc "GPI status change interrupt";
+  };
+
+  // 19.2.10 
+  register cas rw io(base, 0x34) "Codec access semaphore" {
+    _		7;
+    s		1 "read to set";
+  };
+  
+  // 19.2.11
+  register sdm io(base, 0x80) "SDATA_IN map" {
+    di2l	2 rw "PCM in 2, Mic in 2 data in line";
+    di1l	2 rw "PCM in 1, Mic in 1 data in line";
+    se		1 rw "Steer enable";
+    _		1;
+    ldi		2 ro "Last codec read data input";
+  };
+
+  // 19.2
+  register pi_bdbar rw io(base, 0x00) "PCM in buffer desc. list base" type(bdbar);
+  register pi_civ ro io(base, 0x04) "PCM in cur. index value" type(uint8);
+  register pi_lvi rw io(base, 0x05) "PCM in last valud index" type(uint8);
+  register pi_sr io(base, 0x06) "PCM in status" type(sr);
+  register pi_picb ro io(base, 0x08) "PCM in pos. in cur. buffer" type(uint16);
+  register pi_piv ro io(base, 0x0a) "PCM in prefetched index val" type(uint8);
+  register pi_cr rw io(base, 0x0b) "PCM in control" type(cr);
+  
+  register po_bdbar rw io(base, 0x10) "PCM out buffer desc. list base" type(bdbar);
+  register po_civ ro io(base, 0x14) "PCM out cur. index value" type(uint8);
+  register po_lvi rw io(base, 0x15) "PCM out last valud index" type(uint8);
+  register po_sr io(base, 0x16) "PCM out status" type(sr);
+  register po_picb ro io(base, 0x18) "PCM out pos. in cur. buffer" type(uint16);
+  register po_piv ro io(base, 0x1a) "PCM out prefetched index val" type(uint8);
+  register po_cr rw io(base, 0x1b) "PCM out control" type(cr);
+
+  register mc_bdbar rw io(base, 0x20) "Mic in buffer desc. list base" type(bdbar);
+  register mc_civ ro io(base, 0x24) "Mic in cur. index value" type(uint8);
+  register mc_lvi rw io(base, 0x25) "Mic in last valud index" type(uint8);
+  register mc_sr io(base, 0x26) "Mic in status" type(sr);
+  register mc_picb ro io(base, 0x28) "Mic in pos. in cur. buffer" type(uint16);
+  register mc_piv ro io(base, 0x2a) "Mic in prefetched index val" type(uint8);
+  register mc_cr rw io(base, 0x2b) "Mic in control" type(cr);
+
+  register mc2_bdbar rw io(base, 0x40) "Mic 2 buffer desc. list base" type(bdbar);
+  register mc2_civ ro io(base, 0x44) "Mic 2 cur. index value" type(uint8);
+  register mc2_lvi rw io(base, 0x45) "Mic 2 last valud index" type(uint8);
+  register mc2_sr io(base, 0x46) "Mic 2 status" type(sr);
+  register mc2_picb ro io(base, 0x48) "Mic 2 pos. in cur. buffer" type(uint16);
+  register mc2_piv ro io(base, 0x4a) "Mic 2 prefetched index val" type(uint8);
+  register mc2_cr rw io(base, 0x4b) "Mic 2 control" type(cr);
+  
+  register pi2_bdbar rw io(base, 0x50) "PCM in 2 buf desc. list base" type(bdbar);
+  register pi2_civ ro io(base, 0x54) "PCM in 2 cur. index value" type(uint8);
+  register pi2_lvi rw io(base, 0x55) "PCM in 2 last valud index" type(uint8);
+  register pi2_sr io(base, 0x56) "PCM in 2 status" type(sr);
+  register pi2_picb ro io(base, 0x58) "PCM in 2 pos. in cur. buf" type(uint16);
+  register pi2_piv ro io(base, 0x5a) "PCM in 2 pref. index val" type(uint8);
+  register pi2_cr rw io(base, 0x5b) "PCM in 2 control" type(cr);
+  
+  register sp_bdbar rw io(base, 0x60) "S/PDIF buf desc. list base" type(bdbar);
+  register sp_civ ro io(base, 0x64) "S/PDIF cur. index value" type(uint8);
+  register sp_lvi rw io(base, 0x65) "S/PDIF last valud index" type(uint8);
+  register sp_sr io(base, 0x66) "S/PDIF status" type(sr);
+  register sp_picb ro io(base, 0x68) "S/PDIF pos. in cur. buf" type(uint16);
+  register sp_piv ro io(base, 0x6a) "S/PDIF pref. index val" type(uint8);
+  register sp_cr rw io(base, 0x6b) "S/PDIF control" type(cr);
+
+};
+
+	

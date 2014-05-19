@@ -1,0 +1,37 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2013, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Universitaetstr. 6, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for omap44xx sd-card driver
+-- 
+--------------------------------------------------------------------------
+
+[
+    build application { target = "mmchs",
+                        cFiles = [
+                            "main.c", "cm2.c", "ctrlmod.c", 
+                            "i2c.c", "mmchs.c", "twl6030.c",
+                            "service.c"
+                        ],
+                        mackerelDevices = [
+                            "ti_i2c",
+                            "ti_twl6030",
+                            "omap/omap44xx_mmchs1",
+                            "omap/omap44xx_sysctrl_padconf_core",
+                            "omap/omap44xx_l3init_cm2",
+                            "omap/omap44xx_ckgen_cm2",
+                            "omap/omap44xx_l4per_cm2"
+                        ],
+
+                        flounderDefs = [ "ata_rw28" ],
+                        flounderBindings = [ "ata_rw28" ],
+                        flounderTHCStubs = [ "ata_rw28" ],
+
+                        addLibraries = [ "driverkit", "thc" ],
+                        architectures = ["armv7"]
+    }
+]

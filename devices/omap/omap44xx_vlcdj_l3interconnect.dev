@@ -1,0 +1,187 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_vlcdj_l3interconnect.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_vlcdj_l3interconnect msbfirst ( addr base ) "" {
+    
+    
+    register vlcdj_revision ro addr(base, 0x0) "IP revision" type(uint32);
+    
+    register vlcdj_ctrl addr(base, 0x4) "Controls common to encoding and decoding" {
+        _ 15 mbz;
+        busy 1 ro "Idle/busy status 0: Idle 1: Busy";
+        _ 8 mbz;
+        clrrb 1 wo "Write only; read returns 0.";
+        rben 1 rw "Enable RB signaling.";
+        inten_err 1 rw "Interrupt enable for decode error 0: No interrupt generated on decode error 1: Interrupt generated on decode error";
+        inten_done 1 rw "Interrupt enable for task completion. DONE_VLCD is not gated by this and is always asserted at task completion. 0: No interrupt generated on task completion 1: Interrupt generated on task completion";
+        autogating 1 rw "Internal clock gating on OCP clock and functional clock 0: Clocks are free-running. 1: Clocks are gated off in sub-blocks that are not required for operation.";
+        trig_src 1 rw "Which mechanism starts VLCDJ operation 0: MMR write to VLCDJ_CTRL.EN 1: Hardware start signal";
+        mode 1 rw "0: Encode 1: Decode";
+        en 1 wo "Module enable by software (write-only, read returns 0). When TRIG_SRC = 0 and BUSY = 0, set this field to 1 to start VLCDJ. When TRIG_SRC = 1, writes to this field are ignored. Setting TRIG_SRC = 0 and EN = 1 on the same register write is recognized.";
+    };
+    
+    register vlcdje_cfg addr(base, 0x8) "Encode configuration" {
+        _ 18 mbz;
+        nmcus 6 rw "Number of MCUs (FMT = 0, 1) or blocks (FMT = 2) to encode 0: 1 MCU 1: 2 MCUs, etc.";
+        _ 4 mbz;
+        rlocen 1 rw "Restart marker location recording enable 0: Restart marker location recording disabled 1: Restart marker location recording enabled";
+        rsten 1 rw "Restart marker insertion enable 0: Restart marker insertion disabled 1: Restart marker insertion enabled";
+        fmt 2 rw "0: YUV4:2:0 1: YUV4:2:2 2 : Sequential blocks";
+    };
+    
+    register vlcdje_dcpredy addr(base, 0xC) "Encode DC predictor for Y" {
+        _ 20 mbz;
+        predy 12 rw "DC predictor for Y";
+    };
+    
+    register vlcdje_dcpreduv addr(base, 0x10) "Encode DC predictor for U and V" {
+        _ 4 mbz;
+        predv 12 rw "DC predictor for V";
+        _ 4 mbz;
+        predu 12 rw "DC predictor for U";
+    };
+    
+    register vlcdje_bsptr addr(base, 0x14) "Encode bitstream pointer" {
+        _ 12 mbz;
+        bitptr 4 rw "Bit pointer, 1..8, indicates number of available bits";
+        _ 4 mbz;
+        byteptr 12 rw "Byte pointer (to BSMEM)";
+    };
+    
+    register vlcdje_cbuf addr(base, 0x18) "Encode bitstream circular buffer" {
+        _ 4 mbz;
+        end 2 rw "Ending quarter (1KB each unit) of bitstream buffer. Software can write a byte address into the upper 16 bits of the register.";
+        _ 10 rsvd;
+        _ 4 mbz;
+        start 2 rw "Starting quarter (1KB each unit) of bitstream buffer. Software can write a byte address to the lower 16 bits of the register.";
+        _ 10 mbz;
+    };
+    
+    register vlcdje_rstcfg addr(base, 0x1C) "Encode restart marker configuration" {
+        _ 1 mbz;
+        inc 3 rw "Restart count increment value";
+        _ 1 mbz;
+        init 3 rw "Restart marker initial count";
+        _ 2 mbz;
+        phase 10 rw "MCU count within the interval";
+        _ 2 mbz;
+        intrvl 10 rw "Restart interval (in MCUs)";
+    };
+    
+    register vlcdje_dctqm addr(base, 0x20) "Encode DCT coefficient and quantizer matrix pointers" {
+        _ 7 mbz;
+        qmr 2 rw "Quarter (128 bytes/unit) of quantization matrix reciprocal. Software can write a byte address to the upper 16 bits of the register.";
+        _ 9 mbz;
+        dct 10 rw "128-bit/word address of DCT coefficients. Software can write a byte address to the lower 16 bits of the register.";
+        _ 4 mbz;
+    };
+    
+    register vlcdje_vlctbl addr(base, 0x24) "Encode Huffman table pointer" {
+        _ 20 mbz;
+        addr 10 rw "Encode Huffman table pointer, 32-bit word address. Software can write a byte address into the entire register.";
+        _ 2 mbz;
+    };
+    
+    register vlcdje_rstptr addr(base, 0x28) "Encode restart marker locations" {
+        _ 18 mbz;
+        addr 10 rw "Pointer to restart marker locations in image buffer, 128-bit/word address Software can write a byte address into the entire register.";
+        _ 4 mbz;
+    };
+    
+    register vlcdje_rstofst rw addr(base, 0x2C) "SDRAM address to add to encode restart marker locations" type(uint32);
+    
+    register vlcdjd_cfg addr(base, 0x40) "Decode configuration" {
+        _ 18 mbz;
+        nmcus 6 rw "Number of MCUs (FMT = 0, 1) or blocks (FMT = 2) to decode 0: 1 MCU 1: 2 MCUs, etc.";
+        _ 5 mbz;
+        rsten 1 rw "Restart marker detection/processing enable 0: Restart marker detection/processing disabled 1: Restart marker detection/processing enabled";
+        fmt 2 rw "0: YUV4:2:0 1: YUV4:2:2 2: Sequential blocks";
+    };
+    
+    register vlcdjd_dcpredy addr(base, 0x44) "Decode DC predictor for Y" {
+        _ 20 mbz;
+        predy 12 rw "DC predictor for Y";
+    };
+    
+    register vlcdjd_dcpreduv addr(base, 0x48) "Decode DC predictor for U and V" {
+        _ 4 mbz;
+        predv 12 rw "DC predictor for V";
+        _ 4 mbz;
+        predu 12 rw "DC predictor for U";
+    };
+    
+    register vlcdjd_bsptr addr(base, 0x4C) "Decode bitstream pointer" {
+        _ 12 mbz;
+        bitptr 4 rw "Bit pointer, 1..8, indicates number of available bits";
+        _ 4 mbz;
+        byteptr 12 rw "Byte pointer (to BSMEM)";
+    };
+    
+    register vlcdjd_cbuf addr(base, 0x50) "Decode bitstream circular buffer" {
+        _ 4 mbz;
+        end 2 rw "Ending quarter (1KB each unit) of bitstream buffer. Software can write a byte address into the upper 16 bits of the register.";
+        _ 10 rsvd;
+        _ 4 mbz;
+        start 2 rw "Starting quarter (1KB each unit) of bitstream buffer. Software can write a byte address to the lower 16 bits of the register.";
+        _ 10 mbz;
+    };
+    
+    register vlcdjd_dctqm addr(base, 0x54) "Decode DCT coefficient and quantizer matrix pointers" {
+        _ 7 mbz;
+        qm 2 rw "Quarter (128 bytes/unit) of quantization matrix. Software can write a byte address to the upper 16 bits of the register.";
+        _ 9 mbz;
+        dct 10 rw "128-bit/word address of DCT coefficients. Software can write a byte address to the lower 16 bits of the register.";
+        _ 4 mbz;
+    };
+    
+    register vlcdjd_ctrltbl addr(base, 0x58) "Decode control table base" {
+        _ 20 mbz;
+        addr 10 rw "Starting address of decode control table, 32-bit word. Software can write a byte address into the entire register.";
+        _ 2 mbz;
+    };
+    
+    register vlcdjd_dcdtbl01 addr(base, 0x5C) "Decode Huffman tables 0 and 1" {
+        _ 4 mbz;
+        dcdtbl1 10 rw "Starting byte address of decode table 1, 32-bit word. Software can write a byte address into the lower 16 bits of the register. This is for Luma AC.";
+        _ 6 mbz;
+        dcdtbl0 10 rw "Starting byte address of decode table 0, 32-bit word. Software can write a byte address into the lower 16 bits of the register. This is for Luma DC.";
+        _ 2 mbz;
+    };
+    
+    register vlcdjd_dcdtbl23 addr(base, 0x60) "Decode Huffman tables 2 and 3" {
+        _ 4 mbz;
+        dcdtbl3 10 rw "Starting byte address of decode table 3, 32-bit word. Software can write a byte address into the lower 16 bits of the register. This is for Chroma AC.";
+        _ 6 mbz;
+        dcdtbl2 10 rw "Starting byte address of decode table 2, 32-bit word. Software can write a byte address into the lower 16 bits of the register. This is for Chroma DC.";
+        _ 2 mbz;
+    };
+    
+    register vlcdjd_dcterr addr(base, 0x64) "" {
+        _ 18 mbz;
+        errptr 14 ro "Byte address pointer to DCT coefficients, near where decode error occurs (read-only)";
+    };
+};

@@ -1,0 +1,137 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_mpu_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_mpu_prm msbfirst ( addr base ) "" {
+    
+
+    constants mpu_ram_onstate_status width(2) "" {
+        MPU_RAM_ONSTATE_3_r = 3 "Memory bank is on when the domain is ON.";
+    };
+
+    constants mpu_ram_retstate_status width(1) "" {
+        MPU_RAM_RETSTATE_1_r = 1 "Memory bank is retained when domain is in RETENTION state.";
+    };
+
+    constants mpu_l2_retstate_status width(1) "" {
+        MPU_L2_RETSTATE_0 = 0 "Memory bank is off when the domain is in the RETENTION state.";
+        MPU_L2_RETSTATE_1 = 1 "Memory bank is retained when domain is in RETENTION state.";
+    };
+
+    constants lowpowerstatechange_status width(1) "" {
+        LOWPOWERSTATECHANGE_0 = 0 "Do not request a low power state change.";
+        LOWPOWERSTATECHANGE_1 = 1 "Request a low power state change. This bit is automatically cleared when the power state is effectively changed or when power state is ON.";
+    };
+
+    constants powerstate_status width(2) "" {
+        POWERSTATE_0 = 0 "Reserved";
+        POWERSTATE_1 = 1 "RETENTION state";
+        POWERSTATE_2 = 2 "INACTIVE state";
+        POWERSTATE_3 = 3 "ON State";
+    };
+    
+    register pm_mpu_pwrstctrl addr(base, 0x0) "This register controls the MPU domain power state to reach upon a domain sleep transition" {
+        _ 10 mbz;
+        mpu_ram_onstate 2 ro type(mpu_ram_onstate_status) "MPU_RAM memory state when domain is ON.";
+        mpu_l2_onstate 2 ro type(mpu_ram_onstate_status) "MPU_L2 memory state when domain is ON.";
+        _ 7 mbz;
+        mpu_ram_retstate 1 ro type(mpu_ram_retstate_status) "MPU_RAM memory state when domain is RETENTION.";
+        mpu_l2_retstate 1 rw type(mpu_l2_retstate_status) "MPU_L2 memory state when domain is RETENTION.";
+        _ 4 mbz;
+        lowpowerstatechange 1 rw type(lowpowerstatechange_status) "Power state change request when domain has already performed a sleep transition. Allows going into deeper low power state without waking up the power domain.";
+        _ 1 mbz;
+        logicretstate 1 rw type(mpu_l2_retstate_status) "Logic state when power domain is RETENTION";
+        powerstate 2 rw type(powerstate_status) "Power state control.";
+    };
+
+    constants lastpowerstateentered_status width(2) "" {
+        LASTPOWERSTATEENTERED_3_r = 3 "Power domain was previously ON-ACTIVE";
+        LASTPOWERSTATEENTERED_2_r = 2 "Power domain was previously ON-INACTIVE";
+        LASTPOWERSTATEENTERED_1_r = 1 "Power domain was previously in RETENTION";
+        LASTPOWERSTATEENTERED_0_r = 0 "Power domain was previously OFF";
+    };
+
+    constants intransition_status width(1) "" {
+        INTRANSITION_0_r = 0 "No ongoing transition on power domain";
+        INTRANSITION_1_r = 1 "Power domain transition is in progress.";
+    };
+
+    constants mpu_ram_statest_status width(2) "" {
+        MPU_RAM_STATEST_0_r = 0 "Memory is OFF";
+        MPU_RAM_STATEST_1_r = 1 "Memory is RETENTION";
+        MPU_RAM_STATEST_2_r = 2 "Reserved";
+        MPU_RAM_STATEST_3_r = 3 "Memory is ON";
+    };
+
+    constants logicstatest_status width(1) "" {
+        LOGICSTATEST_0_r = 0 "Logic in domain is OFF";
+        LOGICSTATEST_1_r = 1 "Logic in domain is ON";
+    };
+
+    constants powerstatest_status width(2) "" {
+        POWERSTATEST_0_r = 0 "Power domain is OFF";
+        POWERSTATEST_1_r = 1 "Power domain is in RETENTION";
+        POWERSTATEST_2_r = 2 "Power domain is ON-INACTIVE";
+        POWERSTATEST_3_r = 3 "Power domain is ON-ACTIVE";
+    };
+    
+    register pm_mpu_pwrstst addr(base, 0x4) "This register provides a status on the MPU domain current power state. [warm reset insensitive]" {
+        _ 6 mbz;
+        lastpowerstateentered 2 rw type(lastpowerstateentered_status) "Last low power state entered. Set to 0x3 upon write of the same only. This register is intended for debug purpose only.";
+        _ 3 mbz;
+        intransition 1 ro type(intransition_status) "Domain transition status";
+        _ 10 mbz;
+        mpu_ram_statest 2 ro type(mpu_ram_statest_status) "MPU_RAM memory state status";
+        mpu_l2_statest 2 ro type(mpu_ram_statest_status) "MPU_L2 memory state status";
+        _ 3 mbz;
+        logicstatest 1 ro type(logicstatest_status) "Logic state status";
+        powerstatest 2 ro type(powerstatest_status) "Current power state status";
+    };
+
+    constants emulation_rst_status width(1) "" {
+        EMULATION_RST_0 = 0 "No emulation reset";
+        EMULATION_RST_1 = 1 "The domain has been reset upon emulation reset";
+    };
+    
+    register rm_mpu_rstst addr(base, 0x14) "This register logs the different reset sources of the MPU domain. Each bit is set upon release of the domain reset signal. Must be cleared by software. [warm reset insensitive]" {
+        _ 31 mbz;
+        emulation_rst 1 rw1c type(emulation_rst_status) "MPU domain has been reset due to emulation reset source e.g. assert reset command initiated by the icepick module";
+    };
+
+    constants lostmem_mpu_ram_status width(1) "" {
+        LOSTMEM_MPU_RAM_0 = 0 "Context has been maintained";
+        LOSTMEM_MPU_RAM_1 = 1 "Context has been lost";
+    };
+    
+    register rm_mpu_mpu_context addr(base, 0x24) "This register contains dedicated MPU context statuses. [warm reset insensitive]" {
+        _ 21 mbz;
+        lostmem_mpu_ram 1 rw1c type(lostmem_mpu_ram_status) "Specify if memory-based context in MPU_RAM memory bank has been lost due to a previous power transition or other reset source (not affected by a global warm reset).";
+        lostmem_mpu_l2 1 rw1c type(lostmem_mpu_ram_status) "Specify if memory-based context in MPU_L2 memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_rff 1 rw1c type(lostmem_mpu_ram_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of MPU_MA_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostmem_mpu_ram_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of MPU_RST signal)";
+    };
+};

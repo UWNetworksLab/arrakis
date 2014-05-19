@@ -1,0 +1,57 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+--------------------------------------------------------------------------
+
+let commonCFlags = [ "-DCOPPERRIDGE", "-Wno-unused",
+                     "-Wno-strict-prototypes", "-Wno-shadow",
+                     "-Wno-old-style-definition",
+                     "-Wno-redundant-decls",
+                     "-Wno-missing-declarations",
+                     "-Wno-missing-prototypes", "-Wno-uninitialized" ]
+    template = application {
+      cFiles = [ "blts.c", "buts.c", "erhs.c", "error.c", "exact.c",
+                 "exchange_1.c", "exchange_3.c", "exchange_4.c",
+                 "exchange_5.c", "exchange_6.c", "init_comm.c",
+                 "jacld.c", "jacu.c", "l2norm.c", "lu.c", 
+                 "neighbors.c", "nodedim.c", "pintgr.c",
+                 "print_results.c", "proc_grid.c", "read_input.c",
+                 "rhs.c", "setbv.c", "setcoeff.c", "setiv.c",
+                 "ssor.c", "subdomain.c", "timers.c", "verify.c" ],
+      addLibraries = [ "rcce"],
+      addIncludes = [ "/include/rcce" ]
+      }
+
+  in
+ [ build template { target = "rcce_lu_A1",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=1" : commonCFlags },
+   build template { target = "rcce_lu_A2",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=2" : commonCFlags },
+   build template { target = "rcce_lu_A4",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=4" : commonCFlags },
+   build template { target = "rcce_lu_A8",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=8" : commonCFlags },
+   build template { target = "rcce_lu_A16",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=16" : commonCFlags },
+   build template { target = "rcce_lu_A32",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=32" : commonCFlags },
+   build template { target = "rcce_lu_A64",
+                    addCFlags = "-DUSE_CLASS=A -DUSE_CPUS=64" : commonCFlags },
+   build template { target = "rcce_lu_S1",
+                    addCFlags = "-DUSE_CLASS=S -DUSE_CPUS=1" : commonCFlags },
+   build template { target = "rcce_lu_S2",
+                    addCFlags = "-DUSE_CLASS=S -DUSE_CPUS=2" : commonCFlags },
+   build template { target = "rcce_lu_S4",
+                    addCFlags = "-DUSE_CLASS=S -DUSE_CPUS=4" : commonCFlags },
+   build template { target = "rcce_lu_S8",
+                    addCFlags = "-DUSE_CLASS=S -DUSE_CPUS=8" : commonCFlags },
+   build template { target = "rcce_lu_S16",
+                    addCFlags = "-DUSE_CLASS=S -DUSE_CPUS=16" : commonCFlags },
+   build template { target = "rcce_lu_S32",
+                    addCFlags = "-DUSE_CLASS=S -DUSE_CPUS=32" : commonCFlags }
+  ]

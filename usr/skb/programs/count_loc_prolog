@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sed -r -e '/^%/d' -e '/^$/d' $1|wc -l
+

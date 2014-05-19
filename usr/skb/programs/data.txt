@@ -1,0 +1,489 @@
+apic(0,0,1).
+apic(1,1,1).
+apic(2,2,1).
+apic(3,3,1).
+apic_nmi(0,5,1).
+apic_nmi(1,5,1).
+apic_nmi(2,5,1).
+apic_nmi(3,5,1).
+associativity_encoding(amd, 1, 0, reserved).
+associativity_encoding(amd, 1, 100, 100).
+associativity_encoding(amd, 1, 10, 10).
+associativity_encoding(amd, 1, 101, 101).
+associativity_encoding(amd, 1, 102, 102).
+associativity_encoding(amd, 1, 103, 103).
+associativity_encoding(amd, 1, 104, 104).
+associativity_encoding(amd, 1, 105, 105).
+associativity_encoding(amd, 1, 106, 106).
+associativity_encoding(amd, 1, 107, 107).
+associativity_encoding(amd, 1, 108, 108).
+associativity_encoding(amd, 1, 109, 109).
+associativity_encoding(amd, 1, 110, 110).
+associativity_encoding(amd, 1, 11, 11).
+associativity_encoding(amd, 1, 111, 111).
+associativity_encoding(amd, 1, 112, 112).
+associativity_encoding(amd, 1, 113, 113).
+associativity_encoding(amd, 1, 114, 114).
+associativity_encoding(amd, 1, 115, 115).
+associativity_encoding(amd, 1, 116, 116).
+associativity_encoding(amd, 1, 117, 117).
+associativity_encoding(amd, 1, 118, 118).
+associativity_encoding(amd, 1, 119, 119).
+associativity_encoding(amd, 1, 120, 120).
+associativity_encoding(amd, 1, 121, 121).
+associativity_encoding(amd, 1, 12, 12).
+associativity_encoding(amd, 1, 122, 122).
+associativity_encoding(amd, 1, 123, 123).
+associativity_encoding(amd, 1, 124, 124).
+associativity_encoding(amd, 1, 125, 125).
+associativity_encoding(amd, 1, 126, 126).
+associativity_encoding(amd, 1, 127, 127).
+associativity_encoding(amd, 1, 128, 128).
+associativity_encoding(amd, 1, 129, 129).
+associativity_encoding(amd, 1, 130, 130).
+associativity_encoding(amd, 1, 131, 131).
+associativity_encoding(amd, 1, 13, 13).
+associativity_encoding(amd, 1, 132, 132).
+associativity_encoding(amd, 1, 133, 133).
+associativity_encoding(amd, 1, 134, 134).
+associativity_encoding(amd, 1, 135, 135).
+associativity_encoding(amd, 1, 136, 136).
+associativity_encoding(amd, 1, 137, 137).
+associativity_encoding(amd, 1, 138, 138).
+associativity_encoding(amd, 1, 139, 139).
+associativity_encoding(amd, 1, 140, 140).
+associativity_encoding(amd, 1, 141, 141).
+associativity_encoding(amd, 1, 14, 14).
+associativity_encoding(amd, 1, 142, 142).
+associativity_encoding(amd, 1, 143, 143).
+associativity_encoding(amd, 1, 144, 144).
+associativity_encoding(amd, 1, 145, 145).
+associativity_encoding(amd, 1, 146, 146).
+associativity_encoding(amd, 1, 147, 147).
+associativity_encoding(amd, 1, 148, 148).
+associativity_encoding(amd, 1, 149, 149).
+associativity_encoding(amd, 1, 150, 150).
+associativity_encoding(amd, 1, 151, 151).
+associativity_encoding(amd, 1, 15, 15).
+associativity_encoding(amd, 1, 152, 152).
+associativity_encoding(amd, 1, 153, 153).
+associativity_encoding(amd, 1, 154, 154).
+associativity_encoding(amd, 1, 155, 155).
+associativity_encoding(amd, 1, 156, 156).
+associativity_encoding(amd, 1, 157, 157).
+associativity_encoding(amd, 1, 158, 158).
+associativity_encoding(amd, 1, 159, 159).
+associativity_encoding(amd, 1, 160, 160).
+associativity_encoding(amd, 1, 161, 161).
+associativity_encoding(amd, 1, 16, 16).
+associativity_encoding(amd, 1, 162, 162).
+associativity_encoding(amd, 1, 163, 163).
+associativity_encoding(amd, 1, 164, 164).
+associativity_encoding(amd, 1, 165, 165).
+associativity_encoding(amd, 1, 166, 166).
+associativity_encoding(amd, 1, 167, 167).
+associativity_encoding(amd, 1, 168, 168).
+associativity_encoding(amd, 1, 169, 169).
+associativity_encoding(amd, 1, 170, 170).
+associativity_encoding(amd, 1, 171, 171).
+associativity_encoding(amd, 1, 17, 17).
+associativity_encoding(amd, 1, 172, 172).
+associativity_encoding(amd, 1, 173, 173).
+associativity_encoding(amd, 1, 174, 174).
+associativity_encoding(amd, 1, 175, 175).
+associativity_encoding(amd, 1, 176, 176).
+associativity_encoding(amd, 1, 177, 177).
+associativity_encoding(amd, 1, 178, 178).
+associativity_encoding(amd, 1, 179, 179).
+associativity_encoding(amd, 1, 180, 180).
+associativity_encoding(amd, 1, 181, 181).
+associativity_encoding(amd, 1, 18, 18).
+associativity_encoding(amd, 1, 182, 182).
+associativity_encoding(amd, 1, 183, 183).
+associativity_encoding(amd, 1, 184, 184).
+associativity_encoding(amd, 1, 185, 185).
+associativity_encoding(amd, 1, 186, 186).
+associativity_encoding(amd, 1, 187, 187).
+associativity_encoding(amd, 1, 188, 188).
+associativity_encoding(amd, 1, 189, 189).
+associativity_encoding(amd, 1, 190, 190).
+associativity_encoding(amd, 1, 191, 191).
+associativity_encoding(amd, 1, 19, 19).
+associativity_encoding(amd, 1, 192, 192).
+associativity_encoding(amd, 1, 193, 193).
+associativity_encoding(amd, 1, 194, 194).
+associativity_encoding(amd, 1, 195, 195).
+associativity_encoding(amd, 1, 196, 196).
+associativity_encoding(amd, 1, 197, 197).
+associativity_encoding(amd, 1, 198, 198).
+associativity_encoding(amd, 1, 199, 199).
+associativity_encoding(amd, 1, 1, direct).
+associativity_encoding(amd, 1, 200, 200).
+associativity_encoding(amd, 1, 201, 201).
+associativity_encoding(amd, 1, 20, 20).
+associativity_encoding(amd, 1, 202, 202).
+associativity_encoding(amd, 1, 203, 203).
+associativity_encoding(amd, 1, 204, 204).
+associativity_encoding(amd, 1, 205, 205).
+associativity_encoding(amd, 1, 206, 206).
+associativity_encoding(amd, 1, 207, 207).
+associativity_encoding(amd, 1, 208, 208).
+associativity_encoding(amd, 1, 209, 209).
+associativity_encoding(amd, 1, 210, 210).
+associativity_encoding(amd, 1, 211, 211).
+associativity_encoding(amd, 1, 21, 21).
+associativity_encoding(amd, 1, 212, 212).
+associativity_encoding(amd, 1, 213, 213).
+associativity_encoding(amd, 1, 214, 214).
+associativity_encoding(amd, 1, 215, 215).
+associativity_encoding(amd, 1, 216, 216).
+associativity_encoding(amd, 1, 217, 217).
+associativity_encoding(amd, 1, 218, 218).
+associativity_encoding(amd, 1, 219, 219).
+associativity_encoding(amd, 1, 2, 2).
+associativity_encoding(amd, 1, 220, 220).
+associativity_encoding(amd, 1, 221, 221).
+associativity_encoding(amd, 1, 22, 22).
+associativity_encoding(amd, 1, 222, 222).
+associativity_encoding(amd, 1, 223, 223).
+associativity_encoding(amd, 1, 224, 224).
+associativity_encoding(amd, 1, 225, 225).
+associativity_encoding(amd, 1, 226, 226).
+associativity_encoding(amd, 1, 227, 227).
+associativity_encoding(amd, 1, 228, 228).
+associativity_encoding(amd, 1, 229, 229).
+associativity_encoding(amd, 1, 230, 230).
+associativity_encoding(amd, 1, 231, 231).
+associativity_encoding(amd, 1, 232, 232).
+associativity_encoding(amd, 1, 23, 23).
+associativity_encoding(amd, 1, 233, 233).
+associativity_encoding(amd, 1, 234, 234).
+associativity_encoding(amd, 1, 235, 235).
+associativity_encoding(amd, 1, 236, 236).
+associativity_encoding(amd, 1, 237, 237).
+associativity_encoding(amd, 1, 238, 238).
+associativity_encoding(amd, 1, 239, 239).
+associativity_encoding(amd, 1, 240, 240).
+associativity_encoding(amd, 1, 241, 241).
+associativity_encoding(amd, 1, 242, 242).
+associativity_encoding(amd, 1, 24, 24).
+associativity_encoding(amd, 1, 243, 243).
+associativity_encoding(amd, 1, 244, 244).
+associativity_encoding(amd, 1, 245, 245).
+associativity_encoding(amd, 1, 246, 246).
+associativity_encoding(amd, 1, 247, 247).
+associativity_encoding(amd, 1, 248, 248).
+associativity_encoding(amd, 1, 249, 249).
+associativity_encoding(amd, 1, 250, 250).
+associativity_encoding(amd, 1, 251, 251).
+associativity_encoding(amd, 1, 252, 252).
+associativity_encoding(amd, 1, 25, 25).
+associativity_encoding(amd, 1, 253, 253).
+associativity_encoding(amd, 1, 254, 254).
+associativity_encoding(amd, 1, 255, full).
+associativity_encoding(amd, 1, 26, 26).
+associativity_encoding(amd, 1, 27, 27).
+associativity_encoding(amd, 1, 28, 28).
+associativity_encoding(amd, 1, 29, 29).
+associativity_encoding(amd, 1, 30, 30).
+associativity_encoding(amd, 1, 31, 31).
+associativity_encoding(amd, 1, 32, 32).
+associativity_encoding(amd, 1, 3, 3).
+associativity_encoding(amd, 1, 33, 33).
+associativity_encoding(amd, 1, 34, 34).
+associativity_encoding(amd, 1, 35, 35).
+associativity_encoding(amd, 1, 36, 36).
+associativity_encoding(amd, 1, 37, 37).
+associativity_encoding(amd, 1, 38, 38).
+associativity_encoding(amd, 1, 39, 39).
+associativity_encoding(amd, 1, 40, 40).
+associativity_encoding(amd, 1, 41, 41).
+associativity_encoding(amd, 1, 42, 42).
+associativity_encoding(amd, 1, 43, 43).
+associativity_encoding(amd, 1, 4, 4).
+associativity_encoding(amd, 1, 44, 44).
+associativity_encoding(amd, 1, 45, 45).
+associativity_encoding(amd, 1, 46, 46).
+associativity_encoding(amd, 1, 47, 47).
+associativity_encoding(amd, 1, 48, 48).
+associativity_encoding(amd, 1, 49, 49).
+associativity_encoding(amd, 1, 50, 50).
+associativity_encoding(amd, 1, 51, 51).
+associativity_encoding(amd, 1, 52, 52).
+associativity_encoding(amd, 1, 53, 53).
+associativity_encoding(amd, 1, 54, 54).
+associativity_encoding(amd, 1, 5, 5).
+associativity_encoding(amd, 1, 55, 55).
+associativity_encoding(amd, 1, 56, 56).
+associativity_encoding(amd, 1, 57, 57).
+associativity_encoding(amd, 1, 58, 58).
+associativity_encoding(amd, 1, 59, 59).
+associativity_encoding(amd, 1, 60, 60).
+associativity_encoding(amd, 1, 61, 61).
+associativity_encoding(amd, 1, 62, 62).
+associativity_encoding(amd, 1, 63, 63).
+associativity_encoding(amd, 1, 64, 64).
+associativity_encoding(amd, 1, 65, 65).
+associativity_encoding(amd, 1, 6, 6).
+associativity_encoding(amd, 1, 66, 66).
+associativity_encoding(amd, 1, 67, 67).
+associativity_encoding(amd, 1, 68, 68).
+associativity_encoding(amd, 1, 69, 69).
+associativity_encoding(amd, 1, 70, 70).
+associativity_encoding(amd, 1, 71, 71).
+associativity_encoding(amd, 1, 72, 72).
+associativity_encoding(amd, 1, 73, 73).
+associativity_encoding(amd, 1, 74, 74).
+associativity_encoding(amd, 1, 75, 75).
+associativity_encoding(amd, 1, 76, 76).
+associativity_encoding(amd, 1, 7, 7).
+associativity_encoding(amd, 1, 77, 77).
+associativity_encoding(amd, 1, 78, 78).
+associativity_encoding(amd, 1, 79, 79).
+associativity_encoding(amd, 1, 80, 80).
+associativity_encoding(amd, 1, 81, 81).
+associativity_encoding(amd, 1, 82, 82).
+associativity_encoding(amd, 1, 83, 83).
+associativity_encoding(amd, 1, 84, 84).
+associativity_encoding(amd, 1, 85, 85).
+associativity_encoding(amd, 1, 86, 86).
+associativity_encoding(amd, 1, 87, 87).
+associativity_encoding(amd, 1, 8, 8).
+associativity_encoding(amd, 1, 88, 88).
+associativity_encoding(amd, 1, 89, 89).
+associativity_encoding(amd, 1, 90, 90).
+associativity_encoding(amd, 1, 91, 91).
+associativity_encoding(amd, 1, 92, 92).
+associativity_encoding(amd, 1, 93, 93).
+associativity_encoding(amd, 1, 94, 94).
+associativity_encoding(amd, 1, 95, 95).
+associativity_encoding(amd, 1, 96, 96).
+associativity_encoding(amd, 1, 97, 97).
+associativity_encoding(amd, 1, 98, 98).
+associativity_encoding(amd, 1, 9, 9).
+associativity_encoding(amd, 1, 99, 99).
+associativity_encoding(amd, 2, 0, disabled).
+associativity_encoding(amd, 2, 10, 32).
+associativity_encoding(amd, 2, 11, 48).
+associativity_encoding(amd, 2, 12, 64).
+associativity_encoding(amd, 2, 13, 96).
+associativity_encoding(amd, 2, 14, 128).
+associativity_encoding(amd, 2, 15, full).
+associativity_encoding(amd, 2, 1, direct).
+associativity_encoding(amd, 2, 2, 2).
+associativity_encoding(amd, 2, 4, 4).
+associativity_encoding(amd, 2, 6, 8).
+associativity_encoding(amd, 2, 8, 16).
+associativity_encoding(amd, 3, 0, disabled).
+associativity_encoding(amd, 3, 10, 32).
+associativity_encoding(amd, 3, 11, 48).
+associativity_encoding(amd, 3, 12, 64).
+associativity_encoding(amd, 3, 13, 96).
+associativity_encoding(amd, 3, 14, 128).
+associativity_encoding(amd, 3, 15, full).
+associativity_encoding(amd, 3, 1, direct).
+associativity_encoding(amd, 3, 2, 2).
+associativity_encoding(amd, 3, 4, 4).
+associativity_encoding(amd, 3, 6, 8).
+associativity_encoding(amd, 3, 8, 16).
+
+cache(l1d, 0, 1, data, 65536, 2, 64, 1).
+cache(l1i, 0, 1, instruction, 65536, 2, 64, 1).
+cache(l2, 0, 2, data, 1048576, 8, 64, 1).
+cache(l2, 0, 2, instruction, 1048576, 8, 64, 1).
+cache(l3, 0, 3, data, 0, 0, 0, 0).
+cache(l3, 0, 3, instruction, 0, 0, 0, 0).
+cache(l1d, 1, 1, data, 65536, 2, 64, 1).
+cache(l1i, 1, 1, instruction, 65536, 2, 64, 1).
+cache(l2, 1, 2, data, 1048576, 8, 64, 1).
+cache(l2, 1, 2, instruction, 1048576, 8, 64, 1).
+cache(l3, 1, 3, data, 0, 0, 0, 0).
+cache(l3, 1, 3, instruction, 0, 0, 0, 0).
+cache(l1d, 2, 1, data, 65536, 2, 64, 1).
+cache(l1i, 2, 1, instruction, 65536, 2, 64, 1).
+cache(l2, 2, 2, data, 1048576, 8, 64, 1).
+cache(l2, 2, 2, instruction, 1048576, 8, 64, 1).
+cache(l3, 2, 3, data, 0, 0, 0, 0).
+cache(l3, 2, 3, instruction, 0, 0, 0, 0).
+cache(l1d, 3, 1, data, 65536, 2, 64, 1).
+cache(l1i, 3, 1, instruction, 65536, 2, 64, 1).
+cache(l2, 3, 2, data, 1048576, 8, 64, 1).
+cache(l2, 3, 2, instruction, 1048576, 8, 64, 1).
+cache(l3, 3, 3, data, 0, 0, 0, 0).
+cache(l3, 3, 3, instruction, 0, 0, 0, 0).
+
+
+
+cache(l1d, 4, 1, data, 65536, 2, 128, 1).
+cache(l1d, 5, 1, data, 65536, 2, 32, 1).
+cache(l1d, 6, 1, data, 65536, 2, 16, 1).
+cache(l1d, 7, 1, data, 65536, 2, 16, 1).
+
+
+
+cpu(0,0).
+cpu(1,0).
+cpu(2,0).
+cpu(3,0).
+cpu_affinity(0,0,0).
+cpu_affinity(1,0,0).
+cpu_affinity(2,0,1).
+cpu_affinity(3,0,1).
+device(pci,addr(0,24,0),4130,4352,100663296).
+device(pci,addr(0,24,1),4130,4353,100663296).
+device(pci,addr(0,24,2),4130,4354,100663296).
+device(pci,addr(0,24,3),4130,4355,100663296).
+device(pci,addr(0,25,0),4130,4352,100663296).
+device(pci,addr(0,25,1),4130,4353,100663296).
+device(pci,addr(0,25,2),4130,4354,100663296).
+device(pci,addr(0,25,3),4130,4355,100663296).
+device(pcie,addr(0,0,0),4318,873,83886242).
+device(pcie,addr(0,10,0),4318,886,100925603).
+device(pcie,addr(0,1,0),4318,868,100728995).
+device(pcie,addr(0,1,1),4318,872,201654435).
+device(pcie,addr(0,13,0),4318,888,100925603).
+device(pcie,addr(0,15,0),4318,887,100925603).
+device(pcie,addr(0,2,0),4318,876,201527457).
+device(pcie,addr(0,2,1),4318,877,201531554).
+device(pcie,addr(0,4,0),4318,878,16878241).
+device(pcie,addr(0,5,0),4318,895,16876963).
+device(pcie,addr(0,5,1),4318,895,16876963).
+device(pcie,addr(0,5,2),4318,895,16876963).
+device(pcie,addr(0,6,0),4318,880,100925858).
+device(pcie,addr(0,6,1),4318,881,67305634).
+device(pcie,addr(0,8,0),4318,882,33554595).
+device(pcie,addr(0,9,0),4318,883,109052067).
+device(pcie,addr(128,0,0),4318,873,83886242).
+device(pcie,addr(128,10,0),4318,886,100925603).
+device(pcie,addr(128,1,0),4318,865,83886243).
+device(pcie,addr(128,1,1),4318,872,201654435).
+device(pcie,addr(128,13,0),4318,888,100925603).
+device(pcie,addr(128,15,0),4318,887,100925603).
+device(pcie,addr(1,5,0),4172,32803,201330688).
+device(pcie,addr(2,0,0),32902,4221,33554438).
+device(pcie,addr(3,0,0),4147,293,100925446).
+device(pcie,addr(3,0,1),4147,293,100925446).
+device(pcie,addr(6,0,0),4098,38281,50331648).
+device(pcie,addr(6,0,1),4098,43528,67305472).
+interrupt_override(0,0,2,0).
+interrupt_override(0,0,2,5).
+interrupt_override(0,9,9,15).
+ioapic(4,4273995776,0).
+ioapic(5,3489660928,24).
+maxstdcpuid(99, 1).
+memory_affinity(0, 655360, 0).
+memory_affinity(1048576, 2951741440, 0).
+memory_affinity(4294967296, 1342177280, 0).
+memory_affinity(5637144576, 4294967296, 1).
+memory_region(0,20,1048576, 6,0).
+memory_region(1073741824,30,1073741824, 0,0).
+memory_region(134217728,27,134217728, 0,0).
+memory_region(159,688209,131072, 5,19).
+memory_region(1,645706,1024, 5,0).
+memory_region(19267584,17,131072, 2,0).
+memory_region(19398656,14,16384, 2,0).
+memory_region(19415040,14,16384, 2,0).
+memory_region(19431424,15,32768, 2,0).
+memory_region(19464192,16,65536, 2,0).
+memory_region(19795968,12,4096, 0,0).
+memory_region(19800064,13,8192, 0,0).
+memory_region(19808256,14,16384, 0,0).
+memory_region(19824640,15,32768, 0,0).
+memory_region(19857408,16,65536, 0,0).
+memory_region(19922944,20,1048576, 4294967295,0).
+memory_region(20971520,22,4194304, 0,0).
+memory_region(2147483648,29,536870912, 0,0).
+memory_region(25165824,23,8388608, 0,0).
+memory_region(2684354560,27,134217728, 0,0).
+memory_region(268435456,28,268435456, 0,0).
+memory_region(2813,2414995,524288, 5,82).
+memory_region(2818572288,26,67108864, 0,0).
+memory_region(2885681152,25,33554432, 0,0).
+memory_region(2919235584,24,16777216, 0,0).
+memory_region(2936012800,23,8388608, 0,0).
+memory_region(2944401408,22,4194304, 0,0).
+memory_region(2948595712,21,2097152, 0,0).
+memory_region(2950692864,19,524288, 0,0).
+memory_region(2951217152,18,262144, 0,0).
+memory_region(2951479296,17,131072, 0,0).
+memory_region(2951610368,16,65536, 0,0).
+memory_region(2951675904,16,65536, 6,0).
+memory_region(2951741440,14,16384, 6,0).
+memory_region(2951757824,14,16384, 6,0).
+memory_region(2951774208,15,32768, 6,0).
+memory_region(2951806976,16,65536, 6,0).
+memory_region(2951872512,17,131072, 6,0).
+memory_region(2952003584,18,262144, 6,0).
+memory_region(2952265728,19,524288, 6,0).
+memory_region(2952790016,28,268435456, 3,0).
+memory_region(3221225472,29,536870912, 3,0).
+memory_region(328,621376,1, 5,34).
+memory_region(33554432,25,33554432, 0,0).
+memory_region(3403,633636,0, 5,96).
+memory_region(3489660928,12,4096, 8,0).
+memory_region(3558,615966,1073741824, 5,116).
+memory_region(3709,606109,536870912, 5,133).
+memory_region(3758096384,28,268435456, 6,0).
+memory_region(3857,729501,536870912, 5,153).
+memory_region(4026531840,27,134217728, 3,0).
+memory_region(4160749568,26,67108864, 3,0).
+memory_region(4227858432,25,33554432, 3,0).
+memory_region(4261412864,23,8388608, 3,0).
+memory_region(4269801472,22,4194304, 3,0).
+memory_region(4273995776,12,4096, 8,0).
+memory_region(4273995776,16,65536, 6,0).
+memory_region(4274061312,16,65536, 3,0).
+memory_region(4274126848,17,131072, 3,0).
+memory_region(4274257920,18,262144, 3,0).
+memory_region(4274520064,19,524288, 3,0).
+memory_region(4275044352,20,1048576, 3,0).
+memory_region(4276092928,11,2048, 7,0).
+memory_region(4276092928,12,4096, 6,0).
+memory_region(4276097024,12,4096, 3,0).
+memory_region(4276101120,13,8192, 3,0).
+memory_region(4276109312,14,16384, 3,0).
+memory_region(4276125696,15,32768, 3,0).
+memory_region(4276158464,16,65536, 3,0).
+memory_region(4276224000,17,131072, 3,0).
+memory_region(4276355072,18,262144, 3,0).
+memory_region(4276617216,19,524288, 3,0).
+memory_region(4277141504,20,1048576, 3,0).
+memory_region(4278190080,23,8388608, 3,0).
+memory_region(4286578688,22,4194304, 3,0).
+memory_region(4290772992,21,2097152, 3,0).
+memory_region(4292870144,20,1048576, 3,0).
+memory_region(4293918720,20,1048576, 6,0).
+memory_region(4294967296,32,0, 0,0).
+memory_region(480,961087,0, 5,50).
+memory_region(536870912,29,536870912, 0,0).
+memory_region(67108864,26,67108864, 0,0).
+memory_region(715,8592504,0, 5,68).
+memory_region(8589934592,30,1073741824, 0,0).
+memory_region(9663676416,28,268435456, 0,0).
+mem_region_type(0,ram).
+mem_region_type(1,init_caps).
+mem_region_type(2,roottask).
+mem_region_type(3,phyaddr).
+mem_region_type(4,caps_only).
+mem_region_type(5,multiboot_module).
+mem_region_type(6,platform_data).
+mem_region_type(7,apic).
+mem_region_type(8,ioapic).
+rootbridge(addr(0,0,0),childbus(0,127),mem(2952790016,4294901759)).
+rootbridge(addr(128,0,0),childbus(128,255),mem(4294901760,3758096383)).
+tlb(99, 1, data, 0, 0, 1073741824).
+tlb(99, 1, data, 255, 32, 4096).
+tlb(99, 1, data, 255, 4, 4194304).
+tlb(99, 1, data, 255, 8, 2097152).
+tlb(99, 1, instruction, 0, 0, 1073741824).
+tlb(99, 1, instruction, 255, 32, 4096).
+tlb(99, 1, instruction, 255, 4, 4194304).
+tlb(99, 1, instruction, 255, 8, 2097152).
+tlb(99, 2, data, 0, 0, 1073741824).
+tlb(99, 2, data, 0, 0, 2097152).
+tlb(99, 2, data, 0, 0, 4194304).
+tlb(99, 2, data, 4, 0, 4096).
+tlb(99, 2, instruction, 0, 0, 1073741824).
+tlb(99, 2, instruction, 0, 0, 2097152).
+tlb(99, 2, instruction, 0, 0, 4194304).
+tlb(99, 2, instruction, 4, 0, 4096).

@@ -1,0 +1,24 @@
+if Config.libc == "newlib" then [ build library {
+  target = "search",
+  cFiles = [
+    "bsearch.c",
+    "qsort.c",
+    "hash.c",
+    "hash_bigkey.c",
+    "hash_buf.c",
+    "hash_func.c",
+    "hash_log2.c",
+    "hash_page.c",
+    "hcreate.c",
+    "hcreate_r.c",
+    "tdelete.c",
+    "tdestroy.c",
+    "tfind.c",
+    "tsearch.c",
+    "twalk.c"],
+  addCFlags  = Config.newlibAddCFlags,
+  omitCFlags = [ "-Wold-style-definition",
+                 "-Wstrict-prototypes",
+                 "-Wredundant-decls",
+                 "-Werror" ]
+}] else []

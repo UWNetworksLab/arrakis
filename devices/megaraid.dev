@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2014, University of Washington. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * megaraid.dev
+ *
+ * DESCRIPTION: LSI MegaRAID Controller
+ *
+ * From the FreeBSD driver.
+ */
+
+device megaraid msbfirst ( addr base ) "LSI MegaRAID Controller" {
+       register doorbell rw addr(base, 0x0) "Doorbell" type(uint32);
+       register fusion_seq_offset rw addr(base, 0x4) "Fusion SEQ Offset" type (uint32);
+       register fusion_host_diag rw addr(base, 0x8) "Fusion Host Diag" type (uint32);
+
+       register inbound_msg_0 rw addr(base, 0x10) "Inbound msg 0" type (uint32);
+       register inbound_msg_1 rw addr(base, 0x14) "Inbound msg 0" type (uint32);
+       register outbound_msg_0 rw addr(base, 0x18) "Outbound msg 0" type (uint32);
+       register outbound_msg_1 rw addr(base, 0x1c) "Outbound msg 1" type (uint32);
+
+       register inbound_doorbell rw addr(base, 0x20) "Inbound doorbell" type (uint32);
+       register inbound_intr_status rw addr(base, 0x24) "Inbound interrupt status" type (uint32);
+       register inbound_intr_mask rw addr(base, 0x28) "Inbound interrupt mask" type (uint32);
+       register outbound_doorbell rw addr(base, 0x2c) "Outbound doorbell" type (uint32);
+       register outbound_intr_status rw addr(base, 0x30) "Outbound interrupt status" type (uint32);
+       register outbound_intr_mask rw addr(base, 0x34) "Outbound interrupt mask" type (uint32);
+
+       register inbound_queue_port rw addr(base, 0x40) "Inbound queue port" type (uint32);
+       register outbound_queue_port rw addr(base, 0x44) "Outbound queue port" type (uint32);
+
+       register reply_post_host_index rw addr(base, 0x6c) "Reply post host index" type (uint32);
+
+       register outbound_doorbell_clear rw addr(base, 0xa0) "Outbound doorbell clear" type (uint32);
+
+       constants state "Controller state" {
+         state_undefined	   = 0x0  "Undefined";
+	 state_bb_init		   = 0x1  "BB Init";
+	 state_fw_init		   = 0x4  "FW Init";
+	 state_wait_handshake	   = 0x6  "Wait handshake";
+	 state_fw_init_2	   = 0x7  "FW Init 2";
+	 state_device_scane	   = 0x8  "Device scan";
+	 state_boot_msg_pending	   = 0x9  "Boot message pending";
+	 state_flush_cache	   = 0xa  "Flush cache";
+	 state_ready		   = 0xb  "Ready";
+	 state_operational	   = 0xc  "Operational";
+	 state_fault		   = 0xf  "Fault";
+       };
+
+       register status ro addr(base, 0xb0) "Device status" {
+         state	     4  type(state) "Controller status";
+	 _	     4;
+	 sge	     8;
+	 max_cmds    16 "Max. # of commands";
+       };
+
+       register outbound_scratch_pad_2 rw addr(base, 0xb4) "Outbound scratch pad #2" type (uint32);
+
+       register inbound_low_queue_port rw addr(base, 0xc0) "Inbound low queue port" type (uint32);
+       register inbound_high_queue_port rw addr(base, 0xc4) "Inbound high queue port" type (uint32);
+};

@@ -1,0 +1,176 @@
+/*
+ * Copyright (c) 2008, 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * pci_hdr0.dev
+ *
+ * DESCRIPTION: PCI Type 0 Configuration header
+ * 
+ */
+
+device pci_hdr0_mem msbfirst ( addr base ) "PCI Type 0 Configuration" {
+
+  register vendor_id rw addr( base, 0x00 ) "Vendor ID" type(uint16);
+  register device_id rw addr( base, 0x02 ) "Device ID" type(uint16);
+
+  register command rw addr( base, 0x04 ) "Command" {
+    _		5; 
+    int_dis	1 rw "Interrupt disable";
+    back2back	1 ro "Fast back-to-back enable";
+    serr	1 rw "SERR# enable";
+    stepping	1 ro "IDSEL stepping/wait cycle control";
+    parity	1 rw "Parity error response";
+    vga_snoop	1 ro "VGA palette snoop enable";
+    mem_inval	1 ro "Memory write and invalidate enable";
+    special	1 ro "Special cycles";
+    master	1 rw "Bus master";
+    mem_space	1 rw "Memory space enable";
+    io_space	1 rw "I/O space enable";
+  };
+
+  register status addr( base, 0x06 ) "Status" {
+    parity_err	1 rwc "Detected parity error";
+    system_err	1 rwc "Signalled system error";
+    rx_m_abrt	1 rwc "Received master abort";
+    rx_t_abrt	1 rwc "Received target abort";
+    sig_t_abrt	1 rwc "Signalled target abort";
+    devsel	2 ro  "DEVSEL timing";
+    md_parity	1 rwc "Master data parity error";
+    back2back   1 ro  "Fast Back-to-Back enable";
+    udf		1 ro  "UDF supported";
+    m66		1 ro  "66MHz capable";
+    caplist	1 ro  "Capabilities list";
+    intstat	1 ro  "Interrupt status";
+    _		3;
+  };
+
+  //
+  // Revision ID and Class code fall in the same 32-bit space.  We
+  // allow access to the Revision ID as an 8-bit value, and the Class
+  // Code as a 32-bit value with the bottom 8 bits reserved, but we
+  // could I suppose combine them all into one register.
+  //
+
+  register rev_id ro addr( base, 0x08 ) "Revision ID" type(uint8);
+
+  constants classcode "Class code" {
+    old		= 0x00 "Pre-2.0 PCI device";
+    mass	= 0x01 "Mass storage controller";
+    network	= 0x02 "Network controller";
+    display	= 0x03 "Display controller";
+    multimedia  = 0x04 "Multimedia device";
+    memory	= 0x05 "Memory controller";
+    bridge	= 0x06 "Bridge device";
+    simple	= 0x07 "Simple communications controller";
+    base	= 0x08 "Base system peripherals";
+    input	= 0x09 "Input device";
+    docking	= 0x0a "Docking station";
+    processor	= 0x0b "Processor";
+    serial	= 0x0c "Serial bus controller";
+    wireless	= 0x0d "Wireless controller";
+    intelligent = 0x0e "Intelligent I/O controller";
+    satellite   = 0x0f "Satellite communications controller";
+    crypt	= 0x10 "Encryption/decryption device";
+    acquisition = 0x11 "Data acquisition controller";
+    misc	= 0xff "Miscellaneous";
+  };
+
+  register class_code rw also addr( base, 0x08 ) "Class code" {
+    clss	8 type(classcode) "Class code";
+    subclss	8 "Subclass code";
+    prog_if	8 "Programming intf";
+    _		8; 
+  };
+
+  register cache_sz rw addr( base, 0x0c ) "Cache line size" type(uint8);
+  register latency rw addr( base, 0x0d ) "Master latency timer" type(uint8);
+
+  //
+  // Important stuff: whether this is actually a Type-0 header at
+  // all.  This is currently duplicated into the Type-1 definition -
+  // when Mackerel gets a module system we can break this out into
+  // other files. 
+  //
+  constants hdrtype "Configuration header types" {
+    nonbridge	= 0 "non-bridge function";
+    pci2pci	= 1 "PCI-to-PCI bridge";
+    cardbus	= 2 "CardBus bridge";
+  };
+
+  register hdr_type ro addr( base, 0x0e ) "Header type" { 
+    multi	1 "Multifunction device";
+    fmt		7 type(hdrtype) "Configuration header format";
+  };
+
+  register bist addr( base, 0x0f ) "Built-in self-test" {
+    cap		1 ro "BIST capable";
+    start	1 rw "Start BIST";
+    _		2;
+    comp	4 ro "Completion code";
+  };
+
+  // 
+  // Base-Address registers.  These are problematic for Mackerel,
+  // since you don't know exactly what the register is (32, 64, or IO)
+  // until you read it.  And only then do you know where the next one
+  // might be.   This is beyond Mackerel, and in all honesty probably
+  // should stay that way.  
+  // 
+  // As a compromise we define register types for each BAR, and give
+  // the BAR block as simply a set of 6 32-bit registers.  PCI
+  // enumeration code can do the rest. 
+  // 
+  constants bardecoder "BAR decoder type" {
+    bar_32bit	= 0b00 "32-bit decoder";
+    bar_64bit	= 0b10 "64-bit decoder";
+  };
+
+  regtype bar32 "32-bit memory base address" {
+    base	25 rw "Base address";
+    _		3;
+    prefetch	1 ro "Prefetchable";
+    tpe		2 ro type(bardecoder) "Memory decoder type";
+    space       1 ro "Memory space indicator";
+  };
+  regtype bar64 "64-bit memory base address" {
+    base	57 rw "Base address";
+    _		3;
+    prefetch	1 ro "Prefetchable";
+    tpe		2 ro type(bardecoder) "Memory decoder type";
+    space       1 ro "Memory space indicator";
+  };
+  regtype bario "I/O space base address" {
+    base	30 rw "Base address";
+    _		1;
+    space	1 ro "I/O space indicator";
+  };
+  
+  regarray bars addr( base, 0x10 ) [5] "Base address registers" type(uint32);
+
+  register cardbus ro addr(base, 0x28) "CardBus CIS ptr" type(uint32);
+
+  register subsys_vid ro addr(base, 0x2c) "Subsystem vendor ID" type(uint16);
+  register subsys_id ro addr(base, 0x2e) "Subsystem ID" type(uint16);
+  
+  register rom_base rw addr(base, 0x30) "Expansion ROM base addr" {
+    base	21 "ROM Base address high bits";
+    _		10;
+    enable	1 "ROM address decoder enable";
+  };
+
+  register cap_ptr ro addr(base, 0x34) "Capabilities ptr" type(uint8);
+
+  register int_line rw addr(base, 0x3c) "Interrupt line" type(uint8);
+  register int_pin ro addr(base, 0x3d) "Interrupt ping" type(uint8);
+
+  register min_gnt ro addr(base, 0x3e) "Min Gnt" type(uint8);
+  register max_lat ro addr(base, 0x3f) "Max Lat" type(uint8);
+
+};
+
+

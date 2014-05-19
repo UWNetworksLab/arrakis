@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface net_soft_filters "Software based filter Interface" {
+
+    call register_filter_memory_request(cap mem);
+    response register_filter_memory_response(errval err);
+
+    call register_filter_request(uint64 id,
+            uint64 len_rx,
+            uint64 len_tx,
+            uint64 buffer_id_rx,
+            uint64 buffer_id_tx,
+            uint64 filter_type,
+            uint64 paused);
+    response register_filter_response(uint64 id,
+            errval err,
+            uint64 filter_id,
+            uint64 buffer_id_rx,
+            uint64 buffer_id_tx,
+            uint64 filter_type);
+
+    call re_register_filter_request(uint64 filter_id,
+            uint64 buffer_id_rx,
+            uint64 buffer_id_tx);
+    response re_register_filter_response(errval err,
+            uint64 filter_id,
+            uint64 buffer_id_rx,
+            uint64 buffer_id_tx);
+
+    call deregister_filter_request(uint64 filter_id);
+    response deregister_filter_response(errval err,
+            uint64 filter_id);
+
+    call register_arp_filter_request(uint64 id,
+            uint64 len_rx,
+            uint64 len_tx);
+    response register_arp_filter_response(uint64 id,
+            errval err);
+
+    call pause(uint64 filter_id, uint64 buffer_id_rx, uint64 buffer_id_tx);
+    response pause_response(uint64 filter_id, errval err);
+    call unpause(uint64 filter_id);
+    response unpause_response(uint64 filter_id, errval err);
+
+    /* Hack to pass the mac addr info to */
+    call mac_address_request();
+    response mac_address_response(errval err, uint64 macaddr);
+};
+
+

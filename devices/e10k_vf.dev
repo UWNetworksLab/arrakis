@@ -1,0 +1,430 @@
+/*
+ * Copyright (c) 2013, University of Washington. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * e10k_vf.dev
+ *
+ * DESCRIPTION: Intel 82599 10 GbE Controller Virtual Function
+ *
+ * Numbers in comments refer to the Intel 82599 10 GbE Controller Datasheet,
+ * Revison 2.76, September 2012
+ */
+
+device e10k_vf lsbfirst ( addr base ) "Intel 82599 10 GbE Controller Virtual Function" {
+
+  /************************************
+   * 8.3.5.1 General control registers--VF
+   ***********************************/
+
+  // 8.3.5.1.1
+  register vfctrl wo addr(base, 0x00000) "VF control" {
+    _           26 rsvd;
+    rst         1 "Device reset";
+    _           5 rsvd;
+  };
+
+  constants lanid "LAN ID" {
+    lan_0       = 0b00 "LAN 0";
+    lan_1       = 0b01 "LAN 1";
+    lan_not_u1  = 0b10 "LAN ID not used";
+    lan_not_u2  = 0b11 "LAN ID not used";
+  };
+
+  // 8.3.5.1.2
+  register vfstatus ro addr(base, 0x00008) "VF status" {
+    _           2;
+    lan_id      2 type(lanid) "LAN ID";
+    _           3;
+    link_up     1 "Linkup Status Indication";
+    _           2;
+    num_vfs     8 "Num VFs";
+    iov_active  1 "IOV Active";
+    pcie_mes    1 "PCIe Master Enable Status";
+    _           12;
+  };
+
+  // 8.3.5.1.3
+  constants mac_lnkmode "MAC link mode status" {
+    lms_1g      = 0b00 "1 GbE";
+    lms_10g_par = 0b01 "10 GbE parallel";
+    lms_10g_ser = 0b10 "10 GbE serial";
+    lms_aneg    = 0b11 "auto-negotiation";
+  };
+
+  constants link_speed "MAC link speed status" {
+    ls_100m     = 0b01 "100 Mb/s";
+    ls_1g       = 0b10 "1 GbE";
+    ls_10g      = 0b11 "10 GbE";
+  };
+
+  register vflinks ro addr(base, 0x00010) "VF Link Status Register" {
+    kxsig_det   1 "A signal is present";
+    fecsig_det  1 "FEC reports signal detected";
+    fecblk_lck  1 "FEC reached block lock";
+    krhberr     1 "10GbE serial KR_PCS high error rate";
+    krpcsbl     1 "10 GbE serial PCS block lock";
+    kxr_annprcv 1 "KX/KX4/KR AN Next Page Received";
+    kxr_anprcv  1 "KX/KX4/KR Backplane Auto Negotiation Page Received";
+    lnk_stat    1 "Link Up and there was no link down from last time read";
+    kx4sig_det  4 "Signal Detect of 10 GbE Parallel (KX4, CX4 or XAUI) (1bit per lane)";
+    krsig_det   1 "Signal Detect of 10 GbE serial (KR or SFI)";
+    l10g_syncst 4 "10G Parallel lane sync status (1bit per lane)";
+    l10g_algst  1 "10 GbE align_status";
+    l1g_syncst  1 "1G sync_status";
+    kxr_anrxid  1 "KX/KX4/KR Backplane Auto Negotiation Rx Idle";
+    l1g_anen    1 "PCS_1 GbE auto-negotiation is enabled";
+    l1g_lnken   1 "1 GbE PCS enabled for 1 GbE and SGMII operation";
+    l10g_lnken  1 "XGXS Enabled for 10 GbE operation";
+    fec_en      1 "Status of forwarderrorcorrection in 10 GbE serial link";
+    l10g_seren  1 "Status of 10 GbE serial PCS (KR PCS) for KR or SFI operation";
+    sgmii_en    1 "Status of SGMII operation";
+    mlink_mode  2 type (mac_lnkmode) "MAC link mode status";
+    lnk_speed   2 type (link_speed) "MAC link speed status";
+    lnk_up      1 "Link is up";
+    kxr_ancomp  1 "KX/KX4/KR backplane auto-negotiation has completed successfully";
+  };
+
+  // NYI:
+  // 8.3.5.1.4 VF Free Running Timer (VFFRTIMER)
+  // 8.3.5.1.5 VF Mailbox (VFMailbox)
+  // 8.3.5.1.6 VF Mailbox Memory (VFMBMEM)
+
+  // 8.3.5.1.7
+  register vfrxmemwrap ro addr(base, 0x03190) "VF Rx Packet Buffer Flush Detect" {
+    tc0_wrap    3 "Packet Buffer 0 Wrap Around Counter";
+    tc0_empty   1 "Packet Buffer 0 Empty";
+    tc1_wrap    3 "Packet Buffer 1 Wrap Around Counter";
+    tc1_empty   1 "Packet Buffer 1 Empty";
+    tc2_wrap    3 "Packet Buffer 2 Wrap Around Counter";
+    tc2_empty   1 "Packet Buffer 2 Empty";
+    tc3_wrap    3 "Packet Buffer 3 Wrap Around Counter";
+    tc3_empty   1 "Packet Buffer 3 Empty";
+    tc4_wrap    3 "Packet Buffer 4 Wrap Around Counter";
+    tc4_empty   1 "Packet Buffer 4 Empty";
+    tc5_wrap    3 "Packet Buffer 5 Wrap Around Counter";
+    tc5_empty   1 "Packet Buffer 5 Empty";
+    tc6_wrap    3 "Packet Buffer 6 Wrap Around Counter";
+    tc6_empty   1 "Packet Buffer 6 Empty";
+    tc7_wrap    3 "Packet Buffer 7 Wrap Around Counter";
+    tc7_empty   1 "Packet Buffer 7 Empty";
+  };
+
+  /************************************
+   * 8.3.5.2 Interrupt Registers--VF
+   ***********************************/
+
+  // 8.3.5.2.1
+  register vfeicr rw1c addr(base, 0x00100) "VF Extended Interrupt Cause" {
+    msix   	3  "Indicates an interrupt cause mapped to MSI-X vectors 2:0";
+    _           29 rsvd;
+  };
+
+  // 8.3.5.2.2
+  register vfeics wo addr(base, 0x00104) "VF Extended Interrupt Cause Set" {
+    msix        3  "Sets to corresponding EICR bit of MSI-X vectors 2:0";
+    _           29 rsvd;
+  };
+
+  // 8.3.5.2.3
+  register vfeims rw addr(base, 0x00108) "VF Extended Interrupt Mask Set/Read" {
+    msix        3  "Set mask bit for the corresponding EICR bit of MSI-X vectors 2:0";
+    _           29 rsvd;
+  };
+
+  // 8.3.5.2.4
+  register vfeimc wo addr(base, 0x0010c) "VF Extended Interrupt Mask Clear" {
+    msix        3  "Clear mask bit for the corresponding EICR bit of MSI-X vectors 2:0";
+    _           29 rsvd;
+  };
+
+  // 8.3.5.2.5
+  register vfeiam rw addr(base, 0x00114) "VF Extended Interrupt Auto Mask Enable" {
+    msix        3  "Auto mask bit for the corresponding EICR bit of MSI-X vectors 2:0";
+    _           29 rsvd;
+  };
+
+  // 8.3.5.2.6
+/*
+  regtype vfeitrn "VF Extended Interrupt Throttle Register Type" {
+    _           3 rsvd;
+    itr_int     9 "Minimum inter-interrupt interval";
+    _           3 rsvd;
+    lli_mod     1 "LLI Moderation";
+    lli_credit  5 "LLI Credit";
+    itr_count   7 "ITR Counter";
+    _           3 rsvd;
+    cnt_wdis    1 "CNT_WDIS";
+  };
+*/
+  // XXX: Not sure if this is correct...
+  regarray vfeitr rw addr(base, 0x00820) [2]
+                "VF Extended Interrupt Mask Set/Read #0-#1"
+                type(uint32);
+
+  // 8.3.5.2.7
+  regarray vfivar rw addr(base, 0x00120) [4] "VF Interrupt Vector Allocation Registers" {
+    i_alloc0    1 "Defines the MSI-X vector (0 or 1) assigned to Rx queue 2*N for IVAR N register (N = 0..3)";
+    _           6 rsvd;
+    i_allocval0 1 "Interrupt allocation 0 valid";
+    i_alloc1    1 "The interrupt allocation for Tx queue 2n";
+    _           6 rsvd;
+    i_allocval1 1 "Interrupt allocation 1 valid";
+    i_alloc2    1 "The interrupt allocation for Rx queue 2n+1";
+    _           6 rsvd;
+    i_allocval2 1 "Interrupt allocation 2 valid";
+    i_alloc3    1 "The interrupt allocation for Tx queue 2n+1";
+    _           6 rsvd;
+    i_allocval3 1 "Interrupt allocation 3 valid";
+  };
+
+  // 8.3.5.2.8
+  register vfivar_misc rw addr(base, 0x00140) "VF Miscellaneous Interrupt Vector Allocation" {
+    i_alloc0    2 "MSI-X vector assigned to the mailbox interrupt";
+    _		5 rsvd;
+    i_allocval0 1 "Interrupt allocation 0 valid";
+    _           24 rsvd;
+  };
+
+  // 8.3.5.2.9
+  // XXX: Not sure if this is correct...
+  regarray vfrscint rw addr(base, 0x00180) [2] "VF RSC Enable Interrupt" type(uint32);
+
+  // 8.3.5.2.10
+  register vfpbacl rw1c addr(base, 0x00148) "VF MSI-X PBA Clear" {
+    penbit 	   3	"MSI-X Pending Bits Clear. Reading returns PBA vector.";
+    _		   29	rsvd;
+  };
+
+  /************************************
+   * 8.3.5.3 Receive DMA Registers -- VF
+   ***********************************/
+
+  // 8.3.5.3.1
+  regarray vfrdbal rw addr(base, 0x01000) [8; 0x40]
+                "VF Receive Descriptor Base Address Low (#0-#7)"
+                type(uint32);
+
+  // 8.3.5.3.2
+  regarray vfrdbah rw addr(base, 0x01004) [8; 0x40]
+                "VF Receive Descriptor Base Address High (#0-#7)"
+                type(uint32);
+
+  // 8.3.5.3.3
+  regarray vfrdlen rw addr(base, 0x01008) [8; 0x40]
+                "VF Receive Descriptor Length (#0-#7)"
+                type(uint32);
+
+  // 8.3.5.3.4
+  regarray vfrdh rw addr(base, 0x01010) [8; 0x40]
+                "VF Receive Descriptor Head (#0-#7)"
+                type(uint32);
+
+  // 8.3.5.3.5
+  regarray vfrdt rw addr(base, 0x01018) [8; 0x40]
+                "VF Receive Descriptor Tail (#0-#7)"
+                type(uint32);
+
+  // 8.3.5.3.6
+  regtype rxdctl "Receive Descriptor Control" {
+    _           25 rsvd;
+    enable      1 "Receive Queue Enable";
+    _           4 rsvd;
+    vme         1 "VLAN Mode Enable";
+    _           1 rsvd;
+  };
+
+  regarray vfrxdctl rw addr(base, 0x01028) [8; 0x40]
+                "VF Receive Descriptor Control (#0-#7)"
+                type(rxdctl);
+
+  // 8.3.5.3.7
+  constants rx_desctype "RX Descriptor Type" {
+    legacy      = 0b000 "Legacy";
+    adv_1buf    = 0b001 "Advanced descriptor one buffer";
+    adv_hdrsp   = 0b010 "Advanced descriptor header splitting";
+    adv_usehb   = 0b101 "Advanced descriptor header splitting always use header buffer";
+  };
+
+  regtype srrctl "Split Receive Control Registers" {
+    bsz_pkt     5 "Receive Buffer Size for Packet Buffer";
+    _           3 mbz;
+    bsz_hdr     6 "Receive Buffer Size for Header Buffer";
+    _           8 rsvd;
+    rdmts       3 "Receive Descriptor Minimum Threshold Size";
+    desctype    3 type(rx_desctype) "Define the descriptor type";
+    drop_en     1 "Drop Enabled";
+    _           3 rsvd;
+  };
+
+  regarray vfsrrctl rw addr(base, 0x01014) [8; 0x40]
+                "VF Split Receive Control Registers (#0-#7)"
+                type(srrctl);
+
+  // 8.3.5.3.8
+  register vfpsrtype rw addr(base, 0x00300) "VF Replication Packet Split Receive Type" {
+    _           1 mbz;
+    split_nfs   1 "Split received NFS packets after NFS header";
+    _           2 mbz;
+    split_tcp   1 "Split received TCP packets after TCP header";
+    split_udp   1 "Split received UDP packets after UDP header";
+    _           2 mbz;
+    split_ip4   1 "Split received IPv4 packets after IPv4 header";
+    split_ip6   1 "Split received IPv6 packets after IPv6 header";
+    _           2 mbz;
+    split_l2    1 "Split received L2 packets after L2 header";
+    _           16 mbz;
+    rqpl        3 "Number of bits to use for RSS redirection";
+  };
+
+  // 8.3.5.3.9
+  constants rsc_maxdesc "Maximum descriptors per Large receive" {
+    max_1desc   = 0b00 "Maximum of 1 descriptor per large receive";
+    max_4desc   = 0b01 "Maximum of 4 descriptors per large receive";
+    max_8desc   = 0b10 "Maximum of 8 descriptors per large receive";
+    max_16desc  = 0b11 "Maximum of 16 descriptors per large receive";
+  };
+
+  regtype rscctl "RSC Control" {
+    rsc_en      1 "RSC Enable";
+    _           1 rsvd;
+    maxdesc     2 type(rsc_maxdesc) "Maximum descriptors per Large receive";
+    _           28 rsvd;
+  };
+
+  regarray vfrscctl rw addr(base, 0x0102c) [8; 0x40]
+                "RSC Control (#0-#7)"
+                type(rscctl);
+
+  /************************************
+   * 8.3.5.4 Transmit Registers -- VF
+   ***********************************/
+
+  // 8.3.5.4.1
+  regarray vftdbal rw addr(base, 0x02000) [4; 0x40]
+                "VF Transmit Descriptor Base Address Low"
+                type(uint32);
+
+  // 8.3.5.4.2
+  regarray vftdbah rw addr(base, 0x02004) [4; 0x40]
+                "VF Transmit Descriptor Base Address High"
+                type(uint32);
+
+  // 8.3.5.4.3
+  regarray vftdlen rw addr(base, 0x02008) [4; 0x40]
+                "VF Transmit Descriptor Length"
+                type(uint32);
+
+  // 8.3.5.4.4
+  // rw is only partially accurate here. This register must only be written
+  // directly after reset.
+  regarray vftdh rw addr(base, 0x02010) [4; 0x40]
+                "VF Transmit Descriptor Head"
+                type(uint32);
+
+  // 8.3.5.4.5
+  regarray vftdt rw addr(base, 0x02018) [4; 0x40]
+                "VF Transmit Descriptor Tail"
+                type(uint32);
+
+  // 8.3.5.4.6
+  regarray vftxdctl rw addr(base, 0x02028) [4; 0x40] "VF Transmit Descriptor Control" {
+    pthresh     7 "Pre-Fetch Threshold";
+    _           1 rsvd;
+    hthresh     7 "Host Threshold";
+    _           1 rsvd;
+    wthresh     7 "Write-Back Threshold";
+    _           2 rsvd;
+    enable      1 "Transmit Queue Enable";
+    swflsh      1 "Transmit Software Flush";
+    _           5 rsvd;
+  };
+
+  // 8.3.5.4.7
+  regarray vftdwbal rw addr(base, 0x02038) [4; 0x40] "VF Tx Descriptor Completion Write Back Address Low" {
+    headwb_en   1 "Head Write-Back Enable";
+    _           1 rsvd;
+    headwb_low  30 "Lowest 32 bits of the head write-back memory location";
+  };
+
+  // 8.3.5.4.8
+  regarray vftdwbah rw addr(base, 0x0203c) [4; 0x40] "VF Tx Descriptor Completion Write Back Address High" {
+    headwb_high 32 "Highest 32 bits of the head write-back memory location";
+  };
+
+  /************************************
+   * 8.3.5.5 DCA Registers -- VF
+   ***********************************/
+
+  // 8.3.5.5.1
+  regtype dca_rxctrl "Rx DCA Control Register" {
+    _           5 rsvd;
+    rxdca_desc  1 "Descriptor DCA EN";
+    rxdca_hdr   1 "Rx Header DCA EN";
+    rxdca_payl  1 "Payload DCA EN";
+    _           1 rsvd;
+    rxdesc_rdro 1 "Rx Descriptor Read Relax Order Enable";
+    _           1 rsvd;
+    rxdesc_wbro 1 mbz "Rx Descriptor Write Back Relax Order Enable";
+    _           1 rsvd;
+    rxdata_wrro 1 "Rx data Write Relax Order Enable";
+    _           1 rsvd;
+    rxhdr_ro    1 "Rx Split Header Relax Order Enable";
+    _           8 rsvd;
+    cpuid       8 "Physical ID";
+  };
+
+  regarray vfdca_rxctrl rw addr(base, 0x0100c) [8; 0x40]
+                "VF Rx DCA Control Register (#0-#7)"
+                type(dca_rxctrl);
+
+  // 8.3.5.5.2
+  regarray vfdca_txctrl rw addr(base, 0x0200c) [8; 0x40] "VF Tx DCA Control Registers" {
+    _           5 rsvd;
+    txdesc_dca  1 "Descriptor DCA Enable";
+    _           3 rsvd;
+    txdesc_rdro 1 "Tx Descriptor Read Relax Order Enable";
+    _           1 rsvd;
+    txdesc_wbro 1 "Relax Order Enable of Tx Descriptor well as head pointer write back";
+    _           1 rsvd;
+    txdata_rdro 1 "Tx Data Read Relax Order Enable";
+    _           10 rsvd;
+    cpuid       8 "Physical ID";
+  };
+
+  /************************************
+   * 8.3.5.6 Statistics -- VF
+   ***********************************/
+
+  // 8.3.5.6.1
+  register vfgprc ro addr(base, 0x0101c) "VF Good packets received count"
+    type(uint32);
+
+  // 8.3.5.6.2
+  register vfgptc ro addr(base, 0x0201c) "VF Good packets trasmitted count"
+    type(uint32);
+
+  // 8.3.5.6.3
+  register vfgorc_lsb ro addr(base, 0x01020) "VF Good Octets Received Count Low"
+    type(uint32);
+
+  // 8.3.5.6.4
+  register vfgorc_msb ro addr(base, 0x01024) "VF Good Octets Received Count High"
+    type(uint32);
+
+  // 8.3.5.6.5
+  register vfgotc_lsb ro addr(base, 0x02020) "VF Good Octets Transmitted Count Low"
+    type(uint32);
+ 
+  // 8.3.5.6.6
+  register vfgotc_msb ro addr(base, 0x02024) "VF Good Octets Transmitted Count High"
+    type(uint32);
+
+  // 8.3.5.6.7
+  register vfmprc ro addr(base, 0x01034) "VF Multicast Packets Received Count"
+    type(uint32);
+};

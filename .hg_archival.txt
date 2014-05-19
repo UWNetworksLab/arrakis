@@ -1,0 +1,5 @@
+repo: 3274c00b02e5a1286f4e620a388613b51cf503e0
+node: dd7df0b11ff57bd98ff697bc8a4142fdbb55b4b3
+branch: default
+latesttag: arrakis-release-2014-05-14
+latesttagdistance: 1

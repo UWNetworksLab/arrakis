@@ -1,0 +1,52 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for drivers/serial
+-- 
+--------------------------------------------------------------------------
+
+[ build application { target = "usb_manager",
+                      cFiles = [ "usb_manager.c", "usb_controller.c", 
+                      "usb_device.c", "usb_endpoint.c",
+                      "usb_memory.c","usb_xfer.c",
+                      "usb_request.c", "usb_transfer.c",
+                      "usb_pipe.c", "usb_driver.c",
+                      -- OHCI Controller
+                      "controller/ohci/usb_ohci_bus.c", 
+                      "controller/ohci/usb_ohci_memory.c", 
+                      "controller/ohci/usb_ohci_queue.c",
+                      "controller/ohci/usb_ohci_pipe.c", 
+                      "controller/ohci/usb_ohci_root_hub.c", 
+                      "controller/ohci/usb_ohci_xfer.c", 
+                      "controller/ohci/usb_ohci.c",
+                      -- EHCI Controller
+                      "controller/ehci/usb_ehci_bus.c", 
+                      "controller/ehci/usb_ehci_memory.c", 
+                      "controller/ehci/usb_ehci_queue.c",
+                      "controller/ehci/usb_ehci_pipe.c", 
+                      "controller/ehci/usb_ehci_root_hub.c", 
+                      "controller/ehci/usb_ehci_xfer.c", 
+                      "controller/ehci/usb_ehci.c",
+                      -- USB hub
+                      "hub/usb_hub.c",
+                      "hub/usb_hub_request.c"
+                      ],
+                      
+                      flounderDefs = [ "usb_manager", "usb_driver", "monitor_blocking" ],
+                      flounderBindings = [ "usb_manager", "usb_driver" ],
+                      flounderExtraBindings = [ ("usb_manager",["rpcclient"])],
+                      
+                      flounderExtraDefs = [ ("monitor_blocking", ["rpcclient"]) ],
+                      
+                      mackerelDevices = [ "ohci", "omap/ohci", 
+                                          "ehci", "omap/ehci"],
+                      addIncludes = [ "include"],
+                      addLibraries = ["usb", "driverkit"],
+                      architectures = allArchitectures
+                    }
+]

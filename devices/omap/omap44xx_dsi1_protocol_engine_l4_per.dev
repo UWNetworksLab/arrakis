@@ -1,0 +1,1171 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_dsi1_protocol_engine_l4_per.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_dsi1_protocol_engine_l4_per msbfirst ( addr base ) "" {
+    
+    
+    register dsi_revision ro addr(base, 0x0) "IP Revision" type(uint32);
+
+    constants clockactivity_status width(2) "" {
+        CLOCKACTIVITY_0 = 0 "Interface and Functional clocks can be switched off";
+        CLOCKACTIVITY_1 = 1 "Functional clocks can be switched off and Interface clocks are maintained during wake up period";
+        CLOCKACTIVITY_2 = 2 "Interface clocks can be switched off and Functional clocks are maintained during wake up period";
+        CLOCKACTIVITY_3 = 3 "Interface and Functional clocks are maintained during wake up period";
+    };
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0 = 0 "Force-idle. An idle request is acknowledged unconditionally";
+        SIDLEMODE_1 = 1 "No-idle. An idle request is never acknowledged";
+        SIDLEMODE_2 = 2 "Smart-idle. Acknowledgement to an idle request is given based on the internal activity of the module.";
+        SIDLEMODE_3 = 3 "Reserved";
+    };
+
+    constants enwakeup_status width(1) "" {
+        ENWAKEUP_0 = 0 "Wakeup is disabled";
+        ENWAKEUP_1 = 1 "Wakeup is enabled";
+    };
+
+    constants soft_reset_status width(1) "" {
+        SOFT_RESET_0 = 0 "Normal mode.";
+        SOFT_RESET_1 = 1 "The module is reset";
+    };
+
+    constants auto_idle_status width(1) "" {
+        AUTO_IDLE_0 = 0 "Interface clock is free-running.";
+        AUTO_IDLE_1 = 1 "Automatic Interface clock gating strategy is applied based on the interface activity.";
+    };
+    
+    register dsi_sysconfig addr(base, 0x10) "SYSTEM CONFIGURATION REGISTER" {
+        _ 22 mbz;
+        clockactivity 2 rw type(clockactivity_status) "Clocks activity during wake up mode period";
+        _ 3 mbz;
+        sidlemode 2 rw type(sidlemode_status) "Slave interface power management, Idle req/ack control";
+        enwakeup 1 rw type(enwakeup_status) "Wake-up mode enable bit";
+        soft_reset 1 rw type(soft_reset_status) "Software reset. Set the bit to 1 to trigger a module reset. The bit is automatically reset by the hardware. During reads return 0.";
+        auto_idle 1 rw type(auto_idle_status) "Internal interface gating strategy";
+    };
+
+    constants reset_done_status width(1) "" {
+        RESET_DONE_0_r = 0 "Internal module reset is on going.";
+        RESET_DONE_1_r = 1 "Reset completed.";
+    };
+    
+    register dsi_sysstatus addr(base, 0x14) "SYSTEM STATUS REGISTER This register provides status information about the module, excluding the interrupt status register." {
+        _ 31 mbz;
+        reset_done 1 ro type(reset_done_status) "Internal reset monitoring";
+    };
+
+    constants te1_line_irq_status width(1) "" {
+        TE1_LINE_IRQ_0 = 0 "READS: Event is false. WRITES: Status bit unchanged.";
+        TE1_LINE_IRQ_1 = 1 "READS: Event is true (pending). WRITES: Status bit is reset.";
+    };
+
+    constants complexio_err_irq_status width(1) "" {
+        COMPLEXIO_ERR_IRQ_0_r = 0 "READS: Event is false.";
+        COMPLEXIO_ERR_IRQ_1_r = 1 "READS: Event is true (pending).";
+    };
+    
+    register dsi_irqstatus addr(base, 0x18) "INTERRUPT STATUS REGISTER - All virtual channels + Complex I/O + PLL This register associates one bit for each virtual channel in order to determine which virtual channel has generated the interrupt. The virtual channel shall be enabled for events to be generated on that virtual channel. If the virtual channel is disabled, the interrupt is not generated." {
+        _ 9 mbz;
+        te1_line_irq 1 rw type(te1_line_irq_status) "The VSYNC and corresponding HSYNC pulses defined in DSI_TE_HSYNC_NUMBER for the line TE1 have been received by the DSI protocol engine and have trigger the start of the data transfer to the peripheral.";
+        te0_line_irq 1 rw type(te1_line_irq_status) "The VSYNC and corresponding HSYNC pulses defined in DSI_TE_HSYNC_NUMBER for the line TE0 have been received by the DSI protocol engine and have trigger the start of the data transfer to the peripheral.";
+        ta_to_irq 1 rw type(te1_line_irq_status) "Turn-around Time out.";
+        _ 1 mbz;
+        sync_lost_irq 1 rw type(te1_line_irq_status) "Synchronization with Video port is lost (Video mode only)";
+        ack_trigger_irq 1 rw type(te1_line_irq_status) "Acknowledge Trigger";
+        te_trigger_irq 1 rw type(te1_line_irq_status) "Tearing Effect Trigger";
+        lp_rx_to_irq 1 rw type(te1_line_irq_status) "Interrupt for Low Power Rx Time out";
+        hs_tx_to_irq 1 rw type(te1_line_irq_status) "Interrupt for High Speed Tx Time out.";
+        _ 3 mbz;
+        complexio_err_irq 1 ro type(complexio_err_irq_status) "Error signaling from Complex I/O: status of the complex I/O errors received from the complex I/O (events are defined inDSI_COMPLEXIO_IRQSTATUS).";
+        pll_recal_irq 1 rw type(te1_line_irq_status) "PLL recal event (assertion of DSIRecal signal from the DSI PLL Control module)";
+        pll_unlock_irq 1 rw type(te1_line_irq_status) "PLL un-clock event (de-assertion of DSILock signal from the DSI PLL Control module)";
+        pll_lock_irq 1 rw type(te1_line_irq_status) "PLL clock event (assertion of DSILock signal from the DSI PLL Control module)";
+        _ 1 mbz;
+        resynchronization_irq 1 rw type(te1_line_irq_status) "Video mode resynchronization indicates to the software users that the video port works but the configuration of the timings for the display controller (DISPC) and for DSI Protocol engine may need to be modified to avoid the resynchronization to occur.";
+        wakeup_irq 1 rw type(te1_line_irq_status) "Wakeup";
+        virtual_channel3_irq 1 ro type(complexio_err_irq_status) "Virtual channel 3";
+        virtual_channel2_irq 1 ro type(complexio_err_irq_status) "Virtual channel 2";
+        virtual_channel1_irq 1 ro type(complexio_err_irq_status) "Virtual channel 1";
+        virtual_channel0_irq 1 ro type(complexio_err_irq_status) "Virtual channel 0";
+    };
+
+    constants te1_line_irq_en_status width(1) "" {
+        TE1_LINE_IRQ_EN_0 = 0 "Event is masked";
+        TE1_LINE_IRQ_EN_1 = 1 "Event generates an interrupt when it occurs";
+    };
+    
+    register dsi_irqenable addr(base, 0x1C) "INTERRUPT ENABLE REGISTER - This register associates one bit for each virtual channel in order to enable/disable each virtual channel individually." {
+        _ 9 mbz;
+        te1_line_irq_en 1 rw type(te1_line_irq_en_status) "The VSYNC and corresponding HSYNC pulses defined in DSI_TE_HSYNC_NUMBER for the line TE1 have been received by the DSI protocol engine and have trigger the start of the data transfer to the peripheral.";
+        te0_line_irq_en 1 rw type(te1_line_irq_en_status) "The VSYNC and corresponding HSYNC pulses defined in DSI_TE_HSYNC_NUMBER for the line TE0 have been received by the DSI protocol engine and have trigger the start of the data transfer to the peripheral.";
+        ta_to_irq_en 1 rw type(te1_line_irq_en_status) "Turn-around Time out.";
+        _ 1 mbz;
+        sync_lost_irq_en 1 rw type(te1_line_irq_en_status) "Synchronization with Video port is lost (Video mode only)";
+        ack_trigger_irq_en 1 rw type(te1_line_irq_en_status) "Acknowledge trigger";
+        te_trigger_irq_en 1 rw type(te1_line_irq_en_status) "Tearing Effect trigger";
+        lp_rx_to_irq_en 1 rw type(te1_line_irq_en_status) "Interrupt for Low Power Rx Time out.";
+        hs_tx_to_irq_en 1 rw type(te1_line_irq_en_status) "Interrupt for High Speed Tx Time out.";
+        _ 4 mbz;
+        pll_recal_irq_en 1 rw type(te1_line_irq_en_status) "PLL recal event (assertion of DSIRecal signal from the DSI PLL Control module)";
+        pll_unlock_irq_en 1 rw type(te1_line_irq_en_status) "PLL un-clock event (de-assertion of DSILock signal from the DSI PLL Control module)";
+        pll_lock_irq_en 1 rw type(te1_line_irq_en_status) "PLL clock event (assertion of DSILock signal from the DSI PLL Control module)";
+        _ 1 mbz;
+        resynchronization_irq_en 1 rw type(te1_line_irq_en_status) "Video mode resynchronization";
+        wakeup_irq_en 1 rw type(te1_line_irq_en_status) "Wakeup";
+        _ 4 mbz;
+    };
+
+    constants dispc_update_sync_status width(1) "" {
+        DISPC_UPDATE_SYNC_0 = 0 "Dispc_Update_Sync signal is not used.";
+        DISPC_UPDATE_SYNC_1 = 1 "Dispc_Update_Sync signal is used.";
+    };
+
+    constants hsa_blanking_mode_status width(1) "" {
+        HSA_BLANKING_MODE_0 = 0 "Packets in TX FIFO are sent during HSA blanking period of video mode or LPS is used.";
+        HSA_BLANKING_MODE_1 = 1 "LONG BLANKING PACKETS only are used during HSA blanking period of video mode.";
+    };
+
+    constants hbp_blanking_mode_status width(1) "" {
+        HBP_BLANKING_MODE_0 = 0 "Packets in TX FIFO are sent during HBP blanking period of video mode or LPS is used.";
+        HBP_BLANKING_MODE_1 = 1 "LONG BLANKING PACKETS only are used during HBP blanking period of video mode.";
+    };
+
+    constants hfp_blanking_mode_status width(1) "" {
+        HFP_BLANKING_MODE_0 = 0 "Packets in TX FIFO are sent during HFP blanking period of video mode or LPS is used.";
+        HFP_BLANKING_MODE_1 = 1 "LONG BLANKING PACKETS only are used during HFP blanking period of video mode.";
+    };
+
+    constants blanking_mode_status width(1) "" {
+        BLANKING_MODE_0 = 0 "LPS is used during blanking periods of video mode (except HSA, HBP, HFP defined in HSA_BLANKING_MODE, HBP_BLANKING_MODE AND HFP_BLANKING_MODE respectively) when there is no command mode data in TX FIFO ready to be sent. So blanking periods can be different during the frame depending on the TX FIFO.";
+        BLANKING_MODE_1 = 1 "LONG BLANKING PACKETS are used during blanking periods of video mode (except HSA, HBP, HFP defined in HSA_BLANKING_MODE, HBP_BLANKING_MODE AND HFP_BLANKING_MODE respectively) regardless of the packets present in the TX FIFO ready to be sent";
+    };
+
+    constants eot_enable_status width(1) "" {
+        EOT_ENABLE_0 = 0 "No EOT packets";
+        EOT_ENABLE_1 = 1 "EOT packet is sent at all HS to LP transitions.";
+    };
+
+    constants vp_hsync_end_status width(1) "" {
+        VP_HSYNC_END_0 = 0 "Disabled. No HSYNC END short packet is generated.";
+        VP_HSYNC_END_1 = 1 "Enabled. While the HSYNC END pulse is detected, the associated short packet HSYNC END is generated.";
+    };
+
+    constants vp_hsync_start_status width(1) "" {
+        VP_HSYNC_START_0 = 0 "Disabled. No HSYNC START short packet is generated.";
+        VP_HSYNC_START_1 = 1 "Enabled. While the HSYNC start pulse is detected, the associated short packet HSYNC START is generated.";
+    };
+
+    constants vp_vsync_end_status width(1) "" {
+        VP_VSYNC_END_0 = 0 "Disabled. No VSYNC END short packet is generated.";
+        VP_VSYNC_END_1 = 1 "Enabled. While the VSYNC END pulse is detected, the associated short packet VSYNC END is generated.";
+    };
+
+    constants vp_vsync_start_status width(1) "" {
+        VP_VSYNC_START_0 = 0 "Disabled. No VSYNC START short packet is generated.";
+        VP_VSYNC_START_1 = 1 "Enabled. While the VSYNC START pulse is detected, the associated short packet VSYNC START is generated.";
+    };
+
+    constants trigger_reset_mode_status width(1) "" {
+        TRIGGER_RESET_MODE_0 = 0 "Synchronized: the mode is only valid if there is virtual channel using the video mode and it is active. The principal is to wait for the current video frame to be transferred on the link. Any data received after the VSYNC are ignored.";
+        TRIGGER_RESET_MODE_1 = 1 "Immediate: all pending requests in TX FIFO are taken into account for transfer scheduling, the RX FIFO is ignored, and the data from video port are ignored as soon as possible. Only the current transfer on DSI link and already scheduled ones are transmitted. All the other transfers are discarded.";
+    };
+
+    constants line_buffer_status width(2) "" {
+        LINE_BUFFER_0 = 0 "No line buffer";
+        LINE_BUFFER_1 = 1 "1 line buffer";
+        LINE_BUFFER_2 = 2 "2 line buffers";
+    };
+
+    constants vp_vsync_pol_status width(1) "" {
+        VP_VSYNC_POL_0 = 0 "VSYNC signal on the video port is active low.";
+        VP_VSYNC_POL_1 = 1 "VSYNC signal on the video port is active high.";
+    };
+
+    constants vp_hsync_pol_status width(1) "" {
+        VP_HSYNC_POL_0 = 0 "HSYNC signal on the video port is active low.";
+        VP_HSYNC_POL_1 = 1 "HSYNC signal on the video port is active high.";
+    };
+
+    constants vp_de_pol_status width(1) "" {
+        VP_DE_POL_0 = 0 "DE signal on the video port is active low.";
+        VP_DE_POL_1 = 1 "DE signal on the video port is active high.";
+    };
+
+    constants vp_clk_pol_status width(1) "" {
+        VP_CLK_POL_0 = 0 "The DSI Protocol Engine module captures the data on the VP on the pixel clock falling edge. The module connected to the VP shall drive the data on the pixel clock rising edge.";
+        VP_CLK_POL_1 = 1 "The DSI Protocol Engine module captures the data on the VP on the pixel clock raising edge. The module connected to the VP shall drive the data on the pixel clock falling edge.";
+    };
+
+    constants vp_data_bus_width_status width(2) "" {
+        VP_DATA_BUS_WIDTH_0 = 0 "16-bits data width (LSB of the 24-bit video port data bus)";
+        VP_DATA_BUS_WIDTH_1 = 1 "18-bits data width (LSB of the 24-bit video port data bus)";
+        VP_DATA_BUS_WIDTH_2 = 2 "24-bits data width (LSB of the 24-bit video port data bus)";
+    };
+
+    constants vp_clk_ratio_status width(1) "" {
+        VP_CLK_RATIO_0 = 0 "The clock VP_PCLK is the clock VP_CLK divided by 2. The duty cycle of VP_PCLK is 50/50.";
+        VP_CLK_RATIO_1 = 1 "The clock VP_PCLK is the clock VP_CLK divided by 3 or more. The duty cycle of VP_PCLK is not 50/50 for odd ratio numbers (3,5,7,...).";
+    };
+
+    constants tx_fifo_arbitration_status width(1) "" {
+        TX_FIFO_ARBITRATION_0 = 0 "Round-Robin Scheme is used";
+        TX_FIFO_ARBITRATION_1 = 1 "Sequential Scheme is used";
+    };
+
+    constants ecc_rx_en_status width(1) "" {
+        ECC_RX_EN_0 = 0 "Disabled";
+        ECC_RX_EN_1 = 1 "Enabled";
+    };
+
+    constants if_en_status width(1) "" {
+        IF_EN_0 = 0 "The interface is disabled. If one of the virtual channel uses the video mode with the video port to receive the data, the DSI protocol engines is disabled when the next VSYNC is received and all the data in the FIFO for the other virtual channels in command mode are sent to the peripherals (if BTA_EN is enabled, the DSI protocol needs to wait for the response and BTA from the peripheral before disabling all the internal logic since an acknowledge is requested).";
+        IF_EN_1 = 1 "The interface is enabled immediately, the data acquisition on the video port starts on the next VSYNC (video mode) or first data received in the Slave port FIFO (command mode).";
+    };
+    
+    register dsi_ctrl addr(base, 0x40) "GLOBAL CONTROL REGISTER This register controls the DSI Protocol Engine module. This register shall not be modified dynamically (except IF_EN bit fields)." {
+        _ 7 mbz;
+        dispc_update_sync 1 rw type(dispc_update_sync_status) "Determines if the Dispc_Update_Sync signal from the display controller is used.";
+        hsa_blanking_mode 1 rw type(hsa_blanking_mode_status) "Blanking mode";
+        hbp_blanking_mode 1 rw type(hbp_blanking_mode_status) "Blanking mode";
+        hfp_blanking_mode 1 rw type(hfp_blanking_mode_status) "Blanking mode";
+        blanking_mode 1 rw type(blanking_mode_status) "Blanking mode";
+        eot_enable 1 rw type(eot_enable_status) "Enable EOT packets at the end of HS transmission.";
+        vp_hsync_end 1 rw type(vp_hsync_end_status) "HSYNC end pulse.";
+        vp_hsync_start 1 rw type(vp_hsync_start_status) "HSYNC start pulse.";
+        vp_vsync_end 1 rw type(vp_vsync_end_status) "VSYNC end pulse.";
+        vp_vsync_start 1 rw type(vp_vsync_start_status) "VSYNC start pulse.";
+        trigger_reset_mode 1 rw type(trigger_reset_mode_status) "Selection of the trigger reset mode";
+        line_buffer 2 rw type(line_buffer_status) "Number of line buffers to be used while receiving data on the video port. The valid values are from 0 toDSI_GNQ[17:16] VP1_NB_LINE_BUFFER.";
+        vp_vsync_pol 1 rw type(vp_vsync_pol_status) "VP vertical synchronization signal polarity";
+        vp_hsync_pol 1 rw type(vp_hsync_pol_status) "VP horizontal synchronization signal polarity";
+        vp_de_pol 1 rw type(vp_de_pol_status) "VP data enable signal polarity";
+        vp_clk_pol 1 rw type(vp_clk_pol_status) "VP pixel clock polarity";
+        vp_data_bus_width 2 rw type(vp_data_bus_width_status) "Defines the size of the video port data bus";
+        trigger_reset 1 rw type(te1_line_irq_status) "Send the reset trigger to the peripheral.";
+        vp_clk_ratio 1 rw type(vp_clk_ratio_status) "The field indicates the clock ratio between VP_CLK and VP_PCLK. The clock VP_PCLK is generated from VP_CLK. It is divided down. The information is only used when the video port is used to provide data in command mode. In the case of video mode, it is not used.";
+        tx_fifo_arbitration 1 rw type(tx_fifo_arbitration_status) "Defines the arbitration scheme for granting the virtual channel pending ready requests in the TX FIFO";
+        ecc_rx_en 1 rw type(ecc_rx_en_status) "Enables the Error Correction Code check for the received header (short and long packets for all virtual channel ids).";
+        cs_rx_en 1 rw type(ecc_rx_en_status) "Enables the checksum check for the received payload (long packet only for all virtual channel ids).";
+        if_en 1 rw type(if_en_status) "Enables the module. When the module is disabled the signals from the complex I/O are gated (no updates of the interrupt status register). It is not possible to change the bit fields in the register DSI_CTRL except IF_EN when it is enabled. All the other registers can be changed except the ones that require DSI_VC_CTRL_i[0] VC_EN to be equal to 0 to be modified.";
+    };
+
+    constants nb_video_ports_status width(1) "" {
+        NB_VIDEO_PORTS_0_r = 0 "Video port 1 only is present";
+        NB_VIDEO_PORTS_1_r = 1 "Video port 1 and video port 2 are present";
+    };
+
+    constants vp2_nb_line_buffer_status width(2) "" {
+        VP2_NB_LINE_BUFFER_0_r = 0 "No line buffer";
+        VP2_NB_LINE_BUFFER_1_r = 1 "1 line buffer of the size defined in LINE_BUFFER_SIZE";
+        VP2_NB_LINE_BUFFER_2_r = 2 "2 line buffers of the size defined in LINE_BUFFER_SIZE";
+    };
+
+    constants vp2_line_buffer_size_status width(3) "" {
+        VP2_LINE_BUFFER_SIZE_1_r = 1 "512x24-bits, 682x18-bits, 768x16bits (memory of 384x32-bits)";
+        VP2_LINE_BUFFER_SIZE_2_r = 2 "682x24-bits, 910x18-bits, 1024x16bits (memory of 512x32-bits)";
+        VP2_LINE_BUFFER_SIZE_3_r = 3 "853x24-bits, 1137x18-bits, 1280x16bits (memory of 640x32-bits)";
+        VP2_LINE_BUFFER_SIZE_4_r = 4 "1024x24-bits, 1365x18-bits, 1536x16bits (memory of 768x32-bits)";
+        VP2_LINE_BUFFER_SIZE_5_r = 5 "1194x24-bits, 1592x18-bits, 1792x16bits (memory of 896x32-bits)";
+        VP2_LINE_BUFFER_SIZE_6_r = 6 "1365x24-bits, 1820x18-bits, 2048x16bits (memory of 1024x32-bits)";
+    };
+
+    constants nb_data_lanes_status width(3) "" {
+        NB_DATA_LANES_1_r = 1 "1 Data lane";
+        NB_DATA_LANES_2_r = 2 "2 Data lanes";
+        NB_DATA_LANES_3_r = 3 "3 Data lanes";
+        NB_DATA_LANES_4_r = 4 "4 Data lanes";
+    };
+
+    constants nb_dma_request_status width(3) "" {
+        NB_DMA_REQUEST_0_r = 0 "No DMA request";
+        NB_DMA_REQUEST_1_r = 1 "1 DMA request";
+        NB_DMA_REQUEST_2_r = 2 "2 DMA requests";
+        NB_DMA_REQUEST_3_r = 3 "3 DMA requests";
+        NB_DMA_REQUEST_4_r = 4 "4 DMA requests";
+    };
+
+    constants rx_fifodepth_status width(3) "" {
+        RX_FIFODEPTH_4_r = 4 "32x 33 bits";
+        RX_FIFODEPTH_5_r = 5 "64x 33 bits";
+        RX_FIFODEPTH_6_r = 6 "128 x 33 bits";
+        RX_FIFODEPTH_7_r = 7 "256 x 33 bits";
+    };
+    
+    register dsi_gnq addr(base, 0x44) "GENERIC PARAMETER REGISTER This register provide a way to read the generic parameters used in the design." {
+        _ 7 mbz;
+        nb_video_ports 1 ro type(nb_video_ports_status) "Number of video ports";
+        vp2_nb_line_buffer 2 ro type(vp2_nb_line_buffer_status) "Determines the number of video buffer lines associated to video port 2.";
+        _ 1 mbz;
+        vp2_line_buffer_size 3 ro type(vp2_line_buffer_size_status) "Determines the video line buffer size associated to video port 2 .";
+        vp1_nb_line_buffer 2 ro type(vp2_nb_line_buffer_status) "Determines the number of video buffer lines associated to video port 1.";
+        _ 1 mbz;
+        vp1_line_buffer_size 3 ro type(vp2_line_buffer_size_status) "Determines the video line buffer size associated to video port 1 .";
+        nb_data_lanes 3 ro type(nb_data_lanes_status) "Determines the number of data lanes supported by the DSI protocol engine .";
+        nb_dma_request 3 ro type(nb_dma_request_status) "Determines the number of DMA_REQ signals.";
+        rx_fifodepth 3 ro type(rx_fifodepth_status) "Determines the data RX FIFO depth (32-bit words) on the slave port.";
+        tx_fifodepth 3 ro type(rx_fifodepth_status) "Determines the data TX FIFO depth (33-bit words) on the slave port.";
+    };
+
+    constants shadowing_status width(1) "" {
+        SHADOWING_0 = 0 "Disabled. The writes to the through registers is done like the other SCP registers.";
+        SHADOWING_1 = 1 "Enabled. The writes to the through registers is done only when the GOBIT is set and when the signal DISPCUpdataSync from the display controller module is active.";
+    };
+
+    constants gobit_status width(1) "" {
+        GOBIT_0 = 0 "Resets the GOBIT. The hardware has finished the update of the shadow SCP registers. The bit is reset by Hardware. The software can reset the bit in case the user decides to abort it. There is no guarantee that the software reset is done before the transfer of the values to the complex IO.";
+        GOBIT_1 = 1 "Set the GOBIT. Only when the transfer of the new values for the three first registers is completed (3, 2, 1, or 0 transfers are performed based on the number of registers to update), the GOBIT is reset. The DISPCUpdateSync signal is used to synchronize the update. The bit shall be set only when it is in reset state.";
+    };
+
+    constants pwr_cmd_status width(2) "" {
+        PWR_CMD_0 = 0 "Command to change to OFF state";
+        PWR_CMD_1 = 1 "Command to change to ON state";
+        PWR_CMD_2 = 2 "Command to change to ULTRALOW-POWER state";
+    };
+
+    constants pwr_status_status width(2) "" {
+        PWR_STATUS_0_r = 0 "Complex I/O in OFF state";
+        PWR_STATUS_1_r = 1 "Complex I/O in ON state";
+        PWR_STATUS_2_r = 2 "Complex I/O in ULTRALOW-POWER state";
+    };
+
+    constants data4_pol_status width(1) "" {
+        DATA4_POL_0 = 0 "+/- pin order (DSI.DX=+ and DSi.DY=-)";
+        DATA4_POL_1 = 1 "-/+ pin order (DSI.DX=- and DSi.DY=+)";
+    };
+
+    constants data4_position_status width(3) "" {
+        DATA4_POSITION_0 = 0 "Not used/connected";
+        DATA4_POSITION_1 = 1 "Data lane 4 is at the position 1 (lane 1).";
+        DATA4_POSITION_2 = 2 "Data lane 4 is at the position 2 (lane 2).";
+        DATA4_POSITION_3 = 3 "Data lane 4 is at the position 3 (lane 3).";
+        DATA4_POSITION_4 = 4 "Data lane 4 is at the position 4 (lane 4).";
+        DATA4_POSITION_5 = 5 "Data lane 4 is at the position 5 (lane 5).";
+    };
+
+    constants clock_position_status width(3) "" {
+        CLOCK_POSITION_0 = 0 "Not used/connected";
+        CLOCK_POSITION_1 = 1 "Clock lane is at the position 1 (lane 1).";
+        CLOCK_POSITION_2 = 2 "Clock lane is at the position 2 (lane 2).";
+        CLOCK_POSITION_3 = 3 "Clock lane is at the position 3 (lane 3).";
+        CLOCK_POSITION_4 = 4 "Clock lane is at the position 4 (lane 4).";
+        CLOCK_POSITION_5 = 5 "Reserved";
+        CLOCK_POSITION_6 = 6 "Reserved";
+        CLOCK_POSITION_7 = 7 "Reserved";
+    };
+    
+    register dsi_complexio_cfg1 addr(base, 0x48) "COMPLEXIO CONFIGURATION REGISTER for the complex I/O This register contains the lane configuration for the order and position of the lanes (clock and data) and the polarity order for the control of the PHY differential signals in addition to the control bit for the power FSM." {
+        shadowing 1 rw type(shadowing_status) "Shadowing configuration.";
+        gobit 1 rw type(gobit_status) "Allows the synchronized update of the shadow registers when the signal DISPCUpdateSync is active.";
+        reset_done 1 ro type(reset_done_status) "Internal reset monitoring of the power domain using the TXBYTECLKHS clock from the complex I/O";
+        pwr_cmd 2 rw type(pwr_cmd_status) "Command for power control of the complex I/O";
+        pwr_status 2 ro type(pwr_status_status) "Status of the power control of the complex I/O";
+        _ 3 mbz;
+        _ 1 mbz;
+        _ 1 mbz;
+        data4_pol 1 rw type(data4_pol_status) "+/- differential pin order of DATA lane 4. Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        data4_position 3 rw type(data4_position_status) "Position and order of the DATA lane 4. Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        data3_pol 1 rw type(data4_pol_status) "+/- differential pin order of DATA lane 3. Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        data3_position 3 rw type(data4_position_status) "Position and order of the DATA lane 3. Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        data2_pol 1 rw type(data4_pol_status) "+/- differential pin order of DATA lane 2.";
+        data2_position 3 rw type(data4_position_status) "Position and order of the DATA lane 2.";
+        data1_pol 1 rw type(data4_pol_status) "+/- pin differential pin order of DATA lane 1";
+        data1_position 3 rw type(data4_position_status) "Position and order of the DATA lane 1. The data lane 1 is always present.";
+        clock_pol 1 rw type(data4_pol_status) "+/- differential pin order of CLOCK lane.";
+        clock_position 3 rw type(clock_position_status) "Position and order of the CLOCK lane. 0, 5, 6 and 7 are reserved. The clock lane is always present but cannot be at the position 5 even if the COMPLEX I/O consists of 5 lanes.";
+    };
+    
+    register dsi_complexio_irqstatus addr(base, 0x4C) "INTERRUPT STATUS REGISTER - All errors from complex I/O" {
+        ulpsactivenot_all1_irq 1 rw type(te1_line_irq_status) "All the ULPSActiveNOT signals corresponding to the lanes with TXULPSExit being high are high.";
+        ulpsactivenot_all0_irq 1 rw type(te1_line_irq_status) "All signals ULPSActiveNOT are 0";
+        errcontentionlp1_5_irq 1 rw type(te1_line_irq_status) "Contention LP1 error for lane 5 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontentionlp0_5_irq 1 rw type(te1_line_irq_status) "Contention LP0 error for lane 5 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontentionlp1_4_irq 1 rw type(te1_line_irq_status) "Contention LP1 error for lane 4 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontentionlp0_4_irq 1 rw type(te1_line_irq_status) "Contention LP0 error for lane 4 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontentionlp1_3_irq 1 rw type(te1_line_irq_status) "Contention LP1 error for lane 3";
+        errcontentionlp0_3_irq 1 rw type(te1_line_irq_status) "Contention LP0 error for lane 3";
+        errcontentionlp1_2_irq 1 rw type(te1_line_irq_status) "Contention LP1 error for lane 2";
+        errcontentionlp0_2_irq 1 rw type(te1_line_irq_status) "Contention LP0 error for lane 2";
+        errcontentionlp1_1_irq 1 rw type(te1_line_irq_status) "Contention LP1 error for lane 1";
+        errcontentionlp0_1_irq 1 rw type(te1_line_irq_status) "Contention LP0 error for lane 1";
+        stateulps5_irq 1 rw type(te1_line_irq_status) "lane 5 in ULTRALOW-POWER State Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        stateulps4_irq 1 rw type(te1_line_irq_status) "lane 4 in ultralow-power mode Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        stateulps3_irq 1 rw type(te1_line_irq_status) "lane 3 in ULTRALOW-POWER state";
+        stateulps2_irq 1 rw type(te1_line_irq_status) "lane 2 in ULTRALOW-POWER state";
+        stateulps1_irq 1 rw type(te1_line_irq_status) "lane 1 in ULTRALOW-POWER state";
+        errcontrol5_irq 1 rw type(te1_line_irq_status) "Control error for lane 5 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontrol4_irq 1 rw type(te1_line_irq_status) "Control error for lane 4 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontrol3_irq 1 rw type(te1_line_irq_status) "Control error for lane 3";
+        errcontrol2_irq 1 rw type(te1_line_irq_status) "Control error for lane 2";
+        errcontrol1_irq 1 rw type(te1_line_irq_status) "Control error for lane 1";
+        erresc5_irq 1 rw type(te1_line_irq_status) "Escape entry error for lane 5 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        erresc4_irq 1 rw type(te1_line_irq_status) "Escape entry error for lane 4 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        erresc3_irq 1 rw type(te1_line_irq_status) "Escape entry error for lane 3";
+        erresc2_irq 1 rw type(te1_line_irq_status) "Escape entry error for lane 2";
+        erresc1_irq 1 rw type(te1_line_irq_status) "Escape entry error for lane 1";
+        errsyncesc5_irq 1 rw type(te1_line_irq_status) "Low power Data transmission synchronization error for lane 5 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errsyncesc4_irq 1 rw type(te1_line_irq_status) "Low power Data transmission synchronization error for lane 4 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errsyncesc3_irq 1 rw type(te1_line_irq_status) "Low power Data transmission synchronization error for lane 3";
+        errsyncesc2_irq 1 rw type(te1_line_irq_status) "Low power Data transmission synchronization error for lane 2";
+        errsyncesc1_irq 1 rw type(te1_line_irq_status) "Low power Data transmission synchronization error for lane 1";
+    };
+    
+    register dsi_complexio_irqenable addr(base, 0x50) "INTERRUPT ENABLE REGISTER - All errors from complex I/O" {
+        ulpsactivenot_all1_irq_en 1 rw type(te1_line_irq_en_status) "All the ULPSActiveNOT signals corresponding to the lanes with TXULPSExit being high are high.";
+        ulpsactivenot_all0_irq_en 1 rw type(te1_line_irq_en_status) "All signals ULPSActiveNOT are 0";
+        errcontentionlp1_5_irq_en 1 rw type(te1_line_irq_en_status) "Contention LP1 error for lane 5 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontentionlp0_5_irq_en 1 rw type(te1_line_irq_en_status) "Contention LP0 error for lane 5 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontentionlp1_4_irq_en 1 rw type(te1_line_irq_en_status) "Contention LP1 error for lane 4 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontentionlp0_4_irq_en 1 rw type(te1_line_irq_en_status) "Contention LP0 error for lane 4 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontentionlp1_3_irq_en 1 rw type(te1_line_irq_en_status) "Contention LP1 error for lane 3";
+        errcontentionlp0_3_irq_en 1 rw type(te1_line_irq_en_status) "Contention LP0 error for lane 3";
+        errcontentionlp1_2_irq_en 1 rw type(te1_line_irq_en_status) "Contention LP1 error for lane 2";
+        errcontentionlp0_2_irq_en 1 rw type(te1_line_irq_en_status) "Contention LP0 error for lane 2";
+        errcontentionlp1_1_irq_en 1 rw type(te1_line_irq_en_status) "Contention LP1 error for lane 1";
+        errcontentionlp0_1_irq_en 1 rw type(te1_line_irq_en_status) "Contention LP0 error for lane 1";
+        stateulps5_irq_en 1 rw type(te1_line_irq_en_status) "lane 5 in ULTRALOW-POWER state Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        stateulps4_irq_en 1 rw type(te1_line_irq_en_status) "lane 4 in ULTRALOW-POWER state Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        stateulps3_irq_en 1 rw type(te1_line_irq_en_status) "lane 3 in ULTRALOW-POWER state";
+        stateulps2_irq_en 1 rw type(te1_line_irq_en_status) "lane 2 in ULTRALOW-POWER state";
+        stateulps1_irq_en 1 rw type(te1_line_irq_en_status) "lane 1 in ULTRALOW-POWER state";
+        errcontrol5_irq_en 1 rw type(te1_line_irq_en_status) "Control error for lane 5 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontrol4_irq_en 1 rw type(te1_line_irq_en_status) "Control error for lane 4 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errcontrol3_irq_en 1 rw type(te1_line_irq_en_status) "Control error for lane 3";
+        errcontrol2_irq_en 1 rw type(te1_line_irq_en_status) "Control error for lane 2";
+        errcontrol1_irq_en 1 rw type(te1_line_irq_en_status) "Control error for lane 1";
+        erresc5_irq_en 1 rw type(te1_line_irq_en_status) "Escape entry error for lane 5 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        erresc4_irq_en 1 rw type(te1_line_irq_en_status) "Escape entry error for lane 4 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        erresc3_irq_en 1 rw type(te1_line_irq_en_status) "Escape entry error for lane 3";
+        erresc2_irq_en 1 rw type(te1_line_irq_en_status) "Escape entry error for lane 2";
+        erresc1_irq_en 1 rw type(te1_line_irq_en_status) "Escape entry error for lane 1";
+        errsyncsesc5_irq_en 1 rw type(te1_line_irq_en_status) "Low power Data transmission synchronization error for lane 5 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errsyncsesc4_irq_en 1 rw type(te1_line_irq_en_status) "Low power Data transmission synchronization error for lane 4 Applicable only to DS1. For DSI2 this bit field is RESERVED.";
+        errsyncsesc3_irq_en 1 rw type(te1_line_irq_en_status) "Low power Data transmission synchronization error for lane 3";
+        errsyncsesc2_irq_en 1 rw type(te1_line_irq_en_status) "Low power Data transmission synchronization error for lane 2";
+        errsyncsesc1_irq_en 1 rw type(te1_line_irq_en_status) "Low power Data transmission synchronization error for lane 1";
+    };
+
+    constants pll_pwr_cmd_status width(2) "" {
+        PLL_PWR_CMD_0 = 0 "Command to change to OFF state";
+        PLL_PWR_CMD_1 = 1 "Command to change to ON state for PLL only (HSDIVISER is OFF)";
+        PLL_PWR_CMD_2 = 2 "Command to change to ON state for both PLL and HSDIVISER";
+        PLL_PWR_CMD_3 = 3 "Command to change to ON state for both PLL and HSDIVISER (no clock output to the DSI complex I/O)";
+    };
+
+    constants pll_pwr_status_status width(2) "" {
+        PLL_PWR_STATUS_0_r = 0 "DSI PLL Control module in OFF state";
+        PLL_PWR_STATUS_1_r = 1 "DSI PLL Control module in ON state for PLL only (HSDIVISER is OFF)";
+        PLL_PWR_STATUS_2_r = 2 "DSI PLL Control module in ON state for both PLL and HSDIVISER";
+        PLL_PWR_STATUS_3_r = 3 "DSI PLL Control module in ON state for both PLL and HSDIVISER (no clock output to the DSI complex I/O)";
+    };
+
+    constants lp_rx_synchro_enable_status width(1) "" {
+        LP_RX_SYNCHRO_ENABLE_0 = 0 "The DSI functional clock is equal or slower than 30 MHz. The synchronization is falling/rising.";
+        LP_RX_SYNCHRO_ENABLE_1 = 1 "The DSI functional clock is higher than 30 MHz. The synchronization is rising/rising.";
+    };
+
+    constants lp_clk_enable_status width(1) "" {
+        LP_CLK_ENABLE_0 = 0 "Disabled. The clock is not generated. The value of LP_CLK_DIVISOR is not used and does not need to be programmed.";
+        LP_CLK_ENABLE_1 = 1 "Enabled. The clock is generated. The value of LP_CLK_DIVISOR is used and needs to be programmed.";
+    };
+
+    constants hs_manual_stop_ctrl_status width(1) "" {
+        HS_MANUAL_STOP_CTRL_0 = 0 "DSIStopClk de-assertion unconditionally.";
+        HS_MANUAL_STOP_CTRL_1 = 1 "DSIStopClk assertion unconditionally.";
+    };
+
+    constants hs_auto_stop_enable_status width(1) "" {
+        HS_AUTO_STOP_ENABLE_0 = 0 "Auto mode disabled.";
+        HS_AUTO_STOP_ENABLE_1 = 1 "Auto mode enabled.";
+    };
+
+    constants lp_clk_null_packet_enable_status width(1) "" {
+        LP_CLK_NULL_PACKET_ENABLE_0 = 0 "Disabled. The NULL packet is not sent in LP mode after the last LP packet.";
+        LP_CLK_NULL_PACKET_ENABLE_1 = 1 "Enabled. The NULL packet is sent in LP mode after the last LP packet.";
+    };
+
+    constants cio_clk_icg_status width(1) "" {
+        CIO_CLK_ICG_0 = 0 "Disabled. SCPClk is not generated. It remains at 0.";
+        CIO_CLK_ICG_1 = 1 "Enabled. SCPClk is generated (OCP_CLK/4)";
+    };
+
+    constants ddr_clk_always_on_status width(1) "" {
+        DDR_CLK_ALWAYS_ON_0 = 0 "Disabled. The DDR clock is only provided when HS packets are sent.";
+        DDR_CLK_ALWAYS_ON_1 = 1 "Enabled. The DDR clock is always sent to the peripheral regardless of the state of the data lanes (HS or LS mode).";
+    };
+    
+    register dsi_clk_ctrl addr(base, 0x54) "CLOCK CONTROL This register controls the CLOCK GENERATION. The register can be modified only when IF_EN is reset." {
+        pll_pwr_cmd 2 rw type(pll_pwr_cmd_status) "Command for power control of the DSI PLL Control module";
+        pll_pwr_status 2 ro type(pll_pwr_status_status) "Status of the power control of the DSI PLL Control module";
+        _ 6 mbz;
+        lp_rx_synchro_enable 1 rw type(lp_rx_synchro_enable_status) "Defines if the functional is higher or lower than 30 MHz. The information is used to define synchronization to be used for RxValidEsc.";
+        lp_clk_enable 1 rw type(lp_clk_enable_status) "Controls the gating of the TXCLKESC clock.";
+        hs_manual_stop_ctrl 1 rw type(hs_manual_stop_ctrl_status) "In case HS_AUTO_STOP_ENABLE=0, the bit field allows manual control of the assertion/de-assertion of the signal DSIStopClk by the user.";
+        hs_auto_stop_enable 1 rw type(hs_auto_stop_enable_status) "Enables the automatic assertion/de-assertion of DSIStopClk signal.";
+        lp_clk_null_packet_size 2 rw "Indicates the size of LP NULL Packets to be sent automatically when after the last LP packet transfer. It is used by the receiver to drain its internal pipeline. The valid values are from 0 to 3 bytes for the payload size.";
+        lp_clk_null_packet_enable 1 rw type(lp_clk_null_packet_enable_status) "Enables the generation of NULL packet in low speed.";
+        cio_clk_icg 1 rw type(cio_clk_icg_status) "Gates SCPClk clock provided to DSI_PHY and PLL-CTRL module.";
+        ddr_clk_always_on 1 rw type(ddr_clk_always_on_status) "Defines if the DDR clock is also sent when there is no HS packets sent to the peripheral (low-power mode). So TXRequest for the clock lane is not de-asserted.";
+        lp_clk_divisor 13 rw "Defines the ratio to be used for the generation of the low-power mode clock from DSI functional clock. The supported values are from 1 to 8191(the value 0 is invalid). The output frequency shall be in the range between 20 MHz and 32 kHz.";
+    };
+
+    constants ta_to_status width(1) "" {
+        TA_TO_0 = 0 "Turn-around counter is disabled.";
+        TA_TO_1 = 1 "Turn-around counter is enabled (required to receive TA interrupt in case the turn-around procedure is not successful).";
+    };
+
+    constants ta_to_x16_status width(1) "" {
+        TA_TO_X16_0 = 0 "The number of DSI_CLK functional clock cycles defined in TA_TO_COUNTER is multiplied by 1x";
+        TA_TO_X16_1 = 1 "The number of DSI_CLK functional clock cycles defined in TA_TO_COUNTER is multiplied by 16x";
+    };
+
+    constants force_tx_stop_mode_io_status width(1) "" {
+        FORCE_TX_STOP_MODE_IO_0 = 0 "De-assertion of ForceTxStopMode. The hardware reset the bit at the end of the ForceTXStopMode assertion. The software can reset the bit in order to stop the assertion of the ForceTXStopMode signal prior to the completion of the period.";
+        FORCE_TX_STOP_MODE_IO_1 = 1 "Assertion of ForceTxStopMode";
+    };
+
+    constants stop_state_x16_io_status width(1) "" {
+        STOP_STATE_X16_IO_0 = 0 "The number of DSI_CLK functional clock cycles defined in STOP_STATE _COUNTER_IO is multiplied by 1x";
+        STOP_STATE_X16_IO_1 = 1 "The number of DSI_CLK functional clock cycles defined in STOP_STATE _COUNTER_IO is multiplied by 16x";
+    };
+
+    constants stop_state_x4_io_status width(1) "" {
+        STOP_STATE_X4_IO_0 = 0 "The number of DSI_CLK functional clock cycles defined in STOP_STATE _COUNTER is multiplied by 1x";
+        STOP_STATE_X4_IO_1 = 1 "The number of DSI_CLK functional clock cycles defined in STOP_STATE _COUNTER_IO is multiplied by 4x";
+    };
+    
+    register dsi_timing1 addr(base, 0x58) "TIMING1 REGISTER This register controls the DSI Protocol Engine module timers. Any bit field can be modified while [0] IF_EN is set to '1'. It is used to indicate the number of DSI1_CLK and DSI2_CLK functional clocks cycles for the timers FORCE_TX_STOP_TIMER and TA_TO_TIMER" {
+        ta_to 1 rw type(ta_to_status) "Enables the turn-around timer";
+        ta_to_x16 1 rw type(ta_to_x16_status) "Multiplication factor for the number of DSI_CLK functional clocks cycles defined in TA_TO_COUNTER bit field";
+        ta_to_x8 1 rw type(ta_to_x16_status) "Multiplication factor for the number of DSI_CLK functional clock cycles defined in TA_TO_COUNTER bit field";
+        ta_to_counter 13 rw "Turn around counter. It indicates the number of DSI_CLK function clock to wait for the change of the Direction PPI signal according to the TurnRequest signal The value is from 0 to 8191.";
+        force_tx_stop_mode_io 1 rw type(force_tx_stop_mode_io_status) "Control of ForceTxStopMode signal";
+        stop_state_x16_io 1 rw type(stop_state_x16_io_status) "Multiplication factor for the number of DSI_CLK functional clock cycles defined in STOP_STATE_COUNTER_IO bit field";
+        stop_state_x4_io 1 rw type(stop_state_x4_io_status) "Multiplication factor for the number of DSI_CLK functional clock cycles defined in STOP_STATE_COUNTER_IO bit field";
+        stop_state_counter_io 13 rw "Stop state counter. It indicates the number of DSI_CLK function clock to assert ForceTXStopMode signal. The value is from 0 to 8191.";
+    };
+
+    constants hs_tx_to_status width(1) "" {
+        HS_TX_TO_0 = 0 "Time-out counter is disabled.";
+        HS_TX_TO_1 = 1 "Time-out counter is enabled (required to receive TA interrupt in case the turn-around procedure is not successful).";
+    };
+
+    constants hs_tx_to_x64_status width(1) "" {
+        HS_TX_TO_X64_0 = 0 "The number of BYTE_CLK functional clock cycles defined in HS_TX_TO_COUNTER is multiplied by 1x";
+        HS_TX_TO_X64_1 = 1 "The number of BYTE_CLK functional clock cycles defined in HS_TX_TO_COUNTER is multiplied by 64x";
+    };
+
+    constants lp_rx_to_x16_status width(1) "" {
+        LP_RX_TO_X16_0 = 0 "The number of DSI_FCLK clock cycles defined in LP_RX_TO_COUNTER is multiplied by 1x";
+        LP_RX_TO_X16_1 = 1 "The number of DSI_FCLK clock cycles defined in LP_RX_TO_COUNTER is multiplied by 16x";
+    };
+    
+    register dsi_timing2 addr(base, 0x5C) "TIMING2 REGISTER This register controls the DSI Protocol Engine module timers. Any bit field can be modified while [0] IF_EN is set to '1'. It is used to indicate the number of DSI_FCLK clock cycles for the timer LP_RX_TIMER and the number of BYTE_CLK functional clock cycles for the timer HS_TX_TIMER" {
+        hs_tx_to 1 rw type(hs_tx_to_status) "Enables the HS TX timer.";
+        hs_tx_to_x64 1 rw type(hs_tx_to_x64_status) "Multiplication factor for the number of BYTE_CLK functional clock cycles defined in HS_TX_COUNTER bit field. BYTE_CLK is a high speed transmit byte clock signal generated by the DSI_PHY.";
+        hs_tx_to_x16 1 rw type(hs_tx_to_x64_status) "Multiplication factor for the number of BYTE_CLK functional clock cycles defined in HS_TX_COUNTER bit";
+        hs_tx_to_counter 13 rw "HS_TX_TIMER counter. It indicates the number of BYTE_CLK function clock for the HS TX timer. The value is from 0 to 8191.";
+        lp_rx_to 1 rw type(ta_to_status) "Enables the LP RX timer.";
+        lp_rx_to_x16 1 rw type(lp_rx_to_x16_status) "Multiplication factor for the number of DSI_FCLK clock cycles defined in LP_RX_COUNTER bit field";
+        lp_rx_to_x4 1 rw type(lp_rx_to_x16_status) "Multiplication factor for the number of DSI_FCLK clock cycles defined in LP_RX_COUNTER bit";
+        lp_rx_to_counter 13 rw "LP_RX_TIMER counter. It indicates the number of DSI_FCLK clock for the LP RX timer. The value is from 0 to 8191.";
+    };
+    
+    register dsi_vm_timing1 addr(base, 0x60) "VIDEO MODE TIMING REGISTER This register defines the video mode timing." {
+        hsa 8 rw "Defines the horizontal Sync active period used in video mode in number of byte clock cycles (TXBYTECLKHS clock) The supported values are from 0 to 255.";
+        hfp 12 rw "Defines the horizontal front porch used in video mode in number of byte clock cycles (TXBYTECLKHS clock) The supported values are from 0 to 4095";
+        hbp 12 rw "Defines the horizontal back porch used in video mode in number of byte clock cycles (TXBYTECLKHS clock) The supported values are from 0 to 4095";
+    };
+    
+    register dsi_vm_timing2 addr(base, 0x64) "VIDEO MODE TIMING REGISTER This register defines the video mode timing." {
+        _ 4 mbz;
+        window_sync 4 rw "Number of BYTE clock cycles for the synchronization window. An interrupt for synchronization lost is generated when the received synchornization on video port is not inside the window. DSI does not change its own timings if the synch is inside the window. The valid values are from 4 to 15.";
+        vsa 8 rw "Defines the vertical Sync active period used in video mode in number of lines. The supported values are from 0 to 255 It is used to generate the short packet for End of Vertical synchronization.";
+        vfp 8 rw "Defines the vertical front porch used in video mode in number of lines. The supported values are from 0 to 255";
+        vbp 8 rw "Defines the vertical back porch used in video mode in number of lines. The supported values are from 0 to 255";
+    };
+    
+    register dsi_vm_timing3 addr(base, 0x68) "VIDEO MODE TIMING REGISTER This register defines the video mode timing." {
+        tl 16 rw "Defines the number of length of the line in video mode in number of byte clock cycles (TXBYTECLKHS clock) The supported values are from 0 to 8192. The values from 8193 to 65535 are not supported.";
+        vact 16 rw "Defines the number of active lines used in video mode. The supported values are from 0 to 65535";
+    };
+    
+    register dsi_clk_timing addr(base, 0x6C) "CLOCK TIMING REGISTER This register controls the DSI Protocol Engine module timers. This register shall not be modified while .IF_EN is set to '1'." {
+        _ 16 mbz;
+        ddr_clk_pre 8 rw "Indicates the number of TXBYTECLKHS clock cycles between the start of the DDR clock and the assertion of the data request signal. The values from 1 to 255 are valid. The value 0 is reserved. The value is not used ifDSI_CLK_CTRL[13] DDR_CLK_ALWAYS_ON is set to '1' since the DDR clock is always present.";
+        ddr_clk_post 8 rw "Indicates the number of TXBYTECLKHS clock cycles after the de-assertion of the data request signal and the stop of the DDR clock. The values from 1 to 255 are valid. The value 0 is reserved. The value is not used ifDSI_CLK_CTRL[13] DDR_CLK_ALWAYS_ON is set to '1' since the DDR clock is always present.";
+    };
+    
+    register dsi_tx_fifo_vc_size addr(base, 0x70) "Defines the corresponding memory entries allocated for each virtual channel. The virtual channel shall be disabled in order to allocate/un-allocate some entries in the TX FIFO." {
+        vc3_fifo_size 4 rw "Size of the FIFO allocated for virtual channel 3. For a complete description, refer to,";
+        _ 1 mbz;
+        vc3_fifo_add 3 rw "Address of the space allocated in the FIFO for virtual channel 3. For a complete description, refer to,";
+        vc2_fifo_size 4 rw "Size of the FIFO allocated for virtual channel 2. For a complete description, refer to,";
+        _ 1 mbz;
+        vc2_fifo_add 3 rw "Address of the space allocated in the FIFO for virtual channel 2. For a complete description, refer to,";
+        vc1_fifo_size 4 rw "Size of the FIFO allocated for virtual channel 1. For a complete description, refer to,";
+        _ 1 mbz;
+        vc1_fifo_add 3 rw "Address of the space allocated in the FIFO for virtual channel 1. For a complete description, refer to,";
+        vc0_fifo_size 4 rw "Size of the FIFO allocated for virtual channel 0. For a complete description, refer to,";
+        _ 1 mbz;
+        vc0_fifo_add 3 rw "Address of the space allocated in the FIFO for virtual channel 0. For a complete description, refer to,";
+    };
+    
+    register dsi_rx_fifo_vc_size addr(base, 0x74) "Defines the corresponding memory entries allocated for each virtual channel and the addresses. The virtual channel shall be disabled in order to allocate/un-allocate some entries in the RX FIFO." {
+        vc3_fifo_size 4 rw "Size of the FIFO allocated for virtual channel 3. For a complete description, refer to,";
+        _ 1 mbz;
+        vc3_fifo_add 3 rw "Address of the space allocated in the FIFO for virtual channel 3. For a complete description, refer to,";
+        vc2_fifo_size 4 rw "Size of the FIFO allocated for virtual channel 2. For a complete description, refer to,";
+        _ 1 mbz;
+        vc2_fifo_add 3 rw "Address of the space allocated in the FIFO for virtual channel 2. For a complete description, refer to,";
+        vc1_fifo_size 4 rw "Size of the FIFO allocated for virtual channel 1. For a complete description, refer to,";
+        _ 1 mbz;
+        vc1_fifo_add 3 rw "Address of the space allocated in the FIFO for virtual channel 1. For a complete description, refer to,";
+        vc0_fifo_size 4 rw "Size of the FIFO allocated for virtual channel 0. For a complete description, refer to,";
+        _ 1 mbz;
+        vc0_fifo_add 3 rw "Address of the space allocated in the FIFO for virtual channel 0. For a complete description, refer to,";
+    };
+
+    constants lp_busy_status width(1) "" {
+        LP_BUSY_0_r = 0 "LP logic is idle";
+        LP_BUSY_1_r = 1 "LP logic is active";
+    };
+
+    constants hs_busy_status width(1) "" {
+        HS_BUSY_0_r = 0 "HS logic is idle";
+        HS_BUSY_1_r = 1 "HS logic is active";
+    };
+
+    constants lane5_ulps_sig2_status width(1) "" {
+        LANE5_ULPS_SIG2_0 = 0 "READ:Inactive state effective. WRITE: Request to change to inactive state";
+        LANE5_ULPS_SIG2_1 = 1 "READ:Active state effective. WRITE: Change request to active. If the lane is a data lane, TxRequestEsc is asserted and synchronously TxUlpsEsc is asserted for one period of TxClkEsc.";
+    };
+
+    constants lane4_ulps_sig2_status width(1) "" {
+        LANE4_ULPS_SIG2_0 = 0 "READ: Inactive state effective. WRITE: Request to change to inactive state";
+        LANE4_ULPS_SIG2_1 = 1 "READ:Active state effective. WRITE: Change request to active. If the lane is a data lane, TxRequestEsc is asserted and synchronously TxUlpsEsc is asserted for one period of TxClkEsc.";
+    };
+    
+    register dsi_complexio_cfg2 addr(base, 0x78) "COMPLEXIO CONFIGURATION REGISTER for the complex I/O This register contains the lane configuration for the ULPS for each lane." {
+        _ 14 mbz;
+        lp_busy 1 ro type(lp_busy_status) "Indicates when there are still pending operations for VCs configured for LP mode. Forced to 1 when at least one VC is enabled and configured for LP mode.";
+        hs_busy 1 ro type(hs_busy_status) "Indicates when there are still pending operations for VCs configured for HS mode. Forced to 1 when at least one VC is enabled and configured for HS mode.";
+        _ 6 mbz;
+        lane5_ulps_sig2 1 rw type(lane5_ulps_sig2_status) "Applicable only to DS1. For DSI2 this bit field is RESERVED. Enables the ULPS for the lane 5. The hardware shall change the state of the lane to ULPS only when it is in stop state and there is no data pending inside the DSI protocol engine and the DSI protocol engine has control of the bus (BTA has not been sent). The state of the signal TxRequestEsc is changed if lane 5 is a data lane. The state of the signal TxUlpsClk is changed if lane 5 is a clock lane. There will be a latency depending on the frequency of TxClkExc. This bit should be read back to confirm a write has been effective.";
+        lane4_ulps_sig2 1 rw type(lane4_ulps_sig2_status) "Applicable only to DS1. For DSI2 this bit field is RESERVED. Enables the ULPS for the lane 4. The hardware shall change the state of the lane to ULPS only when it is in stop state and there is no data pending inside the DSI protocol engine and the DSI protocol engine has control of the bus (BTA has not been sent). The state of the signal TxRequestEsc is changed if lane 4 is a data lane. The state of the signal TxUlpsClk is changed if lane 4 is a clock lane. There will be a latency depending on the frequency of TxClkExc. This bit should be read back to confirm a write has been effective.";
+        lane3_ulps_sig2 1 rw type(lane4_ulps_sig2_status) "Enables the ULPS for the lane 3. The hardware shall change the state of the lane to ULPS only when it is in stop state and there is no data pending inside the DSI protocol engine and the DSI protocol engine has control of the bus (BTA has not been sent). The state of the signal TxRequestEsc is changed if lane 3 is a data lane. The state of the signal TxUlpsClk is changed if lane 3 is a clock lane. There will be a latency depending on the frequency of TxClkExc. This bit should be read back to confirm a write has been effective.";
+        lane2_ulps_sig2 1 rw type(lane4_ulps_sig2_status) "Enables the ULPS for the lane 2. The hardware shall change the state of the lane to ULPS only when it is in stop state and there is no data pending inside the DSI protocol engine and the DSI protocol engine has control of the bus (BTA has not been sent). The state of the signal TxRequestEsc is changed if lane 2 is a data lane. The state of the signal TxUlpsClk is changed if lane 2 is a clock lane. There will be a latency depending on the frequency of TxClkExc. This bit should be read back to confirm a write has been effective.";
+        lane1_ulps_sig2 1 rw type(lane4_ulps_sig2_status) "Enables the ULPS for the lane 1. The hardware shall change the state of the lane to ULPS only when it is in stop state and there is no data pending inside the DSI protocol engine and the DSI protocol engine has control of the bus (BTA has not been sent). The state of the signal TxRequestEsc is changed if lane 1 is a data lane. The state of the signal TxUlpsClk is changed if lane 1 is a clock lane. There will be a latency depending on the frequency of TxClkExc. This bit should be read back to confirm a write has been effective.";
+        lane5_ulps_sig1 1 rw type(lane5_ulps_sig2_status) "Applicable only to DS1. For DSI2 this bit field is RESERVED. Enables the ULPS for the lane 5. The hardware shall change the state of the lane to ULPS only when it is in stop state and there is no data pending inside the DSI protocol engine and the DSI protocol engine has control of the bus (BTA has not been sent). The state of the signal TxULPSExit is changed if the lane 5 is a clock lane. There will be a latency depending on the frequency of TxClkExc. This bit should be read back to confirm a write has been effective.";
+        lane4_ulps_sig1 1 rw type(lane4_ulps_sig2_status) "Applicable only to DS1. For DSI2 this bit field is RESERVED. Enables the ULPS for the lane 4. The hardware shall change the state of the lane to ULPS only when it is in stop state and there is no data pending inside the DSI protocol engine and the DSI protocol engine has control of the bus (BTA has not been sent). The state of the signal TxULPSExit is changed if the lane 4 is a clock lane. There will be a latency depending on the frequency of TxClkExc. This bit should be read back to confirm a write has been effective.";
+        lane3_ulps_sig1 1 rw type(lane4_ulps_sig2_status) "Enables the ULPS for the lane 3. The hardware shall change the state of the lane to ULPS only when it is in stop state and there is no data pending inside the DSI protocol engine and the DSI protocol engine has control of the bus (BTA has not been sent). The state of the signal TxULPSExit is changed if the lane 3 is a clock lane. There will be a latency depending on the frequency of TxClkExc. This bit should be read back to confirm a write has been effective.";
+        lane2_ulps_sig1 1 rw type(lane4_ulps_sig2_status) "Enables the ULPS for the lane 2. The hardware shall change the state of the lane to ULPS only when it is in stop state and there is no data pending inside the DSI protocol engine and the DSI protocol engine has control of the bus (BTA has not been sent). The state of the signal TxULPSExit is changed if the lane 2 is a clock lane. There will be a latency depending on the frequency of TxClkExc. This bit should be read back to confirm a write has been effective.";
+        lane1_ulps_sig1 1 rw type(lane5_ulps_sig2_status) "Enables the ULPS for the lane 1. The hardware shall change the state of the lane to ULPS only when it is in stop state and there is no data pending inside the DSI protocol engine and the DSI protocol engine has control of the bus (BTA has not been sent). The state of the signal TxULPSExit is changed if the lane 1 is a clock lane. There will be a latency depending on the frequency of TxClkExc. This bit should be read back to confirm a write has been effective.";
+    };
+    
+    register dsi_rx_fifo_vc_fullness addr(base, 0x7C) "Defines the fullness of each space allocated for each virtual channel." {
+        vc3_fifo_fullness 8 ro "Fullness of the FIFO allocated for virtual channel 3.The valid values are from 0 toDSI_GNQ[5:3] RX_FIFODEPTH-1 corresponding to 1x33-bit,...up to DSI_GNQ[5:3] RX_FIFODEPTH x33-bit.";
+        vc2_fifo_fullness 8 ro "Fullness of the FIFO allocated for virtual channel 2.The valid values are from 0 toDSI_GNQ[5:3] RX_FIFODEPTH-1 corresponding to 1x33-bit,...up to DSI_GNQ[5:3] RX_FIFODEPTH x33-bit.";
+        vc1_fifo_fullness 8 ro "Fullness of the FIFO allocated for virtual channel 1.The valid values are from 0 toDSI_GNQ[5:3] RX_FIFODEPTH-1 corresponding to 1x33-bit,...up to DSI_GNQ[5:3] RX_FIFODEPTH x33-bit.";
+        vc0_fifo_fullness 8 ro "Fullness of the FIFO allocated for virtual channel 0.The valid values are from 0 toDSI_GNQ[5:3] RX_FIFODEPTH-1 corresponding to 1x33-bit,...up to DSI_GNQ[5:3] RX_FIFODEPTH x33-bit.";
+    };
+    
+    register dsi_vm_timing4 addr(base, 0x80) "VIDEO MODE TIMING REGISTER This register defines the video mode timing." {
+        _ 8 mbz;
+        hsa_hs_interleaving 8 rw "Defines the number of TXBYTECLKHS clock cycles that can be used for interleaving High Speed command mode packet into Video Mode stream during HSA blanking period. The supported values are from 0 to 255.";
+        hfp_hs_interleaving 8 rw "Defines the number of TXBYTECLKHS clock cycles that can be used for interleaving High Speed command mode packet into Video Mode stream during HFP blanking period. The supported values are from 0 to 255";
+        hbp_hs_interleaving 8 rw "Defines the number of TXBYTECLKHS clock cycles that can be used for interleaving High Speed command mode packet into Video Mode stream during HBP blanking period. The supported values are from 0 to 255";
+    };
+    
+    register dsi_tx_fifo_vc_emptiness addr(base, 0x84) "Defines the emptiness of each space allocated for each virtual channel." {
+        vc3_fifo_emptiness 8 ro "Emptiness of the FIFO allocated for virtual channel 3.The valid values are from 0 toDSI_GNQ[2:0] TX_FIFODEPTH-1 corresponding to 1x33-bit,...up to DSI_GNQ[2:0] TX_FIFODEPTH x33-bit.";
+        vc2_fifo_emptiness 8 ro "Emptiness of the FIFO allocated for virtual channel 2.The valid values are from 0 toDSI_GNQ[2:0] TX_FIFODEPTH-1 corresponding to 1x33-bit,...up to DSI_GNQ[2:0] TX_FIFODEPTH x33-bit.";
+        vc1_fifo_emptiness 8 ro "Emptiness of the FIFO allocated for virtual channel 1.The valid values are from 0 toDSI_GNQ[2:0] TX_FIFODEPTH-1 corresponding to 1x33-bit,...up to DSI_GNQ[2:0] TX_FIFODEPTH x33-bit.";
+        vc0_fifo_emptiness 8 ro "Emptiness of the FIFO allocated for virtual channel 0.The valid values are from 0 toDSI_GNQ[2:0] TX_FIFODEPTH-1 corresponding to 1x33-bit,...up to DSI_GNQ[2:0] TX_FIFODEPTH x33-bit.";
+    };
+    
+    register dsi_vm_timing5 addr(base, 0x88) "VIDEO MODE TIMING REGISTER This register defines the video mode timing." {
+        _ 8 mbz;
+        hsa_lp_interleaving 8 rw "Defines the number of bytes of Low Power command mode packets that can be sent on PPI link during HSA blanking period. The supported values are from 0 to 255.";
+        hfp_lp_interleaving 8 rw "Defines the number of bytes of Low Power command mode packets that can be sent on PPI link during HFP blanking period. The supported values are from 0 to 255";
+        hbp_lp_interleaving 8 rw "Defines the number of bytes of Low Power command mode packets that can be sent on PPI link during HBP blanking period. The supported values are from 0 to 255";
+    };
+    
+    register dsi_vm_timing6 addr(base, 0x8C) "VIDEO MODE TIMING REGISTER This register defines the video mode timing." {
+        bl_hs_interleaving 16 rw "Defines the number of TXBYTECLKHS clock cycles that can be used for interleaving High Speed command mode packet into Video Mode stream during blanking periods during VSA, VBP, VFP periods inside one video frame on PPI link. The supported values are from 0 to 65535 .";
+        bl_lp_interleaving 16 rw "Defines the maximum number of bytes of Low Power command mode packets that can be sent on PPI link during blanking periods during VSA, VBP or VFP periods inside one video frame on PPI link. The supported values are from 0 to 65535";
+    };
+    
+    register dsi_vm_timing7 addr(base, 0x90) "Defines the minimum number of HS bytes clock cycles that are required to allow for the delays in entering and exiting HS mode. The supported values are from 0 to 65535" {
+        enter_hs_mode_latency 16 rw "Defines the number of TXBYTECLKHS clock cycles necessary for entering to HS mode. It corresponds to the delay in number of HS clock cycles from assertion of TxRequestHS signal to 1 until assertion of TxReadyHS signal to 1. The supported values are from 0 to 65535 .";
+        exit_hs_mode_latency 16 rw "Defines the number of TXBYTECLKHS clock cycles necessary for exiting from HS mode. It corresponds to the maximum delay in number of TXBYTECLKHS clock from de-assertion of TxRequestHS signal until PPI link is in LP-11 state from which a new entrance to HS mode can be initiated which does not take more than ENTER_HS_MODE_LATENCY clock cycles. The supported values are from 0 to 65535";
+    };
+    
+    register dsi_stopclk_timing addr(base, 0x94) "Number of functional clock cycles to wait for TXBYTECLKHS to stop/start after change in DSIStopClk signal" {
+        _ 24 mbz;
+        dsi_stopclk_latency 8 rw "Clock gating latency from DSI Protocol to TXBYTECLKHS";
+    };
+    
+    register dsi_ctrl2 addr(base, 0x98) "Additional control bits for use with Video Port 2" {
+        _ 18 mbz;
+        line_buffer 2 rw type(line_buffer_status) "Number of line buffers to be used while receiving data on the video port. The valid values are from 0 toDSI_GNQ[23:22] VP2_NB_LINE_BUFFER.";
+        vp_vsync_pol 1 rw type(vp_vsync_pol_status) "VP vertical synchronization signal polarity";
+        vp_hsync_pol 1 rw type(vp_hsync_pol_status) "VP horizontal synchronization signal polarity";
+        vp_de_pol 1 rw type(vp_de_pol_status) "VP data enable signal polarity";
+        vp_clk_pol 1 rw type(vp_clk_pol_status) "VP pixel clock polarity";
+        vp_data_bus_width 2 rw type(vp_data_bus_width_status) "Defines the size of the video port data bus";
+        _ 1 mbz;
+        vp_clk_ratio 1 rw type(vp_clk_ratio_status) "The field indicates the clock ratio between VP_CLK and VP_PCLK. The clock VP_PCLK is generated from VP_CLK. It is divided down. The information is only used when the video port is used to provide data in command mode. In the case of video mode, it is not used.";
+        _ 4 mbz;
+    };
+    
+    register dsi_vm_timing8 addr(base, 0x9C) "VIDEO MODE TIMING REGISTER This register defines the video mode timing." {
+        _ 30 mbz;
+        hfpx 2 rw "Extension to the HFP register. Additional bits added to MSB.";
+    };
+    
+    register dsi_te_hsync_width_j_0 addr(base, 0xA0) "The register configures the TE HSYNC minimum pulse width for TE0 and TE1 CMOS signals The input TE signal is asynchronous and needs to be resynchronizred to DSI_CLK clock domain." {
+        _ 12 mbz;
+        min_hsync_pulse_width 12 rw "Programmable min HSYNC pulse width Minimum HSYNC pulse width. Number of DSI_CLK clock cycles times 256 to determine when HSYNC pulse occurs. The value 0 is invalid.";
+        _ 8 mbz;
+    };
+    
+    register dsi_te_hsync_width_j_1 addr(base, 0xAC) "The register configures the TE HSYNC minimum pulse width for TE0 and TE1 CMOS signals The input TE signal is asynchronous and needs to be resynchronizred to DSI_CLK clock domain." {
+        _ 12 mbz;
+        min_hsync_pulse_width 12 rw "Programmable min HSYNC pulse width Minimum HSYNC pulse width. Number of DSI_CLK clock cycles times 256 to determine when HSYNC pulse occurs. The value 0 is invalid.";
+        _ 8 mbz;
+    };
+    
+    register dsi_te_vsync_width_j_0 addr(base, 0xA4) "The register configures the TE VSYNC minimum pulse width for TE0 and TE1 CMOS signals The input TE signal is asynchronous and needs to be resynchronizred to DSI_CLK clock domain." {
+        _ 12 mbz;
+        min_vsync_pulse_width 12 rw "Programmable min VSYNC pulse width Minimum VSYNC pulse width. Number of DSI_CLK cycles times 256 to determine when VSYNC pulse occurs. The value 0 is invalid. The value shall be greater than MIN_HSYNC_PULSE_WIDTH when DSI_TE_HSYNC_NUMBER is greather than 0";
+        _ 8 mbz;
+    };
+    
+    register dsi_te_vsync_width_j_1 addr(base, 0xB0) "The register configures the TE VSYNC minimum pulse width for TE0 and TE1 CMOS signals The input TE signal is asynchronous and needs to be resynchronizred to DSI_CLK clock domain." {
+        _ 12 mbz;
+        min_vsync_pulse_width 12 rw "Programmable min VSYNC pulse width Minimum VSYNC pulse width. Number of DSI_CLK cycles times 256 to determine when VSYNC pulse occurs. The value 0 is invalid. The value shall be greater than MIN_HSYNC_PULSE_WIDTH when DSI_TE_HSYNC_NUMBER is greather than 0";
+        _ 8 mbz;
+    };
+    
+    register dsi_te_hsync_number_j_0 addr(base, 0xA8) "The register configures the number of HSYNC to synchronize the beginning of the transfer on DSI link based on the number of HSYNC pulse received on the TE line. The input TE signal is asynchronous and needs to be resynchronizred to DSI_CLK clock domain." {
+        _ 21 mbz;
+        line_number 11 rw "Programmable line number Line number from 0 to 2047. Number of HSYNC after the VSYNC occurs before the beginning of the transfer. Any HSYNC before VSYNC is ignored.";
+    };
+    
+    register dsi_te_hsync_number_j_1 addr(base, 0xB4) "The register configures the number of HSYNC to synchronize the beginning of the transfer on DSI link based on the number of HSYNC pulse received on the TE line. The input TE signal is asynchronous and needs to be resynchronizred to DSI_CLK clock domain." {
+        _ 21 mbz;
+        line_number 11 rw "Programmable line number Line number from 0 to 2047. Number of HSYNC after the VSYNC occurs before the beginning of the transfer. Any HSYNC before VSYNC is ignored.";
+    };
+
+    constants dcs_cmd_code_status width(1) "" {
+        DCS_CMD_CODE_0 = 0 "DCS write memory continue code is inserted.";
+        DCS_CMD_CODE_1 = 1 "DCS write memory start code is inserted.";
+    };
+
+    constants dcs_cmd_enable_status width(1) "" {
+        DCS_CMD_ENABLE_0 = 0 "DCS command code is NOT inserted when command mode traffic is coming from the Video Port or Interface slave port.";
+        DCS_CMD_ENABLE_1 = 1 "DCS command code is inserted automatically when command mode traffic is coming from the Video Port or Interface slave port.";
+    };
+
+    constants dma_rx_req_nb_status width(3) "" {
+        DMA_RX_REQ_NB_0 = 0 "DMA_req0 is selected (valid only if[8:6] NB_DMA_REQUEST is greater than 0)";
+        DMA_RX_REQ_NB_1 = 1 "DMA_req1 is selected (valid only if[8:6] NB_DMA_REQUEST is greater than 1)";
+        DMA_RX_REQ_NB_2 = 2 "DMA_req2 is selected (valid only if[8:6] NB_DMA_REQUEST is greater than 2)";
+        DMA_RX_REQ_NB_3 = 3 "DMA_req3 is selected (valid only if[8:6] NB_DMA_REQUEST is equal to 3)";
+        DMA_RX_REQ_NB_4 = 4 "No DMA req selected";
+    };
+
+    constants dma_rx_threshold_status width(3) "" {
+        DMA_RX_THRESHOLD_0 = 0 "1x 32 bits";
+        DMA_RX_THRESHOLD_1 = 1 "2 x 32 bits";
+        DMA_RX_THRESHOLD_2 = 2 "4 x 32 bits";
+        DMA_RX_THRESHOLD_3 = 3 "8 x 32 bits";
+        DMA_RX_THRESHOLD_4 = 4 "16 x 32 bits";
+        DMA_RX_THRESHOLD_5 = 5 "32 x 32 bits";
+    };
+
+    constants rx_fifo_not_empty_status width(1) "" {
+        RX_FIFO_NOT_EMPTY_0_r = 0 "The RX FIFO is empty (the FIFO does not contain any data for the virtual channel)";
+        RX_FIFO_NOT_EMPTY_1_r = 1 "The RX FIFO is not empty (the FIFO contains at least one byte for the virtual channel)";
+    };
+
+    constants tx_fifo_full_status width(1) "" {
+        TX_FIFO_FULL_0_r = 0 "The TX FIFO is not full (the FIFO can accept at least one more 32-bit valuel)";
+        TX_FIFO_FULL_1_r = 1 "The TX FIFO is full";
+    };
+
+    constants vc_busy_status width(1) "" {
+        VC_BUSY_0_r = 0 "No pending operations for this VC";
+        VC_BUSY_1_r = 1 "Pending operations for this VC";
+    };
+
+    constants pp_busy_status width(1) "" {
+        PP_BUSY_0_r = 0 "Software is permitted to write a new header for VP command mode traffic.";
+        PP_BUSY_1_r = 1 "Software is NOT permitted to write a new header for VP command mode traffic.";
+    };
+
+    constants vp_source_status width(1) "" {
+        VP_SOURCE_0 = 0 "The video port 1 is selected.";
+        VP_SOURCE_1 = 1 "The video port 2 is selected.";
+    };
+
+    constants rgb565_order_status width(1) "" {
+        RGB565_ORDER_0 = 0 "Byte order asfor DBI compliance";
+        RGB565_ORDER_1 = 1 "Byte order as for video mode";
+    };
+
+    constants ocp_data_bus_width_status width(2) "" {
+        OCP_DATA_BUS_WIDTH_0 = 0 "16-bits data width (LSB of the 32-bit Interface port data bus)";
+        OCP_DATA_BUS_WIDTH_1 = 1 "24-bits data width (LSB of the 32-bit Interface port data bus)";
+        OCP_DATA_BUS_WIDTH_2 = 2 "2x16-bits data width (first pixel on the LSB of the 32-bit Interface port data bus and second pixel on the MSB of the 32-bit Interface port data bus for the same Interface access)";
+        OCP_DATA_BUS_WIDTH_3 = 3 "32-bits data width";
+    };
+
+    constants mode_speed_status width(1) "" {
+        MODE_SPEED_0 = 0 "Low-power mode (CMOS) is used to send short and long packets to the peripheral.";
+        MODE_SPEED_1 = 1 "High Speed mode (SLVS) is used to send short and long packets to the peripheral.";
+    };
+
+    constants cs_tx_en_status width(1) "" {
+        CS_TX_EN_0 = 0 "Disabled. The value 0x00 is used.";
+        CS_TX_EN_1 = 1 "Enabled. The checksum value is calculated by HW.";
+    };
+
+    constants bta_en_status width(1) "" {
+        BTA_EN_0 = 0 "READS: BTA generation is completed. It is reset by hardware when it is completed. WRITES: Cancellation of the BTA generation (not guarantee since it could already on going, shall not be used).";
+        BTA_EN_1 = 1 "READS: BTA generation has been requested by user (it could be on going but not completed). WRITES: Request for BTA generation.";
+    };
+
+    constants tx_fifo_not_empty_status width(1) "" {
+        TX_FIFO_NOT_EMPTY_0_r = 0 "The TX FIFO is empty (the FIFO does not contain any data for the virtual channel)";
+        TX_FIFO_NOT_EMPTY_1_r = 1 "The TX FIFO is not empty (the FIFO contains at least one byte for the virtual channel)";
+    };
+
+    constants mode_status width(1) "" {
+        MODE_0 = 0 "Command mode.";
+        MODE_1 = 1 "Video mode. The bit fields MODE_SPEED and SOURCE are not used by hardware. The bit field VP_SOURCE is used to select between video port 1 and video port 2 when two video ports are present.";
+    };
+
+    constants source_status width(1) "" {
+        SOURCE_0 = 0 "All the data are provided by the slave port. Any transfer on the video port is ignored for this virtual channel.";
+        SOURCE_1 = 1 "If MODE=VIDEO_MODE. the data received on the video port 1 or video port 2, selected using VP_SOURCE (pixels and enabled synchronization events using[17] VP_HSYNC_START, [18] VP_HSYNC_END, [15] VP_VSYNC_START, [16] VP_VSYNC_END for video port 1 and [] VP_HSYNC_START, [] VP_HSYNC_END, [] VP_VSYNC_START, [] VP_VSYNC_END for video port 2) are sent on the virtual channel (only one virtual channel can be associated with the video port, it is the software responsibility to ensure that no more than one virtual channel is enabled with the video port as the main source for data). If MODE=COMMAND_MODE, the VP.STALL signal is used by the protocol engine to indicate when new data are required. The synchronization signals are not generated by the display controller. Regardless of the MODE, no data can be provided on the Interface slave port.";
+    };
+
+    constants vc_en_status width(1) "" {
+        VC_EN_0 = 0 "Disabled. The virtual channel shall be disabled for any register change in the DSI_VC_... registers to the corresponding VC ID (except for setting the[6] BTA_EN, [23:0] TE_SIZE and [31] TE_START bit fields, and DSI_VC_LONG_,,, DSI_VC_SHORT_..., DSI_VC_IRQ... registers).";
+        VC_EN_1 = 1 "Enabled. No change is allowed to the virtual channel registers expect resetting the VC_EN.";
+    };
+    
+    register dsi_vc_ctrl_i_0 addr(base, 0x100) "CONTROL REGISTER - Virtual channel This register controls the virtual channel." {
+        dcs_cmd_code 1 rw type(dcs_cmd_code_status) "DCS command code value to insert between header and video port or Interface slave data when enabled by DCS_CMD_ENABLE (only when TE mechanism is not used otherwise the bit field DCS_CMD_CODE is ignored by DSI protocol engine).";
+        dcs_cmd_enable 1 rw type(dcs_cmd_enable_status) "Enables automatic insertion of DCS command codes when data is sourced by the video port.";
+        dma_rx_req_nb 3 rw type(dma_rx_req_nb_status) "Selection of the use of the DMA request (associated to the RX FIFO)";
+        dma_rx_threshold 3 rw type(dma_rx_threshold_status) "Defines the threshold value for the DMA request (associated to the RX FIFO)";
+        dma_tx_req_nb 3 rw type(dma_rx_req_nb_status) "Selection of the use of the DMA request (associated to the TX FIFO)";
+        rx_fifo_not_empty 1 ro type(rx_fifo_not_empty_status) "FIFO status in command mode. Otherwise, this bit can be ignored.";
+        dma_tx_threshold 3 rw type(dma_rx_threshold_status) "Defines the threshold value for the DMA request (associated to the TX FIFO)";
+        tx_fifo_full 1 ro type(tx_fifo_full_status) "FIFO status in command mode. Otherwise, this bit can be ignored.";
+        vc_busy 1 ro type(vc_busy_status) "Indicates if previously scheduled activities (packets, BTA) are still being processed. Forced to 1 if VC is enabled. Software should check this bit is 0 before changing channel configuration.";
+        pp_busy 1 ro type(pp_busy_status) "Ping-pong buffer busy status.";
+        vp_source 1 rw type(vp_source_status) "Selection between video port 1 and video port 2. If DSI_GNQ[24] NB_VIDEO_PORTS = 0, the bit field is ignored since only video port 1 is present.Note: This selection applies only to DSI1. For DSI2 to work properly, the VP_SOURCE bit must always be set to 0x0. .";
+        rgb565_order 1 rw type(rgb565_order_status) "Byte order for RBG565";
+        ocp_data_bus_width 2 rw type(ocp_data_bus_width_status) "Defines the size of the Interface data bus";
+        mode_speed 1 rw type(mode_speed_status) "Selection of the mode. The information is used by hardware only if MODE=COMMAND_MODE otherwise it is ignored.";
+        ecc_tx_en 1 rw type(ecc_rx_en_status) "Enables the Error Correction Code generation for the transmit header (short and long packets).";
+        cs_tx_en 1 rw type(cs_tx_en_status) "Enables the checksum generation for the transmit payload (long packet only).";
+        bta_en 1 rw type(bta_en_status) "Send the bus turn around to the peripheral. It can be used when the automatic mode is enabled (BTA_SHORT_EN=1 or/and BTA_LONG_EN=1). In that case only one BTA is sent to the peripheral. The manual mode is used to allow the user to define for which packets, the turn around is required for example getting acknowledge from the peripheral.";
+        tx_fifo_not_empty 1 ro type(tx_fifo_not_empty_status) "FIFO status";
+        mode 1 rw type(mode_status) "Selection of the mode";
+        bta_long_en 1 rw type(ecc_rx_en_status) "Enables the automatic bus turn-around after completion of each long packet transmission.";
+        bta_short_en 1 rw type(ecc_rx_en_status) "Enables the automatic bus turn-around after completion of each short packet transmission.";
+        source 1 rw type(source_status) "Selection of the source between Interface and the Video port(s) (used by the hardware only if MODE=COMMAND MODE (0x0) otherwise it is ignored). The number of available video ports is defined in DSI_GNQ[24] NB_VIDEO_PORTS bit.";
+        vc_en 1 rw type(vc_en_status) "Enables the virtual channel.";
+    };
+    
+    register dsi_vc_ctrl_i_1 addr(base, 0x120) "CONTROL REGISTER - Virtual channel This register controls the virtual channel." {
+        dcs_cmd_code 1 rw type(dcs_cmd_code_status) "DCS command code value to insert between header and video port or Interface slave data when enabled by DCS_CMD_ENABLE (only when TE mechanism is not used otherwise the bit field DCS_CMD_CODE is ignored by DSI protocol engine).";
+        dcs_cmd_enable 1 rw type(dcs_cmd_enable_status) "Enables automatic insertion of DCS command codes when data is sourced by the video port.";
+        dma_rx_req_nb 3 rw type(dma_rx_req_nb_status) "Selection of the use of the DMA request (associated to the RX FIFO)";
+        dma_rx_threshold 3 rw type(dma_rx_threshold_status) "Defines the threshold value for the DMA request (associated to the RX FIFO)";
+        dma_tx_req_nb 3 rw type(dma_rx_req_nb_status) "Selection of the use of the DMA request (associated to the TX FIFO)";
+        rx_fifo_not_empty 1 ro type(rx_fifo_not_empty_status) "FIFO status in command mode. Otherwise, this bit can be ignored.";
+        dma_tx_threshold 3 rw type(dma_rx_threshold_status) "Defines the threshold value for the DMA request (associated to the TX FIFO)";
+        tx_fifo_full 1 ro type(tx_fifo_full_status) "FIFO status in command mode. Otherwise, this bit can be ignored.";
+        vc_busy 1 ro type(vc_busy_status) "Indicates if previously scheduled activities (packets, BTA) are still being processed. Forced to 1 if VC is enabled. Software should check this bit is 0 before changing channel configuration.";
+        pp_busy 1 ro type(pp_busy_status) "Ping-pong buffer busy status.";
+        vp_source 1 rw type(vp_source_status) "Selection between video port 1 and video port 2. If DSI_GNQ[24] NB_VIDEO_PORTS = 0, the bit field is ignored since only video port 1 is present.Note: This selection applies only to DSI1. For DSI2 to work properly, the VP_SOURCE bit must always be set to 0x0. .";
+        rgb565_order 1 rw type(rgb565_order_status) "Byte order for RBG565";
+        ocp_data_bus_width 2 rw type(ocp_data_bus_width_status) "Defines the size of the Interface data bus";
+        mode_speed 1 rw type(mode_speed_status) "Selection of the mode. The information is used by hardware only if MODE=COMMAND_MODE otherwise it is ignored.";
+        ecc_tx_en 1 rw type(ecc_rx_en_status) "Enables the Error Correction Code generation for the transmit header (short and long packets).";
+        cs_tx_en 1 rw type(cs_tx_en_status) "Enables the checksum generation for the transmit payload (long packet only).";
+        bta_en 1 rw type(bta_en_status) "Send the bus turn around to the peripheral. It can be used when the automatic mode is enabled (BTA_SHORT_EN=1 or/and BTA_LONG_EN=1). In that case only one BTA is sent to the peripheral. The manual mode is used to allow the user to define for which packets, the turn around is required for example getting acknowledge from the peripheral.";
+        tx_fifo_not_empty 1 ro type(tx_fifo_not_empty_status) "FIFO status";
+        mode 1 rw type(mode_status) "Selection of the mode";
+        bta_long_en 1 rw type(ecc_rx_en_status) "Enables the automatic bus turn-around after completion of each long packet transmission.";
+        bta_short_en 1 rw type(ecc_rx_en_status) "Enables the automatic bus turn-around after completion of each short packet transmission.";
+        source 1 rw type(source_status) "Selection of the source between Interface and the Video port(s) (used by the hardware only if MODE=COMMAND MODE (0x0) otherwise it is ignored). The number of available video ports is defined in DSI_GNQ[24] NB_VIDEO_PORTS bit.";
+        vc_en 1 rw type(vc_en_status) "Enables the virtual channel.";
+    };
+    
+    register dsi_vc_ctrl_i_2 addr(base, 0x140) "CONTROL REGISTER - Virtual channel This register controls the virtual channel." {
+        dcs_cmd_code 1 rw type(dcs_cmd_code_status) "DCS command code value to insert between header and video port or Interface slave data when enabled by DCS_CMD_ENABLE (only when TE mechanism is not used otherwise the bit field DCS_CMD_CODE is ignored by DSI protocol engine).";
+        dcs_cmd_enable 1 rw type(dcs_cmd_enable_status) "Enables automatic insertion of DCS command codes when data is sourced by the video port.";
+        dma_rx_req_nb 3 rw type(dma_rx_req_nb_status) "Selection of the use of the DMA request (associated to the RX FIFO)";
+        dma_rx_threshold 3 rw type(dma_rx_threshold_status) "Defines the threshold value for the DMA request (associated to the RX FIFO)";
+        dma_tx_req_nb 3 rw type(dma_rx_req_nb_status) "Selection of the use of the DMA request (associated to the TX FIFO)";
+        rx_fifo_not_empty 1 ro type(rx_fifo_not_empty_status) "FIFO status in command mode. Otherwise, this bit can be ignored.";
+        dma_tx_threshold 3 rw type(dma_rx_threshold_status) "Defines the threshold value for the DMA request (associated to the TX FIFO)";
+        tx_fifo_full 1 ro type(tx_fifo_full_status) "FIFO status in command mode. Otherwise, this bit can be ignored.";
+        vc_busy 1 ro type(vc_busy_status) "Indicates if previously scheduled activities (packets, BTA) are still being processed. Forced to 1 if VC is enabled. Software should check this bit is 0 before changing channel configuration.";
+        pp_busy 1 ro type(pp_busy_status) "Ping-pong buffer busy status.";
+        vp_source 1 rw type(vp_source_status) "Selection between video port 1 and video port 2. If DSI_GNQ[24] NB_VIDEO_PORTS = 0, the bit field is ignored since only video port 1 is present.Note: This selection applies only to DSI1. For DSI2 to work properly, the VP_SOURCE bit must always be set to 0x0. .";
+        rgb565_order 1 rw type(rgb565_order_status) "Byte order for RBG565";
+        ocp_data_bus_width 2 rw type(ocp_data_bus_width_status) "Defines the size of the Interface data bus";
+        mode_speed 1 rw type(mode_speed_status) "Selection of the mode. The information is used by hardware only if MODE=COMMAND_MODE otherwise it is ignored.";
+        ecc_tx_en 1 rw type(ecc_rx_en_status) "Enables the Error Correction Code generation for the transmit header (short and long packets).";
+        cs_tx_en 1 rw type(cs_tx_en_status) "Enables the checksum generation for the transmit payload (long packet only).";
+        bta_en 1 rw type(bta_en_status) "Send the bus turn around to the peripheral. It can be used when the automatic mode is enabled (BTA_SHORT_EN=1 or/and BTA_LONG_EN=1). In that case only one BTA is sent to the peripheral. The manual mode is used to allow the user to define for which packets, the turn around is required for example getting acknowledge from the peripheral.";
+        tx_fifo_not_empty 1 ro type(tx_fifo_not_empty_status) "FIFO status";
+        mode 1 rw type(mode_status) "Selection of the mode";
+        bta_long_en 1 rw type(ecc_rx_en_status) "Enables the automatic bus turn-around after completion of each long packet transmission.";
+        bta_short_en 1 rw type(ecc_rx_en_status) "Enables the automatic bus turn-around after completion of each short packet transmission.";
+        source 1 rw type(source_status) "Selection of the source between Interface and the Video port(s) (used by the hardware only if MODE=COMMAND MODE (0x0) otherwise it is ignored). The number of available video ports is defined in DSI_GNQ[24] NB_VIDEO_PORTS bit.";
+        vc_en 1 rw type(vc_en_status) "Enables the virtual channel.";
+    };
+    
+    register dsi_vc_ctrl_i_3 addr(base, 0x160) "CONTROL REGISTER - Virtual channel This register controls the virtual channel." {
+        dcs_cmd_code 1 rw type(dcs_cmd_code_status) "DCS command code value to insert between header and video port or Interface slave data when enabled by DCS_CMD_ENABLE (only when TE mechanism is not used otherwise the bit field DCS_CMD_CODE is ignored by DSI protocol engine).";
+        dcs_cmd_enable 1 rw type(dcs_cmd_enable_status) "Enables automatic insertion of DCS command codes when data is sourced by the video port.";
+        dma_rx_req_nb 3 rw type(dma_rx_req_nb_status) "Selection of the use of the DMA request (associated to the RX FIFO)";
+        dma_rx_threshold 3 rw type(dma_rx_threshold_status) "Defines the threshold value for the DMA request (associated to the RX FIFO)";
+        dma_tx_req_nb 3 rw type(dma_rx_req_nb_status) "Selection of the use of the DMA request (associated to the TX FIFO)";
+        rx_fifo_not_empty 1 ro type(rx_fifo_not_empty_status) "FIFO status in command mode. Otherwise, this bit can be ignored.";
+        dma_tx_threshold 3 rw type(dma_rx_threshold_status) "Defines the threshold value for the DMA request (associated to the TX FIFO)";
+        tx_fifo_full 1 ro type(tx_fifo_full_status) "FIFO status in command mode. Otherwise, this bit can be ignored.";
+        vc_busy 1 ro type(vc_busy_status) "Indicates if previously scheduled activities (packets, BTA) are still being processed. Forced to 1 if VC is enabled. Software should check this bit is 0 before changing channel configuration.";
+        pp_busy 1 ro type(pp_busy_status) "Ping-pong buffer busy status.";
+        vp_source 1 rw type(vp_source_status) "Selection between video port 1 and video port 2. If DSI_GNQ[24] NB_VIDEO_PORTS = 0, the bit field is ignored since only video port 1 is present.Note: This selection applies only to DSI1. For DSI2 to work properly, the VP_SOURCE bit must always be set to 0x0. .";
+        rgb565_order 1 rw type(rgb565_order_status) "Byte order for RBG565";
+        ocp_data_bus_width 2 rw type(ocp_data_bus_width_status) "Defines the size of the Interface data bus";
+        mode_speed 1 rw type(mode_speed_status) "Selection of the mode. The information is used by hardware only if MODE=COMMAND_MODE otherwise it is ignored.";
+        ecc_tx_en 1 rw type(ecc_rx_en_status) "Enables the Error Correction Code generation for the transmit header (short and long packets).";
+        cs_tx_en 1 rw type(cs_tx_en_status) "Enables the checksum generation for the transmit payload (long packet only).";
+        bta_en 1 rw type(bta_en_status) "Send the bus turn around to the peripheral. It can be used when the automatic mode is enabled (BTA_SHORT_EN=1 or/and BTA_LONG_EN=1). In that case only one BTA is sent to the peripheral. The manual mode is used to allow the user to define for which packets, the turn around is required for example getting acknowledge from the peripheral.";
+        tx_fifo_not_empty 1 ro type(tx_fifo_not_empty_status) "FIFO status";
+        mode 1 rw type(mode_status) "Selection of the mode";
+        bta_long_en 1 rw type(ecc_rx_en_status) "Enables the automatic bus turn-around after completion of each long packet transmission.";
+        bta_short_en 1 rw type(ecc_rx_en_status) "Enables the automatic bus turn-around after completion of each short packet transmission.";
+        source 1 rw type(source_status) "Selection of the source between Interface and the Video port(s) (used by the hardware only if MODE=COMMAND MODE (0x0) otherwise it is ignored). The number of available video ports is defined in DSI_GNQ[24] NB_VIDEO_PORTS bit.";
+        vc_en 1 rw type(vc_en_status) "Enables the virtual channel.";
+    };
+
+    constants te_start_status width(1) "" {
+        TE_START_0 = 0 "Indicates the end of the transfer. The bit can be used by user to cancel the transfer if not already started. The FIFO shall be flushed by software to ensure there is no data remaining in it.";
+        TE_START_1 = 1 "Starts the transfer of the data. The size is defined in TE_SIZE. The bit field is set until the transfer is completed. It is reset by hardware when the transfer is completed.";
+    };
+
+    constants te_en_status width(1) "" {
+        TE_EN_0 = 0 "Disables the automatic transfer. The user shall use the interruption in order to know when TE PHY trigger is received or when the TE is detected on the input CMOS signals. The hardware reset the bit field when the transfer is completed (TE_SIZE=0).";
+        TE_EN_1 = 1 "Enables the automatic transfer of the data using the TE PHY trigger or one of the TE input signals as a synchronization event. The bit field TE_LINE defines if the CMOS signal is used or if the PHY trigger is used.";
+    };
+
+    constants te_line_status width(1) "" {
+        TE_LINE_0 = 0 "Disabled the TE CMOS signalling for the automatic data transfer. The DSI PHY trigger is used for the automactic data transfer.";
+        TE_LINE_1 = 1 "Enables the TE CMOS signalling for the automatic data transfer. The DSI PHY trigger is not used for the automactic data transfer.";
+    };
+
+    constants te_line_nb_status width(1) "" {
+        TE_LINE_NB_0 = 0 "TE0 CMOS input line is selected";
+        TE_LINE_NB_1 = 1 "TE1 CMOS input line is selected";
+    };
+    
+    register dsi_vc_te_i_0 addr(base, 0x104) "CONTROL REGISTER - Virtual channel This register controls the tearing effect logic. It defines the size of the transfer when TE occurs and enables the automatic TE mode." {
+        te_start 1 rw type(te_start_status) "Manual control of the start of the transfer. The user can use the TE interrupt in order to know that the TE trigger has been received prior to set the TE_START bit field. It is not mandatory to use the TE interrupt.";
+        te_en 1 rw type(te_en_status) "Tearing Effect Control";
+        te_line 1 rw type(te_line_status) "";
+        te_line_nb 1 rw type(te_line_nb_status) "Selection between TE0 and TE1 CMOS signals.";
+        _ 4 mbz;
+        te_size 24 rw "Defines the number of byte (payload data excluding the check -sum) to be sent. The write into the registerDSI_VC_LONG_PACKET_HEADER_i shall be performed by the user before sending data from the register DSI_VC_LONG_PACKET_PAYLOAD_i. The register value is decremented for every byte sent of the DSI link. At the end of the transfer (TE_SIZE=0), the bit field TE_EN is reset by hardware. The DMA request will be asserted when the trigger is received in order to receive data in the TX FIFO. It should not be deasserted until all data (TE_SIZE) have been received in the FIFO.";
+    };
+    
+    register dsi_vc_te_i_1 addr(base, 0x124) "CONTROL REGISTER - Virtual channel This register controls the tearing effect logic. It defines the size of the transfer when TE occurs and enables the automatic TE mode." {
+        te_start 1 rw type(te_start_status) "Manual control of the start of the transfer. The user can use the TE interrupt in order to know that the TE trigger has been received prior to set the TE_START bit field. It is not mandatory to use the TE interrupt.";
+        te_en 1 rw type(te_en_status) "Tearing Effect Control";
+        te_line 1 rw type(te_line_status) "";
+        te_line_nb 1 rw type(te_line_nb_status) "Selection between TE0 and TE1 CMOS signals.";
+        _ 4 mbz;
+        te_size 24 rw "Defines the number of byte (payload data excluding the check -sum) to be sent. The write into the registerDSI_VC_LONG_PACKET_HEADER_i shall be performed by the user before sending data from the register DSI_VC_LONG_PACKET_PAYLOAD_i. The register value is decremented for every byte sent of the DSI link. At the end of the transfer (TE_SIZE=0), the bit field TE_EN is reset by hardware. The DMA request will be asserted when the trigger is received in order to receive data in the TX FIFO. It should not be deasserted until all data (TE_SIZE) have been received in the FIFO.";
+    };
+    
+    register dsi_vc_te_i_2 addr(base, 0x144) "CONTROL REGISTER - Virtual channel This register controls the tearing effect logic. It defines the size of the transfer when TE occurs and enables the automatic TE mode." {
+        te_start 1 rw type(te_start_status) "Manual control of the start of the transfer. The user can use the TE interrupt in order to know that the TE trigger has been received prior to set the TE_START bit field. It is not mandatory to use the TE interrupt.";
+        te_en 1 rw type(te_en_status) "Tearing Effect Control";
+        te_line 1 rw type(te_line_status) "";
+        te_line_nb 1 rw type(te_line_nb_status) "Selection between TE0 and TE1 CMOS signals.";
+        _ 4 mbz;
+        te_size 24 rw "Defines the number of byte (payload data excluding the check -sum) to be sent. The write into the registerDSI_VC_LONG_PACKET_HEADER_i shall be performed by the user before sending data from the register DSI_VC_LONG_PACKET_PAYLOAD_i. The register value is decremented for every byte sent of the DSI link. At the end of the transfer (TE_SIZE=0), the bit field TE_EN is reset by hardware. The DMA request will be asserted when the trigger is received in order to receive data in the TX FIFO. It should not be deasserted until all data (TE_SIZE) have been received in the FIFO.";
+    };
+    
+    register dsi_vc_te_i_3 addr(base, 0x164) "CONTROL REGISTER - Virtual channel This register controls the tearing effect logic. It defines the size of the transfer when TE occurs and enables the automatic TE mode." {
+        te_start 1 rw type(te_start_status) "Manual control of the start of the transfer. The user can use the TE interrupt in order to know that the TE trigger has been received prior to set the TE_START bit field. It is not mandatory to use the TE interrupt.";
+        te_en 1 rw type(te_en_status) "Tearing Effect Control";
+        te_line 1 rw type(te_line_status) "";
+        te_line_nb 1 rw type(te_line_nb_status) "Selection between TE0 and TE1 CMOS signals.";
+        _ 4 mbz;
+        te_size 24 rw "Defines the number of byte (payload data excluding the check -sum) to be sent. The write into the registerDSI_VC_LONG_PACKET_HEADER_i shall be performed by the user before sending data from the register DSI_VC_LONG_PACKET_PAYLOAD_i. The register value is decremented for every byte sent of the DSI link. At the end of the transfer (TE_SIZE=0), the bit field TE_EN is reset by hardware. The DMA request will be asserted when the trigger is received in order to receive data in the TX FIFO. It should not be deasserted until all data (TE_SIZE) have been received in the FIFO.";
+    };
+    
+    register dsi_vc_long_packet_header_i_0 wo addr(base, 0x108) "LONG PACKET HEADER INFORMATION -Virtual channel This register sets the 32-bit DATA_ID + Word count + ECC (the virtual channel id can be different than VC). The ECC will be computed if ECC_TX_EN is set to 1. DATA_ID is located at bit[7:0] WC is located at bit[23:8] ECC is located at bit[31:24] (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_long_packet_header_i_1 wo addr(base, 0x128) "LONG PACKET HEADER INFORMATION -Virtual channel This register sets the 32-bit DATA_ID + Word count + ECC (the virtual channel id can be different than VC). The ECC will be computed if ECC_TX_EN is set to 1. DATA_ID is located at bit[7:0] WC is located at bit[23:8] ECC is located at bit[31:24] (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_long_packet_header_i_2 wo addr(base, 0x148) "LONG PACKET HEADER INFORMATION -Virtual channel This register sets the 32-bit DATA_ID + Word count + ECC (the virtual channel id can be different than VC). The ECC will be computed if ECC_TX_EN is set to 1. DATA_ID is located at bit[7:0] WC is located at bit[23:8] ECC is located at bit[31:24] (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_long_packet_header_i_3 wo addr(base, 0x168) "LONG PACKET HEADER INFORMATION -Virtual channel This register sets the 32-bit DATA_ID + Word count + ECC (the virtual channel id can be different than VC). The ECC will be computed if ECC_TX_EN is set to 1. DATA_ID is located at bit[7:0] WC is located at bit[23:8] ECC is located at bit[31:24] (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_long_packet_payload_i_0 wo addr(base, 0x10C) "LONG PACKET PAYLOAD INFORMATION -Virtual channel This register sets the payload information (excluding checksum). The hardware shall capture the word count in the packet header (in DSI_VC_LONG_PACKET_HEADER) in order to determine the last valid data (the virtual channel id can be different than VC). Byte1 is bit[7:0] Byte2 is bit[15:8] Byte3 is bit[23:16] Byte4 is bit[31:24] Byten is sent before Byten+1 (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_long_packet_payload_i_1 wo addr(base, 0x12C) "LONG PACKET PAYLOAD INFORMATION -Virtual channel This register sets the payload information (excluding checksum). The hardware shall capture the word count in the packet header (in DSI_VC_LONG_PACKET_HEADER) in order to determine the last valid data (the virtual channel id can be different than VC). Byte1 is bit[7:0] Byte2 is bit[15:8] Byte3 is bit[23:16] Byte4 is bit[31:24] Byten is sent before Byten+1 (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_long_packet_payload_i_2 wo addr(base, 0x14C) "LONG PACKET PAYLOAD INFORMATION -Virtual channel This register sets the payload information (excluding checksum). The hardware shall capture the word count in the packet header (in DSI_VC_LONG_PACKET_HEADER) in order to determine the last valid data (the virtual channel id can be different than VC). Byte1 is bit[7:0] Byte2 is bit[15:8] Byte3 is bit[23:16] Byte4 is bit[31:24] Byten is sent before Byten+1 (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_long_packet_payload_i_3 wo addr(base, 0x16C) "LONG PACKET PAYLOAD INFORMATION -Virtual channel This register sets the payload information (excluding checksum). The hardware shall capture the word count in the packet header (in DSI_VC_LONG_PACKET_HEADER) in order to determine the last valid data (the virtual channel id can be different than VC). Byte1 is bit[7:0] Byte2 is bit[15:8] Byte3 is bit[23:16] Byte4 is bit[31:24] Byten is sent before Byten+1 (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_short_packet_header_i_0 rw addr(base, 0x110) "SHORT PACKET HEADER INFORMATION -Virtual channel This register sets the 24-bit DATA_ID + Short Packet Data Field + ECC (the virtual channel id can be different than VC). The ECC will be computed if ECC_TX_EN is set to 1. DATA_ID is located at bit[7:0] Short Packet Data field is located at bit[23:8] ECC is located at bit[31:24] (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_short_packet_header_i_1 rw addr(base, 0x130) "SHORT PACKET HEADER INFORMATION -Virtual channel This register sets the 24-bit DATA_ID + Short Packet Data Field + ECC (the virtual channel id can be different than VC). The ECC will be computed if ECC_TX_EN is set to 1. DATA_ID is located at bit[7:0] Short Packet Data field is located at bit[23:8] ECC is located at bit[31:24] (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_short_packet_header_i_2 rw addr(base, 0x150) "SHORT PACKET HEADER INFORMATION -Virtual channel This register sets the 24-bit DATA_ID + Short Packet Data Field + ECC (the virtual channel id can be different than VC). The ECC will be computed if ECC_TX_EN is set to 1. DATA_ID is located at bit[7:0] Short Packet Data field is located at bit[23:8] ECC is located at bit[31:24] (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_short_packet_header_i_3 rw addr(base, 0x170) "SHORT PACKET HEADER INFORMATION -Virtual channel This register sets the 24-bit DATA_ID + Short Packet Data Field + ECC (the virtual channel id can be different than VC). The ECC will be computed if ECC_TX_EN is set to 1. DATA_ID is located at bit[7:0] Short Packet Data field is located at bit[23:8] ECC is located at bit[31:24] (Least significant byte first and least significant bit first)" type(uint32);
+    
+    register dsi_vc_irqstatus_i_0 addr(base, 0x118) "INTERRUPT STATUS REGISTER - Virtual channel This register regroups all the events related to the virtual channel." {
+        _ 23 mbz;
+        pp_busy_change_irq 1 rw type(te1_line_irq_status) "Video Port ping-pong buffer busy status. PP_BUSY has changed from 1 to 0.";
+        fifo_tx_udf_irq 1 rw type(te1_line_irq_status) "FIFO underflow status. The FIFO used on the L3 interconnect slave port for buffering the data for the virtual channel has underflowed which means that the data for the current packet have not been received in time since the transfer of the packet are already started (transfer started since the packet size is bigger than space allocated in the FIFO).";
+        ecc_no_correction_irq 1 rw type(te1_line_irq_status) "ECC error status (short and long packets). No correction of the header because of more than 1-bit error.";
+        bta_irq 1 rw type(te1_line_irq_status) "Virtual channel - BTA status.";
+        fifo_rx_ovf_irq 1 rw type(te1_line_irq_status) "FIFO overflow error status. The FIFO used on the L3 interconnect slave port for buffering the data received on the DSI link for the virtual channel has overflowed.";
+        fifo_tx_ovf_irq 1 rw type(te1_line_irq_status) "FIFO overflow error status. The FIFO used on the L3 interconnect slave port for buffering the data for the virtual channel has overflowed.";
+        packet_sent_irq 1 rw type(te1_line_irq_status) "Indicates that a packet has been sent. It is used when BTA manual mode is used.";
+        ecc_correction_irq 1 rw type(te1_line_irq_status) "Virtual channel - ECC has been used to do the correction of the only 1-bit error status (short and long packet).";
+        cs_irq 1 rw type(te1_line_irq_status) "Virtual channel - checksum mismatch status.";
+    };
+    
+    register dsi_vc_irqstatus_i_1 addr(base, 0x138) "INTERRUPT STATUS REGISTER - Virtual channel This register regroups all the events related to the virtual channel." {
+        _ 23 mbz;
+        pp_busy_change_irq 1 rw type(te1_line_irq_status) "Video Port ping-pong buffer busy status. PP_BUSY has changed from 1 to 0.";
+        fifo_tx_udf_irq 1 rw type(te1_line_irq_status) "FIFO underflow status. The FIFO used on the L3 interconnect slave port for buffering the data for the virtual channel has underflowed which means that the data for the current packet have not been received in time since the transfer of the packet are already started (transfer started since the packet size is bigger than space allocated in the FIFO).";
+        ecc_no_correction_irq 1 rw type(te1_line_irq_status) "ECC error status (short and long packets). No correction of the header because of more than 1-bit error.";
+        bta_irq 1 rw type(te1_line_irq_status) "Virtual channel - BTA status.";
+        fifo_rx_ovf_irq 1 rw type(te1_line_irq_status) "FIFO overflow error status. The FIFO used on the L3 interconnect slave port for buffering the data received on the DSI link for the virtual channel has overflowed.";
+        fifo_tx_ovf_irq 1 rw type(te1_line_irq_status) "FIFO overflow error status. The FIFO used on the L3 interconnect slave port for buffering the data for the virtual channel has overflowed.";
+        packet_sent_irq 1 rw type(te1_line_irq_status) "Indicates that a packet has been sent. It is used when BTA manual mode is used.";
+        ecc_correction_irq 1 rw type(te1_line_irq_status) "Virtual channel - ECC has been used to do the correction of the only 1-bit error status (short and long packet).";
+        cs_irq 1 rw type(te1_line_irq_status) "Virtual channel - checksum mismatch status.";
+    };
+    
+    register dsi_vc_irqstatus_i_2 addr(base, 0x158) "INTERRUPT STATUS REGISTER - Virtual channel This register regroups all the events related to the virtual channel." {
+        _ 23 mbz;
+        pp_busy_change_irq 1 rw type(te1_line_irq_status) "Video Port ping-pong buffer busy status. PP_BUSY has changed from 1 to 0.";
+        fifo_tx_udf_irq 1 rw type(te1_line_irq_status) "FIFO underflow status. The FIFO used on the L3 interconnect slave port for buffering the data for the virtual channel has underflowed which means that the data for the current packet have not been received in time since the transfer of the packet are already started (transfer started since the packet size is bigger than space allocated in the FIFO).";
+        ecc_no_correction_irq 1 rw type(te1_line_irq_status) "ECC error status (short and long packets). No correction of the header because of more than 1-bit error.";
+        bta_irq 1 rw type(te1_line_irq_status) "Virtual channel - BTA status.";
+        fifo_rx_ovf_irq 1 rw type(te1_line_irq_status) "FIFO overflow error status. The FIFO used on the L3 interconnect slave port for buffering the data received on the DSI link for the virtual channel has overflowed.";
+        fifo_tx_ovf_irq 1 rw type(te1_line_irq_status) "FIFO overflow error status. The FIFO used on the L3 interconnect slave port for buffering the data for the virtual channel has overflowed.";
+        packet_sent_irq 1 rw type(te1_line_irq_status) "Indicates that a packet has been sent. It is used when BTA manual mode is used.";
+        ecc_correction_irq 1 rw type(te1_line_irq_status) "Virtual channel - ECC has been used to do the correction of the only 1-bit error status (short and long packet).";
+        cs_irq 1 rw type(te1_line_irq_status) "Virtual channel - checksum mismatch status.";
+    };
+    
+    register dsi_vc_irqstatus_i_3 addr(base, 0x178) "INTERRUPT STATUS REGISTER - Virtual channel This register regroups all the events related to the virtual channel." {
+        _ 23 mbz;
+        pp_busy_change_irq 1 rw type(te1_line_irq_status) "Video Port ping-pong buffer busy status. PP_BUSY has changed from 1 to 0.";
+        fifo_tx_udf_irq 1 rw type(te1_line_irq_status) "FIFO underflow status. The FIFO used on the L3 interconnect slave port for buffering the data for the virtual channel has underflowed which means that the data for the current packet have not been received in time since the transfer of the packet are already started (transfer started since the packet size is bigger than space allocated in the FIFO).";
+        ecc_no_correction_irq 1 rw type(te1_line_irq_status) "ECC error status (short and long packets). No correction of the header because of more than 1-bit error.";
+        bta_irq 1 rw type(te1_line_irq_status) "Virtual channel - BTA status.";
+        fifo_rx_ovf_irq 1 rw type(te1_line_irq_status) "FIFO overflow error status. The FIFO used on the L3 interconnect slave port for buffering the data received on the DSI link for the virtual channel has overflowed.";
+        fifo_tx_ovf_irq 1 rw type(te1_line_irq_status) "FIFO overflow error status. The FIFO used on the L3 interconnect slave port for buffering the data for the virtual channel has overflowed.";
+        packet_sent_irq 1 rw type(te1_line_irq_status) "Indicates that a packet has been sent. It is used when BTA manual mode is used.";
+        ecc_correction_irq 1 rw type(te1_line_irq_status) "Virtual channel - ECC has been used to do the correction of the only 1-bit error status (short and long packet).";
+        cs_irq 1 rw type(te1_line_irq_status) "Virtual channel - checksum mismatch status.";
+    };
+    
+    register dsi_vc_irqenable_i_0 addr(base, 0x11C) "INTERRUPT ENABLE REGISTER - Virtual channel This register regroups all the events related to virtual channel." {
+        _ 23 mbz;
+        pp_busy_change_irq_en 1 rw type(te1_line_irq_en_status) "Video Port ping-pong buffer busy status.";
+        fifo_tx_udf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO underflow enable. The FIFO used for buffering the data received on the L3 interface slave port for the virtual channel has underflowed which means that the data for the current packet have not been received in time since the transfer of the packet are already started (transfer started since the packet size is bigger than space allocated in the FIFO).";
+        ecc_no_correction_irq_en 1 rw type(te1_line_irq_en_status) "ECC error (short and long packets). No correction of the header because of more than 1-bit error.";
+        bta_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel -Bus turn around reception";
+        fifo_rx_ovf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO overflow enable. The FIFO used on the L3 interconnect slave port for buffering the data received on the DSI link for the virtual channel has overflowed.";
+        fifo_tx_ovf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO overflow enable. The FIFO used on the L3 interconnect slave port for buffering the data received on the Interface slave port for the virtual channel has overflowed.";
+        packet_sent_irq_en 1 rw type(te1_line_irq_en_status) "Indicates that a packet has been sent. It is used when BTA manual mode is used.";
+        ecc_correction_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel - ECC has been used to correct the only 1-bit error (short and long packet).";
+        cs_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel - checksum of the payload mismatch detection";
+    };
+    
+    register dsi_vc_irqenable_i_1 addr(base, 0x13C) "INTERRUPT ENABLE REGISTER - Virtual channel This register regroups all the events related to virtual channel." {
+        _ 23 mbz;
+        pp_busy_change_irq_en 1 rw type(te1_line_irq_en_status) "Video Port ping-pong buffer busy status.";
+        fifo_tx_udf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO underflow enable. The FIFO used for buffering the data received on the L3 interface slave port for the virtual channel has underflowed which means that the data for the current packet have not been received in time since the transfer of the packet are already started (transfer started since the packet size is bigger than space allocated in the FIFO).";
+        ecc_no_correction_irq_en 1 rw type(te1_line_irq_en_status) "ECC error (short and long packets). No correction of the header because of more than 1-bit error.";
+        bta_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel -Bus turn around reception";
+        fifo_rx_ovf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO overflow enable. The FIFO used on the L3 interconnect slave port for buffering the data received on the DSI link for the virtual channel has overflowed.";
+        fifo_tx_ovf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO overflow enable. The FIFO used on the L3 interconnect slave port for buffering the data received on the Interface slave port for the virtual channel has overflowed.";
+        packet_sent_irq_en 1 rw type(te1_line_irq_en_status) "Indicates that a packet has been sent. It is used when BTA manual mode is used.";
+        ecc_correction_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel - ECC has been used to correct the only 1-bit error (short and long packet).";
+        cs_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel - checksum of the payload mismatch detection";
+    };
+    
+    register dsi_vc_irqenable_i_2 addr(base, 0x15C) "INTERRUPT ENABLE REGISTER - Virtual channel This register regroups all the events related to virtual channel." {
+        _ 23 mbz;
+        pp_busy_change_irq_en 1 rw type(te1_line_irq_en_status) "Video Port ping-pong buffer busy status.";
+        fifo_tx_udf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO underflow enable. The FIFO used for buffering the data received on the L3 interface slave port for the virtual channel has underflowed which means that the data for the current packet have not been received in time since the transfer of the packet are already started (transfer started since the packet size is bigger than space allocated in the FIFO).";
+        ecc_no_correction_irq_en 1 rw type(te1_line_irq_en_status) "ECC error (short and long packets). No correction of the header because of more than 1-bit error.";
+        bta_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel -Bus turn around reception";
+        fifo_rx_ovf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO overflow enable. The FIFO used on the L3 interconnect slave port for buffering the data received on the DSI link for the virtual channel has overflowed.";
+        fifo_tx_ovf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO overflow enable. The FIFO used on the L3 interconnect slave port for buffering the data received on the Interface slave port for the virtual channel has overflowed.";
+        packet_sent_irq_en 1 rw type(te1_line_irq_en_status) "Indicates that a packet has been sent. It is used when BTA manual mode is used.";
+        ecc_correction_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel - ECC has been used to correct the only 1-bit error (short and long packet).";
+        cs_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel - checksum of the payload mismatch detection";
+    };
+    
+    register dsi_vc_irqenable_i_3 addr(base, 0x17C) "INTERRUPT ENABLE REGISTER - Virtual channel This register regroups all the events related to virtual channel." {
+        _ 23 mbz;
+        pp_busy_change_irq_en 1 rw type(te1_line_irq_en_status) "Video Port ping-pong buffer busy status.";
+        fifo_tx_udf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO underflow enable. The FIFO used for buffering the data received on the L3 interface slave port for the virtual channel has underflowed which means that the data for the current packet have not been received in time since the transfer of the packet are already started (transfer started since the packet size is bigger than space allocated in the FIFO).";
+        ecc_no_correction_irq_en 1 rw type(te1_line_irq_en_status) "ECC error (short and long packets). No correction of the header because of more than 1-bit error.";
+        bta_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel -Bus turn around reception";
+        fifo_rx_ovf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO overflow enable. The FIFO used on the L3 interconnect slave port for buffering the data received on the DSI link for the virtual channel has overflowed.";
+        fifo_tx_ovf_irq_en 1 rw type(te1_line_irq_en_status) "FIFO overflow enable. The FIFO used on the L3 interconnect slave port for buffering the data received on the Interface slave port for the virtual channel has overflowed.";
+        packet_sent_irq_en 1 rw type(te1_line_irq_en_status) "Indicates that a packet has been sent. It is used when BTA manual mode is used.";
+        ecc_correction_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel - ECC has been used to correct the only 1-bit error (short and long packet).";
+        cs_irq_en 1 rw type(te1_line_irq_en_status) "Virtual channel - checksum of the payload mismatch detection";
+    };
+};

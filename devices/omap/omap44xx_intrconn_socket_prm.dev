@@ -1,0 +1,250 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_intrconn_socket_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_intrconn_socket_prm msbfirst ( addr base ) "" {
+    
+    
+    register revision_prm ro addr(base, 0x0) "This register contains the IP revision code for the PRM part of the PRCM" type(uint32);
+
+    constants abb_iva_done_st_status width(1) "" {
+        ABB_IVA_DONE_ST_0 = 0 "No interrupt";
+        ABB_IVA_DONE_ST_1 = 1 "Interrupt is pending";
+    };
+    
+    register prm_irqstatus_mpu_a9 addr(base, 0x10) "This register provides status on MPU interrupt events. Any event is logged independently of the corresponding IRQENABLE value. Software is required to clear a set bit by writing a 1 into the bit-position to be cleared." {
+        abb_iva_done_st 1 rw1c type(abb_iva_done_st_status) "IVA ABB mode change done. This status is set when OPP_CHANGE bit is cleared by hardware in PRM_LDO_ABB_IVA_CRTL register. It is cleared by software.";
+        vc_iva_vpack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller IVA voltage processor command acknowledge status.";
+        vp_iva_tranxdone_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA transaction completion status. This status is set when a transaction is completed in the voltage processor, including ABB mode change done if applicable (OPP_CHANGE bit cleared in PRM_LDO_ABB_IVA_CRTL). It is cleared by software.";
+        vp_iva_eqvalue_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA voltage value change event. This status is set when an update has been requested but the new voltage value is the same as the current SMPS voltage value. It is cleared by software.";
+        vp_iva_nosmpsack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA timeout event status. This status is set when the timeout occured before the SMPS acknowledge. It is cleared by software.";
+        vp_iva_maxvdd_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA voltage higher limit event status. This status is set when the voltage higher limit is reached. It is cleared by software.";
+        vp_iva_minvdd_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA voltage lower limit event status. This status is set when the voltage lower limit is reached. It is cleared by software.";
+        vp_iva_oppchangedone_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA OPP change done status, including ABB mode change done if applicable (OPP_CHANGE bit cleared in PRM_LDO_ABB_IVA_CRTL). It is cleared by software.";
+        _ 1 mbz;
+        vc_core_vpack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller CORE voltage processor command acknowledge status";
+        vp_core_tranxdone_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE transaction completion status. This status is set when a transaction is completed in the voltage processor. It is cleared by software.";
+        vp_core_eqvalue_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE voltage value change event. This status is set when an update has been requested but the new voltage value is the same as the current SMPS voltage value. It is cleared by software.";
+        vp_core_nosmpsack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE timeout event status. This status is set when the timeout occured before the SMPS acknowledge. It is cleared by software.";
+        vp_core_maxvdd_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE voltage higher limit event status. This status is set when the voltage higher limit is reached. It is cleared by software.";
+        vp_core_minvdd_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE voltage lower limit event status. This status is set when the voltage lower limit is reached. It is cleared by software.";
+        vp_core_oppchangedone_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE OPP change done status. It is cleared by software.";
+        _ 1 mbz;
+        vc_bypassack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller bypass command acknowledge status.";
+        vc_toerr_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller timeout error event status.";
+        vc_raerr_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller register address acknowledge error event status.";
+        vc_saerr_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller slave address acknowledge error event status.";
+        _ 1 mbz;
+        io_st 1 rw1c type(abb_iva_done_st_status) "I/O pad event interrupt status.";
+        transition_st 1 rw1c type(abb_iva_done_st_status) "Software supervised transition completed event interrupt status (any domain). Asserted upon completion of any clock domain force wakeup transition or upon completion of any power domain sleep transition with at least one enclosed clock domain configured in forced-sleep.";
+        _ 3 mbz;
+        dpll_abe_recal_st 1 rw1c type(abb_iva_done_st_status) "ABE DPLL recalibration interrupt status.";
+        dpll_per_recal_st 1 rw1c type(abb_iva_done_st_status) "PER DPLL recalibration interrupt status.";
+        dpll_iva_recal_st 1 rw1c type(abb_iva_done_st_status) "IVA DPLL recalibration interrupt status.";
+        dpll_mpu_recal_st 1 rw1c type(abb_iva_done_st_status) "MPU DPLL recalibration interrupt status.";
+        dpll_core_recal_st 1 rw1c type(abb_iva_done_st_status) "CORE DPLL recalibration interrupt status.";
+    };
+    
+    register prm_irqstatus_mpu_a9_2 addr(base, 0x14) "This register provides status on MPU interrupt events. Any event is logged independently of the corresponding IRQENABLE value. Software is required to clear a set bit by writing a 1 into the bit-position to be cleared." {
+        _ 24 mbz;
+        abb_mpu_done_st 1 rw1c type(abb_iva_done_st_status) "MPU ABB mode change done. This status is set when OPP_CHANGE bit is cleared by hardware in PRM_LDO_ABB_MPU_CRTL register. It is cleared by software.";
+        vc_mpu_vpack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller MPU voltage processor command acknowledge status.";
+        vp_mpu_tranxdone_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor MPU transaction completion status. This status is set when a transaction is completed in the voltage processor, including ABB mode change done if applicable (OPP_CHANGE bit cleared in PRM_LDO_ABB_MPU_CRTL). It is cleared by software.";
+        vp_mpu_eqvalue_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor MPU voltage value change event. This status is set when an update has been requested but the new voltage value is the same as the current SMPS voltage value. It is cleared by software.";
+        vp_mpu_nosmpsack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor MPU timeout event status. This status is set when the timeout occured before the SMPS acknowledge. It is cleared by software.";
+        vp_mpu_maxvdd_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor MPU voltage higher limit event status. This status is set when the voltage higher limit is reached. It is cleared by software.";
+        vp_mpu_minvdd_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor MPU voltage lower limit event status. This status is set when the voltage lower limit is reached. It is cleared by software.";
+        vp_mpu_oppchangedone_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor MPU OPP change done status, including ABB mode change done if applicable (OPP_CHANGE bit cleared in PRM_LDO_ABB_MPU_CRTL). It is cleared by software.";
+    };
+
+    constants abb_iva_done_en_status width(1) "" {
+        ABB_IVA_DONE_EN_0 = 0 "Interrupt is masked";
+        ABB_IVA_DONE_EN_1 = 1 "Interrupt is enabled";
+    };
+    
+    register prm_irqenable_mpu_a9 addr(base, 0x18) "This register is used to enable or disable MPU interrupt activation upon presence of corresponding bit." {
+        abb_iva_done_en 1 rw type(abb_iva_done_en_status) "IIVA ABB mode change done enable.";
+        vc_iva_vpack_en 1 rw type(abb_iva_done_en_status) "Voltage Controller IVA voltage processor command acknowledge enable.";
+        vp_iva_tranxdone_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA transaction completion enable.";
+        vp_iva_eqvalue_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA voltage value change event enable.";
+        vp_iva_nosmpsack_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA timeout event enable.";
+        vp_iva_maxvdd_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA voltage higher limit event enable.";
+        vp_iva_minvdd_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA voltage lower limit event enable.";
+        vp_iva_oppchangedone_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA OPP change done enable.";
+        _ 1 mbz;
+        vc_core_vpack_en 1 rw type(abb_iva_done_en_status) "Voltage Controller CORE voltage processor command acknowledge enable";
+        vp_core_tranxdone_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE transaction completion enable.";
+        vp_core_eqvalue_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE voltage value change event enable.";
+        vp_core_nosmpsack_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE timeout event enable.";
+        vp_core_maxvdd_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE voltage higher limit event enable.";
+        vp_core_minvdd_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE voltage lower limit event enable.";
+        vp_core_oppchangedone_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE OPP change done enable.";
+        _ 1 mbz;
+        vc_bypassack_en 1 rw type(abb_iva_done_en_status) "Voltage Controller bypass command acknowledge enable.";
+        vc_toerr_en 1 rw type(abb_iva_done_en_status) "Voltage Controller timeout error event enable.";
+        vc_raerr_en 1 rw type(abb_iva_done_en_status) "Voltage Controller register address acknowledge error event enable.";
+        vc_saerr_en 1 rw type(abb_iva_done_en_status) "Voltage Controller slave address acknowledge error event enable.";
+        _ 1 mbz;
+        io_en 1 rw type(abb_iva_done_en_status) "I/O pad event interrupt enable.";
+        transition_en 1 rw type(abb_iva_done_en_status) "Software supervised transition completed event interrupt enable (any domain).";
+        _ 3 mbz;
+        dpll_abe_recal_en 1 rw type(abb_iva_done_en_status) "ABE DPLL recalibration interrupt enable.";
+        dpll_per_recal_en 1 rw type(abb_iva_done_en_status) "PER DPLL recalibration interrupt enable.";
+        dpll_iva_recal_en 1 rw type(abb_iva_done_en_status) "IVA DPLL recalibration interrupt enable.";
+        dpll_mpu_recal_en 1 rw type(abb_iva_done_en_status) "MPU DPLL recalibration interrupt enable.";
+        dpll_core_recal_en 1 rw type(abb_iva_done_en_status) "CORE DPLL recalibration interrupt enable.";
+    };
+    
+    register prm_irqenable_mpu_a9_2 addr(base, 0x1C) "This register is used to enable or disable MPU interrupt activation upon presence of corresponding bit." {
+        _ 24 mbz;
+        abb_mpu_done_en 1 rw type(abb_iva_done_en_status) "MPU ABB mode change done enable.";
+        vc_mpu_vpack_eb 1 rw type(abb_iva_done_en_status) "Voltage Controller MPU voltage processor command acknowledge enable.";
+        vp_mpu_tranxdone_en 1 rw type(abb_iva_done_en_status) "Voltage Processor MPU transaction completion enable";
+        vp_mpu_eqvalue_en 1 rw type(abb_iva_done_en_status) "Voltage Processor MPU voltage value change event enable";
+        vp_mpu_nosmpsack_en 1 rw type(abb_iva_done_en_status) "Voltage Processor MPU timeout event enable";
+        vp_mpu_maxvdd_en 1 rw type(abb_iva_done_en_status) "Voltage Processor MPU voltage higher limit event enable";
+        vp_mpu_minvdd_en 1 rw type(abb_iva_done_en_status) "Voltage Processor MPU voltage lower limit event enable";
+        vp_mpu_oppchangedone_en 1 rw type(abb_iva_done_en_status) "Voltage Processor MPU OPP change done enable";
+    };
+    
+    register prm_irqstatus_mpu_m3 addr(base, 0x20) "This register provides status on MPU_A3 interrupt events. Any event is logged independently of the corresponding IRQENABLE value. Software is required to clear a set bit by writing a 1 into the bit-position to be cleared." {
+        abb_iva_done_st 1 rw1c type(abb_iva_done_st_status) "IVA ABB mode change done. This status is set when OPP_CHANGE bit is cleared by hardware in PRM_LDO_ABB_IVA_CRTL register. It is cleared by software.";
+        vc_iva_vpack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller IVA voltage processor command acknowledge status";
+        vp_iva_tranxdone_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA transaction completion status. This status is set when a transaction is completed in the voltage processor, including ABB mode change done if applicable (OPP_CHANGE bit cleared in PRM_LDO_ABB_IVA_CRTL). It is cleared by software.";
+        vp_iva_eqvalue_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA voltage value change event. This status is set when an update has been requested but the new voltage value is the same as the current SMPS voltage value. It is cleared by software.";
+        vp_iva_nosmpsack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA timeout event status. This status is set when the timeout occured before the SMPS acknowledge. It is cleared by software.";
+        vp_iva_maxvdd_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA voltage higher limit event status. This status is set when the voltage higher limit is reached. It is cleared by software.";
+        vp_iva_minvdd_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA voltage lower limit event status. This status is set when the voltage lower limit is reached. It is cleared by software.";
+        vp_iva_oppchangedone_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor IVA OPP change done status, including ABB mode change done if applicable (OPP_CHANGE bit cleared in PRM_LDO_ABB_IVA_CRTL). It is cleared by software.";
+        _ 1 mbz;
+        vc_core_vpack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller CORE voltage processor command acknowledge status";
+        vp_core_tranxdone_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE transaction completion status. This status is set when a transaction is completed in the voltage processor. It is cleared by software.";
+        vp_core_eqvalue_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE voltage value change event. This status is set when an update has been requested but the new voltage value is the same as the current SMPS voltage value. It is cleared by software.";
+        vp_core_nosmpsack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE timeout event status. This status is set when the timeout occured before the SMPS acknowledge. It is cleared by software.";
+        vp_core_maxvdd_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE voltage higher limit event status. This status is set when the voltage higher limit is reached. It is cleared by software.";
+        vp_core_minvdd_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE voltage lower limit event status. This status is set when the voltage lower limit is reached. It is cleared by software.";
+        vp_core_oppchangedone_st 1 rw1c type(abb_iva_done_st_status) "Voltage Processor CORE OPP change done status. It is cleared by software.";
+        _ 1 mbz;
+        vc_bypassack_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller bypass command acknowledge status";
+        vc_toerr_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller timeout error event status";
+        vc_raerr_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller register address acknowledge error event status";
+        vc_saerr_st 1 rw1c type(abb_iva_done_st_status) "Voltage Controller slave address acknowledge error event status";
+        forcewkup_st 1 rw1c type(abb_iva_done_st_status) "CORTEXM3 domain software supervised wakeup transition completed event interrupt status.";
+        io_st 1 rw1c type(abb_iva_done_st_status) "I/O pad event interrupt status.";
+        transition_st 1 rw1c type(abb_iva_done_st_status) "Software supervised transition completed event interrupt status (any domain). Asserted upon completion of any clock domain force wakeup transition or upon completion of any power domain sleep transition with at least one enclosed clock domain configured in forced-sleep.";
+        _ 3 mbz;
+        dpll_abe_recal_st 1 rw1c type(abb_iva_done_st_status) "ABE DPLL recalibration interrupt status.";
+        dpll_per_recal_st 1 rw1c type(abb_iva_done_st_status) "PER DPLL recalibration interrupt status.";
+        dpll_iva_recal_st 1 rw1c type(abb_iva_done_st_status) "IVA DPLL recalibration interrupt status.";
+        _ 1 mbz;
+        dpll_core_recal_st 1 rw1c type(abb_iva_done_st_status) "CORE DPLL recalibration interrupt status.";
+    };
+    
+    register prm_irqenable_mpu_m3 addr(base, 0x28) "This register is used to enable or disable MPU_A3 interrupt activation upon presence of corresponding bit." {
+        abb_iva_done_en 1 rw type(abb_iva_done_en_status) "IVA ABB mode change done enable";
+        vc_iva_vpack_en 1 rw type(abb_iva_done_en_status) "Voltage Controller IVA voltage processor command acknowledge enable";
+        vp_iva_tranxdone_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA transaction completion enable";
+        vp_iva_eqvalue_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA voltage value change event enable";
+        vp_iva_nosmpsack_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA timeout event enable";
+        vp_iva_maxvdd_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA voltage higher limit event enable";
+        vp_iva_minvdd_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA voltage lower limit event enable";
+        vp_iva_oppchangedone_en 1 rw type(abb_iva_done_en_status) "Voltage Processor IVA OPP change done enable";
+        _ 1 mbz;
+        vc_core_vpack_en 1 rw type(abb_iva_done_en_status) "Voltage Controller CORE voltage processor command acknowledge enable";
+        vp_core_tranxdone_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE transaction completion enable";
+        vp_core_eqvalue_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE voltage value change event enable";
+        vp_core_nosmpsack_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE timeout event enable";
+        vp_core_maxvdd_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE voltage higher limit event enable";
+        vp_core_minvdd_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE voltage lower limit event enable";
+        vp_core_oppchangedone_en 1 rw type(abb_iva_done_en_status) "Voltage Processor CORE OPP change done enable";
+        _ 1 mbz;
+        vc_bypassack_en 1 rw type(abb_iva_done_en_status) "Voltage Controller bypass command acknowledge enable";
+        vc_toerr_en 1 rw type(abb_iva_done_en_status) "Voltage Controller timeout error event enable";
+        vc_raerr_en 1 rw type(abb_iva_done_en_status) "Voltage Controller register address acknowledge error event enable";
+        vc_saerr_en 1 rw type(abb_iva_done_en_status) "Voltage Controller slave address acknowledge error event enable";
+        forcewkup_en 1 rw type(abb_iva_done_en_status) "CORTEXM3 domain software supervised wakeup transition completed event interrupt enable.";
+        io_en 1 rw type(abb_iva_done_en_status) "I/O pad event interrupt enable";
+        transition_en 1 rw type(abb_iva_done_en_status) "Software supervised transition completed event interrupt enable (any domain)";
+        _ 3 mbz;
+        dpll_abe_recal_en 1 rw type(abb_iva_done_en_status) "ABEDPLL recalibration interrupt enable";
+        dpll_per_recal_en 1 rw type(abb_iva_done_en_status) "PER DPLL recalibration interrupt enable";
+        dpll_iva_recal_en 1 rw type(abb_iva_done_en_status) "IVA DPLL recalibration interrupt enable";
+        _ 1 mbz;
+        dpll_core_recal_en 1 rw type(abb_iva_done_en_status) "CORE DPLL recalibration interrupt enable";
+    };
+    
+    register prm_irqstatus_dsp addr(base, 0x30) "This register provides status on DSP interrupt events. Any event is logged independently of the corresponding IRQENABLE value. Software is required to clear a set bit by writing a 1 into the bit-position to be cleared." {
+        _ 21 mbz;
+        forcewkup_st 1 rw1c type(abb_iva_done_st_status) "DSP domain software supervised wakeup transition completed event interrupt status.";
+        _ 5 mbz;
+        dpll_abe_recal_st 1 rw1c type(abb_iva_done_st_status) "ABE DPLL recalibration interrupt status.";
+        _ 1 mbz;
+        dpll_iva_recal_st 1 rw1c type(abb_iva_done_st_status) "IVA DPLL recalibration interrupt status.";
+        _ 2 mbz;
+    };
+    
+    register prm_irqenable_dsp addr(base, 0x38) "This register is used to enable or disable DSP interrupt activation upon presence of corresponding bit." {
+        _ 21 mbz;
+        forcewkup_en 1 rw type(abb_iva_done_en_status) "DSP domain software supervised wakeup transition completed event interrupt enable.";
+        _ 5 mbz;
+        dpll_abe_recal_en 1 rw type(abb_iva_done_en_status) "ABEDPLL recalibration interrupt enable";
+        _ 1 mbz;
+        dpll_iva_recal_en 1 rw type(abb_iva_done_en_status) "IVA DPLL recalibration interrupt enable";
+        _ 2 mbz;
+    };
+
+    constants idlest_status width(2) "" {
+        IDLEST_0_r = 0 "Module is fully functional";
+        IDLEST_1_r = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_2_r = 2 "Module is in Idle";
+        IDLEST_3_r = 3 "Module is disabled";
+    };
+
+    constants modulemode_status width(2) "" {
+        MODULEMODE_0 = 0 "Module is disabled by software. INTRCONN configuration port is not accessible.";
+        MODULEMODE_1 = 1 "Module is managed automatically by hardware along with EMU domain. INTRCONN configuration port is accessible only when EMU domain is on.";
+        MODULEMODE_2_r = 2 "Reserved";
+        MODULEMODE_3_r = 3 "Reserved";
+    };
+    
+    register cm_prm_profiling_clkctrl addr(base, 0x40) "This register manages the PRM_PROFILING clock. [warm reset insensitive]" {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register prm_debug_cfg addr(base, 0xF0) "This register is used to configure the PRM's 32-bit debug output. There is one 7-bit source select field for selecting from a shared set of 8-bit internal signal blocks per byte. [warm reset insensitive]" {
+        _ 1 mbz;
+        sel3 7 rw "Internal signal block select for debug word byte-3";
+        _ 1 mbz;
+        sel2 7 rw "Internal signal block select for debug word byte-2";
+        _ 1 mbz;
+        sel1 7 rw "Internal signal block select for debug word byte-1";
+        _ 1 mbz;
+        sel0 7 rw "Internal signal block select for debug word byte-0";
+    };
+};

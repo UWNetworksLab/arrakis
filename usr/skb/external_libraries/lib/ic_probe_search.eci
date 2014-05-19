@@ -1,0 +1,8 @@
+:- module(ic_probe_search).
+:- export probe_search / 5.
+:- comment(summary, "Probe Search").
+:- comment(author, "Mark Wallace, Hani El Sakkout").
+:- comment(date, "$Date: 2006/09/23 01:53:47 $").
+:- comment(copyright, "Cisco Systems, Inc.").
+:- comment(desc, html("\n    A search routine which fixes resource bottlenecks by forcing tasks not to overlap.\n    ")).
+:- comment(probe_search / 5, [summary : "Add alternative constraints to try and repair infeasible probes", amode : probe_search(+, +, ++, ++, +), args : ["Bivs" : "A list of lists of binary integer variables", "BivSums" : "A list of integer variables, each one the sum of a list \n                      of binaries", "Resource" : "An integer quantity of resource available", "Options" : "An options structure", "Handle" : "A linear solver handle"], resat : no, see_also : [probe_cstr_sched / 7, add_con / 3], desc : html("<P>\n    Based on the tentative assignments, <B>probe_search</B> finds a task\n    start time where the resources are not sufficient to make the\n    tentative assignment feasible.  In case a bottleneck task has a\n    variable resource requirement, this is reduced to its minimum\n    possible value. Otherwise, <B>probe_search</B> chooses a binary\n    'overlap' variable at this bottleneck and using <B>add_con</B> it adds \n    a constraint trying to eliminate the overlap.\n</P>\n")]).

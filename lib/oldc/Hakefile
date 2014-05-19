@@ -1,0 +1,94 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2011, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /lib/c
+--
+--------------------------------------------------------------------------
+if Config.libc == "oldc" then
+[(
+  let
+      -- architecture independent source files
+      generic_src = [ "src" ./. f | f <- [
+        "asctime.c",    "fseek.c",         "getchar.c",   "strncpy.c",
+        "assert.c",     "ftell.c",         "getenv.c",    "rewind.c",   "strpbrk.c",
+        "calloc.c",     "fwrite.c",        "getopt.c",    "scanf.c",    "strrchr.c",
+        "clearerr.c",   "gdtoa/dmisc.c",   "gmtime.c",    "setbuf.c",   "strspn.c",
+        "clock.c",      "gdtoa/dtoa.c",    "locale.c",    "snprintf.c", "strstr.c",
+        "difftime.c",   "gdtoa/gdtoa.c",   "localtime.c", "sprintf.c",  "strtok.c",
+        "errno.c",      "gdtoa/gethex.c",  "malloc.c",    "strtol.c",   "fileno.c",
+        "exit.c",       "gdtoa/gmisc.c",   "memchr.c",    "_srefill.c", "strtoll.c",
+        "fclose.c",     "gdtoa/hd_init.c", "memcmp.c",    "sscanf.c",   "strtoul.c",
+        "feof.c",       "gdtoa/_hdtoa.c",  "memcpy.c",    "strcat.c",   "system.c",
+        "ferror.c",     "gdtoa/hexnan.c",  "memmove.c",   "strchr.c",
+        "fflush.c",     "gdtoa/_hldtoa.c", "memset.c",    "strcmp.c",   "tmpfile.c",
+        "fgetc.c",      "gdtoa/_ldtoa.c",  "mktime.c",    "strcoll.c",  "ungetc.c",
+        "fgets.c",      "gdtoa/misc.c",    "perror.c",    "strcpy.c",   "vfprintf.c",
+        "fpclassify.c", "gdtoa/smisc.c",   "printf.c",    "strcspn.c",  "vfscanf.c",
+        "fprintf.c",    "gdtoa/strtod.c",  "putchar.c",   "strdup.c",   "vprintf.c",
+        "fputc.c",      "gdtoa/strtodg.c", "puts.c",      "strerror.c", "vsnprintf.c",
+        "fputs.c",      "gdtoa/strtof.c",  "qsort.c",     "strftime.c", "xprintf.c",
+        "_fread.c",     "gdtoa/strtord.c", "rand.c",      "strlen.c",   "xprintf_float.c",
+        "fread.c",      "gdtoa/sum.c",     "realloc.c",   "strncat.c",  "xprintf_int.c",
+        "fscanf.c",     "gdtoa/ulp.c",     "strncmp.c",  "xprintf_str.c",
+        "msgcat.c", "strlcpy.c", "strtold.c", "strtoull.c", "strxfrm.c",
+        "swprintf.c", "vsscanf.c", "vswprintf.c", "wcscmp.c", "wcscoll.c", "wcscpy.c",
+        "wcslen.c", "wcsncpy.c", "wcsxfrm.c", "wmemchr.c", "wmemcmp.c", "wmemcpy.c",
+        "wmemmove.c", "wmemset.c", "bsearch.c",
+        "fs-barrelfish/fopen.c", "sys-barrelfish/sys_exit.c", "sys-barrelfish/sys_stdio.c",
+        "sys-barrelfish/sys_abort.c", "sys-barrelfish/sys_morecore.c",
+        "sys-barrelfish/sys_tmpfile.c",
+        "locale/ascii.c", "locale/btowc.c", "locale/collate.c",
+        "locale/collcmp.c", "locale/fix_grouping.c", "locale/iswctype.c",
+        "locale/lmessages.c", "locale/lmonetary.c", "locale/lnumeric.c",
+        "locale/mblen.c", "locale/mbrlen.c", "locale/mbrtowc.c",
+        "locale/mbsinit.c", "locale/mbsnrtowcs.c", "locale/mbsrtowcs.c",
+        "locale/mbstowcs.c", "locale/mbtowc.c", "locale/nextwctype.c",
+        "locale/nomacros.c", "locale/none.c", "locale/runetype.c",
+        "locale/setlocale.c", "locale/table.c", "locale/tolower.c",
+        "locale/toupper.c", "locale/wcrtomb.c", "locale/wcsftime.c",
+        "locale/wcsnrtombs.c", "locale/wcsrtombs.c", "locale/wcstod.c",
+        "locale/wcstof.c", "locale/wcstoimax.c", "locale/wcstol.c",
+        "locale/wcstold.c", "locale/wcstoll.c", "locale/wcstombs.c",
+        "locale/wcstoul.c", "locale/wcstoull.c", "locale/wcstoumax.c",
+        "locale/wctob.c", "locale/wctomb.c", "locale/wctrans.c",
+        "locale/wctype.c", "string/strcasecmp.c" ]]
+
+      -- architecture-dependent source files (relative to arch family)
+      archfam_src a = [ ("src/arch-" ++ a) ./. f | f <- archfam_files a ]
+      archfam_files "x86_64" = ["flt_rounds.c"]
+      archfam_files "x86_32" = ["flt_rounds.c"]
+      archfam_files _ = []
+
+      args = library { target = "oldc",
+                    cFiles = generic_src ++ (archfam_src (archFamily a)),
+                    architectures = [a],
+                    addIncludes = [ "src/gdtoa", "src/gdtoa" ./. archFamily a,
+                                    "src/locale" ],
+                    addCFlags = [ "-DNO_FENV_H", "-DNO_ERRNO", "-DHAVE_WCHAR" ],
+                    assemblyFiles = [ ("src/arch-" ++ archFamily a) ./. "jmp.S" ]
+                  }
+      defaultopts = libGetOptionsForArch a args
+
+      -- build gdtoa with -fno-strict-aliasing
+      mkopts s
+        | isPrefixOf "src/gdtoa" s = defaultopts { extraFlags = ["-fno-strict-aliasing"] ++ (extraFlags defaultopts) }
+        | otherwise                = defaultopts
+
+      -- this is in the List module, but I can't do an import from a Hakefile. sigh.
+      isPrefixOf              :: (Eq a) => [a] -> [a] -> Bool
+      isPrefixOf [] _         =  True
+      isPrefixOf _  []        =  False
+      isPrefixOf (x:xs) (y:ys)=  x == y && isPrefixOf xs ys
+
+  in
+    Rules [Rules [compileCFile (mkopts s)  s | s <- (Args.cFiles args)],
+           assembleSFiles defaultopts (Args.assemblyFiles args),
+           staticLibrary defaultopts (Args.target args) (allObjectPaths defaultopts args) 
+             [ libraryPath "msun" ] ]
+) | a <- allArchitectures ]
+else []

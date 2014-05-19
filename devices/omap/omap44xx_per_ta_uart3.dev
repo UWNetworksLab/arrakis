@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_per_ta_uart3.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_per_ta_uart3 msbfirst ( addr base ) "" {
+    
+    
+    register l4_ta_component_h ro addr(base, 0x0) "Contains a component code and revision." type(uint32);
+    
+    register l4_ta_component_l addr(base, 0x4) "Contains a component code and revision." {
+        code 16 ro "Interconnect code.";
+        rev 16 ro "Component revision code.";
+    };
+    
+    register l4_ta_core_l addr(base, 0x18) "Contains a component code and revision." {
+        core_code 16 ro "Interconnect core code";
+        core_rev 16 ro "Component revision code code";
+    };
+    
+    register l4_ta_core_h addr(base, 0x1C) "Contains a component code and revision." {
+        _ 16 mbz;
+        vendor_code 16 ro "Vendor revision core code";
+    };
+    
+    register l4_ta_agent_control_l addr(base, 0x20) "Enable error reporting" {
+        _ 7 mbz;
+        serror_rep 1 ro "Enable logging of error";
+        _ 13 mbz;
+        req_timeout 3 rw "Time-out Bound. Values are:0 - No time-out1 - 1x base cycles.2 - 4x base cycles. 3 - 16x base cycles. 4 - 64x base cycles.";
+        _ 7 mbz;
+        ocp_reset 1 rw "The OCP_RESET field controls the OCP reset signal to the attached core. Setting this bit clears any pending transfers and resets the OCP interface. The bit must be cleared to deassert the OCP reset signal. When the software reset feature is available on a target agent, the target agent OCP must also have a reset signal directed to the target core.";
+    };
+    
+    register l4_ta_agent_control_h addr(base, 0x24) "Enable clock power management" {
+        _ 23 mbz;
+        ext_clock 1 ro "When set to 1, the ext_clk_off_i signal on a target agent indicates when the target agent should shut off.";
+        _ 8 mbz;
+    };
+    
+    register l4_ta_agent_status_l addr(base, 0x28) "Error reporting" {
+        _ 8 mbz;
+        _ 15 rsvd;
+        req_timeout 1 ro "Time-out status:0x0: No request time-out0x1: A request time-out has occurred";
+        _ 8 mbz;
+    };
+    
+    register l4_ta_agent_status_h ro addr(base, 0x2C) "Error reporting" type(uint32);
+};

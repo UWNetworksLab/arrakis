@@ -1,0 +1,1841 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_per_ap.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_per_ap msbfirst ( addr base ) "" {
+    
+    
+    register l4_ap_component_l addr(base, 0x0) "Contains a component code and revision, which are used to identify the hardware of the component." {
+        code 16 ro "Interconnect code";
+        rev 16 ro "Component revision code";
+    };
+    
+    register l4_ap_component_h ro addr(base, 0x4) "Contains a component code and revision, which are used to identify the hardware of the component." type(uint32);
+    
+    register l4_ap_segment_i_l_0 addr(base, 0x100) "Define the base address of each segments" {
+        _ 8 mbz;
+        base 24 ro "The base address of the segment (with 0s from bit 0 to bit SIZE-1).";
+    };
+    
+    register l4_ap_segment_i_l_1 addr(base, 0x108) "Define the base address of each segments" {
+        _ 8 mbz;
+        base 24 ro "The base address of the segment (with 0s from bit 0 to bit SIZE-1).";
+    };
+    
+    register l4_ap_segment_i_h_0 addr(base, 0x104) "Define the size of each segments" {
+        _ 27 mbz;
+        size 5 ro "Segment size is a power of 2, where 2 is the byte size of a segment (all segment registers use the same size).";
+    };
+    
+    register l4_ap_segment_i_h_1 addr(base, 0x10C) "Define the size of each segments" {
+        _ 27 mbz;
+        size 5 ro "Segment size is a power of 2, where 2 is the byte size of a segment (all segment registers use the same size).";
+    };
+    
+    register l4_ap_prot_group_members_k_l_0 addr(base, 0x200) "Define ConnID bit vectors for a protection group." {
+        _ 16 mbz;
+        dmm_page_table_walk 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        perf_probe 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        hs_usb_host_usb 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        mmc1_mmc2 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        hsi 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        c2c 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sgx 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sdma 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cam_cortexa9_mpu_ss_face_detect 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        iva_hd 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dsp_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dap 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cortexm3_mpu_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+    };
+    
+    register l4_ap_prot_group_members_k_l_1 addr(base, 0x208) "Define ConnID bit vectors for a protection group." {
+        _ 16 mbz;
+        dmm_page_table_walk 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        perf_probe 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        hs_usb_host_usb 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        mmc1_mmc2 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        hsi 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        c2c 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sgx 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sdma 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cam_cortexa9_mpu_ss_face_detect 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        iva_hd 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dsp_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dap 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cortexm3_mpu_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+    };
+    
+    register l4_ap_prot_group_members_k_l_2 addr(base, 0x210) "Define ConnID bit vectors for a protection group." {
+        _ 16 mbz;
+        dmm_page_table_walk 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        perf_probe 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        hs_usb_host_usb 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        mmc1_mmc2 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        hsi 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        c2c 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sgx 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sdma 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cam_cortexa9_mpu_ss_face_detect 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        iva_hd 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dsp_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dap 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cortexm3_mpu_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+    };
+    
+    register l4_ap_prot_group_members_k_l_3 addr(base, 0x218) "Define ConnID bit vectors for a protection group." {
+        _ 16 mbz;
+        dmm_page_table_walk 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        perf_probe 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        hs_usb_host_usb 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        mmc1_mmc2 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        hsi 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        c2c 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sgx 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sdma 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cam_cortexa9_mpu_ss_face_detect 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        iva_hd 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dsp_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dap 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cortexm3_mpu_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+    };
+    
+    register l4_ap_prot_group_members_k_l_4 addr(base, 0x220) "Define ConnID bit vectors for a protection group." {
+        _ 16 mbz;
+        dmm_page_table_walk 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        perf_probe 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        hs_usb_host_usb 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        mmc1_mmc2 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        hsi 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        c2c 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sgx 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sdma 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cam_cortexa9_mpu_ss_face_detect 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        iva_hd 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dsp_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dap 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cortexm3_mpu_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+    };
+    
+    register l4_ap_prot_group_members_k_l_5 addr(base, 0x228) "Define ConnID bit vectors for a protection group." {
+        _ 16 mbz;
+        dmm_page_table_walk 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        perf_probe 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        hs_usb_host_usb 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        mmc1_mmc2 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        hsi 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        c2c 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sgx 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sdma 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cam_cortexa9_mpu_ss_face_detect 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        iva_hd 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dsp_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dap 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cortexm3_mpu_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+    };
+    
+    register l4_ap_prot_group_members_k_l_6 addr(base, 0x230) "Define ConnID bit vectors for a protection group." {
+        _ 16 mbz;
+        dmm_page_table_walk 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        perf_probe 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        hs_usb_host_usb 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        mmc1_mmc2 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        hsi 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        c2c 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sgx 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sdma 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cam_cortexa9_mpu_ss_face_detect 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        iva_hd 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dsp_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dap 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cortexm3_mpu_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+    };
+    
+    register l4_ap_prot_group_members_k_l_7 addr(base, 0x238) "Define ConnID bit vectors for a protection group." {
+        _ 16 mbz;
+        dmm_page_table_walk 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        perf_probe 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        hs_usb_host_usb 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        _ 1 rsvd;
+        mmc1_mmc2 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        hsi 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        c2c 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sgx 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        sdma 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cam_cortexa9_mpu_ss_face_detect 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        iva_hd 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dsp_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        dap 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+        cortexm3_mpu_ss 1 rw "Included in the protection group k0x0: Not a member0x1: Member";
+    };
+    
+    register l4_ap_prot_group_members_k_h_0 ro addr(base, 0x204) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_members_k_h_1 ro addr(base, 0x20C) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_members_k_h_2 ro addr(base, 0x214) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_members_k_h_3 ro addr(base, 0x21C) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_members_k_h_4 ro addr(base, 0x224) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_members_k_h_5 ro addr(base, 0x22C) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_members_k_h_6 ro addr(base, 0x234) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_members_k_h_7 ro addr(base, 0x23C) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_roles_k_l_0 addr(base, 0x280) "Define MReqInfo bit vectors for a protection group." {
+        _ 16 mbz;
+        enable 16 ro "Setting of type acces allowed for the group of initiators.";
+    };
+    
+    register l4_ap_prot_group_roles_k_l_1 addr(base, 0x288) "Define MReqInfo bit vectors for a protection group." {
+        _ 16 mbz;
+        enable 16 ro "Setting of type acces allowed for the group of initiators.";
+    };
+    
+    register l4_ap_prot_group_roles_k_l_2 addr(base, 0x290) "Define MReqInfo bit vectors for a protection group." {
+        _ 16 mbz;
+        enable 16 ro "Setting of type acces allowed for the group of initiators.";
+    };
+    
+    register l4_ap_prot_group_roles_k_l_3 addr(base, 0x298) "Define MReqInfo bit vectors for a protection group." {
+        _ 16 mbz;
+        enable 16 ro "Setting of type acces allowed for the group of initiators.";
+    };
+    
+    register l4_ap_prot_group_roles_k_l_4 addr(base, 0x2A0) "Define MReqInfo bit vectors for a protection group." {
+        _ 16 mbz;
+        enable 16 ro "Setting of type acces allowed for the group of initiators.";
+    };
+    
+    register l4_ap_prot_group_roles_k_l_5 addr(base, 0x2A8) "Define MReqInfo bit vectors for a protection group." {
+        _ 16 mbz;
+        enable 16 ro "Setting of type acces allowed for the group of initiators.";
+    };
+    
+    register l4_ap_prot_group_roles_k_l_6 addr(base, 0x2B0) "Define MReqInfo bit vectors for a protection group." {
+        _ 16 mbz;
+        enable 16 ro "Setting of type acces allowed for the group of initiators.";
+    };
+    
+    register l4_ap_prot_group_roles_k_l_7 addr(base, 0x2B8) "Define MReqInfo bit vectors for a protection group." {
+        _ 16 mbz;
+        enable 16 ro "Setting of type acces allowed for the group of initiators.";
+    };
+    
+    register l4_ap_prot_group_roles_k_h_0 ro addr(base, 0x284) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_roles_k_h_1 ro addr(base, 0x28C) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_roles_k_h_2 ro addr(base, 0x294) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_roles_k_h_3 ro addr(base, 0x29C) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_roles_k_h_4 ro addr(base, 0x2A4) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_roles_k_h_5 ro addr(base, 0x2AC) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_roles_k_h_6 ro addr(base, 0x2B4) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_prot_group_roles_k_h_7 ro addr(base, 0x2BC) "Define ConnID bit vectors for a protection group." type(uint32);
+    
+    register l4_ap_region_l_l_0 addr(base, 0x300) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_1 addr(base, 0x308) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_2 addr(base, 0x310) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_3 addr(base, 0x318) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_4 addr(base, 0x320) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_5 addr(base, 0x328) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_6 addr(base, 0x330) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_7 addr(base, 0x338) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_8 addr(base, 0x340) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_9 addr(base, 0x348) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_10 addr(base, 0x350) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_11 addr(base, 0x358) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_12 addr(base, 0x360) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_13 addr(base, 0x368) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_14 addr(base, 0x370) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_15 addr(base, 0x378) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_16 addr(base, 0x380) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_17 addr(base, 0x388) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_18 addr(base, 0x390) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_19 addr(base, 0x398) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_20 addr(base, 0x3A0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_21 addr(base, 0x3A8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_22 addr(base, 0x3B0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_23 addr(base, 0x3B8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_24 addr(base, 0x3C0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_25 addr(base, 0x3C8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_26 addr(base, 0x3D0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_27 addr(base, 0x3D8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_28 addr(base, 0x3E0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_29 addr(base, 0x3E8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_30 addr(base, 0x3F0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_31 addr(base, 0x3F8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_32 addr(base, 0x400) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_33 addr(base, 0x408) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_34 addr(base, 0x410) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_35 addr(base, 0x418) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_36 addr(base, 0x420) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_37 addr(base, 0x428) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_38 addr(base, 0x430) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_39 addr(base, 0x438) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_40 addr(base, 0x440) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_41 addr(base, 0x448) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_42 addr(base, 0x450) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_43 addr(base, 0x458) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_44 addr(base, 0x460) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_45 addr(base, 0x468) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_46 addr(base, 0x470) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_47 addr(base, 0x478) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_48 addr(base, 0x480) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_49 addr(base, 0x488) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_50 addr(base, 0x490) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_51 addr(base, 0x498) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_52 addr(base, 0x4A0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_53 addr(base, 0x4A8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_54 addr(base, 0x4B0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_55 addr(base, 0x4B8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_56 addr(base, 0x4C0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_57 addr(base, 0x4C8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_58 addr(base, 0x4D0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_59 addr(base, 0x4D8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_60 addr(base, 0x4E0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_61 addr(base, 0x4E8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_62 addr(base, 0x4F0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_63 addr(base, 0x4F8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_64 addr(base, 0x500) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_65 addr(base, 0x508) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_66 addr(base, 0x510) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_67 addr(base, 0x518) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_68 addr(base, 0x520) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_69 addr(base, 0x528) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_70 addr(base, 0x530) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_71 addr(base, 0x538) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_72 addr(base, 0x540) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_73 addr(base, 0x548) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_74 addr(base, 0x550) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_75 addr(base, 0x558) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_76 addr(base, 0x560) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_77 addr(base, 0x568) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_78 addr(base, 0x570) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_79 addr(base, 0x578) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_80 addr(base, 0x580) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_81 addr(base, 0x588) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_82 addr(base, 0x590) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_83 addr(base, 0x598) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_84 addr(base, 0x5A0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_85 addr(base, 0x5A8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_86 addr(base, 0x5B0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_87 addr(base, 0x5B8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_88 addr(base, 0x5C0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_89 addr(base, 0x5C8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_90 addr(base, 0x5D0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_91 addr(base, 0x5D8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_92 addr(base, 0x5E0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_93 addr(base, 0x5E8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_94 addr(base, 0x5F0) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_95 addr(base, 0x5F8) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_l_96 addr(base, 0x600) "Define the base address of the region in respect to the segment it belongs to." {
+        _ 8 mbz;
+        base 24 ro "Sets the base address of the region relative to its segment base.";
+    };
+    
+    register l4_ap_region_l_h_0 addr(base, 0x304) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_1 addr(base, 0x30C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_2 addr(base, 0x314) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_3 addr(base, 0x31C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_4 addr(base, 0x324) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_5 addr(base, 0x32C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_6 addr(base, 0x334) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_7 addr(base, 0x33C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_8 addr(base, 0x344) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_9 addr(base, 0x34C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_10 addr(base, 0x354) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_11 addr(base, 0x35C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_12 addr(base, 0x364) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_13 addr(base, 0x36C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_14 addr(base, 0x374) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_15 addr(base, 0x37C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_16 addr(base, 0x384) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_17 addr(base, 0x38C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_18 addr(base, 0x394) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_19 addr(base, 0x39C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_20 addr(base, 0x3A4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_21 addr(base, 0x3AC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_22 addr(base, 0x3B4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_23 addr(base, 0x3BC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_24 addr(base, 0x3C4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_25 addr(base, 0x3CC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_26 addr(base, 0x3D4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_27 addr(base, 0x3DC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_28 addr(base, 0x3E4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_29 addr(base, 0x3EC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_30 addr(base, 0x3F4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_31 addr(base, 0x3FC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_32 addr(base, 0x404) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_33 addr(base, 0x40C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_34 addr(base, 0x414) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_35 addr(base, 0x41C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_36 addr(base, 0x424) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_37 addr(base, 0x42C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_38 addr(base, 0x434) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_39 addr(base, 0x43C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_40 addr(base, 0x444) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_41 addr(base, 0x44C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_42 addr(base, 0x454) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_43 addr(base, 0x45C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_44 addr(base, 0x464) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_45 addr(base, 0x46C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_46 addr(base, 0x474) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_47 addr(base, 0x47C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_48 addr(base, 0x484) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_49 addr(base, 0x48C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_50 addr(base, 0x494) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_51 addr(base, 0x49C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_52 addr(base, 0x4A4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_53 addr(base, 0x4AC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_54 addr(base, 0x4B4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_55 addr(base, 0x4BC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_56 addr(base, 0x4C4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_57 addr(base, 0x4CC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_58 addr(base, 0x4D4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_59 addr(base, 0x4DC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_60 addr(base, 0x4E4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_61 addr(base, 0x4EC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_62 addr(base, 0x4F4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_63 addr(base, 0x4FC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_64 addr(base, 0x504) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_65 addr(base, 0x50C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_66 addr(base, 0x514) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_67 addr(base, 0x51C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_68 addr(base, 0x524) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_69 addr(base, 0x52C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_70 addr(base, 0x534) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_71 addr(base, 0x53C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_72 addr(base, 0x544) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_73 addr(base, 0x54C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_74 addr(base, 0x554) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_75 addr(base, 0x55C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_76 addr(base, 0x564) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_77 addr(base, 0x56C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_78 addr(base, 0x574) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_79 addr(base, 0x57C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_80 addr(base, 0x584) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_81 addr(base, 0x58C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_82 addr(base, 0x594) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_83 addr(base, 0x59C) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_84 addr(base, 0x5A4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_85 addr(base, 0x5AC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_86 addr(base, 0x5B4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_87 addr(base, 0x5BC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_88 addr(base, 0x5C4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_89 addr(base, 0x5CC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_90 addr(base, 0x5D4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_91 addr(base, 0x5DC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_92 addr(base, 0x5E4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_93 addr(base, 0x5EC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_94 addr(base, 0x5F4) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_95 addr(base, 0x5FC) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+    
+    register l4_ap_region_l_h_96 addr(base, 0x604) "Define the size, protection group and segment ID of the region" {
+        _ 4 mbz;
+        segment_id 4 ro "The segment associated to the region.";
+        _ 1 mbz;
+        prot_group_id 3 rw "The protection group associated to the region.";
+        byte_data_width_exp 3 ro "The target data byte width is 2 bytes.";
+        _ 11 mbz;
+        size 5 ro "Define the size of the region in bytes. 2 equals the region.";
+        enable 1 ro "0x0: Disable the region, no access allows0x1: Enable the region, with access as define in registers";
+    };
+};

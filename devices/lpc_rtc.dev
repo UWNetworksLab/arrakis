@@ -1,0 +1,114 @@
+/*
+ * Copyright (c) 2007, 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * lpc_rtc.dev
+ *
+ * DESCRIPTION: Legacy real-time clock registers on the LPC (low pin count, or
+ *              legacy PC) bridge function of a typical Intel IHC
+ *              (Southbridge).    
+ * 
+ * This is derived from the "Intel 631xESB/632xESB IO/Controller Hub
+ * Datasheet", chapter 21, "LPC Interface Bridge Registers (D31:F0)". 
+ * 
+ */
+
+device lpc_rtc (io base) "LPC Real-Time Clock and CMOS RAM" {
+  
+  // 21.6
+  register ndx rw io(base, 0x70) "Standard index" type(uint8);
+  register target rw io(base, 0x71) "Standard target" type(uint8);
+
+  register endx rw io(base, 0x72) "Extended index" type(uint8);
+  register etarget rw io(base, 0x73) "Extended target" type(uint8);
+
+  // 21.6.2
+  constants sndx "Standard index values" { 
+    seconds	= 0x0 "Seconds";
+    al_seconds	= 0x1 "Seconds alarm";
+    minutes	= 0x2 "Minutes";
+    al_minutes	= 0x3 "Minutes Alarm";
+    hours	= 0x4 "Hours";
+    al_hours	= 0x5 "Hours Alarm";
+    weekday	= 0x6 "Day of Week";
+    date	= 0x7 "Day of Month";
+    month	= 0x8 "Month";
+    year	= 0x9 "Year";
+    rega	= 0xa "Register A";
+    regb	= 0xb "Register B";
+    regc	= 0xc "Register C";
+    regd	= 0xd "Register D";
+  };
+
+  // 21.6.2.1
+  constants dcs "Division chain select" {
+    normal	= 0b010 "Normal operation";
+    divreset	= 0b110 "Divider reset";
+    divreset2	= 0b111 "Divider reset";
+    bypass15	= 0b101 "Bypass 15 stages";
+    bypass10	= 0b100 "Bypass 10 stages";
+    bypass5	= 0b011 "Bypass 5 stages";
+  };
+  
+  constants rate "Rate select" {
+    never	= 0b0000 "Interrupt never toggles";
+    ms3_90625_	= 0b0001 "3.90625 ms (duplicate)";
+    ms7_8125_	= 0b0010 "7.8125 ms (duplicate)";
+    us122_070	= 0b0011 "122.070 us";
+    us244_141	= 0b0100 "244.141 us";
+    us488_281	= 0b0101 "488.281 us";
+    us976_5625	= 0b0110 "976.5625 us";
+    ms1_953125	= 0b0111 "1.953125 ms";
+    ms3_906251	= 0b1000 "3.906251 ms";
+    ms7_8125	= 0b1001 "7.8125 ms";
+    ms15_625	= 0b1010 "15.625 ms";
+    ms31_25	= 0b1011 "31.25 ms";
+    ms62_5	= 0b1100 "62.5 ms";
+    ms125	= 0b1101 "125 ms";
+    ms250	= 0b1110 "250 ms";
+    ms500	= 0b1111 "500 ms";
+  };
+
+  register rega rw also io(base, 0x71) "Register A" {
+    rs		4 type(rate) "Rate select";
+    dv		3 type(dcs) "Divisioin chain select";
+    uip		1 "Update in progress";
+  };
+
+  // 26.6.2.2
+  register regb rw also io(base, 0x71) "General configuration" {
+    dse		1 "Daylight savings enable";
+    hourform	1 "Hour format";
+    dm		1 "Data mode (BCD/binary)";
+    sqwe	1 "Square wave enable";
+    uie		1 "Update-ended interrupt enable";
+    aie		1 "Alarm interrupt enable";
+    pie		1 "Periodic interrupt enable";
+    set		1 "Update cycle inhibit";
+  };
+
+  // 26.6.2.3
+  register regc ro also io(base, 0x71) "Flag register C" {
+    _		4;
+    uf		1 "Update-ended";
+    af		1 "Alarm";
+    pf		1 "Periodic interrupt";
+    irqf	1 "Interrupt request flag";
+  };
+
+  // 26.6.2.4
+  register regd rw also io(base, 0x71) "Flag register D" {
+    al_date	6 "Date alarm";
+    _		1;
+    vrt		1 mbz "Valid RAM and time";
+  };
+
+};
+
+
+  

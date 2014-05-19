@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2011, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface ata_rw28 "ATA read & write with 28-bit LBA" {
+
+    @ata(command=0xC8, dma_arg=buffer, dma_size=read_size, lba=start_lba)
+    rpc read_dma(in uint32 read_size, in uint32 start_lba, out uint8 buffer[buffer_size]);
+
+    @ata(command=0xC8, dma_arg=buffer, dma_size=512, lba=lba)
+    rpc read_dma_block(in uint32 lba, out uint8 buffer[buffer_size]);
+
+    @ata(command=0xCA, dma_arg=buffer, is_write=1, lba=lba)
+    rpc write_dma(in uint8 buffer[buffer_size], in uint32 lba, out errval status);
+
+    @ata(command=0xEC, dma_arg=buffer, dma_size=512)
+    rpc identify_device(out uint8 buffer[buffer_size]);
+
+    @ata(command=0xE7)
+    rpc flush_cache(out errval status);
+};

@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2011, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/* Lock server RPC interface. */
+interface lock "Lock server (lox) interface" {
+    typedef iref lockhandle; // lock handle
+
+    rpc create(out lockhandle lockhandle, out errval ret);
+    rpc acquire(in lockhandle lockhandle, out errval ret);
+    rpc tryacquire(in lockhandle lockhandle, out bool locked, out errval ret);
+    rpc release(in lockhandle lockhandle);
+    rpc delete(in lockhandle lockhandle);
+};

@@ -1,0 +1,35 @@
+timeout 0
+
+#
+# This script is used to describe the commands to start at
+# boot-time and the arguments they should receive.
+#
+# Kernel arguments are not read from this script. On QEMU they can be
+# set using 'qemu-system-arm -append ...'.
+
+title	Barrelfish
+#root	(nd)
+kernel	/armv7/sbin/cpu_arm_gem5 loglevel=4
+module	/armv7/sbin/cpu_arm_gem5
+module	/armv7/sbin/init
+
+# Domains spawned by init
+module	/armv7/sbin/mem_serv
+module	/armv7/sbin/monitor
+
+# Special boot time domains spawned by monitor
+#module /armv7/sbin/chips boot
+module /armv7/sbin/ramfsd boot
+module /armv7/sbin/skb boot
+module /armv7/sbin/spawnd boot bootarm=0
+module /armv7/sbin/startd boot
+
+# General user domains
+#module	/armv7/sbin/serial
+#module	/armv7/sbin/fish
+
+module /armv7/sbin/memtest
+
+# gem5 simulates 256MB of RAM starting at 0x0
+#        start       size      id
+mmap map 0x00000000 0x10000000 1

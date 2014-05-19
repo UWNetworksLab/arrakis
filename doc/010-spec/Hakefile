@@ -1,0 +1,26 @@
+----------------------------------------------------------------------
+-- Copyright (c) 2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Universitaetstr. 6, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /doc/010-spec
+--
+----------------------------------------------------------------------
+
+let
+    figoutput f = "/tmp/" ++ f ++ ".pdf"
+    circo f = [ Str "circo", Str "-Tpdf",
+                In SrcTree "src" (f ++ ".circo"), Str "-o", Out "tools" (figoutput f), NL ]
+    dot f = [ Str "dot", Str "-Tpdf",
+              In SrcTree "src" (f ++ ".dot"), Str "-o", Out "tools" (figoutput f), NL ]
+in
+  [ buildTechNoteWithDeps "Spec.tex" "TN-010-Spec.pdf" True False []
+    (concat [dot "app_cspace", circo "disp_states_simple",
+             dot "disp_states_simple_save_area_analysis", dot "init_cspace"]
+    ++ [ Str "hg", Str "-R", NoDep SrcTree "src" "/",
+         Str "log -l 1 --template 'Revision {rev} of {date|shortdate}\\n'",
+         In SrcTree "src" "Spec.tex", Str ">", Out "tools" "/tmp/specdate.tex", NL ])
+  ]

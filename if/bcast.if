@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, 2011 ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface bcast "The bcast Interface" {
+	message bcast_id_request(uint8 type);
+	message bcast_id_reply(uint64 data);
+
+	message bcast_init_alloc_request();
+	message bcast_init_alloc_reply();
+	message bcast_init_request();
+	message bcast_init_reply();
+
+	message bcast_backend_send(uint64 id, uint8 coreid, uint64 mask,
+                                   uint64 payload1, uint64 payload2,
+          			   uint64 payload3);
+
+	message token_request();
+	message token_reply();
+        message init_request(uint8 coreid);
+        message init_reply();
+        message bsp_id_request(uint8 coreid);
+        message bsp_id_reply();
+
+        message experiment_init_request(uint8 max_cpus);
+        message experiment_init_reply();
+
+        message experiment_start();
+        message experiment_done();
+
+	message ssf(uint8 id, uint64 pyaload, uint64 timestamp);
+	message jump(uint8 id, uint64 timestamp);
+	message acknowledgement(uint8 id, uint64 time);
+
+	message sequencer_bcast_request();
+	message sequencer_ready();
+	message dummy();
+	message sequencer_commit_request();
+	message sequencer_commit_reply();
+
+        message wait_request();
+        message wait_reply();
+
+        message ring_request();
+        message ring_reply();
+};

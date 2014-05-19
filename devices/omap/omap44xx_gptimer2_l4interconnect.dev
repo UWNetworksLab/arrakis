@@ -1,0 +1,271 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_gptimer2_l4interconnect.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_gptimer2_l4interconnect msbfirst ( addr base ) "" {
+    
+    
+    register gpt_tidr ro addr(base, 0x0) "This read-only register contains the revision number of the module. A write to this register has no effect. This register is used by software to track features, bugs, and compatibility." type(uint32);
+
+    constants clockactivity_status width(2) "" {
+        CLOCKACTIVITY_0 = 0 "Functional clock can be switched-off ; L4 clock can be switched-off.";
+        CLOCKACTIVITY_1 = 1 "Functional clock can be switched-off ; L4 clock is maintained during wake-up period.";
+        CLOCKACTIVITY_2 = 2 "Functional clock is maintained during wake-up period; L4 clock can be switched-off.";
+        CLOCKACTIVITY_3 = 3 "Functional clock is maintained during wake-up period; L4 clock is maintained during wake-up period.";
+    };
+
+    constants emufree_status width(1) "" {
+        EMUFREE_0 = 0 "Timer counter frozen in emulation";
+        EMUFREE_1 = 1 "Timer counter free-running in emulation";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle. An idle request is acknowledged unconditionally.";
+        IDLEMODE_1 = 1 "No-idle. An idle request is never acknowledged.";
+        IDLEMODE_2 = 2 "Smart-idle. Acknowledgment to an idle request is given based on the internal activity of the module.";
+        IDLEMODE_3 = 3 "Reserved, do not use.";
+    };
+
+    constants enawakeup_status width(1) "" {
+        ENAWAKEUP_0 = 0 "No wake-up line assertion in idle mode";
+        ENAWAKEUP_1 = 1 "Wake-up line assertion enabled in smart-idle mode.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "Normal mode";
+        SOFTRESET_1 = 1 "The module is reset.";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "L4 clock is free-running.";
+        AUTOIDLE_1 = 1 "Automatic L4 clock gating strategy is applied, based on the L4 interface activity.";
+    };
+    
+    register gpt1ms_tiocp_cfg addr(base, 0x10) "This register controls the various parameters of the OCP interface." {
+        _ 22 mbz;
+        clockactivity 2 rw type(clockactivity_status) "Clock activity";
+        _ 2 mbz;
+        emufree 1 rw type(emufree_status) "Emulation mode";
+        idlemode 2 rw type(idlemode_status) "Power management, req/ack control";
+        enawakeup 1 rw type(enawakeup_status) "Wake-up feature global control";
+        softreset 1 rw type(softreset_status) "Software reset. This bit is automatically reset by the hardware. During reads, it always returns 0.";
+        autoidle 1 rw type(autoidle_status) "Internal L4 clock gating strategy";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Internal module reset in ongoing.";
+        RESETDONE_1_r = 1 "Reset complete";
+    };
+    
+    register gpt_tistat addr(base, 0x14) "This register provides status information about the module, excluding interrupt status information." {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal reset monitoring";
+    };
+
+    constants tcar_it_flag_status width(1) "" {
+        TCAR_IT_FLAG_0 = 0 "No capture interrupt request";
+        TCAR_IT_FLAG_1 = 1 "Capture interrupt request";
+    };
+
+    constants ovf_it_flag_status width(1) "" {
+        OVF_IT_FLAG_0 = 0 "No overflow interrupt request";
+        OVF_IT_FLAG_1 = 1 "Overflow interrupt pending";
+    };
+
+    constants mat_it_flag_status width(1) "" {
+        MAT_IT_FLAG_0 = 0 "No compare interrupt request";
+        MAT_IT_FLAG_1 = 1 "Compare interrupt pending";
+    };
+    
+    register gpt_tisr addr(base, 0x18) "The timer status register is used to determine which of the timer events requested an interrupt." {
+        _ 29 mbz;
+        tcar_it_flag 1 rw type(tcar_it_flag_status) "Indicates when an external pulse transition of the correct polarity is detected on external pin GPTi_EVENT_CAPTURE";
+        ovf_it_flag 1 rw type(ovf_it_flag_status) "TCRR overflow";
+        mat_it_flag 1 rw type(mat_it_flag_status) "The compare result of TCRR and TMAR";
+    };
+
+    constants tcar_it_ena_status width(1) "" {
+        TCAR_IT_ENA_0 = 0 "Disable capture interrupt.";
+        TCAR_IT_ENA_1 = 1 "Enable capture interrupt.";
+    };
+
+    constants ovf_it_ena_status width(1) "" {
+        OVF_IT_ENA_0 = 0 "Disable overflow interrupt.";
+        OVF_IT_ENA_1 = 1 "Enable overflow interrupt.";
+    };
+
+    constants mat_it_ena_status width(1) "" {
+        MAT_IT_ENA_0 = 0 "Disable match interrupt.";
+        MAT_IT_ENA_1 = 1 "Enable match interrupt.";
+    };
+    
+    register gpt_tier addr(base, 0x1C) "This register controls (enable/disable) the interrupt events." {
+        _ 29 mbz;
+        tcar_it_ena 1 rw type(tcar_it_ena_status) "Capture interrupt enable";
+        ovf_it_ena 1 rw type(ovf_it_ena_status) "Overflow interrupt enable";
+        mat_it_ena 1 rw type(mat_it_ena_status) "Match interrupt enable";
+    };
+
+    constants tcar_wup_ena_status width(1) "" {
+        TCAR_WUP_ENA_0 = 0 "Disable capture wake-up.";
+        TCAR_WUP_ENA_1 = 1 "Enable capture wake-up.";
+    };
+
+    constants ovf_wup_ena_status width(1) "" {
+        OVF_WUP_ENA_0 = 0 "Disable overflow wake-up.";
+        OVF_WUP_ENA_1 = 1 "Enable overflow wake-up.";
+    };
+
+    constants mat_wup_ena_status width(1) "" {
+        MAT_WUP_ENA_0 = 0 "Disable match wake-up.";
+        MAT_WUP_ENA_1 = 1 "Enable match wake-up.";
+    };
+    
+    register gpt_twer addr(base, 0x20) "This register controls (enable/disable) the wake-up feature on specific interrupt events." {
+        _ 29 mbz;
+        tcar_wup_ena 1 rw type(tcar_wup_ena_status) "Capture wake-up enable";
+        ovf_wup_ena 1 rw type(ovf_wup_ena_status) "Overflow wake-up enable";
+        mat_wup_ena 1 rw type(mat_wup_ena_status) "Match wake-up enable";
+    };
+
+    constants gpo_cfg_status width(1) "" {
+        GPO_CFG_0 = 0 "GPTi_PORGPOCFG drives 0.";
+        GPO_CFG_1 = 1 "GPTi_PORGPOCFG drives 1.";
+    };
+
+    constants capt_mode_status width(1) "" {
+        CAPT_MODE_0 = 0 "Single capture: Capture the first enabled capture event in TCAR1.";
+        CAPT_MODE_1 = 1 "Capture on second event: Capture the second enabled capture event in TCAR2.";
+    };
+
+    constants pt_status width(1) "" {
+        PT_0 = 0 "Pulse modulation";
+        PT_1 = 1 "Toggle modulation";
+    };
+
+    constants trg_status width(2) "" {
+        TRG_0 = 0 "No trigger";
+        TRG_1 = 1 "Trigger on overflow.";
+        TRG_2 = 2 "Trigger on overflow and match.";
+        TRG_3 = 3 "Reserved";
+    };
+
+    constants tcm_status width(2) "" {
+        TCM_0 = 0 "No capture";
+        TCM_1 = 1 "Capture on rising edges of GPTi_EVENT_CAPTURE pin";
+        TCM_2 = 2 "Capture on falling edges of GPTi_EVENT_CAPTURE pin";
+        TCM_3 = 3 "Capture on both edges of GPTi_EVENT_CAPTURE pin";
+    };
+
+    constants ce_status width(1) "" {
+        CE_0 = 0 "Compare mode is disable.";
+        CE_1 = 1 "Compare mode is enable.";
+    };
+
+    constants pre_status width(1) "" {
+        PRE_0 = 0 "The TIMER clock input pin clocks the counter.";
+        PRE_1 = 1 "The divided input pin clocks the counter.";
+    };
+
+    constants ar_status width(1) "" {
+        AR_0 = 0 "One shot timer";
+        AR_1 = 1 "Autoreload timer";
+    };
+
+    constants st_status width(1) "" {
+        ST_0 = 0 "Stop timer: Only the counter is frozen. If one-shot mode selected (AR =0), this bit is automatically reset by internal logic when the counter is overflowed.";
+        ST_1 = 1 "Start timer";
+    };
+    
+    register gpt_tclr addr(base, 0x24) "This register controls optional features specific to the timer functionality." {
+        _ 17 mbz;
+        gpo_cfg 1 rw type(gpo_cfg_status) "General-purpose output - this register directly drives the GPTi_PORGPOCFG output pin. For specific use of the GPO_CFG bit, see, .";
+        capt_mode 1 rw type(capt_mode_status) "Capture mode select bit (first/second)";
+        pt 1 rw type(pt_status) "Pulse or toggle mode on GPTi_PWM_out output pin";
+        trg 2 rw type(trg_status) "Trigger output mode on GPTi_PWM_out output pin";
+        tcm 2 rw type(tcm_status) "Transition capture mode on GPTi_EVENT_CAPTURE input pin (When the TCM field passed from (00) to any other combination, the TCAR_IT_FLAG and the edge detection logic are cleared.)";
+        scpwm 1 rw type(idlemode_status) "Pulse width modulation output pin default settingThis bit must be set or clear while the timer is stopped or the trigger is off.";
+        ce 1 rw type(ce_status) "Compare enable";
+        pre 1 rw type(pre_status) "Prescaler enable";
+        ptv 3 rw "Prescale clock timer valueThe timer counter is prescaled with the value 2. Example: PTV = 3, counter increases value (if started) after 16 functional clock periods.";
+        ar 1 rw type(ar_status) "Autoreload mode";
+        st 1 rw type(st_status) "Start/stop timer control";
+    };
+    
+    register gpt_tcrr rw addr(base, 0x28) "This register holds the value of the internal counter." type(uint32);
+    
+    register gpt_tldr rw addr(base, 0x2C) "This register holds the timer load value." type(uint32);
+    
+    register gpt_ttgr rw addr(base, 0x30) "The read value of this register is always 0xFFFF FFFF." type(uint32);
+    
+    register gpt_twps addr(base, 0x34) "This register contains the write posting bits for all writable functional registers." {
+        _ 27 mbz;
+        w_pend_tmar 1 ro "When equal to 1, a write is pending to theGPT_TMAR register.";
+        w_pend_ttgr 1 ro "When equal to 1, a write is pending to theGPT_TTGR register.";
+        w_pend_tldr 1 ro "When equal to 1, a write is pending to theGPT_TLDR register.";
+        w_pend_tcrr 1 ro "When equal to 1, a write is pending to theGPT_TCRR register.";
+        w_pend_tclr 1 ro "When equal to 1, a write is pending to theGPT_TCLR register.";
+    };
+    
+    register gpt_tmar rw addr(base, 0x38) "The compare logic consists of a 32-bit-wide, read/write data TMAR register and logic to compare counter." type(uint32);
+    
+    register gpt_tcar1 ro addr(base, 0x3C) "This register holds the first captured value of the counter register." type(uint32);
+
+    constants posted_status width(1) "" {
+        POSTED_0 = 0 "Posted mode inactive: Delay the command accept output signal.";
+        POSTED_1 = 1 "Posted mode active";
+    };
+
+    constants sft_status width(1) "" {
+        SFT_0 = 0 "Software reset is disabled.";
+        SFT_1 = 1 "Software reset is enabled.";
+    };
+    
+    register gpt_tsicr addr(base, 0x40) "Timer synchronous interface control register" {
+        _ 29 mbz;
+        posted 1 rw type(posted_status) "Posted mode selection";
+        sft 1 rw type(sft_status) "This bit resets all the functional part of the module.";
+        _ 1 mbz;
+    };
+    
+    register gpt_tcar2 ro addr(base, 0x44) "This register holds the second captured value of the counter register." type(uint32);
+    
+    register gpt_tpir rw addr(base, 0x48) "This register is used for 1-ms tick generation. The TPIR register holds the value of the positive increment. The value of this register is added to the value of TCVR to determine whether next value loaded in TCRR is the subperiod value or the overperiod value." type(uint32);
+    
+    register gpt_tnir rw addr(base, 0x4C) "This register is used for 1-ms tick generation. The TNIR register holds the value of the negative increment. The value of this register is added to the value of the TCVR to determine whether next value loaded in TCRR is the subperiod value or the overperiod value." type(uint32);
+    
+    register gpt_tcvr rw addr(base, 0x50) "This register is used for 1-ms tick generation. The TCVR register determines whether next value loaded in TCRR is the subperiod value or the overperiod value." type(uint32);
+    
+    register gpt_tocr addr(base, 0x54) "This register is used to mask the tick interrupt for a selected number of ticks." {
+        _ 8 mbz;
+        ovf_counter_value 24 rw "Number of overflow events";
+    };
+    
+    register gpt_towr addr(base, 0x58) "This register holds the number of masked overflow interrupts." {
+        _ 8 mbz;
+        ovf_wrapping_value 24 rw "Number of masked interrupts";
+    };
+};

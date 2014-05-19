@@ -1,0 +1,781 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_hsi_dma_channels.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_hsi_dma_channels msbfirst ( addr base ) "" {
+    
+
+    constants dst_add_mode_status width(2) "" {
+        DST_ADD_MODE_0 = 0 "constant address";
+        DST_ADD_MODE_1 = 1 "post increment address";
+    };
+
+    constants enable_status width(1) "" {
+        ENABLE_0 = 0 "transfer stops and is reset";
+        ENABLE_1 = 1 "transfer is enabled. Automatically cleared by hardware once transfer is finished";
+    };
+
+    constants dst_burst_en_status width(2) "" {
+        DST_BURST_EN_0 = 0 "single access";
+        DST_BURST_EN_1 = 1 "single access";
+        DST_BURST_EN_3 = 3 "burst 8x32 bits (not implemented)";
+        DST_BURST_EN_2 = 2 "burst 4x32 bits";
+    };
+
+    constants dst_status width(4) "" {
+        DST_8 = 8 "Transfer to Memory port";
+        DST_9 = 9 "Transfer to Peripheral port";
+    };
+
+    constants src_status width(4) "" {
+        SRC_8 = 8 "Transfer From Memory port";
+        SRC_9 = 9 "Transfer From Peripheral port";
+    };
+    
+    register dma_ccr_csdp_i_0 addr(base, 0x0) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_1 addr(base, 0x40) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_2 addr(base, 0x80) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_3 addr(base, 0xC0) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_4 addr(base, 0x100) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_5 addr(base, 0x140) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_6 addr(base, 0x180) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_7 addr(base, 0x1C0) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_8 addr(base, 0x200) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_9 addr(base, 0x240) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_10 addr(base, 0x280) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_11 addr(base, 0x2C0) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_12 addr(base, 0x300) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_13 addr(base, 0x340) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_14 addr(base, 0x380) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+    
+    register dma_ccr_csdp_i_15 addr(base, 0x3C0) "Stores source and destination parameters and channel control bits" {
+        dst_add_mode 2 rw type(dst_add_mode_status) "Destination addressing mode";
+        src_add_mode 2 rw type(dst_add_mode_status) "Source addressing mode";
+        _ 4 mbz;
+        enable 1 rw type(enable_status) "Logical channel enable";
+        _ 7 mbz;
+        dst_burst_en 2 rw type(dst_burst_en_status) "Destination burst enable";
+        _ 1 mbz;
+        dst 4 rw type(dst_status) "Transfer destination";
+        src_burst_en 2 rw type(dst_burst_en_status) "Source burst enable";
+        _ 1 mbz;
+        src 4 rw type(src_status) "Transfer source";
+        data_type 2 rw "Defines data typesImplemented bitfield but not used";
+    };
+
+    constants block_is_status width(1) "" {
+        BLOCK_IS_1_r = 1 "block transferred";
+        BLOCK_IS_0_r = 0 "no event";
+    };
+
+    constants half_is_status width(1) "" {
+        HALF_IS_1_r = 1 "half block transferred";
+        HALF_IS_0_r = 0 "no event";
+    };
+
+    constants tout_is_status width(1) "" {
+        TOUT_IS_1_r = 1 "time-out occurred";
+        TOUT_IS_0_r = 0 "no event";
+    };
+
+    constants block_ie_status width(1) "" {
+        BLOCK_IE_0 = 0 "no interrupt";
+        BLOCK_IE_1 = 1 "interrupt enable";
+    };
+    
+    register dma_csr_ccir_i_0 addr(base, 0x4) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_1 addr(base, 0x44) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_2 addr(base, 0x84) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_3 addr(base, 0xC4) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_4 addr(base, 0x104) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_5 addr(base, 0x144) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_6 addr(base, 0x184) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_7 addr(base, 0x1C4) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_8 addr(base, 0x204) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_9 addr(base, 0x244) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_10 addr(base, 0x284) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_11 addr(base, 0x2C4) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_12 addr(base, 0x304) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_13 addr(base, 0x344) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_14 addr(base, 0x384) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_csr_ccir_i_15 addr(base, 0x3C4) "Interrupt enable and status registerInterrupt flag fields will be cleared through read access using the following byteenable values:0xC0xF" {
+        _ 10 mbz;
+        block_is 1 ro type(block_is_status) "Block transferred";
+        _ 2 mbz;
+        half_is 1 ro type(half_is_status) "Half block reached";
+        _ 1 mbz;
+        tout_is 1 ro type(tout_is_status) "Time-out overflow event";
+        _ 10 mbz;
+        block_ie 1 rw type(block_ie_status) "Interrupt is sent when a full block is transferred";
+        _ 2 mbz;
+        half_ie 1 rw type(block_ie_status) "Interrupt is sent when a half block is transferred";
+        _ 1 mbz;
+        tout_ie 1 rw type(block_ie_status) "Interrupt is sent when a time-out overflow occurs";
+    };
+    
+    register dma_cssa_i_0 rw addr(base, 0x8) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_1 rw addr(base, 0x48) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_2 rw addr(base, 0x88) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_3 rw addr(base, 0xC8) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_4 rw addr(base, 0x108) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_5 rw addr(base, 0x148) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_6 rw addr(base, 0x188) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_7 rw addr(base, 0x1C8) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_8 rw addr(base, 0x208) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_9 rw addr(base, 0x248) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_10 rw addr(base, 0x288) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_11 rw addr(base, 0x2C8) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_12 rw addr(base, 0x308) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_13 rw addr(base, 0x348) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_14 rw addr(base, 0x388) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cssa_i_15 rw addr(base, 0x3C8) "Stores source start addressIf the transfer configured from memory port all bits are taken into account as an address,if the transfer configured from peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_0 rw addr(base, 0xC) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_1 rw addr(base, 0x4C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_2 rw addr(base, 0x8C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_3 rw addr(base, 0xCC) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_4 rw addr(base, 0x10C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_5 rw addr(base, 0x14C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_6 rw addr(base, 0x18C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_7 rw addr(base, 0x1CC) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_8 rw addr(base, 0x20C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_9 rw addr(base, 0x24C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_10 rw addr(base, 0x28C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_11 rw addr(base, 0x2CC) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_12 rw addr(base, 0x30C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_13 rw addr(base, 0x34C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_14 rw addr(base, 0x38C) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cdsa_i_15 rw addr(base, 0x3CC) "Stores destination start addressIf the transfer configured to memory port all bits are taken into account as an address,if the transfer configured to peripheral port the lower four bits will determine the FIFO ID." type(uint32);
+    
+    register dma_cen_i_0 addr(base, 0x10) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_1 addr(base, 0x50) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_2 addr(base, 0x90) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_3 addr(base, 0xD0) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_4 addr(base, 0x110) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_5 addr(base, 0x150) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_6 addr(base, 0x190) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_7 addr(base, 0x1D0) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_8 addr(base, 0x210) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_9 addr(base, 0x250) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_10 addr(base, 0x290) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_11 addr(base, 0x2D0) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_12 addr(base, 0x310) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_13 addr(base, 0x350) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_14 addr(base, 0x390) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cen_i_15 addr(base, 0x3D0) "Stores the number of 4 byte words in a DMA data block. Max is 65536." {
+        _ 16 mbz;
+        size 16 rw "Number of elements in a block. Max is 65536.";
+    };
+    
+    register dma_cdac_csac_i_0 addr(base, 0x18) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_1 addr(base, 0x58) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_2 addr(base, 0x98) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_3 addr(base, 0xD8) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_4 addr(base, 0x118) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_5 addr(base, 0x158) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_6 addr(base, 0x198) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_7 addr(base, 0x1D8) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_8 addr(base, 0x218) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_9 addr(base, 0x258) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_10 addr(base, 0x298) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_11 addr(base, 0x2D8) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_12 addr(base, 0x318) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_13 addr(base, 0x358) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_14 addr(base, 0x398) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+    
+    register dma_cdac_csac_i_15 addr(base, 0x3D8) "Monitors the progress of DMA transfer, by storing the 16-bit counter address for source and destination." {
+        address_cdac 16 ro "Destination address";
+        address_csac 16 ro "Source address";
+    };
+};

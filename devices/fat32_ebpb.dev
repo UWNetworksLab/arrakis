@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2011, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * fat32_ebpb.dev
+ *
+ * DESCRIPTION: FAT32 file system extended BIOS parameter block.
+ * 
+ */
+
+device fat32_ebpb lsbfirst (addr b) "FAT32 Extended BIOS Parameter Block (EBPB)" {
+
+    register spf  rw addr(b,0x24) "Sectors per FAT" type(uint32);
+
+    register flgs rw addr(b,0x28) "Flags" {
+        afc  5 "Active FAT Copy";
+        _    1 rsvd;
+        fme  1 "FAT Mirror Enabled";
+        _    9 rsvd;
+    };
+
+    register vrsn rw addr(b,0x2a) "Version" type(uint16);
+
+    register rtst rw addr(b,0x2c) "Start cluster of root directory" type(uint32);
+
+    register fsis rw addr(b,0x30) "Sector of the File System Information Sector" type(uint16);
+
+    register bbss rw addr(b,0x32) "Sector of backup boot sector, 0 implies no backup" type(uint16);
+
+    // 0x34: rsvd, 12 bytes
+
+    // See fat16_ebpb bytes 0x24-0x26 for descriptions the following three bytes
+    register ldn  rw addr(b,0x40) "Logical Drive Number of partition" type(uint8);
+
+    register rsv  rw addr(b,0x41) "Reserved" type(uint8);
+
+    register ebs  rw addr(b,0x42) "Extended boot signature" type(uint8);
+
+    register vsn  rw addr(b,0x43) "Volume serial number" type(uint32);
+
+    regarray vlb  rw addr(b,0x47) [11] "Volume label" type(uint8);
+
+    // Should be "FAT32   ";
+    regarray fst  rw addr(b,0x52) [8] "File system type, informative" type(uint8);
+
+};

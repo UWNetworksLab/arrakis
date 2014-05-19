@@ -1,0 +1,690 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_usbtllhs_ulpi.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_usbtllhs_ulpi msbfirst ( addr base ) "" {
+    
+    
+    register vendor_id_lo_i_0 ro addr(base, 0x0) "Lower byte of USB-IF-supplied 16-bit vendor ID Value is set for all channels. Default is Texas Instruments Vendor ID = 0x0451." type(uint8);
+    
+    register vendor_id_lo_i_1 ro addr(base, 0x100) "Lower byte of USB-IF-supplied 16-bit vendor ID Value is set for all channels. Default is Texas Instruments Vendor ID = 0x0451." type(uint8);
+    
+    register vendor_id_hi_i_0 ro addr(base, 0x1) "Upper byte of USB-IF-supplied 16-bit vendor ID Value is set for all channels. Default is Texas-Instruments Vendor ID = 0x0451." type(uint8);
+    
+    register vendor_id_hi_i_1 ro addr(base, 0x101) "Upper byte of USB-IF-supplied 16-bit vendor ID Value is set for all channels. Default is Texas-Instruments Vendor ID = 0x0451." type(uint8);
+    
+    register product_id_lo_i_0 ro addr(base, 0x2) "Lower byte of 16-bit product ID Value is set for all channels. Default is" type(uint8);
+    
+    register product_id_lo_i_1 ro addr(base, 0x102) "Lower byte of 16-bit product ID Value is set for all channels. Default is" type(uint8);
+    
+    register product_id_hi_i_0 ro addr(base, 0x3) "Upper byte of 16-bit product ID Value is set for all channels. Default is" type(uint8);
+    
+    register product_id_hi_i_1 ro addr(base, 0x103) "Upper byte of 16-bit product ID Value is set for all channels. Default is" type(uint8);
+
+    constants suspendm_status width(1) "" {
+        SUSPENDM_0 = 0 "PHY is in low-power mode.";
+        SUSPENDM_1 = 1 "PHY is not in low-power mode.";
+    };
+
+    constants reset_status width(1) "" {
+        RESET_0 = 0 "No ongoing reset/no action";
+        RESET_1 = 1 "Ongoing reset/apply reset";
+    };
+
+    constants opmode_status width(2) "" {
+        OPMODE_0 = 0 "Normal operation";
+        OPMODE_1 = 1 "Nondriving";
+        OPMODE_3 = 3 "Reserved";
+        OPMODE_2 = 2 "Disable bit-stuff and NRZI encoding";
+    };
+
+    constants termselect_status width(1) "" {
+        TERMSELECT_0 = 0 "HS termination enabled (other conditions)";
+        TERMSELECT_1 = 1 "FS termination enabled (other conditions)";
+    };
+
+    constants xcvrselect_status width(2) "" {
+        XCVRSELECT_0 = 0 "Enable HS transceiver";
+        XCVRSELECT_1 = 1 "Enable FS transceiver";
+        XCVRSELECT_3 = 3 "Enable FS transceiver for LS packets (automatic FS preamble prepending)";
+        XCVRSELECT_2 = 2 "Enable LS transceiver";
+    };
+    
+    register function_ctrl_i_0 addr(base, 0x4) "Controls UTMI function settings of the PHY. Read/write address." {
+        _ 1 mbz;
+        suspendm 1 rw type(suspendm_status) "Active low PHY suspend: puts the ULPI bus in low-power mode. Automatically set back to 1 upon low-power mode exit.";
+        reset 1 rw type(reset_status) "Active high UTMI transceiver reset. Auto-cleared. Does not reset the ULPI interface or ULPI register set.";
+        opmode 2 rw type(opmode_status) "Select the required bit encoding style during transmit";
+        termselect 1 rw type(termselect_status) "Controls the internal 1.5-kohm HS terminations. Control over bus resistors changes depending on XcvrSelect, OpMode, DpPulldown and DmPulldown.";
+        xcvrselect 2 rw type(xcvrselect_status) "Select the required transceiver speed.";
+    };
+    
+    register function_ctrl_i_1 addr(base, 0x104) "Controls UTMI function settings of the PHY. Read/write address." {
+        _ 1 mbz;
+        suspendm 1 rw type(suspendm_status) "Active low PHY suspend: puts the ULPI bus in low-power mode. Automatically set back to 1 upon low-power mode exit.";
+        reset 1 rw type(reset_status) "Active high UTMI transceiver reset. Auto-cleared. Does not reset the ULPI interface or ULPI register set.";
+        opmode 2 rw type(opmode_status) "Select the required bit encoding style during transmit";
+        termselect 1 rw type(termselect_status) "Controls the internal 1.5-kohm HS terminations. Control over bus resistors changes depending on XcvrSelect, OpMode, DpPulldown and DmPulldown.";
+        xcvrselect 2 rw type(xcvrselect_status) "Select the required transceiver speed.";
+    };
+
+    constants suspendm_status1 width(1) "" {
+        SUSPENDM_0_w = 0 "No effect on bit value";
+        SUSPENDM_1_w = 1 "Set the bit to 1.";
+    };
+    
+    register function_ctrl_set_i_0 addr(base, 0x5) "Controls UTMI function settings of the PHY. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See the field description at the read/write address of the same register." {
+        _ 1 mbz;
+        suspendm 1 rw type(suspendm_status1) "Active low PHY suspend: Puts the ULPI bus in low-power mode. Automatically set back to 1 upon low-power mode exit.";
+        reset 1 rw type(suspendm_status1) "Active high UTMI transceiver reset. Autocleared. Does not reset the ULPI interface or ULPI register set.";
+        opmode 2 rw type(suspendm_status1) "Select the required bit encoding style during transmit.";
+        termselect 1 rw type(suspendm_status1) "Controls the internal 1.5-kohm pullup resistor and 45-ohm HS terminations. Control over bus resistors changes depending on XcvrSelect, OpMode, DpPulldown and DmPulldown.";
+        xcvrselect 2 rw type(suspendm_status1) "Select the required transceiver speed.";
+    };
+    
+    register function_ctrl_set_i_1 addr(base, 0x105) "Controls UTMI function settings of the PHY. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See the field description at the read/write address of the same register." {
+        _ 1 mbz;
+        suspendm 1 rw type(suspendm_status1) "Active low PHY suspend: Puts the ULPI bus in low-power mode. Automatically set back to 1 upon low-power mode exit.";
+        reset 1 rw type(suspendm_status1) "Active high UTMI transceiver reset. Autocleared. Does not reset the ULPI interface or ULPI register set.";
+        opmode 2 rw type(suspendm_status1) "Select the required bit encoding style during transmit.";
+        termselect 1 rw type(suspendm_status1) "Controls the internal 1.5-kohm pullup resistor and 45-ohm HS terminations. Control over bus resistors changes depending on XcvrSelect, OpMode, DpPulldown and DmPulldown.";
+        xcvrselect 2 rw type(suspendm_status1) "Select the required transceiver speed.";
+    };
+
+    constants suspendm_status2 width(1) "" {
+        SUSPENDM_0_w_2 = 0 "No effect on bit value";
+        SUSPENDM_1_w_2 = 1 "Clear the bit to 0.";
+    };
+    
+    register function_ctrl_clr_i_0 addr(base, 0x6) "Controls UTMI function settings of the PHY. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See the field description at the read/write address of the same register." {
+        _ 1 mbz;
+        suspendm 1 rw type(suspendm_status2) "Active low PHY suspend: Puts the ULPI bus in low-power mode. Automatically set back to 1 upon low-power mode exit.";
+        reset 1 rw type(suspendm_status2) "Active high UTMI transceiver reset. Autocleared. Does not reset the ULPI interface or ULPI register set.";
+        opmode 2 rw type(suspendm_status2) "Select the required bit encoding style during transmit";
+        termselect 1 rw type(suspendm_status2) "Controls the internal 1.5-kohm pull-up resistor and 45-ohm HS terminations. Control over bus resistors changes depending on XcvrSelect, OpMode, DpPulldown and DmPulldown.";
+        xcvrselect 2 rw type(suspendm_status2) "Select the required transceiver speed.";
+    };
+    
+    register function_ctrl_clr_i_1 addr(base, 0x106) "Controls UTMI function settings of the PHY. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See the field description at the read/write address of the same register." {
+        _ 1 mbz;
+        suspendm 1 rw type(suspendm_status2) "Active low PHY suspend: Puts the ULPI bus in low-power mode. Automatically set back to 1 upon low-power mode exit.";
+        reset 1 rw type(suspendm_status2) "Active high UTMI transceiver reset. Autocleared. Does not reset the ULPI interface or ULPI register set.";
+        opmode 2 rw type(suspendm_status2) "Select the required bit encoding style during transmit";
+        termselect 1 rw type(suspendm_status2) "Controls the internal 1.5-kohm pull-up resistor and 45-ohm HS terminations. Control over bus resistors changes depending on XcvrSelect, OpMode, DpPulldown and DmPulldown.";
+        xcvrselect 2 rw type(suspendm_status2) "Select the required transceiver speed.";
+    };
+
+    constants interface_protect_disable_status width(1) "" {
+        INTERFACE_PROTECT_DISABLE_0 = 0 "Enables the interface protect circuit";
+        INTERFACE_PROTECT_DISABLE_1 = 1 "Disables the interface protect circuit";
+    };
+
+    constants autoresume_status width(1) "" {
+        AUTORESUME_0 = 0 "AutoResume disabled";
+        AUTORESUME_1 = 1 "AutoResume enabled";
+    };
+
+    constants clocksuspendm_status width(1) "" {
+        CLOCKSUSPENDM_0 = 0 "ULPI clock will stop during serial modes.";
+        CLOCKSUSPENDM_1 = 1 "ULPI clock will run during serial modes.";
+    };
+
+    constants fslsserialmode_3pin_status width(1) "" {
+        FSLSSERIALMODE_3PIN_0 = 0 "ULPI is not in 3-pin mode.";
+        FSLSSERIALMODE_3PIN_1 = 1 "ULPI is in 3-pin serial mode.";
+    };
+
+    constants fslsserialmode_6pin_status width(1) "" {
+        FSLSSERIALMODE_6PIN_0 = 0 "ULPI is not in 6-pin mode.";
+        FSLSSERIALMODE_6PIN_1 = 1 "ULPI is in 6-pin serial mode.";
+    };
+    
+    register interface_ctrl_i_0 addr(base, 0x7) "Enables alternative interfaces and PHY features. Read/write address." {
+        interface_protect_disable 1 rw type(interface_protect_disable_status) "Controls circuitry built into the PHY for protecting the ULPI interface when the link 3-states stp and data.";
+        _ 2 mbz;
+        autoresume 1 rw type(autoresume_status) "Enables the PHY to automatically drive resume signaling. On by default.";
+        clocksuspendm 1 rw type(clocksuspendm_status) "Active low clock suspend for serial modes (6-pin/3-pin).";
+        _ 1 mbz;
+        fslsserialmode_3pin 1 rw type(fslsserialmode_3pin_status) "Sets the ULPI interface to 3-pin (FS/LS only) serial mode. Auto-cleared when serial mode is exited.";
+        fslsserialmode_6pin 1 rw type(fslsserialmode_6pin_status) "Sets the ULPI interface to 6-pin (FS/LS only) serial mode. Auto-cleared when serial mode is exited.";
+    };
+    
+    register interface_ctrl_i_1 addr(base, 0x107) "Enables alternative interfaces and PHY features. Read/write address." {
+        interface_protect_disable 1 rw type(interface_protect_disable_status) "Controls circuitry built into the PHY for protecting the ULPI interface when the link 3-states stp and data.";
+        _ 2 mbz;
+        autoresume 1 rw type(autoresume_status) "Enables the PHY to automatically drive resume signaling. On by default.";
+        clocksuspendm 1 rw type(clocksuspendm_status) "Active low clock suspend for serial modes (6-pin/3-pin).";
+        _ 1 mbz;
+        fslsserialmode_3pin 1 rw type(fslsserialmode_3pin_status) "Sets the ULPI interface to 3-pin (FS/LS only) serial mode. Auto-cleared when serial mode is exited.";
+        fslsserialmode_6pin 1 rw type(fslsserialmode_6pin_status) "Sets the ULPI interface to 6-pin (FS/LS only) serial mode. Auto-cleared when serial mode is exited.";
+    };
+    
+    register interface_ctrl_set_i_0 addr(base, 0x8) "Enables alternative interfaces and PHY features. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See field description at the read/write address of the same register." {
+        interface_protect_disable 1 rw type(suspendm_status1) "Controls circuitry built into the PHY for protecting the ULPI interface when the link 3-states stp and data.";
+        _ 2 mbz;
+        autoresume 1 rw type(suspendm_status1) "Enables the PHY to automatically drive resume signaling. On by default.";
+        clocksuspendm 1 rw type(suspendm_status1) "Active low clock suspend for serial modes (6-pin/3-pin).";
+        _ 1 mbz;
+        fslsserialmode_3pin 1 rw type(suspendm_status1) "Sets the ULPI interface to 3-pin (FS/LS only) serial mode. Autocleared when serial mode is exited.";
+        fslsserialmode_6pin 1 rw type(suspendm_status1) "Sets the ULPI interface to 6-pin (FS/LS only) serial mode. Autocleared when serial mode is exited.";
+    };
+    
+    register interface_ctrl_set_i_1 addr(base, 0x108) "Enables alternative interfaces and PHY features. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See field description at the read/write address of the same register." {
+        interface_protect_disable 1 rw type(suspendm_status1) "Controls circuitry built into the PHY for protecting the ULPI interface when the link 3-states stp and data.";
+        _ 2 mbz;
+        autoresume 1 rw type(suspendm_status1) "Enables the PHY to automatically drive resume signaling. On by default.";
+        clocksuspendm 1 rw type(suspendm_status1) "Active low clock suspend for serial modes (6-pin/3-pin).";
+        _ 1 mbz;
+        fslsserialmode_3pin 1 rw type(suspendm_status1) "Sets the ULPI interface to 3-pin (FS/LS only) serial mode. Autocleared when serial mode is exited.";
+        fslsserialmode_6pin 1 rw type(suspendm_status1) "Sets the ULPI interface to 6-pin (FS/LS only) serial mode. Autocleared when serial mode is exited.";
+    };
+    
+    register interface_ctrl_clr_i_0 addr(base, 0x9) "Enables alternative interfaces and PHY features. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        interface_protect_disable 1 rw type(suspendm_status2) "Controls circuitry built into the PHY for protecting the ULPI interface when the link 3-states stp and data.";
+        _ 2 mbz;
+        autoresume 1 rw type(suspendm_status2) "Enables the PHY to automatically drive resume signaling. On by default.";
+        clocksuspendm 1 rw type(suspendm_status2) "Active low clock suspend for serial modes (6-pin/3-pin).";
+        _ 1 mbz;
+        fslsserialmode_3pin 1 rw type(suspendm_status2) "Sets the ULPI interface to 3-pin (FS/LS only) serial mode. Autocleared when serial mode is exited.";
+        fslsserialmode_6pin 1 rw type(suspendm_status2) "Sets the ULPI interface to 6-pin (FS/LS only) serial mode. Autocleared when serial mode is exited.";
+    };
+    
+    register interface_ctrl_clr_i_1 addr(base, 0x109) "Enables alternative interfaces and PHY features. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        interface_protect_disable 1 rw type(suspendm_status2) "Controls circuitry built into the PHY for protecting the ULPI interface when the link 3-states stp and data.";
+        _ 2 mbz;
+        autoresume 1 rw type(suspendm_status2) "Enables the PHY to automatically drive resume signaling. On by default.";
+        clocksuspendm 1 rw type(suspendm_status2) "Active low clock suspend for serial modes (6-pin/3-pin).";
+        _ 1 mbz;
+        fslsserialmode_3pin 1 rw type(suspendm_status2) "Sets the ULPI interface to 3-pin (FS/LS only) serial mode. Autocleared when serial mode is exited.";
+        fslsserialmode_6pin 1 rw type(suspendm_status2) "Sets the ULPI interface to 6-pin (FS/LS only) serial mode. Autocleared when serial mode is exited.";
+    };
+
+    constants drvvbus_status width(1) "" {
+        DRVVBUS_0 = 0 "No action";
+        DRVVBUS_1 = 1 "Drive VBUS.";
+    };
+
+    constants chrgvbus_status width(1) "" {
+        CHRGVBUS_0 = 0 "No action";
+        CHRGVBUS_1 = 1 "Charge VBUS.";
+    };
+
+    constants dischrgvbus_status width(1) "" {
+        DISCHRGVBUS_0 = 0 "No action";
+        DISCHRGVBUS_1 = 1 "Discharge VBUS.";
+    };
+
+    constants dmpulldown_status width(1) "" {
+        DMPULLDOWN_0 = 0 "Pulldown resistor not connected to D-";
+        DMPULLDOWN_1 = 1 "Pulldown resistor connected to D-";
+    };
+
+    constants dppulldown_status width(1) "" {
+        DPPULLDOWN_0 = 0 "Pulldown resistor not connected to D+";
+        DPPULLDOWN_1 = 1 "Pulldown resistor connected to D+";
+    };
+
+    constants idpullup_status width(1) "" {
+        IDPULLUP_0 = 0 "Disable sampling of ID line.";
+        IDPULLUP_1 = 1 "Enable sampling of ID line.";
+    };
+    
+    register otg_ctrl_i_0 addr(base, 0xA) "Controls UTMI+ OTG functions of the PHY. Read/write address." {
+        _ 2 mbz;
+        drvvbus 1 rw type(drvvbus_status) "Drive 5 V on VBUS";
+        chrgvbus 1 rw type(chrgvbus_status) "Charge VBUS through a resistor for VBUS-pulsing SRP.";
+        dischrgvbus 1 rw type(dischrgvbus_status) "Discharge VBUS through a resistor, until the session-end VBUS state is reached.";
+        dmpulldown 1 rw type(dmpulldown_status) "Enables the 15-kohm pulldown resistor on D-";
+        dppulldown 1 rw type(dppulldown_status) "Enables the 15-kohm pulldown resistor on D+";
+        idpullup 1 rw type(idpullup_status) "Pullup to the (OTG) ID line to allow its sampling";
+    };
+    
+    register otg_ctrl_i_1 addr(base, 0x10A) "Controls UTMI+ OTG functions of the PHY. Read/write address." {
+        _ 2 mbz;
+        drvvbus 1 rw type(drvvbus_status) "Drive 5 V on VBUS";
+        chrgvbus 1 rw type(chrgvbus_status) "Charge VBUS through a resistor for VBUS-pulsing SRP.";
+        dischrgvbus 1 rw type(dischrgvbus_status) "Discharge VBUS through a resistor, until the session-end VBUS state is reached.";
+        dmpulldown 1 rw type(dmpulldown_status) "Enables the 15-kohm pulldown resistor on D-";
+        dppulldown 1 rw type(dppulldown_status) "Enables the 15-kohm pulldown resistor on D+";
+        idpullup 1 rw type(idpullup_status) "Pullup to the (OTG) ID line to allow its sampling";
+    };
+    
+    register otg_ctrl_set_i_0 addr(base, 0xB) "Controls UTMI+ OTG functions of the PHY. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See field description at the read/write address of the same register." {
+        _ 2 mbz;
+        drvvbus 1 rw type(suspendm_status1) "Drive 5 V on VBUS";
+        chrgvbus 1 rw type(suspendm_status1) "Charge VBUS through a resistor for VBUS-pulsing SRP.";
+        dischrgvbus 1 rw type(suspendm_status1) "Discharge VBUS through a resistor, until the session-end VBUS state is reached.";
+        dmpulldown 1 rw type(suspendm_status1) "Enables the 15-kohm pulldown resistor on D-";
+        dppulldown 1 rw type(suspendm_status1) "Enables the 15-kohm pulldown resistor on D+";
+        idpullup 1 rw type(suspendm_status1) "Pullup to the (OTG) ID line to allow its sampling";
+    };
+    
+    register otg_ctrl_set_i_1 addr(base, 0x10B) "Controls UTMI+ OTG functions of the PHY. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See field description at the read/write address of the same register." {
+        _ 2 mbz;
+        drvvbus 1 rw type(suspendm_status1) "Drive 5 V on VBUS";
+        chrgvbus 1 rw type(suspendm_status1) "Charge VBUS through a resistor for VBUS-pulsing SRP.";
+        dischrgvbus 1 rw type(suspendm_status1) "Discharge VBUS through a resistor, until the session-end VBUS state is reached.";
+        dmpulldown 1 rw type(suspendm_status1) "Enables the 15-kohm pulldown resistor on D-";
+        dppulldown 1 rw type(suspendm_status1) "Enables the 15-kohm pulldown resistor on D+";
+        idpullup 1 rw type(suspendm_status1) "Pullup to the (OTG) ID line to allow its sampling";
+    };
+    
+    register otg_ctrl_clr_i_0 addr(base, 0xC) "Controls UTMI+ OTG functions of the PHY. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        _ 2 mbz;
+        drvvbus 1 rw type(suspendm_status2) "Drive 5 V on VBUS";
+        chrgvbus 1 rw type(suspendm_status2) "Charge VBUS through a resistor for VBUS-pulsing SRP.";
+        dischrgvbus 1 rw type(suspendm_status2) "Discharge VBUS through a resistor, until the session-end VBUS state is reached.";
+        dmpulldown 1 rw type(suspendm_status2) "Enables the 15k pulldown resistor on D-";
+        dppulldown 1 rw type(suspendm_status2) "Enables the 15kohm pulldown resistor on D+";
+        idpullup 1 rw type(suspendm_status2) "Pullup to the (OTG) ID line to allow its sampling";
+    };
+    
+    register otg_ctrl_clr_i_1 addr(base, 0x10C) "Controls UTMI+ OTG functions of the PHY. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        _ 2 mbz;
+        drvvbus 1 rw type(suspendm_status2) "Drive 5 V on VBUS";
+        chrgvbus 1 rw type(suspendm_status2) "Charge VBUS through a resistor for VBUS-pulsing SRP.";
+        dischrgvbus 1 rw type(suspendm_status2) "Discharge VBUS through a resistor, until the session-end VBUS state is reached.";
+        dmpulldown 1 rw type(suspendm_status2) "Enables the 15k pulldown resistor on D-";
+        dppulldown 1 rw type(suspendm_status2) "Enables the 15kohm pulldown resistor on D+";
+        idpullup 1 rw type(suspendm_status2) "Pullup to the (OTG) ID line to allow its sampling";
+    };
+
+    constants idgnd_rise_status width(1) "" {
+        IDGND_RISE_0_w = 0 "No effect on bit value";
+        IDGND_RISE_1_w = 1 "Set the bit to 1";
+    };
+    
+    register usb_int_en_rise_i_0 addr(base, 0xD) "Enables an interrupt event notification when the corresponding status bit changes from low to high. By default, all transitions are enabled. Read/write address." {
+        _ 3 mbz;
+        idgnd_rise 1 rw type(idgnd_rise_status) "Generate an interrupt event notification when IdGnd changes from low to high. Event is automatically masked if IdPullup bit is clear to 0 and for 50ms after IdPullup is set to 1.";
+        sessend_rise 1 rw type(idgnd_rise_status) "Generate an interrupt event notification when SessEnd changes from low to high.";
+        sessvalid_rise 1 rw type(idgnd_rise_status) "Generate an interrupt event notification when SessValid changes from low to high. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_rise 1 rw type(idgnd_rise_status) "Generate an interrupt event notification when VbusValid changes from low to high.";
+        hostdisconnect_rise 1 rw type(idgnd_rise_status) "Generate an interrupt event notification when Hostdisconnect changes from low to high. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_rise_i_1 addr(base, 0x10D) "Enables an interrupt event notification when the corresponding status bit changes from low to high. By default, all transitions are enabled. Read/write address." {
+        _ 3 mbz;
+        idgnd_rise 1 rw type(idgnd_rise_status) "Generate an interrupt event notification when IdGnd changes from low to high. Event is automatically masked if IdPullup bit is clear to 0 and for 50ms after IdPullup is set to 1.";
+        sessend_rise 1 rw type(idgnd_rise_status) "Generate an interrupt event notification when SessEnd changes from low to high.";
+        sessvalid_rise 1 rw type(idgnd_rise_status) "Generate an interrupt event notification when SessValid changes from low to high. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_rise 1 rw type(idgnd_rise_status) "Generate an interrupt event notification when VbusValid changes from low to high.";
+        hostdisconnect_rise 1 rw type(idgnd_rise_status) "Generate an interrupt event notification when Hostdisconnect changes from low to high. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_rise_set_i_0 addr(base, 0xE) "Enables an interrupt event notification when the corresponding status bit changes from low to high. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        _ 3 mbz;
+        idgnd_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when IdGnd changes from low to high. Event is automatically masked if IdPullup bit is clear to 0 and for 50ms after IdPullup is set to 1.";
+        sessend_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when SessEnd changes from low to high.";
+        sessvalid_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when SessValid changes from low to high. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when VbusValid changes from low to high.";
+        hostdisconnect_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when Hostdisconnect changes from low to high. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_rise_set_i_1 addr(base, 0x10E) "Enables an interrupt event notification when the corresponding status bit changes from low to high. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        _ 3 mbz;
+        idgnd_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when IdGnd changes from low to high. Event is automatically masked if IdPullup bit is clear to 0 and for 50ms after IdPullup is set to 1.";
+        sessend_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when SessEnd changes from low to high.";
+        sessvalid_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when SessValid changes from low to high. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when VbusValid changes from low to high.";
+        hostdisconnect_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when Hostdisconnect changes from low to high. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_rise_clr_i_0 addr(base, 0xF) "Enables an interrupt event notification when the corresponding status bit changes from low to high. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See the field description at the read/write address of the same register." {
+        _ 3 mbz;
+        idgnd_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when IdGnd changes from low to high. Event is automatically masked if IdPullup bit is clear to 0 and for 50 ms after IdPullup is set to 1.";
+        sessend_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when SessEnd changes from low to high.";
+        sessvalid_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when SessValid changes from low to high. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when VbusValid changes from low to high.";
+        hostdisconnect_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when Hostdisconnect changes from low to high. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_rise_clr_i_1 addr(base, 0x10F) "Enables an interrupt event notification when the corresponding status bit changes from low to high. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See the field description at the read/write address of the same register." {
+        _ 3 mbz;
+        idgnd_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when IdGnd changes from low to high. Event is automatically masked if IdPullup bit is clear to 0 and for 50 ms after IdPullup is set to 1.";
+        sessend_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when SessEnd changes from low to high.";
+        sessvalid_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when SessValid changes from low to high. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when VbusValid changes from low to high.";
+        hostdisconnect_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when Hostdisconnect changes from low to high. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_fall_i_0 addr(base, 0x10) "Enables an interrupt event notification when the corresponding status bit changes from high to low. By default, all transitions are enabled. Read/write address." {
+        _ 3 mbz;
+        idgnd_fall 1 rw "Generate an interrupt event notification when IdGnd changes from high to low. Event is automatically masked if IdPullup bit is clear to 0 and for 50 ms after IdPullup is set to 1.";
+        sessend_fall 1 rw "Generate an interrupt event notification when SessEnd changes from high to low.";
+        sessvalid_fall 1 rw "Generate an interrupt event notification when SessValid changes from high to low. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_fall 1 rw "Generate an interrupt event notification when VbusValid changes from high to low.";
+        hostdisconnect_fall 1 rw "Generate an interrupt event notification when Hostdisconnect changes from high to low. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_fall_i_1 addr(base, 0x110) "Enables an interrupt event notification when the corresponding status bit changes from high to low. By default, all transitions are enabled. Read/write address." {
+        _ 3 mbz;
+        idgnd_fall 1 rw "Generate an interrupt event notification when IdGnd changes from high to low. Event is automatically masked if IdPullup bit is clear to 0 and for 50 ms after IdPullup is set to 1.";
+        sessend_fall 1 rw "Generate an interrupt event notification when SessEnd changes from high to low.";
+        sessvalid_fall 1 rw "Generate an interrupt event notification when SessValid changes from high to low. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_fall 1 rw "Generate an interrupt event notification when VbusValid changes from high to low.";
+        hostdisconnect_fall 1 rw "Generate an interrupt event notification when Hostdisconnect changes from high to low. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_fall_set_i_0 addr(base, 0x11) "Enables an interrupt event notification when the corresponding status bit changes from high to low. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        _ 3 mbz;
+        idgnd_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when IdGnd changes from low to high. Event is automatically masked if IdPullup bit is clear to 0 and for 50 ms after IdPullup is set to 1.";
+        sessend_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when SessEnd changes from low to high.";
+        sessvalid_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when SessValid changes from low to high. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when VbusValid changes from low to high.";
+        hostdisconnect_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when Hostdisconnect changes from low to high. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_fall_set_i_1 addr(base, 0x111) "Enables an interrupt event notification when the corresponding status bit changes from high to low. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        _ 3 mbz;
+        idgnd_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when IdGnd changes from low to high. Event is automatically masked if IdPullup bit is clear to 0 and for 50 ms after IdPullup is set to 1.";
+        sessend_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when SessEnd changes from low to high.";
+        sessvalid_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when SessValid changes from low to high. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when VbusValid changes from low to high.";
+        hostdisconnect_rise 1 rw type(suspendm_status1) "Generate an interrupt event notification when Hostdisconnect changes from low to high. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_fall_clr_i_0 addr(base, 0x12) "Enables an interrupt event notification when the corresponding status bit changes from high to low. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See field description at the read/write address of the same register." {
+        _ 3 mbz;
+        idgnd_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when IdGnd changes from low to high. Event is automatically masked if IdPullup bit is clear to 0 and for 50 ms after IdPullup is set to 1.";
+        sessend_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when SessEnd changes from low to high.";
+        sessvalid_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when SessValid changes from low to high. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when VbusValid changes from low to high.";
+        hostdisconnect_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when Hostdisconnect changes from low to high. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+    
+    register usb_int_en_fall_clr_i_1 addr(base, 0x112) "Enables an interrupt event notification when the corresponding status bit changes from high to low. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See field description at the read/write address of the same register." {
+        _ 3 mbz;
+        idgnd_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when IdGnd changes from low to high. Event is automatically masked if IdPullup bit is clear to 0 and for 50 ms after IdPullup is set to 1.";
+        sessend_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when SessEnd changes from low to high.";
+        sessvalid_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when SessValid changes from low to high. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when VbusValid changes from low to high.";
+        hostdisconnect_rise 1 rw type(suspendm_status2) "Generate an interrupt event notification when Hostdisconnect changes from low to high. Applicable only in host mode (DpPulldown and DmPulldown both set to 1b).";
+    };
+
+    constants idgnd_status width(1) "" {
+        IDGND_1_r = 1 "ID pin is floating = OTG B = default peripheral";
+        IDGND_0_r = 0 "ID pin is grounded = OTG A = default host";
+    };
+
+    constants sessend_status width(1) "" {
+        SESSEND_1_r = 1 "VBUS is below Session-End threshold.";
+        SESSEND_0_r = 0 "VBUS is above Session-End threshold.";
+    };
+
+    constants sessvalid_status width(1) "" {
+        SESSVALID_1_r = 1 "VBUS is above Session-Valid threshold.";
+        SESSVALID_0_r = 0 "VBUS is below Session-Valid threshold.";
+    };
+
+    constants vbusvalid_status width(1) "" {
+        VBUSVALID_1_r = 1 "VBUS is above Vbus-Valid threshold.";
+        VBUSVALID_0_r = 0 "VBUS is below Vbus-Valid threshold.";
+    };
+
+    constants hostdisconnect_status width(1) "" {
+        HOSTDISCONNECT_1_r = 1 "Peripheral disconnected";
+        HOSTDISCONNECT_0_r = 0 "Peripheral not disconnected or nonhost mode";
+    };
+    
+    register usb_int_status_i_0 addr(base, 0x13) "Indicates the current value of the interrupt source signal." {
+        _ 3 mbz;
+        idgnd 1 ro type(idgnd_status) "Value of UTMI+ IdDig output. Undefined unless IdPullup = 1";
+        sessend 1 ro type(sessend_status) "Current value of UTMI+ SessEnd output.";
+        sessvalid 1 ro type(sessvalid_status) "Current value of UTMI+ SessValid output. SessValid is the same as UTMI+ AValid.";
+        vbusvalid 1 ro type(vbusvalid_status) "Current value of UTMI+ VbusValid output.";
+        hostdisconnect 1 ro type(hostdisconnect_status) "Current value of UTMI+ Hostdisconnect output. Applicable only in host mode. Automatically reset to 0 when low-power mode is entered.";
+    };
+    
+    register usb_int_status_i_1 addr(base, 0x113) "Indicates the current value of the interrupt source signal." {
+        _ 3 mbz;
+        idgnd 1 ro type(idgnd_status) "Value of UTMI+ IdDig output. Undefined unless IdPullup = 1";
+        sessend 1 ro type(sessend_status) "Current value of UTMI+ SessEnd output.";
+        sessvalid 1 ro type(sessvalid_status) "Current value of UTMI+ SessValid output. SessValid is the same as UTMI+ AValid.";
+        vbusvalid 1 ro type(vbusvalid_status) "Current value of UTMI+ VbusValid output.";
+        hostdisconnect 1 ro type(hostdisconnect_status) "Current value of UTMI+ Hostdisconnect output. Applicable only in host mode. Automatically reset to 0 when low-power mode is entered.";
+    };
+    
+    register usb_int_latch_i_0 addr(base, 0x14) "Set by unmasked changes on the corresponding status bits to generate the ULPI interrupt. Cleared upon read, and when low-power mode, serial mode, or carkit mode are entered." {
+        _ 3 mbz;
+        idgnd_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on IdGnd. Cleared when this register is read.";
+        sessend_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on SessEnd. Cleared when this register is read.";
+        sessvalid_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on SessValid. Cleared when this register is read. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on VbusValid. Cleared when this register is read.";
+        hostdisconnect_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on Hostdisconnect. Cleared when this register is read. Applicable only in host mode.";
+    };
+    
+    register usb_int_latch_i_1 addr(base, 0x114) "Set by unmasked changes on the corresponding status bits to generate the ULPI interrupt. Cleared upon read, and when low-power mode, serial mode, or carkit mode are entered." {
+        _ 3 mbz;
+        idgnd_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on IdGnd. Cleared when this register is read.";
+        sessend_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on SessEnd. Cleared when this register is read.";
+        sessvalid_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on SessValid. Cleared when this register is read. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on VbusValid. Cleared when this register is read.";
+        hostdisconnect_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on Hostdisconnect. Cleared when this register is read. Applicable only in host mode.";
+    };
+
+    constants line_state_status width(2) "" {
+        LINE_STATE_3_r = 3 "SE1 (LS/FS), Invalid (HS/Chirp)";
+        LINE_STATE_2_r = 2 "LS: J state, FS: K state, HS: Invalid, Chirp: !Squelch AND !HS_Differential_Receiver_Output";
+        LINE_STATE_1_r = 1 "LS: K state, FS: J state, HS: !Squelch, Chirp: !Squelch AND HS_Differential_Receiver_Output";
+        LINE_STATE_0_r = 0 "SE0 (LS/FS), Squelch (HS/Chirp)";
+    };
+    
+    register debug_i_0 addr(base, 0x15) "Indicates the current value of various signals useful for debugging." {
+        _ 6 mbz;
+        line_state 2 ro type(line_state_status) "Current state of the USB line: D+ (bit 0) and D- (bit 1).";
+    };
+    
+    register debug_i_1 addr(base, 0x115) "Indicates the current value of various signals useful for debugging." {
+        _ 6 mbz;
+        line_state 2 ro type(line_state_status) "Current state of the USB line: D+ (bit 0) and D- (bit 1).";
+    };
+    
+    register scratch_register_i_0 rw addr(base, 0x16) "Register byte for register access testing purposes. Value has no functional effect on PHY. Read/write address." type(uint8);
+    
+    register scratch_register_i_1 rw addr(base, 0x116) "Register byte for register access testing purposes. Value has no functional effect on PHY. Read/write address." type(uint8);
+    
+    register scratch_register_set_i_0 rw addr(base, 0x17) "Register byte for register access testing purposes. Value has no functional effect on PHY. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See field description at the read/write address of the same register." type(uint8);
+    
+    register scratch_register_set_i_1 rw addr(base, 0x117) "Register byte for register access testing purposes. Value has no functional effect on PHY. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See field description at the read/write address of the same register." type(uint8);
+    
+    register scratch_register_clr_i_0 rw addr(base, 0x18) "Register byte for register access testing purposes. Value has no functional effect on PHY. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See field description at the read/write address of the same register." type(uint8);
+    
+    register scratch_register_clr_i_1 rw addr(base, 0x118) "Register byte for register access testing purposes. Value has no functional effect on PHY. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See field description at the read/write address of the same register." type(uint8);
+    
+    register extended_set_access_i_0 rw addr(base, 0x2F) "This address is used to access the extended register set; that is, addresses above 0x40." type(uint8);
+    
+    register extended_set_access_i_1 rw addr(base, 0x12F) "This address is used to access the extended register set; that is, addresses above 0x40." type(uint8);
+    
+    register utmi_vcontrol_en_i_0 addr(base, 0x30) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1 Enables an interrupt notification when the corresponding vcontrol_status bit changes. Read/write address. Lowest VCS_CTRL_WIDTH (HDL generic) bits are implemented, others are always-0, read-only. (UTMI standard is 4-bit.)" {
+        vc7_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc6_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc5_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc4_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc3_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc2_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc1_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc0_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+    };
+    
+    register utmi_vcontrol_en_i_1 addr(base, 0x130) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1 Enables an interrupt notification when the corresponding vcontrol_status bit changes. Read/write address. Lowest VCS_CTRL_WIDTH (HDL generic) bits are implemented, others are always-0, read-only. (UTMI standard is 4-bit.)" {
+        vc7_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc6_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc5_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc4_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc3_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc2_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc1_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc0_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+    };
+    
+    register utmi_vcontrol_en_set_i_0 addr(base, 0x31) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1 Enables an interrupt notification when the corresponding vcontrol_status bit changes. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        vc7_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc6_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc5_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc4_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc3_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc2_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc1_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc0_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+    };
+    
+    register utmi_vcontrol_en_set_i_1 addr(base, 0x131) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1 Enables an interrupt notification when the corresponding vcontrol_status bit changes. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        vc7_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc6_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc5_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc4_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc3_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc2_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc1_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+        vc0_en 1 rw "Enable alt_int assertion upon vcontrol_status bit change: Write 0x0: No effect on bit value Write 0x1: Set the bit to 1.";
+    };
+    
+    register utmi_vcontrol_en_clr_i_0 rw addr(base, 0x32) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. Enables an interrupt notification when the corresponding vcontrol_status bit changes. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." type(uint8);
+    
+    register utmi_vcontrol_en_clr_i_1 rw addr(base, 0x132) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. Enables an interrupt notification when the corresponding vcontrol_status bit changes. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." type(uint8);
+    
+    register utmi_vcontrol_status_i_0 rw addr(base, 0x33) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. UTMI-standard Vcontrol vector byte is sent by the UTMI controller (other side of TLL) to its PHY (emulated here by the TLL). Alternatively, data can be also written directly into the register. Can contain any user-defined data. Vcontrol bit changes can be used to assert the ULPI ALT interrupt. Lowest VCS_CTRL_WIDTH (HDL generic) bits are implemented, others are always-0, read-only. (UTMI standard is 4-bit)." type(uint8);
+    
+    register utmi_vcontrol_status_i_1 rw addr(base, 0x133) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. UTMI-standard Vcontrol vector byte is sent by the UTMI controller (other side of TLL) to its PHY (emulated here by the TLL). Alternatively, data can be also written directly into the register. Can contain any user-defined data. Vcontrol bit changes can be used to assert the ULPI ALT interrupt. Lowest VCS_CTRL_WIDTH (HDL generic) bits are implemented, others are always-0, read-only. (UTMI standard is 4-bit)." type(uint8);
+    
+    register utmi_vcontrol_latch_i_0 addr(base, 0x34) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. Set by unmasked changes on the corresponding vcontrol_status bits to generate the ULPI ALT interrupt. Cleared upon read, and when low-power mode, serial mode or carkit mode are entered. Lowest VCS_CTRL_WIDTH (HDL generic) bits are implemented, others are always-0, read-only. (UTMI standard is 4-bit.)" {
+        vc7_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc6_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc5_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc4_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc3_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc2_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc1_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc0_change 1 ro "Unmasked change on vcontrol_status bit";
+    };
+    
+    register utmi_vcontrol_latch_i_1 addr(base, 0x134) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. Set by unmasked changes on the corresponding vcontrol_status bits to generate the ULPI ALT interrupt. Cleared upon read, and when low-power mode, serial mode or carkit mode are entered. Lowest VCS_CTRL_WIDTH (HDL generic) bits are implemented, others are always-0, read-only. (UTMI standard is 4-bit.)" {
+        vc7_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc6_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc5_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc4_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc3_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc2_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc1_change 1 ro "Unmasked change on vcontrol_status bit";
+        vc0_change 1 ro "Unmasked change on vcontrol_status bit";
+    };
+    
+    register utmi_vstatus_i_0 rw addr(base, 0x35) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. UTMI-standard Vstatus vector byte is sent by the PHY (emulated here by the TLL) to the UTMI controller (other side of TLL): information written into this register goes directly to the UTMI controller, and can contain any user-defined data. Read/write address. Lowest VCS_STAT_WIDTH (HDL generic) bits are implemented, others are always-0, read-only. (UTMI standard is 8-bit.)" type(uint8);
+    
+    register utmi_vstatus_i_1 rw addr(base, 0x135) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. UTMI-standard Vstatus vector byte is sent by the PHY (emulated here by the TLL) to the UTMI controller (other side of TLL): information written into this register goes directly to the UTMI controller, and can contain any user-defined data. Read/write address. Lowest VCS_STAT_WIDTH (HDL generic) bits are implemented, others are always-0, read-only. (UTMI standard is 8-bit.)" type(uint8);
+    
+    register utmi_vstatus_set_i_0 rw addr(base, 0x36) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. UTMI-standard Vstatus vector byte is sent by the PHY (emulated here by the TLL) to the UTMI controller (other side of TLL): information written into this register goes directly to the UTMI controller, and can contain any user-defined data. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See field description at the read/write address of the same register." type(uint8);
+    
+    register utmi_vstatus_set_i_1 rw addr(base, 0x136) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. UTMI-standard Vstatus vector byte is sent by the PHY (emulated here by the TLL) to the UTMI controller (other side of TLL): information written into this register goes directly to the UTMI controller, and can contain any user-defined data. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See field description at the read/write address of the same register." type(uint8);
+    
+    register utmi_vstatus_clr_i_0 rw addr(base, 0x37) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. UTMI-standard Vstatus vector byte is sent by the PHY (emulated here by the TLL) to the UTMI controller (other side of TLL): information written into this register goes directly to the UTMI controller, and can contain any user-defined data. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See field description at the read/write address of the same register." type(uint8);
+    
+    register utmi_vstatus_clr_i_1 rw addr(base, 0x137) "Part of nonstandard UTMI-to-ULPI mailbox system, implemented if HDL generic VCS_MAILBOX bit is 1. UTMI-standard Vstatus vector byte is sent by the PHY (emulated here by the TLL) to the UTMI controller (other side of TLL): information written into this register goes directly to the UTMI controller, and can contain any user-defined data. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See field description at the read/write address of the same register." type(uint8);
+    
+    register usb_int_latch_noclr_i_0 addr(base, 0x38) "Set by unmasked changes on the corresponding status bits to generate the ULPI interrupt. Debug, nonstandard address to the standard register: Register is not cleared on read. See field description at the 'clear-on-read' address of the same register." {
+        _ 3 mbz;
+        idgnd_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on IdGnd.";
+        sessend_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on SessEnd.";
+        sessvalid_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on SessValid. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on VbusValid.";
+        hostdisconnect_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on Hostdisconnect. Applicable only in host mode.";
+    };
+    
+    register usb_int_latch_noclr_i_1 addr(base, 0x138) "Set by unmasked changes on the corresponding status bits to generate the ULPI interrupt. Debug, nonstandard address to the standard register: Register is not cleared on read. See field description at the 'clear-on-read' address of the same register." {
+        _ 3 mbz;
+        idgnd_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on IdGnd.";
+        sessend_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on SessEnd.";
+        sessvalid_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on SessValid. SessValid is the same as UTMI+ AValid.";
+        vbusvalid_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on VbusValid.";
+        hostdisconnect_latch 1 ro "Set to 1 by the PHY when an unmasked event occurs on Hostdisconnect. Applicable only in host mode.";
+    };
+
+    constants p2p_en_status width(1) "" {
+        P2P_EN_0 = 0 "PHY-to-PHY wakeup enabled";
+        P2P_EN_1 = 1 "PHY-to-PHY wakeup enabled";
+    };
+    
+    register vendor_int_en_i_0 addr(base, 0x3B) "Vendor-specific interrupt enables (mask) for miscellaneous ULPI alt_int events. Read/write address." {
+        _ 7 mbz;
+        p2p_en 1 rw type(p2p_en_status) "Enable PHY-to-PHY ULPI wakeup upon inactive UTMI suspendm.";
+    };
+    
+    register vendor_int_en_i_1 addr(base, 0x13B) "Vendor-specific interrupt enables (mask) for miscellaneous ULPI alt_int events. Read/write address." {
+        _ 7 mbz;
+        p2p_en 1 rw type(p2p_en_status) "Enable PHY-to-PHY ULPI wakeup upon inactive UTMI suspendm.";
+    };
+    
+    register vendor_int_en_set_i_0 addr(base, 0x3C) "Vendor-specific interrupt enable bit (mask) for miscellaneous ULPI alt_int events. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See field description at the read/write address of the same register." {
+        _ 7 mbz;
+        p2p_en 1 rw type(suspendm_status1) "Enable PHY-to-PHY ULPI wakeup upon inactive UTMI suspendm.";
+    };
+    
+    register vendor_int_en_set_i_1 addr(base, 0x13C) "Vendor-specific interrupt enable bit (mask) for miscellaneous ULPI alt_int events. Read/set address (write 1 to a bit to set it to 1, writing 0 has no effect on bit value). See field description at the read/write address of the same register." {
+        _ 7 mbz;
+        p2p_en 1 rw type(suspendm_status1) "Enable PHY-to-PHY ULPI wakeup upon inactive UTMI suspendm.";
+    };
+    
+    register vendor_int_en_clr_i_0 addr(base, 0x3D) "Vendor-specific interrupt enables (mask) for miscellaneous ULPI alt_int events. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        _ 7 mbz;
+        p2p_en 1 rw type(suspendm_status2) "Enable PHY-to-PHY ULPI wakeup upon inactive UTMI suspendm.";
+    };
+    
+    register vendor_int_en_clr_i_1 addr(base, 0x13D) "Vendor-specific interrupt enables (mask) for miscellaneous ULPI alt_int events. Read/clear address (write 1 to a bit to clear it to 0, writing 0 has no effect on bit value). See fields description at the read/write address of the same register." {
+        _ 7 mbz;
+        p2p_en 1 rw type(suspendm_status2) "Enable PHY-to-PHY ULPI wakeup upon inactive UTMI suspendm.";
+    };
+
+    constants utmi_suspendm_status width(1) "" {
+        UTMI_SUSPENDM_1_r = 1 "UTMI interface is active (not suspended).";
+        UTMI_SUSPENDM_0_r = 0 "UTMI interface is suspended.";
+    };
+    
+    register vendor_int_status_i_0 addr(base, 0x3E) "Vendor-specific interrupt sources for miscellaneous ULPI alt_int events" {
+        _ 7 mbz;
+        utmi_suspendm 1 ro type(utmi_suspendm_status) "UTMI suspendm status (active-low), source of TLL PHY-to-PHY wake-up interrupt.";
+    };
+    
+    register vendor_int_status_i_1 addr(base, 0x13E) "Vendor-specific interrupt sources for miscellaneous ULPI alt_int events" {
+        _ 7 mbz;
+        utmi_suspendm 1 ro type(utmi_suspendm_status) "UTMI suspendm status (active-low), source of TLL PHY-to-PHY wake-up interrupt.";
+    };
+
+    constants p2p_latch_status width(1) "" {
+        P2P_LATCH_1_r = 1 "PHY-to-PHY wake-up event was latched, ALT interrupt active.";
+        P2P_LATCH_0_r = 0 "No PHY-to-PHY wake-up event was latched.";
+    };
+    
+    register vendor_int_latch_i_0 addr(base, 0x3F) "Vendor-specific interrupt latches for miscellaneous ULPI alt_int events. Cleared upon read, and when low-power mode, serial mode or carkit mode are entered." {
+        _ 7 mbz;
+        p2p_latch 1 ro type(p2p_latch_status) "PHY-to-PHY ULPI wake-up event latch. Set when ULPI is in low-power mode (suspendm = 0) and UTMI is active (suspendm = 1).";
+    };
+    
+    register vendor_int_latch_i_1 addr(base, 0x13F) "Vendor-specific interrupt latches for miscellaneous ULPI alt_int events. Cleared upon read, and when low-power mode, serial mode or carkit mode are entered." {
+        _ 7 mbz;
+        p2p_latch 1 ro type(p2p_latch_status) "PHY-to-PHY ULPI wake-up event latch. Set when ULPI is in low-power mode (suspendm = 0) and UTMI is active (suspendm = 1).";
+    };
+};

@@ -1,0 +1,167 @@
+This lab project contains a new testcase \verb+ata_rw28_test+ to test the
+Flounder-generated interface for \acs{ata} in LBA28 addressing mode. This
+chapter walks through its code to demonstrate the steps needed to access disks
+using the Flounder backend.
+
+The application first initializes the necessary bindings and \acs{rpc} client.
+It then uses the \acs{rpc} wrapper around the Flounder-based ATA interface
+geared towards LBA28 addressing mode. The test itself is performed by writing
+\lstinline+0xdeadbeef+ in multiple 512 byte blocks and verifying that the data
+is actually written to disk by reading it back and checking the contents. The
+test concludes with releasing the port.
+
+\section{Datastructures}
+
+To be able to perform \acs{rpc} calls to read from or write to the disk, an
+\lstinline+ahci_binding+ as well as an \lstinline+ahci_ata_rw28_binding+ and an
+\lstinline+ata_rw28_rpc_client+ are necessary.  \lstinline+ata_rw28_test+
+defines these as global variables out of convenience:
+
+\begin{lstlisting}
+struct ahci_ata_rw28_binding ahci_ata_rw28_binding;
+struct ata_rw28_rpc_client ata_rw28_rpc;
+struct ata_rw28_binding *ata_rw28_binding = NULL;
+struct ahci_binding *ahci_binding = NULL;
+\end{lstlisting}
+
+The required header files are:
+
+\begin{lstlisting}
+#include <barrelfish/barrelfish.h>
+#include <barrelfish/waitset.h>
+#include <if/ata_rw28_defs.h>
+#include <if/ata_rw28_ahci_defs.h>
+#include <if/ata_rw28_rpcclient_defs.h>
+\end{lstlisting}
+
+\section{Initialization}
+
+First, we need to initialize the \acs{dma} pool which is used to manage frames
+that are mapped uncached and are therefore suitable for \acs{dma} transfers. We
+initialize the pool to be 1MB in size:
+
+\begin{lstlisting}
+ahci_dma_pool_init(1024*1024);
+\end{lstlisting}
+
+Next, we need to initialize \verb+libahci+ and specify which \ac{ahci} port we
+want to use. For simplicity, we use port $0$ which is the first device
+detected. To achieve blocking behaviour, we enter a spinloop and wait for the
+callback from \verb+ahcid+:
+
+\begin{lstlisting}
+err = ahci_init(0, ahci_bind_cb, NULL, get_default_waitset());
+if (err_is_fail(err) || 
+    err_is_fail(err=wait_bind((void**)&ahci_binding))) {
+    USER_PANIC_ERR(err, "ahci_init");
+}
+\end{lstlisting}
+
+The callback \lstinline+ahci_bind_cb+ simply sets the global
+\lstinline+ahci_binding+ and \lstinline+wait_bind+ waits for this global to be
+set:
+
+\begin{lstlisting}
+static void ahci_bind_cb(void *st, 
+    errval_t err, struct ahci_binding *_binding)
+{
+    bind_err = err;
+    if (err_is_ok(err)) {
+        ahci_binding = _binding;
+    }
+}
+
+static errval_t wait_bind(void **bind_p)
+{
+    while (!*bind_p && err_is_ok(bind_err)) {
+        messages_wait_and_handle_next();
+    }
+    return bind_err;
+}
+\end{lstlisting}
+
+The \acs{rpc} client can be constructed by first initializing the
+\lstinline+ata_rw28+ binding and then building an \acs{rpc} client on top of
+it. The pointer to the binding is stored for convenience as it is used
+frequently:
+
+\begin{lstlisting}
+err = ahci_ata_rw28_init(&ahci_ata_rw28_binding, get_default_waitset(), 
+    ahci_binding);
+if (err_is_fail(err)) {
+    USER_PANIC_ERR(err, "ahci_ata_rw28_init");
+}
+
+ata_rw28_binding = (struct ata_rw28_binding*)&ahci_ata_rw28_binding;
+
+err = ata_rw28_rpc_client_init(&ata_rw28_rpc, ata_rw28_binding);
+if (err_is_fail(err)) {
+    USER_PANIC_ERR(err, "ata_rw28_rpc_client_init");
+}
+\end{lstlisting}
+
+\acs{rpc} calls can now be made to perform operations on the disk.
+
+\section{Data Manipulation}
+
+\lstinline+write_and_check_32+ is the function used to write
+\lstinline+0xdeadbeef+ to the disk and verify that writing succeeded. It
+accepts arbitrary 32 bit patterns that are written to disk.  First off, we need
+to calculate some values, allocate a buffer and fill this buffer with the
+pattern:
+
+\begin{lstlisting}
+static void write_and_check_32(uint32_t pat, size_t start_lba, 
+    size_t block_size, size_t block_count)
+{
+    errval_t err;
+    size_t bytes = block_size*block_count;
+    uint8_t *buf = malloc(bytes);
+    assert(buf);
+    size_t step = sizeof(pat);
+    size_t count = bytes / step;
+    assert(bytes % sizeof(pat) == 0);
+    for (size_t i = 0; i < count; ++i)
+        *(uint32_t*)(buf+i*step) = pat;
+\end{lstlisting}
+
+The actual writing is very simple. We issue the \lstinline+write_dma+ \acs{rpc}
+call, pass it the binding, the buffer, the number of bytes to write, the
+\ac{lba} on the disk where we want to write to and do some basic error
+handling:
+
+\begin{lstlisting}
+    printf("writing data\n");
+    errval_t status;
+    err = ata_rw28_rpc.vtbl.write_dma(&ata_rw28_rpc, buf, bytes, 
+        start_lba, &status);
+    if (err_is_fail(err))
+        USER_PANIC_ERR(err, "write_dma rpc");
+    if (err_is_fail(status))
+        USER_PANIC_ERR(status, "write_dma status");
+\end{lstlisting}
+
+Reading data is equally simple:
+
+\begin{lstlisting}
+    size_t bytes_read;
+    err = ata_rw28_rpc.vtbl.read_dma(&ata_rw28_rpc, bytes, 
+        start_lba, &buf, &bytes_read);
+    if (err_is_fail(err))
+        USER_PANIC_ERR(err, "read_dma rpc");
+    if (!buf)
+        USER_PANIC("read_dma -> !buf");
+    if (bytes_read != bytes)
+        USER_PANIC("read_dma -> bytes_read != bytes");
+\end{lstlisting}
+
+At the end, we do a simple verification and free the allocated buffer.
+
+\section{Cleanup}
+
+To return ownership of the port and clean up resources, a simple call to
+\lstinline+ahci_close+ suffices:
+
+\begin{lstlisting}
+    ahci_close(ahci_binding, NOP_CONT);
+\end{lstlisting}

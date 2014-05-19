@@ -1,0 +1,217 @@
+/*
+ * omap44xx_mmu.dev
+ *
+ * The OMAP4460 has three Memory management units (MMU):
+ *  a) Cortex A9 MMU: For the two ARMV7 cores
+ *  b) Cortex M3 MMU: For the two multimedia processors
+ *  c) DSP device MMU: Don't know what that is
+ *
+ * This is derived from:
+ *
+ * OMAP4460 Multimedia Device Silicon Revision 1.x Technical Reference
+ * Manual Version X, in particular Section 20.5
+ *
+ */
+
+device omap44xx_mmu msbfirst ( addr base ) "OMAP44xx Memory Management Unit (MMU)" {
+
+    register revision ro addr(base, 0x0000) "This register contains the IP revision code" type(uint32);
+
+    constants idle_mode width(2) "Idle mode" {
+    im_force    = 0x0 "Force idle";
+    im_none     = 0x1 "No idle";
+    im_smart    = 0x2 "Smart idle";
+    };
+
+    constants auto_idle_mode width(1) "Idle mode" {
+    aim_free    = 0x0 "Interconnect clock is free-running";
+    aim_auto    = 0x1 "Automatic interconnect clock gating strategy";
+    };
+
+    register sysconfig rw addr(base, 0x0010) "Controls the various parameters of the L3 interconnect interface" {
+    _               22;
+    clockactivity   2                       "Clock activity during wake-up mode";
+    _               3;
+    idlemode        2 type(idle_mode)       "Wake-up enable";
+    _               1;
+    softreset       1                       "Software reset";
+    autoidle        1 type(auto_idle_mode)  "Internal interconnect clock gating strategy";
+    };
+
+
+    constants reset_state width(1) "Reset monitoring" {
+    ongoing = 0x0 "Internal module reset in on-going";
+    done    = 0x1 "Reset completed";
+    };
+
+    register sysstatus ro addr(base, 0x0014) "Status information about the Module" {
+    _               31;
+    reset_state      1 type(reset_state)    "Reset state";
+    };
+
+
+    constants irq_fault width(1) "IRQ Fault" {
+    false   = 0x0 "No fault.";
+    pending = 0x1 "Fault is pending";
+    };
+
+    register irqstatus rw addr(base, 0x0018) "Interrupt Status" {
+    _                   27;
+    multihitfault       1 type(irq_fault)   "Error due to multiple matched in TLB";
+    tablewalkfault      1 type(irq_fault)   "Error response received during table walk";
+    emumiss             1 type(irq_fault)   "Unrecoverable TLB miss during debug";
+    translation_fault   1 type(irq_fault)   "Invalid descriptor in translation tables";
+    tlbmiss             1 type(irq_fault)   "Unrecoverable TLB miss";
+    };
+
+    constants irq_toggle width(1) "IRQ Toggle" {
+    masked  = 0x0 "Interrupt is Masked";
+    irq_enabled = 0x1 "Interrupt is enabled";
+    };
+
+    register irqenable rw addr(base, 0x001C) "Allows to mask/unmask the module internal sources of interrupt" {
+    _                   27;
+    multihitfault       1 type(irq_toggle)  "Error due to multiple matched in TLB";
+    tablewalkfault      1 type(irq_toggle)  "Error response received during table walk";
+    emumiss             1 type(irq_toggle)  "Unrecoverable TLB miss during debug";
+    translation_fault   1 type(irq_toggle)  "Invalid descriptor in translation tables";
+    tlbmiss             1 type(irq_toggle)  "Unrecoverable TLB miss";
+    };
+
+    constants twl_state width(1) "Table walk status" {
+    completed   = 0x0 "Table walk done";
+    running = 0x1 "Table walk is running";
+    };
+
+    register walking_st rw addr(base, 0x0040) "Status information about the table walking logic" {
+    _               31;
+    status          1 type(twl_state)   "Table walk status";
+    };
+
+    constants mmu_feature_status width(1) "MMU Feature Status" {
+    disabled = 0x0 "Disabled";
+    enabled  = 0x1 "Enabled";
+    };
+
+    register cntl rw addr(base, 0x0044) "Programs MMU Features" {
+    _               28;
+    emu_tlb_update  1 type(mmu_feature_status) "TLB Update on emulated table walk";
+    tlw             1 type(mmu_feature_status) "Table walk logic";
+    mmu             1 type(mmu_feature_status) "Memory management unit";
+    _               1;
+    };
+
+    register fault_ad ro addr(base, 0x0048) "MMU Fault Address (virtual)" type(uint32);
+
+    register ttb rw addr(base, 0x004C) "Translation Table Base address" type(uint32);
+
+    register lock rw addr(base, 0x0050) "Lock some TLB entries" {
+    _               17;
+    basevalue       5;
+    _               1;
+    current_victim  5;
+    _               4;
+    };
+
+    constants tlb_load_signal width(1) "TLB Load signal" {
+    start = 0x1 "Start TLB load";
+    };
+
+    register ld_tlb wo addr(base, 0x0054) "Load TLB entries" {
+    _               31;
+    load_table_item 1 type(tlb_load_signal) "Load data in the TLB";
+    };
+
+    constants page_size width(2) "Page sizes" {
+    section = 0x0 "1 MB";
+    large = 0x1 "64 KB";
+    small = 0x2 "4 KB";
+    super = 0x3 "16 MB";
+    };
+
+    register cam rw addr(base, 0x0058) "Holds a CAM entry" {
+    virtual_tag     20                  "Virtual address tag";
+    _               8;
+    preserved       1                   "Preserved bit";
+    valid           1                   "Valid bit";
+    page_size       2 type(page_size)   "Page size";
+    };
+
+    constants page_endianness width(1) "Little/Big Endian?" {
+    little = 0x0 "Little endian";
+    big = 0x1 "Big endian";
+    };
+
+    constants page_element_size width(2) "Element sizes" {
+    eight = 0x0             "8-bits";
+    sixteen = 0x1           "16-bits";
+    thirty_two = 0x2        "32-bits";
+    no_translation = 0x3    "No translation";
+    };
+
+    constants page_mixed_attributes width(1) "Page mixed attributes" {
+    tlb = 0x0 "Use TLB element size";
+    cpu = 0x1 "Use CPU element size";
+    };
+
+    register ram rw addr(base, 0x005C) "Holds a RAM entry" {
+    physical_address 20 "Physical address";
+    _               2;
+    endianness      1 type(page_endianness)         "Page endianness";
+    element_size    2 type(page_element_size)       "Page element size";
+    mixed           1 type(page_mixed_attributes)   "Mixed page attribute";
+    _               6;
+    };
+
+    register gflush wo addr(base, 0x0060) "Flush non-protected TLB entries" {
+    _               31;
+    global_flush    1 "Flush all non-protected TLB entries when set";
+    };
+
+    register flush_entry rw addr(base, 0x0064) "Flush entry pointed to by CAM virtual address" {
+    _               31;
+    flush_entry     1 "Flush TLB entry pointed to by CAM entry.";
+    };
+
+    register read_cam ro addr(base, 0x0068) "Read CAM data from CAM entry" {
+    virtual_tag     20                  "Virtual address tag";
+    _               8;
+    preserved       1                   "Preserved bit";
+    valid           1                   "Valid bit";
+    page_size       2 type(page_size)   "Page size";
+    };
+
+    register read_ram ro addr(base, 0x006C) "Read RAM data from RAM entry" {
+    physical_address 20 "Physical address";
+    _               2;
+    endianness      1 type(page_endianness)         "Page endianness";
+    element_size    2 type(page_element_size)       "Page element size";
+    mixed           1 type(page_mixed_attributes)   "Mixed page attribute";
+    _               6;
+    };
+
+    register emu_fault_ad ro addr(base, 0x0070) "Fault Address caused by debugger" type(uint32);
+
+    register  fault_pc ro addr(base, 0x0080) "Fault Address caused by Process Counter" type(uint32);
+
+    register  fault_status rw addr(base, 0x0084) "Fault status" {
+    _ 24;
+    fault_trans_id      4 "Master ID who causes a fault";
+    read_write          1 "Indicates read or write";
+    fault_type          2 "MMU fault type";
+    fault_indication    1 "Indicates a MMU Fault";
+    };
+
+    constants bus_error_back_en_status width(1) "Bus error back enable status bit" {
+    default = 0x0 "Default behaviour for MMU page faults";
+    return_bus_error = 0x1 "All MMU faults return bus error back";
+    };
+
+    register  gp_reg rw addr(base, 0x0088) "Bus-error back response enable?" {
+    _                   31;
+    bus_error_back_en   1 type(bus_error_back_en_status)    "Bus error back response enable bit";
+    };
+
+    /* TODO overlap?
+    register  dspss_gpr rw addr(base, 0x0088) "MMU Hardware debug multiplexer" type(uint32);*/
+};

@@ -1,0 +1,20 @@
+digraph {
+	mindist=1.5;
+
+	idc;
+	notrunning [style="bold"];
+	run;
+	running;
+
+	running -> notrunning [label="Preempt"];
+	running -> idc [label="syscall()"];
+
+        notrunning -> idc [label="idc_local()"];
+	notrunning -> run [label="schedule()"];
+
+        run -> notrunning [label="Preempt"];
+	run -> running [label="resume()", style="dashed", fontname="Times-Italic"];
+
+	idc -> running [label="resume()", style="dashed", fontname="Times-Italic"];
+	idc -> notrunning [label="Preempt"];
+};

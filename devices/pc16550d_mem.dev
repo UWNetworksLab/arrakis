@@ -1,0 +1,140 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * pc16550d_uart.dev
+ *
+ * DESCRIPTION: PC16550D Universal Asynchronous Receiver Transmitter
+ *              with FIFOs
+ *
+ * This is derived from the IC specification white paper from National
+ * Semiconductor (TL/C/8652 and RRD-B30M75).
+ */
+
+device pc16550d_mem lsbfirst ( addr base ) "PC16550D UART Memory Represenation" {
+  constants trigger_lvl "RCVR FIFO trigger level" {
+    bytes1  = 0b00      "Every byte";
+    bytes4  = 0b01      "Every 4th byte";
+    bytes8  = 0b10      "Every 8th byte";
+    bytes14 = 0b11      "Every 14th byte";
+  };
+
+  constants char_len "Character Length" {
+    bits5   = 0b00   "5 Bits";
+    bits6   = 0b01   "6 Bits";
+    bits7   = 0b10   "7 Bits";
+    bits8   = 0b11   "8 Bits";
+  };
+
+  constants irq_id "Interrupt ID" {
+    irq_none    = 0b0001          "No interrupt pending";
+    irq_rls     = 0b0110          "Receiver line status";
+    irq_rda     = 0b0100          "Receiver data available";
+    irq_cti     = 0b1100          "Character timeout";
+    irq_thre    = 0b0010          "Transmitter holding register empty";
+    irq_ms      = 0b0000          "Modem status";
+  };
+
+  constants divisor "Baud Rate Divisor" {
+    baud50          = 2304     "50 bps";
+    baud75          = 1536     "75 bps";
+    baud110         = 1047     "110 bps";
+    baud134_5       = 857      "134.5 bps";
+    baud150         = 768      "150 bps";
+    baud300         = 384      "300 bps";
+    baud600         = 192      "600 bps";
+    baud1200        = 96       "1200 bps";
+    baud1800        = 64       "1800 bps";
+    baud2000        = 58       "2000 bps";
+    baud2400        = 48       "2400 bps";
+    baud4800        = 24       "4800 bps";
+    baud7200        = 16       "7200 bps";
+    baud9600        = 12       "9600 bps";
+    baud19200       = 6        "19200 bps";
+    baud38400       = 3        "38400 bps";
+    baud57600       = 2        "57600 bps";
+    baud115200      = 1        "115200 bps";
+  };
+
+  constants fifo_type "FIFO Type" {
+    no_fifo         = 0b00      "No FIFO";
+    unusable_fifo   = 0b10      "Unusable FIFO (16550 only)";
+    fifo_enabled    = 0b11      "FIFO enabled";
+  };
+
+  register rbr rw addr ( base, 0x0 ) "Receiver buffer" type(uint8);
+  register thr rw also addr ( base , 0x1 ) "Transmitter holding" type(uint8);
+
+  register ier rw addr ( base, 0x2 ) "Interrupt enable" {
+    erbfi         1  "Enable received data available interrupt";
+    etbei         1  "Enable transmitter holding register empty interrupt";
+    elsi          1  "Enable receiver line status interrupt";
+    edssi         1  "Enable modem status interrupt";
+    _             4  mbz;
+  };
+
+  register iir rw addr ( base, 0x3 ) "Interrupt identification" {
+    iid           4  type(irq_id) "Interrupt ID";
+    _             2  mbz;
+    fifoe         2  type(fifo_type) "FIFOs enabled";
+  };
+
+  register fcr rw also addr ( base, 0x4 ) "FIFO control" {
+    fifoe         1  "FIFO enable";
+    rfifo_reset   1  "RCVR FIFO reset";
+    xfifo_reset   1  "XMIT FIFO reset";
+    dma_mode      1  "DMA mode select";
+    _             2;
+    rtrigger      2  type(trigger_lvl)  "RCVR trigger";
+  };
+
+  register lcr rw addr ( base, 0x5 ) "Line control" {
+    wls           2  type(char_len) "Word length select";
+    stb           1  "Number of stop bits";
+    pen           1  "Parity enable";
+    eps           1  "Even parity select";
+    sp            1  "Stick parity";
+    sb            1  "Set break";
+    dlab          1  "Divisor latch access";
+  };
+
+  register mcr rw addr ( base, 0x6 ) "Modem control" {
+    dtr           1  "Data terminal ready";
+    rts           1  "Request to send";
+    out           2  "Out";
+    loop          1  "Loop";
+    _             3  mbz;
+  };
+
+  register lsr rw addr ( base, 0x7 ) "Line status" {
+    dr            1  "Data ready";
+    oe            1  "Overrun error";
+    pe            1  "Parity error";
+    fe            1  "Framing error";
+    bi            1  "Break interrupt";
+    thre          1  "Transmitter holding register";
+    temt          1  "Transmitter empty";
+    erfifo        1  "Error in RCVR FIFO";
+  };
+
+  register msr rw addr ( base, 0x8 ) "Modem status" {
+    dcts          1  "Delta clear to send";
+    ddsr          1  "Delta data set ready";
+    teri          1  "Trailing edge ring indicator";
+    ddcd          1  "Delta data carrier detect";
+    cts           1  "Clear to send";
+    dsr           1  "Data set ready";
+    ri            1  "Ring indicator";
+    dcd           1  "Data carrier detect";
+  };
+
+  register scr rw addr ( base , 0x9 ) "Scratch register" type(uint8);
+  register dl rw also addr ( base , 0xa ) "Divisor latch" type(uint16);
+  register dll rw also addr ( base , 0xa ) "Divisor latch LSB" type(uint8);
+  register dlm rw also addr ( base , 0xb ) "Divisor latch MSB" type(uint8);
+};

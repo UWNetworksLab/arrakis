@@ -1,0 +1,455 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_l4per_cm2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_l4per_cm2 msbfirst ( addr base ) "" {
+    
+
+    constants clkactivity_per_abe_24m_fclk_status width(1) "" {
+        CLKACTIVITY_PER_ABE_24M_FCLK_0_r = 0 "Corresponding clock is definitely gated";
+        CLKACTIVITY_PER_ABE_24M_FCLK_1_r = 1 "Corresponding clock is running or gating/ungating transition is ongoing";
+    };
+
+    constants clktrctrl_status width(2) "" {
+        CLKTRCTRL_0 = 0 "NO_SLEEP: Sleep transition cannot be initiated. Wakeup transition may however occur.";
+        CLKTRCTRL_1 = 1 "SW_SLEEP: Start a software forced sleep transition on the domain.";
+        CLKTRCTRL_2 = 2 "SW_WKUP: Start a software forced wake-up transition on the domain.";
+        CLKTRCTRL_3 = 3 "HW_AUTO: Automatic transition is enabled. Sleep and wakeup transition are based upon hardware conditions.";
+    };
+    
+    register cm_l4per_clkstctrl addr(base, 0x0) "This register enables the domain power state transition. It controls the hardware supervised domain power state transition between ON-ACTIVE and ON-INACTIVE states. It also holds 1 status bit per clock input of the domain." {
+        _ 6 mbz;
+        clkactivity_per_abe_24m_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the PER_ABE_24M_FCLK clock in the domain. [warm reset insensitive]";
+        _ 1 mbz;
+        _ 1 mbz;
+        clkactivity_per_mcbsp4_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the PER_MCBSP4_FCLK clock in the domain. [warm reset insensitive]";
+        _ 2 mbz;
+        clkactivity_per_96m_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the PER_96M_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_per_48m_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the PER_48M_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_per_32k_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the PER_32K_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_per_24mc_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the PER_24MC_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_12m_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the FUNC_12M_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt9_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the DMT9_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt4_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the DMT4_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt3_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the DMT3_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt2_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the DMT2_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt11_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the DMT11_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt10_fclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the DMT10_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_l4_per_iclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the L4_PER_GICLK clock in the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the clock state transition of the L4PER clock domain.";
+    };
+
+    constants l4sec_dyndep_status width(1) "" {
+        L4SEC_DYNDEP_1_r = 1 "Dependency is enabled";
+    };
+    
+    register cm_l4per_dynamicdep addr(base, 0x8) "This register controls the dynamic domain dependencies from L4PER domain towards 'target' domains. It is relevant only for domain having INTERCONN master port(s)." {
+        _ 4 mbz;
+        windowsize 4 rw "Size of sliding window used to monitor INTRCONN interface activity for determination of auto-sleep feature. Time unit defined byCM_DYN_DEP_PRESCAL register.";
+        _ 9 mbz;
+        l4sec_dyndep 1 ro type(l4sec_dyndep_status) "Dynamic dependency towards L4SEC clock domain";
+        _ 5 mbz;
+        dss_dyndep 1 ro type(l4sec_dyndep_status) "Dynamic dependency towards DSS clock domain";
+        l3_init_dyndep 1 ro type(l4sec_dyndep_status) "Dynamic dependency towards L3INIT clock domain";
+        _ 7 mbz;
+    };
+
+    constants clksel_status width(1) "" {
+        CLKSEL_0 = 0 "Selects the SYS_CLK as the source";
+        CLKSEL_1 = 1 "Selects the 32KHz as the source";
+    };
+
+    constants idlest_status width(2) "" {
+        IDLEST_0_r = 0 "Module is fully functional, including INTRCONN";
+        IDLEST_1_r = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_2_r = 2 "Module is in idle mode (only INTRCONN part). It is functional if using separate functional clock";
+        IDLEST_3_r = 3 "Module is disabled and cannot be accessed";
+    };
+
+    constants modulemode_status width(2) "" {
+        MODULEMODE_0 = 0 "Module is disable by software. Any INTRCONN access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1_r = 1 "Reserved";
+        MODULEMODE_2 = 2 "Module is explicitly enabled. Interface clock (if not used for functions) may be gated according to the clock domain state. Functional clocks are guarantied to stay present. As long as in this configuration, power domain sleep transition cannot happen.";
+        MODULEMODE_3_r = 3 "Reserved";
+    };
+    
+    register cm_l4per_gptimer10_clkctrl addr(base, 0x28) "This register manages the DMTIMER10 clocks." {
+        _ 7 mbz;
+        clksel 1 rw type(clksel_status) "Select the source of the functional clock";
+        _ 6 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gptimer11_clkctrl addr(base, 0x30) "This register manages the DMTIMER11 clocks." {
+        _ 7 mbz;
+        clksel 1 rw type(clksel_status) "Select the source of the functional clock";
+        _ 6 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gptimer2_clkctrl addr(base, 0x38) "This register manages the DMTIMER2 clocks." {
+        _ 7 mbz;
+        clksel 1 rw type(clksel_status) "Select the source of the functional clock";
+        _ 6 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gptimer3_clkctrl addr(base, 0x40) "This register manages the DMTIMER3 clocks." {
+        _ 7 mbz;
+        clksel 1 rw type(clksel_status) "Select the source of the functional clock";
+        _ 6 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gptimer4_clkctrl addr(base, 0x48) "This register manages the DMTIMER4 clocks." {
+        _ 7 mbz;
+        clksel 1 rw type(clksel_status) "Select the source of the functional clock";
+        _ 6 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gptimer9_clkctrl addr(base, 0x50) "This register manages the DMTIMER9 clocks." {
+        _ 7 mbz;
+        clksel 1 rw type(clksel_status) "Select the source of the functional clock";
+        _ 6 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+
+    constants modulemode_status1 width(2) "" {
+        MODULEMODE_1_r_6 = 1 "Module is managed automatically by hardware according to clock domain transition. A clock domain sleep transition put module into idle. A wakeup domain transition put it back into function. If CLKTRCTRL=3, any INTRCONN access to module is always granted. Module clocks may be gated according to the clock domain state.";
+    };
+    
+    register cm_l4per_elm_clkctrl addr(base, 0x58) "This register manages the ELM clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 ro type(modulemode_status1) "Control the way mandatory clocks are managed.";
+    };
+
+    constants optfclken_dbclk_status width(1) "" {
+        OPTFCLKEN_DBCLK_0 = 0 "Optional functional clock is disabled";
+        OPTFCLKEN_DBCLK_1 = 1 "Optional functional clock is enabled";
+    };
+
+    constants modulemode_status2 width(2) "" {
+        MODULEMODE_0_6 = 0 "Module is disable by software. Any INTRCONN access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1 = 1 "Module is managed automatically by hardware according to clock domain transition. A clock domain sleep transition put module into idle. A wakeup domain transition put it back into function. If CLKTRCTRL=3, any INTRCONN access to module is always granted. Module clocks may be gated according to the clock domain state.";
+        MODULEMODE_2_r = 2 "Reserved";
+        MODULEMODE_3_r_6 = 3 "Reserved";
+    };
+    
+    register cm_l4per_gpio2_clkctrl addr(base, 0x60) "This register manages the GPIO2 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status2) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gpio3_clkctrl addr(base, 0x68) "This register manages the GPIO3 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status2) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gpio4_clkctrl addr(base, 0x70) "This register manages the GPIO4 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status2) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gpio5_clkctrl addr(base, 0x78) "This register manages the GPIO5 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status2) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gpio6_clkctrl addr(base, 0x80) "This register manages the GPIO6 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status2) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_hdq1w_clkctrl addr(base, 0x88) "This register manages the HDQ1W clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    regarray cm_l4per_i2c_clkctrl addr(base, 0xA0)[4;0x8] "This register manages the i-th I2C clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+       
+    register cm_l4per_l4per_clkctrl addr(base, 0xC0) "This register manages the L4PER clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 ro type(modulemode_status1) "Control the way mandatory clocks are managed.";
+    };
+
+    constants clksel_internal_source_status width(1) "" {
+        CLKSEL_INTERNAL_SOURCE_0 = 0 "96MHz clock derived from DPLL_PER is selected";
+        CLKSEL_INTERNAL_SOURCE_1 = 1 "98MHz clock derived from DPLL_ABE is selected";
+    };
+
+    constants clksel_source_status width(1) "" {
+        CLKSEL_SOURCE_0 = 0 "Functional clock is sourced from an internal clock";
+        CLKSEL_SOURCE_1 = 1 "Functional clock is sourced from CLKS pad";
+    };
+    
+    register cm_l4per_mcbsp4_clkctrl addr(base, 0xE0) "This register manages the MCBSP4 clocks." {
+        _ 6 mbz;
+        clksel_internal_source 1 rw type(clksel_internal_source_status) "Selects the internal clock to be used as the functional clock in case CLKSEL_SOURCE selects the internal clock source as the functional clock source.";
+        clksel_source 1 rw type(clksel_source_status) "Selects the source of the functional clock between, internal source and CLKS pad. The switching between the clocks is not guaranteed to be glitchless.";
+        _ 6 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_mcspi1_clkctrl addr(base, 0xF0) "This register manages the MCSPI1 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_mcspi2_clkctrl addr(base, 0xF8) "This register manages the MCSPI2 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_mcspi3_clkctrl addr(base, 0x100) "This register manages the MCSPI3 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_mcspi4_clkctrl addr(base, 0x108) "This register manages the MCSPI4 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_mmcsd3_clkctrl addr(base, 0x120) "This register manages the MMCSD3 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_mmcsd4_clkctrl addr(base, 0x128) "This register manages the MMCSD4 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_slimbus2_clkctrl addr(base, 0x138) "This register manages the SLIMBUS2 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 5 mbz;
+        optfclken_slimbus_clk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        optfclken_perabe24m_fclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control for PER_ABE_24M_FCLK clock.";
+        optfclken_per24mc_fclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control for PER_24MC_FCLK clock.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_uart1_clkctrl addr(base, 0x140) "This register manages the UART1 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_uart2_clkctrl addr(base, 0x148) "This register manages the UART2 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_uart3_clkctrl addr(base, 0x150) "This register manages the UART3 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_uart4_clkctrl addr(base, 0x158) "This register manages the UART4 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_mmcsd5_clkctrl addr(base, 0x160) "This register manages the MMCSD5 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4sec_clkstctrl addr(base, 0x180) "This register enables the domain power state transition. It controls the hardware-supervised domain power state transition between ON-ACTIVE and ON-INACTIVE states. It also holds one status bit per clock input of the domain." {
+        _ 22 mbz;
+        clkactivity_l4_secure_giclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the L4_SECURE_GICLK clock in the domain.";
+        clkactivity_l3_secure_giclk 1 ro type(clkactivity_per_abe_24m_fclk_status) "This field indicates the state of the L3_SECURE_GICLK clock in the domain.";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the clock state transition of the L4SEC clock domain.";
+    };
+
+    constants l4per_statdep_status width(1) "" {
+        L4PER_STATDEP_0 = 0 "Dependency is disabled";
+        L4PER_STATDEP_1 = 1 "Dependency is enabled";
+    };
+    
+    register cm_l4sec_staticdep addr(base, 0x184) "This register controls the static domain dependencies from L4SEC domain towards 'target' domains. It is relevant only for domain having system initiator(s)." {
+        _ 18 mbz;
+        l4per_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L4PER clock domain";
+        _ 6 mbz;
+        l3_2_statdep 1 ro type(l4sec_dyndep_status) "Static dependency towards L3_2 clock domain";
+        l3_1_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L3_1 clock domain";
+        memif_statdep 1 rw type(l4per_statdep_status) "Static dependency towards MEMIF clock domain";
+        _ 4 mbz;
+    };
+    
+    register cm_l4sec_dynamicdep addr(base, 0x188) "This register controls the dynamic domain dependencies from L4SEC domain towards 'target' domains. It is relevant only for domain having OCP master port(s)." {
+        _ 25 mbz;
+        l3_2_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L3_2 clock domain";
+        _ 6 mbz;
+    };
+
+    constants idlest_status1 width(2) "" {
+        IDLEST_0_r_31 = 0 "Module is fully functional, including OCP";
+        IDLEST_1_r_31 = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_2_r_31 = 2 "Module is in Idle mode (only OCP part). It is functional if using separate functional clock";
+        IDLEST_3_r_31 = 3 "Module is disabled and cannot be accessed";
+    };
+
+    constants modulemode_status3 width(2) "" {
+        MODULEMODE_0_29 = 0 "Module is disabled by SW. Any OCP access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1_r_26 = 1 "Reserved";
+        MODULEMODE_2_24 = 2 "Module is explicitly enabled. Interface clock (if not used for functions) may be gated according to the clock domain state. Functional clocks are guaranteed to stay present. As long as in this configuration, power domain sleep transition cannot happen.";
+        MODULEMODE_3_r_29 = 3 "Reserved";
+    };
+    
+    register cm_l4sec_aes1_clkctrl addr(base, 0x1A0) "This register manages the AES1 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status1) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status3) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4sec_aes2_clkctrl addr(base, 0x1A8) "This register manages the AES2 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status1) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status3) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4sec_des3des_clkctrl addr(base, 0x1B0) "This register manages the DES3DES clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status1) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status3) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4sec_pka_clkctrl addr(base, 0x1B8) "This register manages the PKA clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status1) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status3) "Control the way mandatory clocks are managed.";
+    };
+
+    constants modulemode_status4 width(2) "" {
+        MODULEMODE_0_33 = 0 "Module is disabled by SW. Any OCP access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1_5 = 1 "Module is managed automatically by HW according to clock domain transition. A clock domain sleep transition put module into idle. A wakeup domain transition put it back into function. If CLKTRCTRL=3, any OCP access to module is always granted. Module clocks may be gated according to the clock domain state.";
+        MODULEMODE_2_r_5 = 2 "Reserved";
+        MODULEMODE_3_r_33 = 3 "Reserved";
+    };
+    
+    register cm_l4sec_rng_clkctrl addr(base, 0x1C0) "This register manages the RNG clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status1) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status4) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4sec_sha2md5_clkctrl addr(base, 0x1C8) "This register manages the SHA2MD5 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status1) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status3) "Control the way mandatory clocks are managed.";
+    };
+
+    constants stbyst_status width(1) "" {
+        STBYST_0_r = 0 "Module is functional (not in standby)";
+        STBYST_1_r = 1 "Module is in standby";
+    };
+    
+    register cm_l4sec_cryptodma_clkctrl addr(base, 0x1D8) "This register manages the CryptoDMA clocks." {
+        _ 13 mbz;
+        stbyst 1 ro type(stbyst_status) "Module standby status. [warm reset insensitive]";
+        idlest 2 ro type(idlest_status1) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 ro type(modulemode_status4) "Control the way mandatory clocks are managed.";
+    };
+};

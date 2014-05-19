@@ -1,0 +1,8 @@
+#!/bin/bash
+FILES="access.c bus.c ioapic.c legacy.c  pci-acpi.c pci.c pci-driver.c probe.c search.c setup-bus.c setup-irq.c slot.c ../acpi/pci_bind.c ../acpi/pci_irq.c ../acpi/pci_link.c ../acpi/pci_root.c ../acpi/pci_slot.c"
+LINUX_PCI_PATH=/home/scadrian/abaglada/linux/kernel/linux-2.6.33.3/drivers/pci
+
+( cd $LINUX_PCI_PATH;
+~/hg/barrelfish.pci/usr/skb/programs/count_loc_c $FILES
+)
+

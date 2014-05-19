@@ -1,0 +1,67 @@
+﻿<Window x:Class="Aquarium.Key"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Aquarium: Key for domain colors" Height="Auto" Width="Auto" 
+        SizeToContent="WidthAndHeight">
+    <Border BorderThickness="10" BorderBrush="White">
+        <StackPanel Orientation="Horizontal">
+        <StackPanel Width="Auto">
+            <!--This must match code in BrushForName in Window1.xaml.cs-->
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="CadetBlue"/>
+                    <Label>monitor</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="Red"/>
+                    <Label>memserv</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="Green"/>
+                    <Label>spantest</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="Yellow"/>
+                    <Label>chips</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="BlueViolet"/>
+                    <Label>e1000n</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="OliveDrab"/>
+                    <Label>serial</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="Khaki"/>
+                    <Label>bfscope</Label>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Width="Auto">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="GreenYellow"/>
+                    <Label>fish</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="Red"/>
+                    <Label>pixels</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="Plum"/>
+                    <Label>(unknown)</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="40" Fill="Green"/>
+                    <Label>(other)</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Stroke="White" StrokeThickness="8" Width="40" Fill="Cyan"/>
+                    <Label>polling</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Stroke="White" StrokeThickness="8" Width="40" Fill="Purple"/>
+                    <Label>bzero</Label>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

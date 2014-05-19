@@ -1,0 +1,618 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_simcop_control_l3interconnect.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_simcop_control_l3interconnect msbfirst ( addr base ) "" {
+    
+    
+    register simcop_hl_revision ro addr(base, 0x0) "MODULE REVISION This register contains the IP revision code in binary coded digital. For example, we have: 0x01 = revision 0.1 and 0x21 = revision 2.1" type(uint32);
+
+    constants ldcr_resp_fifo_status width(3) "" {
+        LDCR_RESP_FIFO_2_r = 2 "8x128 bits";
+        LDCR_RESP_FIFO_3_r = 3 "16x128 bits";
+        LDCR_RESP_FIFO_4_r = 4 "32x128 bits";
+        LDCR_RESP_FIFO_5_r = 5 "64x128 bits";
+        LDCR_RESP_FIFO_6_r = 6 "128x128 bits";
+        LDCR_RESP_FIFO_7_r = 7 "256x256 bits";
+    };
+
+    constants image_buffers_status width(2) "" {
+        IMAGE_BUFFERS_0_r = 0 "4 Image buffers (e, f, g, h)";
+        IMAGE_BUFFERS_1_r = 1 "8 Image buffers";
+    };
+
+    constants rot_a_enable_status width(1) "" {
+        ROT_A_ENABLE_0_r = 0 "Disabled at design time";
+        ROT_A_ENABLE_1_r = 1 "Enabled at design time";
+    };
+    
+    register simcop_hl_hwinfo addr(base, 0x4) "Information about the IP module's hardware configuration. It provides information about the generic parameters." {
+        _ 19 mbz;
+        ldcr_resp_fifo 3 ro type(ldcr_resp_fifo_status) "Defines the size of the LDC read master response FIFO in words of 128-bits.";
+        image_buffers 2 ro type(image_buffers_status) "This parameter defines the image buffer count.";
+        _ 1 mbz;
+        rot_a_enable 1 ro type(rot_a_enable_status) "The ROT a is present when this parameter is set.";
+        imx_b_enable 1 ro type(rot_a_enable_status) "The iMX B module and the CMD b, COEFF b memories are present when this parameter is set.";
+        imx_a_enable 1 ro type(rot_a_enable_status) "The iMX A module and the CMD a, COEFF a memories are present when this parameter is set.";
+        nsf_enable 1 ro type(rot_a_enable_status) "The NSF2 is present when this parameter is set.";
+        vlcdj_enable 1 ro type(rot_a_enable_status) "The VLCD module and the QUANT, HUFFMAN, BITSTREAM memories are present when this parameter is set.";
+        dct_enable 1 ro type(rot_a_enable_status) "The DCT module is present when this parameter is set.";
+        ldc_enable 1 ro type(rot_a_enable_status) "The LDC module and the LDC LUT are present when this parameter is set.";
+    };
+
+    constants standbymode_status width(2) "" {
+        STANDBYMODE_0 = 0 "Force-standby mode: local initiator is unconditionally placed in standby state. Backup mode, for debug only.";
+        STANDBYMODE_1 = 1 "No-standby mode: local initiator is unconditionally placed out of standby state. Backup mode, for debug only.";
+        STANDBYMODE_2 = 2 "Smart-standby mode: local initiator standby status depends on local conditions, that is, the module's functional requirement from the initiator.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_r = 0 "Reset done, no pending action";
+        SOFTRESET_0_w = 0 "No action";
+        SOFTRESET_1_w = 1 "Initiate software reset";
+        SOFTRESET_1_r = 1 "Reset (software or other) ongoing";
+    };
+    
+    register simcop_hl_sysconfig addr(base, 0x10) "This register controls the various parameters of the OCP interface" {
+        _ 26 mbz;
+        standbymode 2 rw type(standbymode_status) "Configuration of the local initiator state management mode. By definition, initiator may generate read/write transaction as long as it is out of STANDBY state.";
+        _ 3 mbz;
+        softreset 1 rw type(softreset_status) "Software reset";
+    };
+
+    constants cpu_proc_start_irq_status width(1) "" {
+        CPU_PROC_START_IRQ_0_w = 0 "No action";
+        CPU_PROC_START_IRQ_0_r = 0 "No event pending";
+        CPU_PROC_START_IRQ_1_r = 1 "Event pending";
+        CPU_PROC_START_IRQ_1_w = 1 "Set event (debug)";
+    };
+    
+    register simcop_hl_irqstatus_raw_i_0 addr(base, 0x20) "Per-event raw interrupt status vector Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 ro type(cpu_proc_start_irq_status) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw type(cpu_proc_start_irq_status) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw type(cpu_proc_start_irq_status) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw type(cpu_proc_start_irq_status) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when the hardware sequencer finishes the sequence: - the sequence step counter has reached the limit - all accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw type(cpu_proc_start_irq_status) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 ro type(cpu_proc_start_irq_status) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqstatus_raw_i_1 addr(base, 0x30) "Per-event raw interrupt status vector Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 ro type(cpu_proc_start_irq_status) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw type(cpu_proc_start_irq_status) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw type(cpu_proc_start_irq_status) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw type(cpu_proc_start_irq_status) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when the hardware sequencer finishes the sequence: - the sequence step counter has reached the limit - all accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw type(cpu_proc_start_irq_status) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 ro type(cpu_proc_start_irq_status) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqstatus_raw_i_2 addr(base, 0x40) "Per-event raw interrupt status vector Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 ro type(cpu_proc_start_irq_status) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw type(cpu_proc_start_irq_status) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw type(cpu_proc_start_irq_status) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw type(cpu_proc_start_irq_status) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when the hardware sequencer finishes the sequence: - the sequence step counter has reached the limit - all accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw type(cpu_proc_start_irq_status) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 ro type(cpu_proc_start_irq_status) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqstatus_raw_i_3 addr(base, 0x50) "Per-event raw interrupt status vector Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 ro type(cpu_proc_start_irq_status) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw type(cpu_proc_start_irq_status) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw type(cpu_proc_start_irq_status) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw type(cpu_proc_start_irq_status) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when the hardware sequencer finishes the sequence: - the sequence step counter has reached the limit - all accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw type(cpu_proc_start_irq_status) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw type(cpu_proc_start_irq_status) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw type(cpu_proc_start_irq_status) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 ro type(cpu_proc_start_irq_status) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+    };
+
+    constants cpu_proc_start_irq_status1 width(1) "" {
+        CPU_PROC_START_IRQ_0_w_4 = 0 "No action";
+        CPU_PROC_START_IRQ_0_r_4 = 0 "No (enabled) event pending";
+        CPU_PROC_START_IRQ_1_r_4 = 1 "Event pending";
+        CPU_PROC_START_IRQ_1_w_4 = 1 "Clear (raw) event";
+    };
+    
+    register simcop_hl_irqstatus_i_0 addr(base, 0x24) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 ro type(cpu_proc_start_irq_status1) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when the hardware sequencer finishes the sequence: -The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 ro type(cpu_proc_start_irq_status1) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqstatus_i_1 addr(base, 0x34) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 ro type(cpu_proc_start_irq_status1) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when the hardware sequencer finishes the sequence: -The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 ro type(cpu_proc_start_irq_status1) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqstatus_i_2 addr(base, 0x44) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 ro type(cpu_proc_start_irq_status1) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when the hardware sequencer finishes the sequence: -The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 ro type(cpu_proc_start_irq_status1) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqstatus_i_3 addr(base, 0x54) "Per-event 'enabled' interrupt status vector. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 ro type(cpu_proc_start_irq_status1) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw1c type(cpu_proc_start_irq_status1) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when the hardware sequencer finishes the sequence: -The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw1c type(cpu_proc_start_irq_status1) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw1c type(cpu_proc_start_irq_status1) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 ro type(cpu_proc_start_irq_status1) "Event triggered by the SIMCOP DMA. This event is automatically cleared at SIMCOP level when it is cleared at SIMCOP DMA level. Check SIMCOP DMA IRQ registers.";
+    };
+
+    constants cpu_proc_start_irq_status2 width(1) "" {
+        CPU_PROC_START_IRQ_0_w_8 = 0 "No action";
+        CPU_PROC_START_IRQ_0_r_8 = 0 "Interrupt disabled (masked)";
+        CPU_PROC_START_IRQ_1_r_8 = 1 "Interrupt enabled";
+        CPU_PROC_START_IRQ_1_w_8 = 1 "Enable interrupt";
+    };
+    
+    register simcop_hl_irqenable_set_i_0 addr(base, 0x28) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw type(cpu_proc_start_irq_status2) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw type(cpu_proc_start_irq_status2) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw type(cpu_proc_start_irq_status2) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when the hardware sequencer finishes the sequence: The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqenable_set_i_1 addr(base, 0x38) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw type(cpu_proc_start_irq_status2) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw type(cpu_proc_start_irq_status2) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw type(cpu_proc_start_irq_status2) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when the hardware sequencer finishes the sequence: The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqenable_set_i_2 addr(base, 0x48) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw type(cpu_proc_start_irq_status2) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw type(cpu_proc_start_irq_status2) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw type(cpu_proc_start_irq_status2) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when the hardware sequencer finishes the sequence: The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqenable_set_i_3 addr(base, 0x58) "Per-event interrupt enable bit vector. Write 1 to set (enable interrupt). Readout equal to corresponding _CLR register." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw type(cpu_proc_start_irq_status2) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw type(cpu_proc_start_irq_status2) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw type(cpu_proc_start_irq_status2) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when the hardware sequencer finishes the sequence: The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw type(cpu_proc_start_irq_status2) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw type(cpu_proc_start_irq_status2) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 rw type(cpu_proc_start_irq_status2) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+    };
+
+    constants cpu_proc_start_irq_status3 width(1) "" {
+        CPU_PROC_START_IRQ_0_w_12 = 0 "No action";
+        CPU_PROC_START_IRQ_0_r_12 = 0 "Interrupt disabled (masked)";
+        CPU_PROC_START_IRQ_1_r_12 = 1 "Interrupt enabled";
+        CPU_PROC_START_IRQ_1_w_12 = 1 "Disable interrupt";
+    };
+    
+    register simcop_hl_irqenable_clr_i_0 addr(base, 0x2C) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when the hardware sequencer finishes the sequence: The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqenable_clr_i_1 addr(base, 0x3C) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when the hardware sequencer finishes the sequence: The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqenable_clr_i_2 addr(base, 0x4C) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when the hardware sequencer finishes the sequence: The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+    };
+    
+    register simcop_hl_irqenable_clr_i_3 addr(base, 0x5C) "Per-event interrupt enable bit vector. Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register." {
+        _ 12 mbz;
+        cpu_proc_start_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the hardware sequencer to instruct the CPU to process a macroblock";
+        simcop_dma_irq1 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+        ldc2bridge_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "The LDC2 bridge has generated an error.";
+        icnt_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "An error has been received on the SIMCOP master port.";
+        vlcdj_decode_err_irq 1 rw1c type(cpu_proc_start_irq_status3) "A decode error has been signaled by the VLCDJ module";
+        done_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when the hardware sequencer finishes the sequence: The sequence step counter has reached the limit. All accelerator and DMA events for the last sequence step have been received.";
+        step3_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 3 is activated by the hardware sequencer";
+        step2_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 2 is activated by the hardware sequencer";
+        step1_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 1 is activated by the hardware sequencer";
+        step0_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when Step 0 is activated by the hardware sequencer";
+        ldc_block_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by LDC when a macroblock has been processed";
+        _ 1 mbz;
+        rot_a 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the ROT a engine";
+        imx_b_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when iMX has executed a SLEEP instruction.";
+        imx_a_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when iMX has executed a SLEEP instruction.";
+        nsf_irq_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the NSF2 imaging accelerator when processing of a block is done.";
+        vlcdj_bloc_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by VLCDJ when a macroblock has been processed (encode/decode)";
+        dct_irq 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered when a block has been processed by the DCT module and the filter outcome has been stored to an image buffer.";
+        ldc_frame_irq 1 rw1c type(cpu_proc_start_irq_status3) "This event is triggered by LDC when a full frame has been processed";
+        simcop_dma_irq0 1 rw1c type(cpu_proc_start_irq_status3) "Event triggered by the SIMCOP DMA. Check SIMCOP DMA IRQ registers.";
+    };
+
+    constants ldc_r_burst_break_status width(1) "" {
+        LDC_R_BURST_BREAK_0 = 0 "Yes.";
+        LDC_R_BURST_BREAK_1 = 1 "No. OCP transactions must be split";
+    };
+
+    constants ldc_r_max_burst_lenght_status width(2) "" {
+        LDC_R_MAX_BURST_LENGHT_0 = 0 "8 x 128";
+        LDC_R_MAX_BURST_LENGHT_1 = 1 "6 x 128";
+        LDC_R_MAX_BURST_LENGHT_2 = 2 "4 x 128";
+        LDC_R_MAX_BURST_LENGHT_3 = 3 "2 x 128";
+    };
+
+    constants imx_b_cmd_status width(1) "" {
+        IMX_B_CMD_0 = 0 "Coprocessor bus";
+        IMX_B_CMD_1 = 1 "iMX B instruction read / write";
+    };
+
+    constants imx_a_cmd_status width(2) "" {
+        IMX_A_CMD_0 = 0 "Coprocessor bus";
+        IMX_A_CMD_1 = 1 "iMX A instruction read/write";
+        IMX_A_CMD_2 = 2 "iMX B instruction read/write";
+    };
+
+    constants huff_status width(1) "" {
+        HUFF_0 = 0 "Coprocessor";
+        HUFF_1 = 1 "VLCDJ Huffman table read";
+    };
+
+    constants quant_status width(1) "" {
+        QUANT_0 = 0 "Coprocessor bus";
+        QUANT_1 = 1 "VLCDJ quantization table read";
+    };
+
+    constants ldc_lut_status width(1) "" {
+        LDC_LUT_0 = 0 "Coprocessor bus";
+        LDC_LUT_1 = 1 "The LDC module could access the LDC LUT.";
+    };
+
+    constants ldc_input_status width(2) "" {
+        LDC_INPUT_0 = 0 "No input memory attached";
+        LDC_INPUT_1 = 1 "Use image buffers a and b";
+        LDC_INPUT_2 = 2 "Use image buffers a, b, c, and d";
+        LDC_INPUT_3 = 3 "Use LDC private input memory.";
+    };
+
+    constants nsf_wmem_status width(2) "" {
+        NSF_WMEM_0 = 0 "No working memory attached to NSF2. NSF2 cannot be used.";
+        NSF_WMEM_1 = 1 "iMX A coefficient memory used.";
+        NSF_WMEM_2 = 2 "Image buffers a and b used. Those image buffers cannot be used for other purposes. This setting has higher priority than the context configuration.";
+        NSF_WMEM_3 = 3 "Image buffers a, b, c, and d used. Those image buffers cannot be used for other purposes. This setting has higher priority than the context configuration.";
+    };
+
+    constants irq3_mode_status width(1) "" {
+        IRQ3_MODE_0 = 0 "The interrupt line is asserted when one of the events enabled in SIMCOP_IRQENABLE_3 is pending.";
+        IRQ3_MODE_1 = 1 "The interrupt line is asserted when all events enabled in SIMCOP_IRQENABLE_3 are pending.";
+    };
+
+    constants irq2_mode_status width(1) "" {
+        IRQ2_MODE_0 = 0 "The interrupt line is asserted when one of the events enabled in SIMCOP_IRQENABLE_2 is pending.";
+        IRQ2_MODE_1 = 1 "The interrupt line is asserted when all events enabled in SIMCOP_IRQENABLE_2 are pending.";
+    };
+
+    constants irq1_mode_status width(1) "" {
+        IRQ1_MODE_0 = 0 "The interrupt line is asserted when one of the events enabled in SIMCOP_IRQENABLE_1 is pending.";
+        IRQ1_MODE_1 = 1 "The interrupt line is asserted when all events enabled in SIMCOP_IRQENABLE_1 are pending.";
+    };
+
+    constants irq0_mode_status width(1) "" {
+        IRQ0_MODE_0 = 0 "The interrupt line is asserted when one of the events enabled in SIMCOP_IRQENABLE_0 is pending.";
+        IRQ0_MODE_1 = 1 "The interrupt line is asserted when all events enabled in SIMCOP_IRQENABLE_0 are pending.";
+    };
+    
+    register simcop_ctrl addr(base, 0x60) "SIMCOP control register" {
+        _ 3 mbz;
+        ldc_r_burst_break 1 rw type(ldc_r_burst_break_status) "Controls if bursts issued by the LDC2 bridge could cross burst length boundaries. When this register is set, the LDC2 bridge only issues aligned bursts. Register can only be used when LDC_R_MAX_BURST_LENGHT is 32, 64, or 128 bytes.";
+        ldc_r_max_burst_lenght 2 rw type(ldc_r_max_burst_lenght_status) "Limits the maximum burst length that could be used by the LDC2 bridge";
+        _ 1 mbz;
+        ldc_r_tag_cnt 4 rw "Limits the maximum number of outstanding requests to LDC_R_TAG_CNT+1";
+        _ 1 mbz;
+        ldc_r_tag_ofst 4 rw "First OCP tag ID that can be used by LDC reads.Software must prevent overlap with tags generated by the SIMCOP DMA.Typically this value should be equal to SIMCP_DMA_CTRL.TAG_CNT+1.";
+        _ 1 mbz;
+        imx_b_cmd 1 rw type(imx_b_cmd_status) "Switch for iMX # command memory";
+        imx_a_cmd 2 rw type(imx_a_cmd_status) "Switch for iMX A command memory";
+        huff 1 rw type(huff_status) "Switch for Huffman table";
+        quant 1 rw type(quant_status) "Switch for quantization table";
+        _ 1 mbz;
+        ldc_lut 1 rw type(ldc_lut_status) "Switch for LDC LUT";
+        ldc_input 2 rw type(ldc_input_status) "Selects input data buffer for LDC. Memories attached to LDC as working memories cannot be used by any other accelerators. HWSEQ or HWSEQ software override settings are ignored for those memories.";
+        nsf_wmem 2 rw type(nsf_wmem_status) "Selects working memory for NSF. Memories attached to NSF as working memories cannot be used by any other accelerators. HWSEQ or HWSEQ software override settings are ignored for those memories.";
+        irq3_mode 1 rw type(irq3_mode_status) "Interrupt generation method";
+        irq2_mode 1 rw type(irq2_mode_status) "Interrupt generation method";
+        irq1_mode 1 rw type(irq1_mode_status) "Interrupt generation method";
+        irq0_mode 1 rw type(irq0_mode_status) "Interrupt generation method";
+    };
+
+    constants rot_a_status width(1) "" {
+        ROT_A_0_w_16 = 0 "Request shutdown of the submodule. No effect if the submodule clock is already off.";
+        ROT_A_0_r_16 = 0 "The submodule is off";
+        ROT_A_1_r_16 = 1 "The submodule is on";
+        ROT_A_1_w_16 = 1 "Request enable of the submodule. No effect if the submodule clock is already off.";
+    };
+
+    constants imx_b_status width(1) "" {
+        IMX_B_0_w = 0 "Request shutdown of the submodule. No effect if the submodule clock is already off.";
+        IMX_B_0_r = 0 "The submodule is off.";
+        IMX_B_1_r = 1 "The submodule is on.";
+        IMX_B_1_w = 1 "Request enable of the submodule. No effect if the submodule clock is already off.";
+    };
+    
+    register simcop_clkctrl addr(base, 0x64) "SIMCOP clock control register. Use to enable/disable the interface and functional clock of SIMCOP submodules. Disabled modules cannot be accessed" {
+        _ 24 mbz;
+        rot_a 1 rw type(rot_a_status) "ROT A";
+        imx_b 1 rw type(imx_b_status) "iMX B";
+        imx_a 1 rw type(imx_b_status) "iMX A";
+        nsf2 1 rw type(imx_b_status) "NSF2";
+        vlcdj 1 rw type(imx_b_status) "VLCDJ";
+        dct 1 rw type(imx_b_status) "DCT";
+        ldc 1 rw type(imx_b_status) "LDC";
+        dma 1 rw type(imx_b_status) "DMA";
+    };
+};

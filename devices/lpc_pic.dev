@@ -1,0 +1,138 @@
+/*
+ * Copyright (c) 2007, 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * lpc_pic.dev
+ *
+ * DESCRIPTION: Definition of the LPC (low pin count, or legacy PC)
+ *              bridge function of a typical Intel IHC (Southbridge).
+ * 
+ * This is derived from the "Intel 631xESB/632xESB IO/Controller Hub
+ * Datasheet", chapter 21, "LPC Interface Bridge Registers (D31:F0)". 
+ * 
+ */
+
+device lpc_pic lsbfirst (io base) "LPC IHC PIC function" {
+  //
+  // 8259 PIC registers: section 21.4
+  //
+
+  constants rrc "Register read command" {
+    read_irq	= 0b10	  "Read IRQ register";
+    read_is	= 0b11	  "Read IS register";
+  };
+
+  constants rsleoi "Rotate and EOI codes" {
+    raeoic  	= 0b000	   "Rotate in auto EOI mode (clear)";
+    eoi		= 0b001	   "Non-specific EOI command";
+    seoi	= 0b011	   "Specific EOI command";
+    raeois	= 0b100	   "Rotate in auto EOI mode (set)";
+    reoi	= 0b101	   "Rotate on non-specific EOI command";
+    sp 		= 0b110	   "Set priority command";
+    rseoi	= 0b111	   "Rotate on specific EOI command";
+  };
+
+  regtype icw1 "Initialization Command Word 1" {
+    _		   1  mb1;
+    _		   1  mbz;	// Specify cascade mode
+    _		   1  mbz;
+    ltim	   1  "Edge / Level bank select (ignored)";
+    _		   1  mb1;
+    _	  	   3  mbz;
+  };
+
+  regtype icw2 "Initialization Command Word 2" {
+    req_level	   3  "Interrupt request level";
+    base  	   5  "Interrupt vector base address";
+  };
+
+  regtype pic_master_icw3 "Master Controller Initialization Command Word 3" {
+    _	           2  mbz;
+    cascade	   1  "Cascaded PIC IRQ connection";
+    _		   5  mbz;
+  };
+
+  regtype pic_slave_icw3 "Slave Controller Initialization Command Word 3" {
+    slave_id	   3  "Slave Identification Code";
+    _		   5  mbz;
+  };
+
+  regtype icw4 "Initialization Command Word 4" {
+    _	  	   1  mb1;
+    aeoi	   1  "Automatic End of Interrupt";
+    _		   1  mbz;
+    _		   1  mbz;
+    sfnm	   1  "Special fully nested mode";
+    _		   3  mbz;
+  };
+
+/*
+  regtype ocw1 "Operational Control Word 1 (Interrupt Mask)" {
+    irq_mask	   8  type(uint8)  "Interrupt request mask";
+  };
+*/
+
+  regtype ocw2 "Operational Control Word 2" {
+    level 	   3  "Interrupt level select";
+    _		   2  mbz;
+    rsleoi	   3  type(rsleoi)	"Rotate and EOI Codes";
+  };
+
+  regtype ocw3 "Operational Control Word 3" {
+    rrc	  	   2  type(rrc)	   "Register read command";
+    pmc		   1  "Poll mode command";
+    _		   1  mb1;
+    _		   1  mbz;
+    esmm	   1  "Enable special mask mode";
+    smm		   1  "Special mask mode";
+    _		   1  mbz;
+  };
+
+  regtype pic_master_trigger "Master Controller Edge/Level Triggered" {
+    _	  	   3  mbz;
+    irq3_ecl	   1  "IRQ3 ECL";
+    irq4_ecl	   1  "IRQ4 ECL";
+    irq5_ecl	   1  "IRQ5 ECL";
+    irq6_ecl	   1  "IRQ6 ECL";
+    irq7_ecl	   1  "IRQ7 ECL";
+  };
+
+  regtype pic_slave_trigger "Slave Controller Edge/Level Triggered" {
+    _	  	   1  mbz;
+    irq9_ecl	   1  "IRQ9 ECL";
+    irq10_ecl	   1  "IRQ10 ECL";
+    irq11_ecl	   1  "IRQ11 ECL";
+    irq12_ecl	   1  "IRQ12 ECL";
+    _		   1  mbz;
+    irq14_ecl	   1  "IRQ14 ECL";
+    irq15_ecl	   1  "IRQ15 ECL";
+  };
+
+  register master_icw1 wo io( base, 0x20 ) "Master PIC Initialization Command Word 1" type(icw1);
+  register master_ocw2 wo also io( base, 0x20 ) "Master PIC Op Ctrl Word 2" type(ocw2);
+  register master_ocw3 wo also io( base, 0x20 ) "Master PIC Op Ctrl Word 3" type(ocw3);
+  register master_ocw3rd ro also io( base, 0x20 ) "Master PIC Op Ctrl Word 3" type(uint8);
+
+  register master_icw2 wo io( base, 0x21 ) "Master PIC Initialization Command Word 2" type(icw2);
+  register master_icw3 wo also io( base, 0x21 ) "Master PIC Initialization Command Word 3" type(pic_master_icw3);
+  register master_icw4 wo also io( base, 0x21 ) "Master PIC Initialization Command Word 4" type(icw4);
+  register master_ocw1 rw also io( base, 0x21 ) "Master PIC Operation Control Word 1" type(uint8);
+
+  register slave_icw1 wo io( base, 0xa0 ) "Slave PIC Initialization Command Word 1" type(icw1);
+  register slave_ocw2 wo also io( base, 0xa0 ) "Slave PIC Op Ctrl Word 2" type(ocw2);
+  register slave_ocw3 wo also io( base, 0xa0 ) "Slave PIC Op Ctrl Word 3" type(ocw3);
+  register slave_ocw3rd ro also io( base, 0xa0 ) "Slave PIC Op Ctrl Word 3" type(uint8);
+
+  register slave_icw2 wo io( base, 0xa1 ) "Slave PIC Initialization Command Word 2" type(icw2);
+  register slave_icw3 wo also io( base, 0xa1 ) "Slave PIC Initialization Command Word 3" type(pic_slave_icw3);
+  register slave_icw4 wo also io( base, 0xa1 ) "Slave PIC Initialization Command Word 4" type(icw4);
+  register slave_ocw1 rw also io( base, 0xa1 ) "Slave PIC Operation Control Word 1" type(uint8);
+
+  register master_trigger rw io( base, 0x4d0 ) "Master PIC Edge/Level Triggered" type(pic_master_trigger);
+  register slave_trigger rw io( base, 0x4d1 ) "Slave PIC Edge/Level Triggered" type(pic_slave_trigger);
+};

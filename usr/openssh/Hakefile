@@ -1,0 +1,24 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2012, ETH Zurich
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+-- Attn: Systems Group.
+--
+-- Hakefile for usr/openssh/
+--
+--------------------------------------------------------------------------
+
+-- create ramdisk of all files contained in /usr/openssh/ramdisk
+-- the files are placed under /etc/ssh in the running system
+
+let ramdisk_files = find inDir "ramdisk" ""
+    ramdisk = "sshd_ramfs.cpio.gz"
+in
+  [ Rule ( [ Str "bash",
+             In SrcTree "src" "mkcpio",
+             NoDep SrcTree "src" "", Out "root" ramdisk]
+             ++ [ In SrcTree "src" f | f <- ramdisk_files ] )
+  ]

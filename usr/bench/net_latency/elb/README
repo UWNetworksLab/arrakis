@@ -1,0 +1,26 @@
+At the moment this is just a simple ethernet RTT benchmark. The client side will
+just send a packet and measure the time until the response arrives, while the
+server just echoes everything back. There are two possibilities to use the
+benchmark, it can either be linked directly against the driver instead of the
+net_queue_manager library or the standalone version elb_app can be used. The
+command line parameters directly for the benchmarke are the same in both
+versions (see benchmark_argument() in benchmark.c).
+
+When using the library version that is linked to the driver it bascically only
+the benchmark binary has to be started (or maybe such as in e10k additional
+processes required by the driver):
+  module /antoinek/x86_64/sbin/e10k function=1
+  module /antoinek/x86_64/sbin/e10k_queue_elb queue=0 elb_server=1
+
+With the standalone version the normal queue managers can be used, but since the
+benchmark does not support adding filters yet, it only works on queue 0, and
+also disable_sf=1 has to be passed to the queue manager, to disable software
+filters (they are enabled by default on queue 0). For example using e10k:
+  module /antoinek/x86_64/sbin/e10k function=1
+  module /antoinek/x86_64/sbin/e10k_queue core=1 queue=0 disable_sf=1
+  module /antoinek/x86_64/sbin/elb_app core=2 queue=0 elb_server=1
+
+In both cases the rest of the network infrastructure must not be started (netd
+etc.).
+
+

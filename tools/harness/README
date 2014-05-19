@@ -1,0 +1,93 @@
+##########################################################################
+Copyright (c) 2009, ETH Zurich.
+All rights reserved.
+
+This file is distributed under the terms in the attached LICENSE file.
+If you do not find this file, copies can be found by writing to:
+ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+##########################################################################
+
+Barrelfish test/benchmarking harness README
+
+RUNNING TESTS
+
+This set of Python modules is designed to automate the process of
+building, booting and collecting/analysing the output of various bechmarks
+on Barrelfish. There are currently two top-level programs:
+
+scalebench.py -- the (poorly-named) main script to run tests and collect results
+reprocess.py -- this is a utility using the same backend code that
+  allows the results of one or more previous runs to be re-analysed
+  without rerunning the benchmark
+
+scalebench.py is essentially a nested loop that runs one or more tests
+for one or more builds on one or more victim machines. The available
+builds, machines and tests are determined by the local site and the
+configured modules -- use scalebench.py -L to see a list.
+
+Specifying builds
+-----------------
+
+Build types may be specified the -b argument (which may be passed multiple
+times). Presently-supported builds are hake's default configuration, and a
+"release" configuration (without assertions or debug info). For a given build
+type, a build directory will be automatically created under the "build base"
+path, specified with -B. This allows the reuse of results of previous builds
+of the same type. Alternatively, rather than passing -b, the -e argument
+may be used to specify a path to an existing (configured) build directory;
+this allows the user to quickly run benchmarks against a specific set of
+compiled binaries with arbitrary build options.
+
+Specifying machines
+-------------------
+
+One or more victim 'machines' must be specified with the -m argument.
+This includes, at a minimum, the machines 'qemu1' and 'qemu4' which are
+simulated 1-way and 4-way CPUs. Depending on your site, various real
+hosts will also be available.
+
+Specifying tests
+----------------
+
+A large number of tests are available, and at least one must be specified
+with -t. See scalebench.py -L for a list of currently-defined tests and
+a short description of each. Not all tests may work at one time, and some
+tests probably won't work on all machines (in particular qemu). You'll have
+to use common sense here or ask for help.
+
+Note that the -b, -m and -t arguments accept shell-style glob wildcards;
+this can be useful to run a set of similarly-named tests, or to try all
+build types.
+
+Results
+-------
+
+Each test run, successful or not, produces a set of files in a result
+directory, which is currently created with a unique name under a global
+results directory that you must pass as the final argument to scalebench.
+This directory contains some metadata describing the test run
+(description.txt), the full console output from running the test (raw.txt)
+and any other test-specific files produced by running the test or processing
+its results -- these are hopefully self-explanatory, but if not see the
+python module that defines the test for information.
+
+
+INVOCATION EXAMPLES
+
+For a quick x86_64 smoke-test, try something like:
+
+python scalebench.py -m qemu1 -t memtest -v SOURCEDIR /tmp/results
+
+
+DEFINING NEW MACHINES, BUILDS, AND TESTS
+
+This is presently undocumented :(
+Please see the existing examples, or ask Andrew for help.
+
+
+TODOs
+
+ * Better support for multiple architectures.
+ * Better support for processing results, plot scripts etc.
+ * Better error handling (don't blow up in a backtrace when subprograms fail)
+ * Parallel tests/builds

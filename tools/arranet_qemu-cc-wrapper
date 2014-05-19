@@ -1,0 +1,113 @@
+#!/bin/bash
+#
+# Barrelfish x86-64 cross compilation wrapper
+# Copyright (c) 2011 Simon Peter <speter@inf.ethz.ch>
+#
+# Set SRCPATH and BUILDPATH to your Barrelfish source and build paths,
+# respectively, and create symlinks to this file, like this:
+#
+# ln -s barrelfish-cc-wrapper x86_64-barrelfish-none-gcc
+#
+# You can set EXTRALIBS to link to libraries needed on Barrelfish that
+# are not easily figured out by Autoconf or passable as LDFLAGS on the
+# commandline.
+
+# echo "invoked with: $*" >> debug.out
+
+SRCPATH=/home/simpeter/projects/arrakis/src
+BUILDPATH=/home/simpeter/projects/arrakis/qemu
+EXTRALIBS="$BUILDPATH/x86_64/lib/libposixcompat.a $BUILDPATH/x86_64/lib/libvfs.a $BUILDPATH/x86_64/lib/libahci.a $BUILDPATH/x86_64/lib/libnfs.a $BUILDPATH/x86_64/lib/libarranet.a $BUILDPATH/x86_64/lib/libe1000n.a"
+#EXTRALIBS="$BUILDPATH/x86_64/lib/libposixcompat.a $BUILDPATH/x86_64/lib/libvfs.a $BUILDPATH/x86_64/lib/libahci.a $BUILDPATH/x86_64/lib/libnfs.a $BUILDPATH/x86_64/lib/liblwip.a $BUILDPATH/x86_64/lib/libcontmng.a $BUILDPATH/x86_64/lib/liboctopus.a"
+
+mode=unknown
+prog=${0##*-}
+
+# Copy commandline arguments
+argi=0
+for a in "$@"; do
+    args[$argi]=$a
+    argi=$((argi + 1))
+done
+
+case $prog in
+    g++)
+	mode=compilelink++
+	;;
+    gcc)
+	mode=compilelink
+	;;
+    ld)
+	mode=link
+	;;
+
+    ar)
+	mode=archive
+	;;
+
+    ranlib)
+	mode=ranlib
+	;;
+
+    *)
+	echo "$0: Unknown program ($prog)" > /dev/stderr
+	exit 1
+	;;
+esac
+
+argi=0
+for arg in "$@"; do
+    case $arg in
+	-print-prog-name=*)
+	    # Print executable name for cross compiler if asked to do so
+	    echo x86_64-barrelfish-none-${arg#-print-prog-name=}
+	    exit 0
+	    ;;
+
+	-c)
+	    # We solely compile when -c is given
+	    if [ $mode = compilelink ]; then
+		mode=compile
+	    elif [ $mode = compilelink++ ]; then
+		mode=compile++
+	    fi
+	    ;;
+
+	-lm)
+	    args[$argi]="$BUILDPATH/x86_64/lib/libm.a"
+	    ;;
+
+	-shared)
+	    echo $0: Shared objects not supported by Barrelfish! >/dev/stderr
+	    exit 1
+	    ;;
+    esac
+
+    argi=$((argi + 1))
+done
+
+case $mode in
+    compile)
+	gcc -nostdinc -nostdlib -static -fno-builtin -m64 -mno-red-zone -U__linux__ -Ulinux -DBARRELFISH -DCONFIG_QEMU_NETWORK -DTRACE_DISABLE_LRPC -DCONFIG_LAZY_THC -DCONFIG_NEWLIB -DUSE_KALUGA_DVM -DCONFIG_INTERCONNECT_DRIVER_LMP -DCONFIG_INTERCONNECT_DRIVER_UMP -DCONFIG_INTERCONNECT_DRIVER_MULTIHOP -DCONFIG_FLOUNDER_BACKEND_LMP -DCONFIG_FLOUNDER_BACKEND_UMP -DCONFIG_FLOUNDER_BACKEND_MULTIHOP -I$SRCPATH/include -I$SRCPATH/include/arch/x86_64 -I$SRCPATH/lib/newlib/newlib/libc/include -I$SRCPATH/include/c -I$SRCPATH/include/target/x86_64 -I$SRCPATH/lib/lwip-1.4.1/src/include/ipv4 -I$SRCPATH/lib/lwip-1.4.1/src/include -I$BUILDPATH/x86_64/include -I$BUILDPATH/x86_64/include/dev "${args[@]}"
+	;;
+
+    compilelink)
+	gcc $BUILDPATH/x86_64/lib/crt0.o $BUILDPATH/x86_64/lib/crtbegin.o -Wl,-z,max-page-size=0x1000 -nostdinc -nostdlib -static -fno-builtin -m64 -mno-red-zone -U__linux__ -Ulinux -DBARRELFISH -DCONFIG_QEMU_NETWORK -DTRACE_DISABLE_LRPC -DCONFIG_LAZY_THC -DCONFIG_NEWLIB -DUSE_KALUGA_DVM -DCONFIG_INTERCONNECT_DRIVER_LMP -DCONFIG_INTERCONNECT_DRIVER_UMP -DCONFIG_INTERCONNECT_DRIVER_MULTIHOP -DCONFIG_FLOUNDER_BACKEND_LMP -DCONFIG_FLOUNDER_BACKEND_UMP -DCONFIG_FLOUNDER_BACKEND_MULTIHOP -I$SRCPATH/include -I$SRCPATH/include/arch/x86_64 -I$SRCPATH/lib/newlib/newlib/libc/include -I$SRCPATH/include/c -I$SRCPATH/include/target/x86_64 -I$SRCPATH/lib/lwip-1.4.1/src/include/ipv4 -I$SRCPATH/lib/lwip-1.4.1/src/include -I$BUILDPATH/x86_64/include -I$BUILDPATH/x86_64/include/dev "${args[@]}" $EXTRALIBS $BUILDPATH/x86_64/lib/libbarrelfish.a $BUILDPATH/x86_64/lib/liboctopus_parser.a $BUILDPATH/x86_64/errors/errno.o $BUILDPATH/x86_64/lib/libnewlib.a $BUILDPATH/x86_64/lib/crtend.o $BUILDPATH/x86_64/lib/libcollections.a
+	;;
+
+    link)
+	ld "${args[@]}"
+	;;
+
+    archive)
+	ar "${args[@]}"
+	;;
+
+    ranlib)
+	ranlib "${args[@]}"
+	;;
+
+    *)
+	echo "$0: Internal cross-compilation wrapper error (mode $mode)!" > /dev/stderr
+	exit 1
+	;;
+esac

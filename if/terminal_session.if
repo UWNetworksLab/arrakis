@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2012, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+interface terminal_session "Terminal Session Interface" {
+
+    /**
+     * \brief Associate a terminal with a session.
+     *
+     * \param session_id ID capability representing the session.
+     * \param in_iref    Interface reference to be used for incoming characters
+     *                   as seen by the terminal client.
+     * \param out_iref   Interface reference to be used for outgoing characters
+     *                   as seen by the terminal client.
+     * \param conf_iref  Interface reference to be used for configuration
+     *                   messages.
+     * \param err        SYS_ERR_OK if successful
+     *                   TERM_ERR_TERMINAL_IN_USE if terminal is already part
+     *                                            of another session
+     */
+    rpc session_associate_with_terminal(in cap session_id, out iref in_iref,
+                                        out iref out_iref, out iref conf_iref,
+                                        out errval err);
+};

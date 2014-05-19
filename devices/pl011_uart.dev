@@ -1,0 +1,192 @@
+/*
+ * Copyright (c) 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * pl011_uart.dev
+ *
+ * DESCRIPTION: PrimeCell UART (PL011)
+ *
+ * This is derived from:
+ *
+ * PrimeCell UART (PL011) Revision: r1p5 by ARM Limited.
+ * (DDI0183_uart_pl011_r1p5_trm.pdf)
+ *
+ */
+
+device pl011_uart msbfirst ( addr base ) "PL011 UART" {
+
+  constants word_len "Word Length" {
+     bits5 = 0b00    "5 bits";
+     bits6 = 0b01    "6 bits";
+     bits7 = 0b10    "7 bits";
+     bits8 = 0b11    "8 bits";
+  };
+
+  constants rx_lvl "Receive interrupt FIFO level" {
+    geq_1_8 = 0b000;
+    geq_1_4 = 0b001;
+    geq_1_2 = 0b010;
+    geq_3_4 = 0b011;
+    geq_7_8 = 0b100;
+  };
+
+  constants tx_lvl "Transmit interrupt FIFO level" {
+    leq_1_8 = 0b000;
+    leq_1_4 = 0b001;
+    leq_1_2 = 0b010;
+    leq_3_4 = 0b011;
+    leq_7_8 = 0b100;
+  };
+
+  register DR addr (base, 0x0) "UARTDR data register" {
+    _      20;
+    oe      1 ro 	"Overrun error";
+    be      1 ro        "Break error";
+    pe      1 ro        "Parity error";
+    fe      1 ro        "Framing error";
+    data    8 rw        "Data character";
+  };
+
+  register RSR_ECR addr (base, 0x4) "UART receive status / error clear" {
+    _      24;
+    _       4 rsvd;
+    oe      1 rwzc   	"Overrun error";
+    be      1 rwzc      "Break error";
+    pe      1 rwzc      "Parity error";
+    fe      1 rwzc      "Framing error";
+  };
+
+  register FR addr (base, 0x18) "UARTFR flag register" {
+    _      23;
+    ri      1 ro        "Ring indicator";
+    txfe    1 ro        "Transmit FIFO empty";
+    rxff    1 ro        "Receive FIFO full";
+    txff    1 ro        "Transmit FIFO full";
+    rxfe    1 ro        "Receive FIFO empty";
+    busy    1 ro        "UART Busy (transmit active)";
+    dcd     1 ro        "Data carrier detect";
+    dsr     1 ro        "Data set ready.";
+    cts     1 ro        "Clear to send.";
+  };
+
+  register ILPR addr (base, 0x20) "UARTIPLR low power counter" {
+    _      24;
+   ilpdvsr 8 rw         "Low power divisor";
+  };
+
+  register IBRD addr (base, 0x24) "UARTIBRD integer baud rate" {
+    _      16;
+    divint 16 rw        "Integer divisor";
+  };
+
+  register FBRD addr (base, 0x28) "UARTFBRD fractional baud rate" {
+    _      26;
+    divfrac 6 rw        "Fractional divisor";
+  };
+
+  register LCR_H addr (base, 0x2c) "UARTLCD_H Line control register" {
+    _      24;
+    sps     1 rw        "Stick parity select";
+    wlen    2 rw        type(word_len) "Word length";
+    fen     1 rw        "FIFOs enable";
+    stp2    1 rw        "Two stop bits select";
+    eps     1 rw        "Even parity select";
+    pen     1 rw        "Parity enable";
+    brk     1 rw        "Send break";
+  };
+
+  register CR addr (base, 0x30) "UARTCR control register" {
+    _      16;
+    ctsen  1 rw         "CTS hardware flow control enable";
+    rtsen  1 rw         "RTS hardware flow control enable";
+    out2   1 rw         "Out2 modem status output";
+    out1   1 rw         "Out1 modem status output";
+    rts    1 rw         "Request to send";
+    dtr    1 rw         "Data transmit ready";
+    rxe    1 rw         "Receive enable";
+    txe    1 rw         "Transmit enable";
+    lbe    1 rw         "Loopback enable";
+    _      4;
+    sirlp  1 rw         "SIR low-power IrDA mode";
+    siren  1 rw         "SIR enable";
+    uarten 1 rw         "UART enable";
+  };
+
+  register IFLS addr (base, 0x34) "Interrupt FIFO Level Selector" {
+    _        26;
+    rxiflsel  3 rw    type(rx_lvl) "Receive interrupt FIFO level select";
+    txiflsel  3 rw    type(tx_lvl) "Transmit interrupt FIFO level select";
+  };
+
+  register IMSC addr (base, 0x38) "Interrupt mask set/clear" {
+    _        21;
+    oeim      1 rw      "Overrun error interrupt mask";
+    beim      1 rw      "Break error interrupt mask";
+    peim      1 rw      "Parity error interrupt mask";
+    feim      1 rw      "Framing error interrupt mask";
+    rtim      1 rw      "Receive timeout interrupt mask";
+    txim      1 rw      "Transmit interrupt mask";
+    rxim      1 rw      "Receive interrupt mask";
+    dsrmim    1 rw      "nUARTDSR modem interrupt mask";
+    dcdmim    1 rw      "nUARTDCD modem interrupt mask";
+    ctsmim    1 rw      "nUARTCTS modem interrupt mask";
+    rimim     1 rw      "nUARTRI modem interrupt mask";
+  };
+
+  register RIS addr (base, 0x3c) "Raw interrupt status" {
+    _        21;
+    oeris   1 ro      "Overrun error interrupt status";
+    beris   1 ro      "Break error interrupt status";
+    peris   1 ro      "Parity error interrupt status";
+    feris   1 ro      "Framing error interrupt status";
+    rtris   1 ro      "Receive timeout interrupt status";
+    txris   1 ro      "Transmit interrupt status";
+    rxris   1 ro      "Receive interrupt status";
+    dsrrmis 1 ro      "nUARTDSR modem interrupt status";
+    dcdrmis 1 ro      "nUARTDCD modem interrupt status";
+    ctsrmis 1 ro      "nUARTCTS modem interrupt status";
+    rirmis  1 ro      "nUARTRI modem interrupt status";
+  };
+
+  register MIS addr (base, 0x40) "Masked interrupt status register" {
+    _        21;
+    oemis   1 ro      "Overrun error masked interrupt status";
+    bemis   1 ro      "Break error masked interrupt status";
+    pemis   1 ro      "Parity error masked interrupt status";
+    femis   1 ro      "Framing error masked interrupt status";
+    rtmis   1 ro      "Receive timeout masked interrupt status";
+    txmis   1 ro      "Transmit masked interrupt status";
+    rxmis   1 ro      "Receive masked interrupt status";
+    dsrmmis 1 ro      "nUARTDSR modem masked interrupt status";
+    dcdmmis 1 ro      "nUARTDCD modem masked interrupt status";
+    ctsmmis 1 ro      "nUARTCTS modem masked interrupt status";
+    rimmis  1 ro      "nUARTRI modem masked interrupt status";
+  };
+
+  register ICR addr (base, 0x44) "Interrupt clear register" {
+    _        21;
+    oeic      1 rw1c    "Overrun error interrupt clear";
+    beic      1 rw1c    "Break error interrupt clear";
+    peic      1 rw1c    "Parity error interrupt clear";
+    feic      1 rw1c    "Framing error interrupt clear";
+    rtic      1 rw1c    "Receive timeout interrupt clear";
+    txic      1 rw1c    "Transmit interrupt clear";
+    rxic      1 rw1c    "Receive interrupt clear";
+    dsrmic    1 rw1c    "nUARTDSR modem interrupt clear";
+    dcdmic    1 rw1c    "nUARTDCD modem interrupt clear";
+    ctsmic    1 rw1c    "nUARTCTS modem interrupt clear";
+    rimic     1 rw1c    "nUARTRI modem interrupt clear";
+  };
+
+  register DMACR addr (base, 0x48) "DMA control register" {
+    _        29;
+    dmaonerr  1 rw      "DMA on error";
+    txdmae    1 rw      "Transmit DMA enable";
+    rxdmae    1 rw      "Receive DMA enable";
+  };
+};

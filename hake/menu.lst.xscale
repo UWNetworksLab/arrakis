@@ -1,0 +1,30 @@
+timeout 0
+
+#
+# This script is used to describe the commands to start at
+# boot-time and the arguments they should receive.
+#
+# Kernel arguments are not read from this script. On QEMU they can be
+# set using 'qemu-system-arm -append ...'.
+
+title	Barrelfish
+#root	(nd)
+#kernel	/xscale/sbin/cpu loglevel=4
+module	/xscale/sbin/cpu
+module	/xscale/sbin/init
+
+# Domains spawned by init
+module	/xscale/sbin/mem_serv
+module	/xscale/sbin/monitor
+
+# Special boot time domains spawned by monitor
+module /xscale/sbin/ramfsd boot
+module /xscale/sbin/skb boot
+module /xscale/sbin/spawnd boot bootarm
+module /xscale/sbin/startd boot
+
+# General user domains
+#module	/xscale/sbin/serial
+#module	/xscale/sbin/fish
+
+#module /xscale/sbin/memtest

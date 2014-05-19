@@ -1,0 +1,80 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_instr_cm2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_instr_cm2 msbfirst ( addr base ) "" {
+    
+    
+    register cmi2_identication ro addr(base, 0x0) "CM profiling identification register" type(uint32);
+    
+    register cmi2_sys_config addr(base, 0x10) "CM profiling system configuartion register" {
+        _ 26 mbz;
+        _ 2 mbz;
+        idlemode 2 rw "Configuration of the local tartget state management mode";
+        _ 1 mbz;
+        softreset 1 rw "Software reset";
+    };
+    
+    register cmi2_status addr(base, 0x14) "CM profiling status register" {
+        _ 23 mbz;
+        fifoempty 1 ro "PM Profiling buffer empty";
+        _ 8 mbz;
+    };
+    
+    register cmi2_configuration addr(base, 0x24) "CM profiling configuration register" {
+        claim_3 2 rw "Ownership";
+        claim_2 1 rw "Debugger override qualifier";
+        claim_1 1 ro "Current owner";
+        _ 4 mbz;
+        _ 1 mbz;
+        _ 7 mbz;
+        _ 1 mbz;
+        _ 7 mbz;
+        evt_capt_en 1 rw "When HIGH the PM events capture is enabled";
+        _ 7 mbz;
+    };
+    
+    register cmi2_class_filtering addr(base, 0x28) "CM profiling class filtering register" {
+        _ 28 mbz;
+        snap_capt_en_03 1 rw "Snapshot capture enable - Class-ID = 0x03";
+        snap_capt_en_02 1 rw "Snapshot capture enable - Class-ID = 0x02";
+        snap_capt_en_01 1 rw "Snapshot capture enable - Class-ID = 0x01";
+        snap_capt_en_00 1 rw "Snapshot capture enable - Class-ID = 0x00";
+    };
+    
+    register cmi2_triggering addr(base, 0x2C) "CM profiling triggering control register" {
+        _ 30 mbz;
+        trig_stop_en 1 rw "Enable stop capturing PM events from external trigger detection";
+        trig_start_en 1 rw "Enable start capturing PM events from external trigger detection";
+    };
+    
+    register cmi2_sampling addr(base, 0x30) "CM profiling sampling window register" {
+        _ 12 mbz;
+        fclk_div_facor 4 rw "FunClk divide factor ranging from 1 to 16";
+        _ 8 mbz;
+        samp_wind_size 8 rw "PM events sampling window size";
+    };
+};

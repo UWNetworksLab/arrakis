@@ -1,0 +1,305 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_rfbi_l4_per.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_rfbi_l4_per msbfirst ( addr base ) "" {
+    
+    
+    register rfbi_revision ro addr(base, 0x0) "This register contains the IP revision." type(uint32);
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0 = 0 "Force-idle. An idle request is acknowledged unconditionally.";
+        SIDLEMODE_1 = 1 "No-idle. An idle request is never acknowledged";
+        SIDLEMODE_2 = 2 "Smart-idle. Acknowledgement to an idle request is given based on the internal activity of the module.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "Normal mode";
+        SOFTRESET_1 = 1 "The module is reset";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "RFBI_ICLK clock and DISPC clock are free-running";
+        AUTOIDLE_1 = 1 "Automatic clock gating strategy is applied for the RFBI_ICLK clock and DISPC clock, based on the slave port interface and internal activity.";
+    };
+    
+    register rfbi_sysconfig addr(base, 0x10) "This register controls various parameters of the slave port interface." {
+        _ 25 mbz;
+        _ 1 mbz;
+        _ 1 mbz;
+        sidlemode 2 rw type(sidlemode_status) "Slave interface power management, Idle req/ack control.";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Software reset Sets this bit to 1 to trigger a module reset. The bit is automatically reset by the hardware. During reads, it always returns 0.";
+        autoidle 1 rw type(autoidle_status) "Internal clock gating strategy (RFBI_ICLK clock and DISPC clock)";
+    };
+
+    constants busyrfbidata_status width(1) "" {
+        BUSYRFBIDATA_0_r = 0 "No data pending";
+        BUSYRFBIDATA_1_r = 1 "Some data are pending";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Internal module reset is ongoing";
+        RESETDONE_1_r = 1 "Reset completed";
+    };
+    
+    register rfbi_sysstatus addr(base, 0x14) "This register provides status information about the module, excluding the interrupt status information." {
+        _ 22 mbz;
+        busyrfbidata 1 ro type(busyrfbidata_status) "Data are pending to be processed from interconnect FIFO.";
+        busy 1 ro type(sidlemode_status) "Slave port busy status bit";
+        _ 7 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal reset monitoring. It can be used to determine when a hardware reset is completed or when a software reset is completed (software has setRFBI_SYSCONFIG[0] SOFTRESET to 1).";
+    };
+
+    constants smart_dma_req_status width(1) "" {
+        SMART_DMA_REQ_0 = 0 "The dmareq is asserted and deasserted depending on FIFO space even if MIdlereq is high in smart-idle/no-idle mode and the entire burst gets error responses from the module.";
+        SMART_DMA_REQ_1 = 1 "The dmareq is deasserted after 2 clock cycles if it has been asserted for more than or equal to 2 clock cycles and MIdlereq is high in smart-idle or no-idle mode. No more burst requests will be given even if the space is available in the FIFO.";
+    };
+
+    constants disable_dma_req_status width(1) "" {
+        DISABLE_DMA_REQ_0 = 0 "The dmareq is enabled and the signal is generated based on the space available and the request coming into the data register.";
+        DISABLE_DMA_REQ_1 = 1 "The dmareq is disabled and the signal is not generated at all based on space in FIFO. It stays high until the DISABLE DM AREQ is high even if there is space in FIFO to take requests.";
+    };
+
+    constants ite_status width(1) "" {
+        ITE_0 = 0 "Hardware waits for ITE bit to be set if in internal trigger mode for the configuration in use.";
+        ITE_1 = 1 "User sets the ITE bit to start the transfer, when hardware takes into account the bit, the hardware resets it.";
+    };
+
+    constants configselect_status width(2) "" {
+        CONFIGSELECT_0 = 0 "No CS selected";
+        CONFIGSELECT_1 = 1 "CS0 selected";
+        CONFIGSELECT_2 = 2 "Reserved";
+        CONFIGSELECT_3 = 3 "Reserved";
+    };
+
+    constants rfbimode_status width(1) "" {
+        RFBIMODE_0 = 0 "The RFBI mode is selected.";
+        RFBIMODE_1 = 1 "The RFBI mode is not selected.";
+    };
+
+    constants enable_status width(1) "" {
+        ENABLE_0 = 0 "Disable the RFBI module.";
+        ENABLE_1 = 1 "Enable the RFBI module.";
+    };
+    
+    register rfbi_control addr(base, 0x40) "The register configures the RFBI module." {
+        _ 23 mbz;
+        smart_dma_req 1 rw type(smart_dma_req_status) "Smart DMA request";
+        disable_dma_req 1 rw type(disable_dma_req_status) "Disable DMA request";
+        highthreshold 2 rw type(sidlemode_status) "Defines the FIFO high threshold used by hardware to assert DMA request. Used only if data written toRFBI_DATA are sent using system DMA.";
+        ite 1 rw type(ite_status) "Internal Trigger";
+        configselect 2 rw type(configselect_status) "Select the CS and configuration";
+        rfbimode 1 rw type(rfbimode_status) "RFBI Mode";
+        enable 1 rw type(enable_status) "Enable/Disable flag";
+    };
+    
+    register rfbi_pixel_cnt rw addr(base, 0x44) "The register configures the RFBI pixel count value." type(uint32);
+    
+    register rfbi_line_number addr(base, 0x48) "The register configures the number of lines to synchronize the beginning of the transfer." {
+        _ 21 mbz;
+        linenumber 11 rw "Programmable line numberLine number from 0 to 2047. Number of HSYNC after the VSYNC occurs before the beginning of the transfer.";
+    };
+    
+    register rfbi_cmd addr(base, 0x4C) "The register configures the RFBI command." {
+        _ 24 mbz;
+        cmd 8 wo "Command Value";
+    };
+    
+    register rfbi_param addr(base, 0x50) "The register configures the RFBI parameter." {
+        _ 24 mbz;
+        param 8 wo "Parameter value";
+    };
+    
+    register rfbi_data wo addr(base, 0x54) "The register configures the RFBI data." type(uint32);
+    
+    register rfbi_read addr(base, 0x58) "The register configures the RFBI read." {
+        _ 24 mbz;
+        read 8 rw "Read value";
+    };
+    
+    register rfbi_status addr(base, 0x5C) "The register configures the RFBI status." {
+        _ 24 mbz;
+        status 8 rw "Status value";
+    };
+
+    constants hsyncpolarity_status width(1) "" {
+        HSYNCPOLARITY_0 = 0 "HSYNC active low";
+        HSYNCPOLARITY_1 = 1 "HSYNC active high";
+    };
+
+    constants te_vsync_polarity_status width(1) "" {
+        TE_VSYNC_POLARITY_0 = 0 "active low";
+        TE_VSYNC_POLARITY_1 = 1 "active high";
+    };
+
+    constants cspolarity_status width(1) "" {
+        CSPOLARITY_0 = 0 "CS active low";
+        CSPOLARITY_1 = 1 "CS active high";
+    };
+
+    constants wepolarity_status width(1) "" {
+        WEPOLARITY_0 = 0 "Active low";
+        WEPOLARITY_1 = 1 "Active high";
+    };
+
+    constants a0polarity_status width(1) "" {
+        A0POLARITY_0 = 0 "A0 active low";
+        A0POLARITY_1 = 1 "A0 active high";
+    };
+
+    constants unusedbits_status width(2) "" {
+        UNUSEDBITS_0 = 0 "Low level (0)";
+        UNUSEDBITS_1 = 1 "High level (1)";
+        UNUSEDBITS_2 = 2 "Unchanged from previous state";
+    };
+
+    constants cycleformat_status width(2) "" {
+        CYCLEFORMAT_0 = 0 "1 cycle for 1 pixel";
+        CYCLEFORMAT_1 = 1 "2 cycles for 1 pixel";
+        CYCLEFORMAT_2 = 2 "3 cycles for 1 pixel";
+        CYCLEFORMAT_3 = 3 "3 cycles for 2 pixels";
+    };
+
+    constants portformat_status width(2) "" {
+        PORTFORMAT_0 = 0 "1 pixel per slave port access to the register data";
+        PORTFORMAT_2 = 2 "2 pixels per slave port access to the register data with first pixel at the position [15:0]";
+        PORTFORMAT_3 = 3 "2 pixels per slave port access to the register data with first pixel at the position [31:16]";
+    };
+
+    constants datatype_status width(2) "" {
+        DATATYPE_0 = 0 "12-bit";
+        DATATYPE_1 = 1 "16-bit";
+        DATATYPE_2 = 2 "18-bit";
+        DATATYPE_3 = 3 "24-bit";
+    };
+
+    constants timegranularity_status width(1) "" {
+        TIMEGRANULARITY_0 = 0 "x2 latencies disabled";
+        TIMEGRANULARITY_1 = 1 "x2 latencies enabled";
+    };
+
+    constants triggermode_status width(2) "" {
+        TRIGGERMODE_0 = 0 "00 Internal trigger mode (ITE bit mode)";
+        TRIGGERMODE_1 = 1 "External trigger mode (Tearing Effect Signal, rfbi_tevsync0 with programmable line counter defined in register)";
+        TRIGGERMODE_2 = 2 "External trigger mode (rfbi_tevsync0/rfbi_hsync0 with programmable line counter defined in register)";
+    };
+
+    constants parallelmode_status width(2) "" {
+        PARALLELMODE_0 = 0 "8-bit parallel output interface selected";
+        PARALLELMODE_1 = 1 "9-bit parallel output interface selected";
+        PARALLELMODE_2 = 2 "Reserved";
+        PARALLELMODE_3 = 3 "16-bit parallel output interface selected";
+    };
+    
+    register rfbi_config addr(base, 0x60) "The control register sets the configuration for the LCD 0 and LCD 1." {
+        _ 10 mbz;
+        hsyncpolarity 1 rw type(hsyncpolarity_status) "HSYNC polarity";
+        te_vsync_polarity 1 rw type(te_vsync_polarity_status) "TE or VSYNC polarity";
+        cspolarity 1 rw type(cspolarity_status) "CS polarity";
+        wepolarity 1 rw type(wepolarity_status) "WE polarity";
+        repolarity 1 rw type(wepolarity_status) "RE polarity";
+        a0polarity 1 rw type(a0polarity_status) "A0 polarity";
+        _ 3 mbz;
+        unusedbits 2 rw type(unusedbits_status) "State of unused bits";
+        cycleformat 2 rw type(cycleformat_status) "Cycle format";
+        portformat 2 rw type(portformat_status) "Slave port write access format";
+        datatype 2 rw type(datatype_status) "Data type from the DISPC and slave port";
+        timegranularity 1 rw type(timegranularity_status) "Multiplies signal timing latencies by 2";
+        triggermode 2 rw type(triggermode_status) "Trigger mode";
+        parallelmode 2 rw type(parallelmode_status) "Parallel mode";
+    };
+    
+    register rfbi_onoff_time addr(base, 0x64) "The control register configures the RFBI timings for the LCD 0 and LCD 1." {
+        _ 2 mbz;
+        reofftime 6 rw "Read enable deassertion time from start access time. Number of RFBI_ICLK cycles";
+        reontime 4 rw "Read enable assertion time from start access time. Number of RFBI_ICLK cycles";
+        weofftime 6 rw "Write enable deassertion time from start access time. Number of RFBI_ICLK cycles";
+        weontime 4 rw "Write enable assertion time from start access time. Number of RFBI_ICLK cycles";
+        csofftime 6 rw "CS deassertion time from start access time. Number of RFBI_ICLK cycles";
+        csontime 4 rw "CS assertion time from start access time. Number of RFBI_ICLK cycles";
+    };
+
+    constants wrenable_status width(1) "" {
+        WRENABLE_0 = 0 "CSPULSEWIDTH does not apply on Write-to-Read access";
+        WRENABLE_1 = 1 "CSPULSEWIDTH applies on Write-to-Read access";
+    };
+    
+    register rfbi_cycle_time addr(base, 0x68) "The control register configures the RFBI timings for the LCD 0 and LCD 1." {
+        _ 4 mbz;
+        accesstime 6 rw "Access time number of RFBI_ICLK cycles";
+        wrenable 1 rw type(wrenable_status) "Write-to-read pulse width enable (same CS)";
+        wwenable 1 rw type(wrenable_status) "Write-to-write pulse width enable (same CS)";
+        rrenable 1 rw type(wrenable_status) "Read-to-read pulse width enable (same CS)";
+        rwenable 1 rw "Read-to-write pulse width enable (same CS):0x0: CSPULSEWIDTH does not apply on Read-to-Write access 0x1: CSPULSEWIDTH applies on Read-to-Write access";
+        cspulsewidth 6 rw "CS pulse width number of RFBI_ICLK cycles";
+        recycletime 6 rw "RE cycle time number of RFBI_ICLK cycles";
+        wecycletime 6 rw "WE cycle time number of RFBI_ICLK cycles";
+    };
+    
+    register rfbi_data_cyclei_0 addr(base, 0x6C) "The control register configures the RFBI data format for ith cycle (i = 1 for firstcycle, i = 2 for second cycle, i = 3 for thrid cycle)." {
+        _ 4 mbz;
+        bitalignmentpixel2 4 rw "Alignment of the bits from pixel 2 on the output interface";
+        _ 3 mbz;
+        nbbitspixel2 5 rw "Number of bits from the pixel 2 (value from 0 to 16 bits). The values from 17 to 31 are invalid.";
+        _ 4 mbz;
+        bitalignmentpixel1 4 rw "Alignment of the bits from pixel 1 on the output interface";
+        _ 3 mbz;
+        nbbitspixel1 5 rw "Number of bits from the pixel 1 (value from 0 to 16 bits). The values from 17 to 31 are invalid.";
+    };
+    
+    register rfbi_data_cyclei_1 addr(base, 0x70) "The control register configures the RFBI data format for ith cycle (i = 1 for firstcycle, i = 2 for second cycle, i = 3 for thrid cycle)." {
+        _ 4 mbz;
+        bitalignmentpixel2 4 rw "Alignment of the bits from pixel 2 on the output interface";
+        _ 3 mbz;
+        nbbitspixel2 5 rw "Number of bits from the pixel 2 (value from 0 to 16 bits). The values from 17 to 31 are invalid.";
+        _ 4 mbz;
+        bitalignmentpixel1 4 rw "Alignment of the bits from pixel 1 on the output interface";
+        _ 3 mbz;
+        nbbitspixel1 5 rw "Number of bits from the pixel 1 (value from 0 to 16 bits). The values from 17 to 31 are invalid.";
+    };
+    
+    register rfbi_data_cyclei_2 addr(base, 0x74) "The control register configures the RFBI data format for ith cycle (i = 1 for firstcycle, i = 2 for second cycle, i = 3 for thrid cycle)." {
+        _ 4 mbz;
+        bitalignmentpixel2 4 rw "Alignment of the bits from pixel 2 on the output interface";
+        _ 3 mbz;
+        nbbitspixel2 5 rw "Number of bits from the pixel 2 (value from 0 to 16 bits). The values from 17 to 31 are invalid.";
+        _ 4 mbz;
+        bitalignmentpixel1 4 rw "Alignment of the bits from pixel 1 on the output interface";
+        _ 3 mbz;
+        nbbitspixel1 5 rw "Number of bits from the pixel 1 (value from 0 to 16 bits). The values from 17 to 31 are invalid.";
+    };
+    
+    register rfbi_vsync_width addr(base, 0x90) "The register configures the RFBI VSYNC minimum pulse width." {
+        _ 16 mbz;
+        minvsyncpulsewidth 16 rw "Programmable minimum VSYNC pulse width Minimum VSYNC pulse width from 0 to 65535. Number of RFBI_ICLK clock cycles to determine when VSYNC pulse occurs. The values 0 and 1 are invalid.";
+    };
+    
+    register rfbi_hsync_width addr(base, 0x94) "The register configures the RFBI HSYNC minimum pulse width." {
+        _ 16 mbz;
+        minhsyncpulsewidth 16 rw "Programmable minimum HSYNC pulse width minimum HSYNC pulse width from 0 to 65535. Number of RFBI_ICLK clock cycles to determine when HSYNC pulse occurs.The values 0 and 1 are invalid.";
+    };
+};

@@ -1,0 +1,970 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_ipipe.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_ipipe msbfirst ( addr base ) "" {
+    
+
+    constants en_status width(1) "" {
+        EN_0 = 0 "waiting";
+        EN_1 = 1 "start/busy";
+    };
+    
+    register ipipe_src_en addr(base, 0x0) "This register is not shadowed" {
+        _ 16 mbz;
+        _ 15 mbz;
+        en 1 rw type(en_status) "The start flag of the IPIPE module. When EN is 1, the IPIPE module starts a processing from the next rising edge of the VD. If the processing mode of the IPIPE module is one shot, the EN is cleared to 0 immediately after the processing has started.";
+    };
+
+    constants wrt_status width(1) "" {
+        WRT_0 = 0 "Disable";
+        WRT_1 = 1 "Enable";
+    };
+
+    constants ost_status width(1) "" {
+        OST_0 = 0 "Free run";
+        OST_1 = 1 "One shot";
+    };
+    
+    register ipipe_src_mode addr(base, 0x4) "" {
+        _ 16 mbz;
+        _ 14 mbz;
+        wrt 1 rw type(wrt_status) "The mode selection of the ipipeif_wrt which is an input port of the IPIPE module. If WRT is 0, the IPIPE module does not use the ipipeif_wrt. Else the IPIPE module uses it.";
+        ost 1 rw type(ost_status) "The processing mode selection of the IPIPE module. Value 0 indicates the mode of free run, value 1 indicates the mode of one shot.";
+    };
+
+    constants fmt_status width(2) "" {
+        FMT_0 = 0 "IN: RAW BAYER OUT: YUV4:2:2 Note that the IPIPE YUV4:2:2 output goes to the RESIZER module where it can be further be converted in YUV4:2:0 or RGB format.";
+        FMT_1 = 1 "IN: RAW BAYER OUT: RAW BAYER The data are output after the White Balance module. It enables to bypass a large part of the IPIPE module.";
+        FMT_3 = 3 "IN: YUV4:2:2 OUT: YUV4:2:2 Note that the IPIPE YUV4:2:2 output goes to the RESIZER module where it can be further be converted in YUV4:2:0 or RGB format.";
+        FMT_2 = 2 "IN: RAW BAYER OUT: DISABLED The data are only going to BOXCAR and HISTOGRAM modules.";
+    };
+    
+    register ipipe_src_fmt addr(base, 0x8) "" {
+        _ 16 mbz;
+        _ 14 mbz;
+        fmt 2 rw type(fmt_status) "IPIPE module data path selection";
+    };
+
+    constants oo_status width(2) "" {
+        OO_0 = 0 "R";
+        OO_1 = 1 "Gr";
+        OO_3 = 3 "B";
+        OO_2 = 2 "Gb";
+    };
+    
+    register ipipe_src_col addr(base, 0xC) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        oo 2 rw type(oo_status) "The color pattern of the odd line and odd pixel. This parameter is valid when IPIPE_SRC[FMT] is 0,1,2.";
+        oe 2 rw type(oo_status) "The color pattern of the odd line and even pixel. This parameter is valid when IPIPE_SRC[FMT] is 0,1,2.";
+        eo 2 rw type(oo_status) "The color pattern of the even line and odd pixel. This parameter is valid when IPIPE_SRC[FMT] is 0,1,2.";
+        ee 2 rw type(oo_status) "The color pattern of the even line and even pixel. This parameter is valid when IPIPE_SRC[FMT] is 0,1,2.";
+    };
+    
+    register ipipe_src_vps addr(base, 0x10) "" {
+        _ 16 mbz;
+        val 16 rw "The vertical position of the global frame from the rising edge of the VD. The IPIPE module will start an image processing from VAL line.";
+    };
+    
+    register ipipe_src_vsz addr(base, 0x14) "" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "The vertical size of the processing area. The VAL0 can not be written. The IPIPE module will process (VAL+1) lines.";
+    };
+    
+    register ipipe_src_hps addr(base, 0x18) "" {
+        _ 16 mbz;
+        val 16 rw "The horizontal position of the global frame from the rising edge of the HD. The IPIPE module will start an image processing from VAL clock.";
+    };
+    
+    register ipipe_src_hsz addr(base, 0x1C) "" {
+        _ 19 mbz;
+        val 12 rw "The horizontal size of the processing area. The VAL0 is fixed. The IPIPE module processes (VAL+1) clocks.";
+        val_0 1 ro "This is the LSB of the VAL[12:0]. This bit is read only.";
+    };
+
+    constants edof_status width(1) "" {
+        EDOF_0 = 0 "Not used";
+        EDOF_1 = 1 "Used";
+    };
+    
+    register ipipe_sel_sbu addr(base, 0x20) "" {
+        _ 16 mbz;
+        _ 15 mbz;
+        edof 1 rw type(edof_status) "EDOF port selection This bit must not be enabled since the EDOF module is not implemented. This is a provision for a future revision of the IP.";
+    };
+    
+    register ipipe_src_sta addr(base, 0x24) "IPIPE STATUS REGISTER" {
+        _ 16 mbz;
+        _ 11 mbz;
+        val4 1 ro "Status of Histogram Process (busy status).";
+        val3 1 ro "Status of Histogram bank select.";
+        val2 1 ro "Status of BSC process (busy status).";
+        val1 1 ro "Status of Boxcar process (busy status).";
+        val0 1 ro "Status of Boxcar process (error status). This bit will be triggered when an overflow happens while transferring the boxcar data to memory. Instead of polling for this register, it is preferable to use the IPIPE_BOXCAR_OVF interrupt. Overflow errors are non recoverable at ISP level and require a software reset at ISS level.";
+    };
+
+    constants reg_status width(1) "" {
+        REG_0 = 0 "Off";
+        REG_1 = 1 "On";
+    };
+    
+    register ipipe_gck_mmr addr(base, 0x28) "" {
+        _ 16 mbz;
+        _ 15 mbz;
+        reg 1 rw type(reg_status) "The on/off selection of the clk_arm_g0 which is used for some ARM register access.";
+    };
+    
+    register ipipe_gck_pix addr(base, 0x2C) "This register is not shadowed" {
+        _ 16 mbz;
+        _ 12 mbz;
+        g3 1 rw type(wrt_status) "The on/off selection of the clk_pix_g3 which is use for the IPIPE processes of EE and 'CAR'.";
+        g2 1 rw type(wrt_status) "The on/off selection of the clk_pix_g2 which is use for the IPIPE processes of CFA to '422', 'Histogram(YCbCr input)', and 'Boundary Signal Calculator'.";
+        g1 1 rw type(wrt_status) "The on/off selection of the clk_pix_g1 which is used for the IPIPE processes of 'DefectCorrection' to 'WhiteBalance', and 'Histogram(RAW input)'.";
+        g0 1 rw type(wrt_status) "The on/off selection of the clk_pix_g0 which is used for the IPIPE processing of 'Boxcar'.";
+    };
+    
+    register ipipe_dpc_lut_en addr(base, 0x34) "" {
+        _ 16 mbz;
+        _ 15 mbz;
+        en 1 rw type(reg_status) "Enable of LUT defect pixel correction.";
+    };
+
+    constants tbl_status width(1) "" {
+        TBL_0 = 0 "Up to 1024 entries. (use)";
+        TBL_1 = 1 "infinity number of entries. (not use)";
+    };
+
+    constants dot_status width(1) "" {
+        DOT_0 = 0 "Replace with black dot";
+        DOT_1 = 1 "Replace with white dot";
+    };
+    
+    register ipipe_dpc_lut_sel addr(base, 0x38) "" {
+        _ 16 mbz;
+        _ 14 mbz;
+        tbl 1 rw type(tbl_status) "LUT table type selection.";
+        dot 1 rw type(dot_status) "Replace dot selection on processing method 0.";
+    };
+    
+    register ipipe_dpc_lut_adr addr(base, 0x3C) "" {
+        _ 16 mbz;
+        _ 6 mbz;
+        adr 10 rw "The address of the first valid data in look-up-table";
+    };
+    
+    register ipipe_dpc_lut_siz addr(base, 0x40) "" {
+        _ 16 mbz;
+        _ 6 mbz;
+        siz 10 rw "The number of valid data in look-up-table. (SIZ+1)";
+    };
+    
+    register ipipe_lsc_voft addr(base, 0x90) "LSC VOFT" {
+        _ 16 mbz;
+        _ 3 mbz;
+        lsc_voft 13 rw "";
+    };
+    
+    register ipipe_lsc_va2 addr(base, 0x94) "" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "LSC VA2";
+    };
+    
+    register ipipe_lsc_va1 addr(base, 0x98) "" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "LSC VA1";
+    };
+    
+    register ipipe_lsc_vs addr(base, 0x9C) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        vs2 4 rw "LSC VS1";
+        vs1 4 rw "LSC VS1";
+    };
+    
+    register ipipe_lsc_hoft addr(base, 0xA0) "" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "LSC HOFT";
+    };
+    
+    register ipipe_lsc_ha2 addr(base, 0xA4) "" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "LSC HA2";
+    };
+    
+    register ipipe_lsc_ha1 addr(base, 0xA8) "" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "LSC HA1";
+    };
+    
+    register ipipe_lsc_hs addr(base, 0xAC) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        hs2 4 rw "LSC HS1";
+        hs1 4 rw "LSC HS1";
+    };
+    
+    register ipipe_lsc_gan_r addr(base, 0xB0) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        val 8 rw "GAN R";
+    };
+    
+    register ipipe_lsc_gan_gr addr(base, 0xB4) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        val 8 rw "GAN GR";
+    };
+    
+    register ipipe_lsc_gan_gb addr(base, 0xB8) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        val 8 rw "GAN GB";
+    };
+    
+    register ipipe_lsc_gan_b addr(base, 0xBC) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        val 8 rw "GAN B";
+    };
+    
+    register ipipe_lsc_oft_r addr(base, 0xC0) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        val 8 rw "LSC OFT R";
+    };
+    
+    register ipipe_lsc_oft_gr addr(base, 0xC4) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        val 8 rw "LSC OFT GR";
+    };
+    
+    register ipipe_lsc_oft_gb addr(base, 0xC8) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        val 8 rw "LSC OFT GB";
+    };
+    
+    register ipipe_lsc_oft_b addr(base, 0xCC) "" {
+        _ 16 mbz;
+        _ 8 mbz;
+        val 8 rw "LSC OFT B";
+    };
+    
+    register ipipe_lsc_shf addr(base, 0xD0) "" {
+        _ 16 mbz;
+        _ 12 mbz;
+        val 4 rw "LSC SHV";
+    };
+    
+    register ipipe_lsc_max addr(base, 0xD4) "" {
+        _ 16 mbz;
+        _ 7 mbz;
+        val 9 rw "LSC MAX";
+    };
+    
+    register ipipe_wb2_oft_r addr(base, 0x1D0) "White Balance Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "Offset before white balance (S12) -2048 to +2047";
+    };
+    
+    register ipipe_wb2_oft_gr addr(base, 0x1D4) "White Balance Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "Offset before white balance (S12) -2048 to +2047";
+    };
+    
+    register ipipe_wb2_oft_gb addr(base, 0x1D8) "White Balance Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "Offset before white balance (S12) -2048 to +2047";
+    };
+    
+    register ipipe_wb2_oft_b addr(base, 0x1DC) "White Balance Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "Offset before white balance (S12) -2048 to +2047";
+    };
+    
+    register ipipe_wb2_wgn_r addr(base, 0x1E0) "White Balance Register" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "White balance gain for R in U4.9 format 0 to +15.998";
+    };
+    
+    register ipipe_wb2_wgn_gr addr(base, 0x1E4) "White Balance Register" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "White balance gain for Gr in U4.9 format 0 to +15.998";
+    };
+    
+    register ipipe_wb2_wgn_gb addr(base, 0x1E8) "White Balance Register" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "White balance gain for Gb in U4.9 format 0 to +15.998";
+    };
+    
+    register ipipe_wb2_wgn_b addr(base, 0x1EC) "White Balance Register" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "White balance gain for B in U4.9 format 0 to +15.998";
+    };
+    
+    register ipipe_rgb1_mul_rr addr(base, 0x22C) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient. 011111111111 = 2047/256 = 7.99609375 011111111110 = 2046/256 [...] 000011111111 = 255/256 000100000000 = 256/256 = 1 000100000001 = 257/256 [...] 000000000001 = 1/256 000000000000 = 0/256 = 0 111111111111 = -1/256 = -0.00390625 111111111110 = -2/256 [...] 100000000001 = -2047/256 100000000000 = -2048/256 = -8.";
+    };
+    
+    register ipipe_rgb1_mul_gr addr(base, 0x230) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb1_mul_br addr(base, 0x234) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb1_mul_rg addr(base, 0x238) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb1_mul_gg addr(base, 0x23C) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb1_mul_bg addr(base, 0x240) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb1_mul_rb addr(base, 0x244) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb1_mul_gb addr(base, 0x248) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb1_mul_bb addr(base, 0x24C) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb1_oft_or addr(base, 0x250) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "The output offset value for R. (s13) -4096 to +4095";
+    };
+    
+    register ipipe_rgb1_oft_og addr(base, 0x254) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "The output offset value for G. (s13) -4096 to +4095";
+    };
+    
+    register ipipe_rgb1_oft_ob addr(base, 0x258) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 13 rw "The output offset value for B. (s13) -4096 to +4095";
+    };
+
+    constants siz_status width(2) "" {
+        SIZ_0 = 0 "64 words";
+        SIZ_1 = 1 "128 words";
+        SIZ_3 = 3 "512 words";
+        SIZ_2 = 2 "256 words";
+    };
+
+    constants tbl_status1 width(1) "" {
+        TBL_0_1 = 0 "RAM";
+        TBL_1_1 = 1 "ROM";
+    };
+
+    constants bypb_status width(1) "" {
+        BYPB_0 = 0 "Not bypassed";
+        BYPB_1 = 1 "Bypassed";
+    };
+    
+    register ipipe_gmm_cfg addr(base, 0x25C) "RGB to RGB Conversion Register" {
+        _ 16 mbz;
+        _ 9 mbz;
+        siz 2 rw type(siz_status) "The size of the gamma table.";
+        tbl 1 rw type(tbl_status1) "Selection of Gamma table.";
+        _ 1 mbz;
+        bypb 1 rw type(bypb_status) "Gamma correction mode for B";
+        bypg 1 rw type(bypb_status) "Gamma correction mode for G";
+        bypr 1 rw type(bypb_status) "Gamma correction mode for R";
+    };
+    
+    register ipipe_rgb2_mul_rr addr(base, 0x260) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The matrix coefficient. 011111111111 = 2047/256 = 7.99609375 011111111110 = 2046/256 000011111111 = 255/256 000100000000 = 256/256 = 1 000100000001 = 257/256 000000000001 = 1/256 000000000000 = 0/256 = 0 111111111111 = -1/256 = -0.00390625 111111111110 = -2/256 100000000001 = -2047/256 100000000000 = -2048/256 = -8.";
+    };
+    
+    register ipipe_rgb2_mul_gr addr(base, 0x264) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb2_mul_br addr(base, 0x268) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb2_mul_rg addr(base, 0x26C) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb2_mul_gg addr(base, 0x270) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb2_mul_bg addr(base, 0x274) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb2_mul_rb addr(base, 0x278) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb2_mul_gb addr(base, 0x27C) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb2_mul_bb addr(base, 0x280) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_rgb2_oft_or addr(base, 0x284) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The output offset value for R S10 number: -1024 to + 1023";
+    };
+    
+    register ipipe_rgb2_oft_og addr(base, 0x288) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The output offset value for G S10 number: -1024 to + 1023";
+    };
+    
+    register ipipe_rgb2_oft_ob addr(base, 0x28C) "RGB to RGB conversion after gamma" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The output offset value for B S10 number: -1024 to + 1023";
+    };
+    
+    register ipipe_yuv_adj addr(base, 0x294) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        brt 8 rw "The offset value for brightness control.";
+        crt 8 rw "The multiplier coefficient value for contrast control. 00000000 = 0/16 = 0 00000001 = 1/16 00001111 = 15/16 00010000 = 16/16 = 1 00010001 = 17/16 11111110 = 254/16 11111111 = 255/16 = 15.9375";
+    };
+    
+    register ipipe_yuv_mul_ry addr(base, 0x298) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "Matrix Coefficient for RY (S4.8 = -8 - +7.996)";
+    };
+    
+    register ipipe_yuv_mul_gy addr(base, 0x29C) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "Matrix Coefficient for GY (S4.8 = -8 - +7.996)";
+    };
+    
+    register ipipe_yuv_mul_by addr(base, 0x2A0) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "Matrix Coefficient for BY (S4.8 = -8 - +7.996)";
+    };
+    
+    register ipipe_yuv_mul_rcb addr(base, 0x2A4) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_yuv_mul_gcb addr(base, 0x2A8) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_yuv_mul_bcb addr(base, 0x2AC) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_yuv_mul_rcr addr(base, 0x2B0) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_yuv_mul_gcr addr(base, 0x2B4) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_yuv_mul_bcr addr(base, 0x2B8) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "The matrix coefficient.";
+    };
+    
+    register ipipe_yuv_oft_y addr(base, 0x2BC) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The output offset value for Y";
+    };
+    
+    register ipipe_yuv_oft_cb addr(base, 0x2C0) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The output offset value for Cb For Cb/Cr, set (0x80 + offset value) here. (0x80 for zero offset.)";
+    };
+    
+    register ipipe_yuv_oft_cr addr(base, 0x2C4) "RGB to YUV Conversion Register" {
+        _ 16 mbz;
+        _ 5 mbz;
+        val 11 rw "The output offset value for Cr For Cb/Cr, set (0x80 + offset value) here. (0x80 for zero offset.)";
+    };
+
+    constants lpf_status width(1) "" {
+        LPF_0 = 0 "off";
+        LPF_1 = 1 "on";
+    };
+
+    constants pos_status width(1) "" {
+        POS_0 = 0 "Cosited = same position with luminance";
+        POS_1 = 1 "Centered = middle of the luminance";
+    };
+    
+    register ipipe_yuv_phs addr(base, 0x2C8) "YUV4:2:2 down sampling register. This register controls the YUV4:4:4 to YUV4:2:2 chroma downsampling. This register is valid if .FMT = 0 (RAW input and YUV output). = 0 leads to pure subsampling, no filtering, cosited chroma output. = 1 leads to (1, 1) &gt;&gt; 1 filtering, centered chroma output. = 2 leads to (1, 2, 1) &gt;&gt; 1 filtering, cosited chroma output. = 3 leads to (1, 3, 3, 1) &gt;&gt; 3 filtering, centered chroma output. When the chroma output is cosited, and that downsampling is enabled in the RESIZER module, one need to take care that the averager disrupts the relative phase for luma and chroma color components. The and registers need to be used to fix the disruption." {
+        _ 16 mbz;
+        _ 14 mbz;
+        lpf 1 rw type(lpf_status) "121-LPF enable for chrominance samples. This register is valid if IPIPE_SRC_FMT.FMT = 0 (RAW input and YUV output).";
+        pos 1 rw type(pos_status) "This bit sets the output position of the chrominance sample with regards to the luma sample positions. One can choose between centered and cosited. This register is valid if IPIPE_SRC_FMT.FMT = 0 (RAW input and YUV output). The RESIZER module does not change the relative position of the chroma samples vs. the luma samples between the input and output and the chroma position at the output of the IPIPE module and at the output of the RESIZER module must be identical. In other words, we must have RSZ_YUV_PHS.POS = IPIPE_YUV_PHS.POS.";
+    };
+    
+    register ipipe_yee_en addr(base, 0x2D4) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 15 mbz;
+        en 1 rw type(wrt_status) "The on/off selection of the Edge enhancer.";
+    };
+
+    constants sel_status width(1) "" {
+        SEL_0 = 0 "EE + ES";
+        SEL_1 = 1 "Maximum (EE, ES)";
+    };
+    
+    register ipipe_yee_typ addr(base, 0x2D8) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 14 mbz;
+        hal 1 rw "Halo reduction in Edge Sharpener module";
+        sel 1 rw type(sel_status) "Merging method between Edge Enhancer and Edge Sharpener";
+    };
+    
+    register ipipe_yee_shf addr(base, 0x2DC) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 12 mbz;
+        shf 4 rw "Down shift length of high pass filter (HPF) in edge enhancer.";
+    };
+    
+    register ipipe_yee_mul_00 addr(base, 0x2E0) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 6 mbz;
+        val 10 rw "Multiplier coefficient in HPF. 0111111111 = 511 0111111110 = 510 0000000001 = 1 0000000000 = 0 1111111111 = -1 1000000001 = -511 1000000000 = -512";
+    };
+    
+    register ipipe_yee_mul_01 addr(base, 0x2E4) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 6 mbz;
+        val 10 rw "Multiplier coefficient in HPF.";
+    };
+    
+    register ipipe_yee_mul_02 addr(base, 0x2E8) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 6 mbz;
+        val 10 rw "Multiplier coefficient in HPF.";
+    };
+    
+    register ipipe_yee_mul_10 addr(base, 0x2EC) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 6 mbz;
+        val 10 rw "Multiplier coefficient in HPF.";
+    };
+    
+    register ipipe_yee_mul_11 addr(base, 0x2F0) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 6 mbz;
+        val 10 rw "Multiplier coefficient in HPF.";
+    };
+    
+    register ipipe_yee_mul_12 addr(base, 0x2F4) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 6 mbz;
+        val 10 rw "Multiplier coefficient in HPF.";
+    };
+    
+    register ipipe_yee_mul_20 addr(base, 0x2F8) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 6 mbz;
+        val 10 rw "Multiplier coefficient in HPF.";
+    };
+    
+    register ipipe_yee_mul_21 addr(base, 0x2FC) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 6 mbz;
+        val 10 rw "Multiplier coefficient in HPF.";
+    };
+    
+    register ipipe_yee_mul_22 addr(base, 0x300) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 6 mbz;
+        val 10 rw "Multiplier coefficient in HPF.";
+    };
+    
+    register ipipe_yee_thr addr(base, 0x304) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 10 mbz;
+        val 6 rw "Edge Enhancer lower threshold before referring to LUT. If HPF &amp;lt; IPIPE_YEE_THR -&amp;gt; output is HPF + IPIPE_YEE_THR If HPF &amp;gt; IPIPE_YEE_THR -&amp;gt; output is HPF - IPIPE_YEE_THR Otherwise, output is zero.";
+    };
+    
+    register ipipe_yee_e_gan addr(base, 0x308) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "Edge sharpener gain";
+    };
+    
+    register ipipe_yee_e_thr_1 addr(base, 0x30C) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 4 mbz;
+        val 12 rw "Edge sharpener HPF value lower limit";
+    };
+    
+    register ipipe_yee_e_thr_2 addr(base, 0x310) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 10 mbz;
+        val 6 rw "Edge sharpener HPF value upper limit (after 6 bit right shift)";
+    };
+    
+    register ipipe_yee_g_gan addr(base, 0x314) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 8 mbz;
+        val 8 rw "Edge sharpener, gain value on gradient";
+    };
+    
+    register ipipe_yee_g_oft addr(base, 0x318) "Edge Enhancer Register" {
+        _ 16 mbz;
+        _ 10 mbz;
+        val 6 rw "Edge sharpener, offset value on gradient";
+    };
+    
+    register ipipe_box_en addr(base, 0x380) "Boxcar Register" {
+        _ 16 mbz;
+        _ 15 mbz;
+        en 1 rw type(wrt_status) "This bit enables or disables the BOXCAR functionality. The BOXCAR output is written to SDRAM. One need to set the IPIPE_BOX_SDR_SAD_H and IPIPE_BOX_SDR_SAD_L registers with the appropriate address.";
+    };
+    
+    register ipipe_box_mode addr(base, 0x384) "Boxcar Register" {
+        _ 16 mbz;
+        _ 15 mbz;
+        ost 1 rw type(ost_status) "The processing mode selection of the Boxcar function. A 0 indicates the mode of the free run, a 1 indicates the mode of the one shot.";
+    };
+
+    constants sel_status1 width(1) "" {
+        SEL_0_1 = 0 "8x8";
+        SEL_1_1 = 1 "16x16";
+    };
+    
+    register ipipe_box_typ addr(base, 0x388) "Boxcar Register" {
+        _ 16 mbz;
+        _ 15 mbz;
+        sel 1 rw type(sel_status1) "Block size in boxcar sampling";
+    };
+    
+    register ipipe_box_shf addr(base, 0x38C) "Boxcar Register" {
+        _ 16 mbz;
+        _ 13 mbz;
+        val 3 rw "The down shift value applied to the boxcar computation result. R out = SUM (Rij) &amp;gt;&amp;gt; SHF G out = (SUM (Gr ij)/2 + SUM (Gr ij)/2) &amp;gt;&amp;gt; SHF B out = SUM (Gij) &amp;gt;&amp;gt; SHF";
+    };
+    
+    register ipipe_box_sdr_sad_h addr(base, 0x390) "Boxcar Register" {
+        _ 16 mbz;
+        val 16 rw "The higher 11 bits of the first address of output in memory.";
+    };
+    
+    register ipipe_box_sdr_sad_l addr(base, 0x394) "Boxcar Register" {
+        _ 16 mbz;
+        val 11 rw "The lower 16 bits of the first address of output in memory.";
+        val_reserved 5 ro "Ensures 32-byte alignment.";
+    };
+
+    constants en_status1 width(1) "" {
+        EN_0_4 = 0 "disable";
+        EN_1_4 = 1 "start/busy";
+    };
+    
+    register ipipe_hst_en addr(base, 0x39C) "Histogram" {
+        _ 16 mbz;
+        _ 15 mbz;
+        en 1 rw type(en_status1) "This bit enables or disables the HISTOGRAM functionality. When enabled, the HISTOGRAM computation will start the processing from the next rising edge of the VD pulse. If the processing mode of the HISTOGRAM is one shot, the enable bit will be cleared to 0 immediately after the processing has started.";
+    };
+    
+    register ipipe_hst_mode addr(base, 0x3A0) "Histogram" {
+        _ 16 mbz;
+        _ 15 mbz;
+        ost 1 rw type(ost_status) "The processing mode selection of the Histogram module. A 0 indicates the mode of the free run, a 1 indicates the mode of the one shot.";
+    };
+
+    constants sel_status2 width(1) "" {
+        SEL_0_2 = 0 "From noise filter input";
+        SEL_1_2 = 1 "From RGBtoYUV";
+    };
+
+    constants typ_status width(2) "" {
+        TYP_0 = 0 "Gb";
+        TYP_1 = 1 "Gr";
+        TYP_3 = 3 "Reserved";
+        TYP_2 = 2 "(Gb+Gr)/2";
+    };
+    
+    register ipipe_hst_sel addr(base, 0x3A4) "Histogram" {
+        _ 16 mbz;
+        _ 13 mbz;
+        sel 1 rw type(sel_status2) "Input selection. When SEL0=0, RGBY are sampled from the output of the line buffer in noise filter-2. When SEL0=1, YCbCr are sampled at the output of RGB2YCbCr module. Y is sampled twice.";
+        typ 2 rw type(typ_status) "G selection in Bayer mode (SEL0=0)";
+    };
+
+    constants bin_status width(2) "" {
+        BIN_0 = 0 "32";
+        BIN_1 = 1 "64";
+        BIN_3 = 3 "256";
+        BIN_2 = 2 "128";
+    };
+    
+    register ipipe_hst_para addr(base, 0x3A8) "Histogram COL0, COL1, COL2, and COL3 should be set to 1." {
+        _ 16 mbz;
+        _ 2 mbz;
+        bin 2 rw type(bin_status) "The number of the bins.";
+        shf 4 rw "The shift length of the input data. data = (INPUT &amp;gt;&amp;gt; SHF)";
+        col3 1 rw type(wrt_status) "The on/off selection of the color pattern 3 (Y).";
+        col2 1 rw type(wrt_status) "The on/off selection of the color pattern 2 (B).";
+        col1 1 rw type(wrt_status) "The on/off selection of the color pattern 1 (G).";
+        col0 1 rw type(wrt_status) "The on/off selection of the color pattern 0 (R).";
+        rgn3 1 rw type(wrt_status) "The on/off selection of the region 3.";
+        rgn2 1 rw type(wrt_status) "The on/off selection of the region 2.";
+        rgn1 1 rw type(wrt_status) "The on/off selection of the region 1.";
+        rgn0 1 rw type(wrt_status) "The on/off selection of the region 0.";
+    };
+    
+    register ipipe_hst_0_vps addr(base, 0x3AC) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The vertical position of the region 0 from theIPIPE_SRC_VPS. The region 0 will start the Histogram processing from VAL line. VAL[0] can not be written.";
+        val_reserved 1 ro "The vertical position of the region 0 from theIPIPE_SRC_VPS. The region 0 will start the Histogram processing from VAL line. VAL[0] can not be written.";
+    };
+    
+    register ipipe_hst_0_vsz addr(base, 0x3B0) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The vertical size of the region 0. The Histogram processing of the region 0 will process (VAL+1) lines.";
+        val_reserved 1 ro "The vertical size of the region 0. The Histogram processing of the region 0 will process (VAL+1) lines. VAL[0] cannot be written.";
+    };
+    
+    register ipipe_hst_0_hps addr(base, 0x3B4) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The horizontal position of the region 0 from theIPIPE_SRC_HPS. The region 0 will start the Histogram processing from VAL clocks. VAL[0] can not be written.";
+        val_reserved 1 ro "The horizontal position of the region 0 from theIPIPE_SRC_HPS. The region 0 will start the Histogram processing from VAL clocks. VAL[0] can not be written.";
+    };
+    
+    register ipipe_hst_0_hsz addr(base, 0x3B8) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The horizontal size of the region 0. The Histogram processing of the region 0 will process (VAL+1) clocks. VAL[0] cannot be written.";
+        val_reserved 1 ro "The horizontal size of the region 0. The Histogram processing of the region 0 will process (VAL+1) clocks. VAL[0] cannot be written.";
+    };
+    
+    register ipipe_hst_1_vps addr(base, 0x3BC) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The vertical position of the region 0 from theIPIPE_SRC_VPS. The region 1 will start the Histogram processing from VAL line. VAL[0] can not be written.";
+        val_reserved 1 ro "The vertical position of the region 0 from theIPIPE_SRC_VPS. The region 1 will start the Histogram processing from VAL line. VAL[0] can not be written.";
+    };
+    
+    register ipipe_hst_1_vsz addr(base, 0x3C0) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The vertical size of the region 1. The Histogram processing of the region 1 will process (VAL+1) lines. VAL[0] cannot be written.";
+        val_reserved 1 ro "The vertical size of the region 1. The Histogram processing of the region 1 will process (VAL+1) lines. VAL[0] cannot be written.";
+    };
+    
+    register ipipe_hst_1_hps addr(base, 0x3C4) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The horizontal position of the region 0 from theIPIPE_SRC_HPS. The region 1 will start the Histogram processing from VAL clocks. VAL[0] can not be written.";
+        val_reserved 1 ro "The horizontal position of the region 0 from theIPIPE_SRC_HPS. The region 1 will start the Histogram processing from VAL clocks. VAL[0] can not be written.";
+    };
+    
+    register ipipe_hst_1_hsz addr(base, 0x3C8) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The horizontal size of the region 1. The Histogram processing of the region 1 will process (VAL+1) clocks. VAL[0] cannot be written.";
+        val_reserved 1 ro "The horizontal size of the region 1. The Histogram processing of the region 1 will process (VAL+1) clocks. VAL[0] cannot be written.";
+    };
+    
+    register ipipe_hst_2_vps addr(base, 0x3CC) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The vertical position of the region 0 from theIPIPE_SRC_VPS. The region 2 will start the Histogram processing from VAL line. VAL[0] can not be written.";
+        val_reserved 1 ro "The vertical position of the region 0 from theIPIPE_SRC_VPS. The region 2 will start the Histogram processing from VAL line. VAL[0] can not be written.";
+    };
+    
+    register ipipe_hst_2_vsz addr(base, 0x3D0) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The vertical size of the region 2. The Histogram processing of the region 2 will process (VAL+1) lines. VAL[0] cannot be written.";
+        val_reserved 1 ro "The vertical size of the region 2. The Histogram processing of the region 2 will process (VAL+1) lines. VAL[0] cannot be written.";
+    };
+    
+    register ipipe_hst_2_hps addr(base, 0x3D4) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The horizontal position of the region 0 from theIPIPE_SRC_HPS. The region 2 will start the Histogram processing from VAL clocks. VAL[0] can not be written.";
+        val_reserved 1 ro "The horizontal position of the region 0 from theIPIPE_SRC_HPS. The region 2 will start the Histogram processing from VAL clocks. VAL[0] can not be written.";
+    };
+    
+    register ipipe_hst_2_hsz addr(base, 0x3D8) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The horizontal size of the region 2. The Histogram processing of the region 2 will process (VAL+1) clocks. VAL[0] cannot be written.";
+        val_reserved 1 ro "The horizontal size of the region 2. The Histogram processing of the region 2 will process (VAL+1) clocks. VAL[0] cannot be written.";
+    };
+    
+    register ipipe_hst_3_vps addr(base, 0x3DC) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The vertical position of the region 0 from theIPIPE_SRC_VPS. The region 3 will start the Histogram processing from VAL line. VAL[0] can not be written.";
+        val_reserved 1 ro "The vertical position of the region 0 from theIPIPE_SRC_VPS. The region 3 will start the Histogram processing from VAL line. VAL[0] can not be written.";
+    };
+    
+    register ipipe_hst_3_vsz addr(base, 0x3E0) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The vertical size of the region 3. The Histogram processing of the region 3 will process (VAL+1) lines. VAL[0] cannot be written.";
+        val_reserved 1 ro "The vertical size of the region 3. The Histogram processing of the region 3 will process (VAL+1) lines. VAL[0] cannot be written.";
+    };
+    
+    register ipipe_hst_3_hps addr(base, 0x3E4) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The horizontal position of the region 0 from theIPIPE_SRC_HPS. The region 3 will start the Histogram processing from VAL clocks. VAL[0] can not be written.";
+        val_reserved 1 ro "The horizontal position of the region 0 from theIPIPE_SRC_HPS. The region 3 will start the Histogram processing from VAL clocks. VAL[0] can not be written.";
+    };
+    
+    register ipipe_hst_3_hsz addr(base, 0x3E8) "Histogram" {
+        _ 16 mbz;
+        _ 3 mbz;
+        val 12 rw "The horizontal size of the region 3. The Histogram processing of the region 3 will process (VAL+1) clocks. VAL[0] cannot be written.";
+        val_reserved 1 ro "The horizontal size of the region 3. The Histogram processing of the region 3 will process (VAL+1) clocks. VAL[0] cannot be written.";
+    };
+
+    constants sel_status3 width(1) "" {
+        SEL_0_3 = 0 "Use Table 0 and 1 = 4KB in the memory ISP map.";
+        SEL_1_3 = 1 "Use Table 2 and 3 = 4KB in the memory ISP map.";
+    };
+    
+    register ipipe_hst_tbl addr(base, 0x3EC) "Histogram" {
+        _ 16 mbz;
+        _ 14 mbz;
+        clr 1 rw type(wrt_status) "Histogram memory clear. The histogram can be cleared before the start of operations. However, the clear takes 512 cycles and therefore: + if line size &amp;gt; 512, the first line must not be used for histogram computation. + if line size &amp;lt; 512, ceil (512/line size) lines must not be used for histogram computation. It's the programmer's responsibility to set the histogram computation area outside the 'clear' area.";
+        sel 1 rw type(sel_status3) "This bit must be used to select which memory is used to store the histogram data. By selecting alternatively one or the other bit, one can double buffer the histogram output buffer. The 4 KB memory can either be read by the CPU or a DMA request.";
+    };
+    
+    register ipipe_hst_mul_r addr(base, 0x3F0) "Histogram" {
+        _ 16 mbz;
+        _ 8 mbz;
+        gain 8 rw "Gain";
+    };
+    
+    register ipipe_hst_mul_gr addr(base, 0x3F4) "Histogram" {
+        _ 16 mbz;
+        _ 8 mbz;
+        gain 8 rw "Gain";
+    };
+    
+    register ipipe_hst_mul_gb addr(base, 0x3F8) "Histogram" {
+        _ 16 mbz;
+        _ 8 mbz;
+        gain 8 rw "Gain";
+    };
+    
+    register ipipe_hst_mul_b addr(base, 0x3FC) "Histogram" {
+        _ 16 mbz;
+        _ 8 mbz;
+        gain 8 rw "Gain";
+    };
+};

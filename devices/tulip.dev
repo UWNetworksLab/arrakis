@@ -1,0 +1,290 @@
+/*
+ * Copyright (c) 2007, 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * tulip.dev
+ *
+ * DESCRIPTION: DEC Tulip Ethernet controller
+ *
+ * Section numbers in this file refer to the DIGITAL Semiconductor
+ * 21140A PCI Fast Ethernet LAN Controller Hardware Reference Manual,
+ * available at http://www.intel.com/design/network/manuals/21140ahm.pdf 
+ */
+
+device tulip lsbfirst ( io base ) "Tulip Ethernet Controller" {
+
+    // 3.2.2.1
+    register CSR0 rw io ( base, 0x00 ) "Bus mode" {
+	SWR     1 "Software reset";
+	BAR     1 "Bus arbitration";
+	DSL     5 "Descriptor Skip Length";
+	BLE     1 "Big/little endian";
+	PBL     6 "Programmable burst length";
+	CAL     2 "Cache alignment";
+	_	1 mbz;
+	TAP	3 "Transmit auto polling";
+	DBO	1 "Descriptor byte ordering mode";
+	RME     1 "Read multiple enable";
+	_	1 mbz;
+	RLE     1 "Read line enable";
+	WIE     1 "Write and invalidation enable";
+	_       7 mbz;
+    };
+    
+    // 3.2.2.2
+    register CSR1 wo io( base, 0x08 ) "Transmit poll demand" type(uint32);
+
+    // 3.2.2.3
+    register CSR2 wo io( base, 0x10 ) "Receive poll demand" type(uint32);
+
+    // 3.2.2.4
+    register CSR3 rw io( base, 0x18 ) "Receive list base address" type(uint32);
+    register CSR4 rw io( base, 0x20 ) "Transmit list base address" type(uint32);
+
+    // 3.2.2.5
+    constants FBEBITS "Fatal bus error bits" {
+	parity = 0b000 "Parity error";
+	mabrt  = 0b001 "Master abort";
+	tabrt  = 0b010 "Target abort";
+    };
+    constants TPROCSTATE "Transmit process state" {
+	tpstop	= 0b000 "Stopped: reset cmd or tx jabber expired";
+	tprftd  = 0b001 "Running - fetching tx desc.";
+	tprwet  = 0b010 "Running - waiting for end of tx";
+	tprrbm  = 0b011 "Running - reading buf from mem & queuing tx fifo";
+	tprset  = 0b101 "Running - setup packet";
+	tpsusp  = 0b110 "Suspended - tx fifo underflow, or unavail tx desc";
+	tprclo  = 0b111 "Running - closing tx desc";
+    };
+    constants RPROCSTATE "Receive process state" {
+	rpstop	= 0b000 "Stopped: reset or stop rx command";
+	rprfrd  = 0b001 "Running - fetching rx desc.";
+	rprcep  = 0b010 "Running - checking for end of rx pkt";
+	rprwrp  = 0b011 "Running - waiting for rx packet";
+	rpsusp  = 0b100 "Suspected - unavailable rx buf";
+	rprclo  = 0b101 "Running - closing rx desc";
+	rprflu  = 0b110 "Running - flushing current frame (no rx buf)";
+	rprqrf  = 0b111 "Running - queueing rx frame to buf";
+    };
+    register CSR5 rw1c io( base, 0x28 ) "Status" {
+	TI	1 "Transmit interrupt";
+	TPS	1 "Transmit process stopped";
+	TU	1 "Transmit buffer unavailable";
+	TJT	1 "Transmit jabber timeout";
+	_	1 mbz;
+	UNF	1 "Transmit underflow";
+	RI	1 "Receive interrupt";
+	RU	1 "Receive buffer unavailable";
+	RPS	1 "Receive process stopped";
+	RWT	1 "Receive watchdog timeout";
+	ETI	1 "Early termination timeout";
+	GTE	1 "General-purpose timer expired";
+	_	1 mbz;
+	FBE	1 "Fatal bus error";
+	ERI	1 "Early receive interrupt";
+	AIS	1 "Abnormal interrupt summary";
+	NIS	1 "Normal interrupt summary";
+	RS	3 ro type(RPROCSTATE) "Receive process state";
+	TS	3 ro type(TPROCSTATE) "Transmission process state";
+	EB	3 ro type(FBEBITS) "Error bits";
+	_	6 mbz;
+    } ;
+
+    // 3.2.2.6
+    register CSR6 rw io( base, 0x30 ) "Operating mode" {
+	HP	1 "Hash/perfect recieve filtering mode";
+	SR	1 "Start/stop receive";
+	HO	1 "Hash-only filtering mode";
+	PB	1 "Pass bad frames";
+	IF	1 "Inverse filtering" ;
+	SB	1 "Start/stop backoff counter";
+	PR	1 "Promiscuous mode";
+	PM	1 "Pass all multicast";
+	_	1 mbz;
+	FD	1 "Full-duplex mode";
+	OM	2 "Operating mode";
+	FC	1 "Force collision mode";
+	ST	1 "Start/stop transmission command";
+	TR	2 "Threshold control bits";
+	_	1 mbz;
+	CA	1 "Capture effect enable";
+	PS	1 "Port select";
+	HBD	1 "Heartbeat disable";
+	_	1 mbz;
+	SF	1 "Store and forward";
+	TTM	1 "Transmit threshold mode";
+	PCS	1 "PCS function";
+	SCR	1 "Scrambler mode";
+	_	1 mb1;
+	_	4 mbz;
+	RA	1 "Receive all";
+	SC	1 "Special capture effect enable";
+    };
+
+    // 3.2.2.7
+    register CSR7 rw io( base, 0x38 ) "Interrupt enable" {
+	TI	1 "Transmit interrupt enable";
+	TS	1 "Transmit stopped enable";
+	TU	1 "Transmit buffer unavailable enable";
+	TJ	1 "Transmit jabber timeout enable";
+	_	1 mbz;
+	UN	1 "Underflow interrupt enable";
+	RI	1 "Recieve interrupt enable";
+	RU	1 "Recieve buffer unavailable enable";
+	RS	1 "Recieve stopped enable";
+	RW	1 "Recieve watchdog timeout enable";
+	ETE	1 "Early transmit interrupt enable";
+	GPT	1 "General-purpose timer enable";
+	_	1 mbz;
+	FBE	1 "Fatal bus error enable";
+	ERE	1 "Early receive enable";
+	AI	1 "Abnormal interrupt summary enable";
+	NI	1 "Normal interrupt summary enable";
+	_	15 mbz;
+    };
+
+    // 3.2.2.8
+    register CSR8 ro io( base, 0x40 ) "Missed frames and overflow counter" {
+	MFC	16 "Missed frame counter";
+	MFO	1 "Missed frame overflow";
+	FOC	11 "FIFO overflow counter";
+	OCO	1 "Overflow counter overflow";
+	_	3 mbz;
+    };
+
+    // 3.2.2.9
+    register CSR9 rw io( base, 0x48 ) "Boot ROM Management" {
+	DATA	8 "Boot ROM data or serial ROM control";
+	_	2 mbz;
+	REG	1 "External register select";
+	SR	1 "Serial ROM select";
+	BR	1 "Boot ROM select";
+	WR	1 "ROM write operation";
+	RD	1 "ROM read operation";
+	_	1 mbz;
+	MDC	1 "MII management clock";
+	MDO	1 "MII management write data";
+	MII	1 "MII management operation mode";
+	MDI	1 "MII management data_in";
+	_	12 mbz;
+    };
+
+    // 3.2.2.10
+    register CSR10 rw io( base, 0x50 ) "Boot ROM programming address" {
+	VAL	18 "Boot ROM address";
+	_	14 mbz;
+    };
+
+    // 3.2.2.11
+    register CSR11 rw io( base, 0x58 ) "General-purpose timer" {
+	VAL	16 "Timer value";
+	CON	1 "Continuous mode";
+	_	15 mbz;
+    };
+
+    // 3.2.2.12
+    register CSR12 rw io( base, 0x60 ) "General purpose port" {
+	MD	8 "General-purpose mode and data";
+	GPC	1 "General-purpose control";
+	_	23 mbz;
+    };
+
+    // 3.2.2.13
+    register CSR15 rw io( base, 0x78 ) "Watchdog timer" {
+	JBD	1 "Jabber disable";
+	HUJ	1 "Host unjab";
+	JCK	1 "Jabber clock";
+	_	1 mbz;
+	RWD	1 "Receive watchdog disable";
+	RWR	1 "Receive watchdog release";
+	_	26;
+    };
+
+    // 4.2.1
+    constants FRAMEDTYPE width(2) "Frame data type" {
+	sr = 0b00	"Serial received frame";
+	il = 0b01	"Internal loopback frame";
+	el = 0b10	"External loopback or serial received frame";
+    };
+    datatype RDES msbfirst(32) "Receive descriptor" {
+	// RDES0
+	OWN	1 "Own bit";
+	FF	1 "Filtering fail";
+	FL	14 "Frame length";
+	ES	1 "Error summary";
+	DE	1 "Descriptor error";
+	DT	2 type(FRAMEDTYPE) "Data type";
+	RF	1 "Runt Frame";
+	MF	1 "Muticast frame";
+	FS	1 "First descriptor";
+	LS	1 "Last descriptor";
+	TL	1 "Frame too long";
+	CS	1 "Collision seen";
+	FT	1 "Frame type";
+	RW	1 "Receive watchdog";
+	RE	1 "Report on MII error";
+	DB	1 "Dribbling bit";
+	CE	1 "CRC error";
+	ZERO	1 "Zero";
+	// RDES1
+	_	6;
+	RER	1 "Receive end of ring";
+	RCH	1 "Second address chained";
+	_	2;
+	RBS2	11 "Buffer 2 size";
+	RBS1	11 "Buffer 1 size";
+	// RDES2-3
+	RBA1	32 "Buffer address 1";
+	RBA2	32 "Buffer address 2";
+    };
+
+    // 4.2.2
+    datatype TDES msbfirst(32) "Transmit descriptor" {
+	// TDES0
+	OWN	1 "Own bit";
+	_	15;
+	ES	1 "Error summary";
+	TO	1 "Transmit jabber timeout";
+	_	2;
+	LO	1 "Loss of Carrier";
+	NC	1 "No Carrier";
+	LC	1 "Late Collision";
+	EC	1 "Excessive Collisions";
+	HF	1 "Heartbeat Fail";
+	CC	4 "Collision Count";
+	LF	1 "Link Fail Report";
+	UF	1 "Underflow Error";
+	DE	1 "Deferred";
+	// TDES1
+	IC	1 "Interrupt on Completion";
+	LS	1 "Last Segment";
+	FS	1 "First Segment";
+	FT1	1 "Filtering Type";
+	SET	1 "Setup Packet";
+	AC	1 "Add CRC Disable";
+	TER	1 "Transmit End of Ring";
+	TCH	1 "Second Address Chained";
+	DPD	1 "Disabled Padding";
+	FT0	1 "Filtering Type";
+	TBS2	11 "Buffer 2 Size";
+	TBS1	11 "Buffer 1 Size";
+	// TDES2-3
+	TBA1	32 "Buffer address 1";
+	TBA2	32 "Buffer address 2";
+    };
+    // Table 4-8: This value is split between FT0 and FT1 above.
+    // Unfortunately (unlike Devil) Mackerel can't express this
+    // cleanly (yet). 
+    constants FILTERTYPE width(2) "Filtering type" {
+	PF = 0b00	"Perfect filtering";
+	HF = 0b01	"Hash-based filtering";
+	IF = 0b10	"Inverse filtering";
+	HOF = 0b11	"Hash-only filtering";
+    };
+
+};

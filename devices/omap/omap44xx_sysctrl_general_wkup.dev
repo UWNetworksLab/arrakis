@@ -1,0 +1,304 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_sysctrl_general_wkup.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_sysctrl_general_wkup msbfirst ( addr base ) "" {
+    
+    
+    register control_gen_wkup_revision ro addr(base, 0x0) "Control module revision identifier Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+    
+    register control_gen_wkup_hwinfo ro addr(base, 0x4) "Information about the IP module hardware configuration that is, typically the module HDL generics (if any). Access conditions. Read: unrestricted, Write: unrestricted" type(uint32);
+
+    constants ip_sysconfig_idlemode_status width(2) "" {
+        IP_SYSCONFIG_IDLEMODE_0 = 0 "Clock is manually gated";
+        IP_SYSCONFIG_IDLEMODE_1 = 1 "Clock is manually enabled";
+    };
+    
+    register control_gen_wkup_sysconfig addr(base, 0x10) "Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 28 mbz;
+        ip_sysconfig_idlemode 2 rw type(ip_sysconfig_idlemode_status) "Select the local clock-gating strategy0x2,0x3: Clock is automatically gated when there is no access to the Control Module through L4-interconnect .";
+        _ 2 mbz;
+    };
+    
+    register control_ocpreg_spare addr(base, 0x10C) "Spare Register Access conditions. Read: unrestricted, Write: unrestricted" {
+        ocpreg_spare31 1 rw "Spare register 31";
+        ocpreg_spare30 1 rw "Spare register 30";
+        ocpreg_spare29 1 rw "Spare register 29";
+        ocpreg_spare28 1 rw "Spare register 28";
+        ocpreg_spare27 1 rw "Spare register 27";
+        ocpreg_spare26 1 rw "Spare register 26";
+        ocpreg_spare25 1 rw "Spare register 25";
+        ocpreg_spare24 1 rw "Spare register 24";
+        ocpreg_spare23 1 rw "Spare register 23";
+        ocpreg_spare22 1 rw "Spare register 22";
+        ocpreg_spare21 1 rw "Spare register 21";
+        ocpreg_spare20 1 rw "Spare register 20";
+        ocpreg_spare19 1 rw "Spare register 19";
+        ocpreg_spare18 1 rw "Spare register 18";
+        ocpreg_spare17 1 rw "Spare register 17";
+        ocpreg_spare16 1 rw "Spare register 16";
+        ocpreg_spare15 1 rw "Spare register 15";
+        ocpreg_spare14 1 rw "Spare register 14";
+        ocpreg_spare13 1 rw "Spare register 13";
+        ocpreg_spare12 1 rw "Spare register 12";
+        ocpreg_spare11 1 rw "Spare register 11";
+        ocpreg_spare10 1 rw "Spare register 10";
+        ocpreg_spare9 1 rw "Spare register 9";
+        ocpreg_spare8 1 rw "Spare register 8";
+        ocpreg_spare7 1 rw "Spare register 7";
+        ocpreg_spare6 1 rw "Spare register 6";
+        ocpreg_spare5 1 rw "Spare register 5";
+        ocpreg_spare4 1 rw "Spare register 4";
+        ocpreg_spare3 1 rw "Spare register 3";
+        ocpreg_spare2 1 rw "Spare register 2";
+        ocpreg_spare1 1 rw "Spare register 1";
+        _ 1 mbz;
+    };
+
+    constants emif1_sdram_cl_status width(4) "" {
+        EMIF1_SDRAM_CL_3 = 3 "CAS latency of 3 cycles";
+        EMIF1_SDRAM_CL_4 = 4 "CAS latency of 4 cycles";
+        EMIF1_SDRAM_CL_5 = 5 "CAS latency of 5 cycles";
+        EMIF1_SDRAM_CL_6 = 6 "CAS latency of 6 cycles";
+        EMIF1_SDRAM_CL_7 = 7 "CAS latency of 7 cycles";
+        EMIF1_SDRAM_CL_8 = 8 "CAS latency of 8 cycles";
+    };
+    
+    register control_wkup_prot_emif1_sdram_config_reg addr(base, 0x110) "Protection EMIF1 SDRAM configuration register 1 Access conditions. Read: unrestricted, Write: unrestricted" {
+        emif1_sdram_type 3 rw "SDRAM type selection:Set to 0x4 for LPDDR2-S4. . Set to 0x5 for LPDDR2-S2. . All other values are reserved. .";
+        emif1_sdram_ibank_pos 2 rw "Internal bank position:Set to 0x0 to assign internal bank address bits from the L3 address as shown in, 64-Byte Linear Read Starting at Address 0x0, and , 64-Byte Linear Read Starting at Address 0x8 (LPDDR2-S2), in , Memory Subsystem. . Set to 0x1, 0x2, or 0x3 to assign internal bank address bits from the L3 address as shown in, 64-Byte Linear Read Starting at Address 0x8 (LPDDR2-S4), , 64-Byte Linear Read Starting at Address 0x10, and , 64-Byte Linear Read Starting at Address 0x18, in , Memory Subsystem. .";
+        _ 3 mbz;
+        emif1_sdram_ddr2_ddqs 1 rw "DDR2 differential DQS enable:Set to 0 for single ended DQS. . Set to 1 for differential DQS. . This bit is only for DDR2 mode; because the device supports LPDDR2, this bit is don't care. .";
+        _ 2 mbz;
+        emif1_sdram_ddr_disable_dll 1 rw "Disable DLL select:Set to 0x0 to enable DLL inside SDRAM. . Set to 0x1 to disable DLL inside SDRAM. .";
+        _ 4 mbz;
+        emif1_sdram_narrow_mode 2 rw "SDRAM data bus width:Set to 0x0 for 64-bit width. . Set to 0x1 for 32-bit width. . Set to 0x2 for 16-bit width. . All other values are reserved. .";
+        emif1_sdram_cl 4 rw type(emif1_sdram_cl_status) "CAS latency (RL latency). The value of this field defines the CAS latency to be used when accessing connected SDRAM devices:Supported for LPDDR2-SDRAM: . All other values are reserved. .";
+        emif1_sdram_rowsize 3 rw "Row size. Defines the number of row address bits of connected SDRAM devices:Set to 0x0 for 9 row bits. . Set to 0x1 for 10 row bits. . Set to 0x2 for 11 row bits. . Set to 0x3 for 12 row bits. . Set to 0x4 for 13 row bits. . Set to 0x5 for 14 row bits. . Set to 0x6 for 15 row bits. . Set to 0x7 for 16 row bits. . This field is used only when the ibank_pos field in the SDRAM Config register is set to 0x1, 0x2, or 0x3. .";
+        emif1_sdram_ibank 3 rw "Internal bank setup. Defines number of banks inside connected SDRAM devices:Set to 0x0 for 1 bank. . Set to 0x1 for 2 banks. . Set to 0x2 for 4 banks. . Set to 0x3 for 8 banks. . All other values are reserved. .";
+        emif1_sdram_ebank 1 rw "External CS setup. Defines whether SDRAM accesses will use 1 or 2 CS lines. Set to 0 to use pad_cs_o_n[0] only:Set to 0x0 to use only pad_cs_o_n[0]. . Set to 0x1 to use pad_cs_o_n[1:0]. . This bit is automatically set to 0 if either the cs0nvmen or cs1nvmen field in the LPDDR2-NVM is set to 1. .";
+        emif1_sdram_pagesize 3 rw "Page size. Defines the internal page size of the connected SDRAM devices:Set to 0x0 for 256-word page (8 column bits). . Set to 0x1 for 512-word page (9 column bits). . Set to 0x2 for 1024-word page (10 column bits). . Set to 0x3 for 2048-word page (11 column bits). . All other values are reserved. .";
+    };
+    
+    register control_wkup_prot_emif1_sdram_config2_reg addr(base, 0x114) "Protection EMIF1 SDRAM configuration register 2 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 1 mbz;
+        emif1_sdram_cs1nvmen 1 rw "CS1 LPDDR2-NVM enable:Set to 0x1 if LPDDR2-NVM is connected to CS1. . This bit is automatically set to 0x0 if the sdram_type field in the SDRAM Config register is not set to LPDDR2. .";
+        _ 24 mbz;
+        emif1_sdram_rdbnum 2 rw "Row buffer setup. Defines the number of row buffers inside the connected LPDDR2-NVM devices:Set to 0x0 for 1 row buffer. . Set to 0x1 for 2 row buffers. . Set to 0x2 for 4 row buffers. . Set to 0x3 for 8 row buffers. . All other values are reserved. .";
+        _ 1 mbz;
+        emif1_sdram_rdbsize 3 rw "Row data buffer size. Defines the row data buffer size of connected LPDDR2-NVM devices:Set to 0x0 for 32 bytes. . Set to 0x1 for 64 bytes. . Set to 0x2 for 128 bytes. . Set to 0x3 for 256 bytes. . Set to 0x4 for 512 bytes. . Set to 0x5 for 1024 bytes. . Set to 0x6 for 2048 bytes. . Set to 0x7 for 4096 bytes. .";
+    };
+    
+    register control_wkup_prot_emif2_sdram_config_reg addr(base, 0x118) "Protection EMIF2 SDRAM configuration register 1 Access conditions. Read: unrestricted, Write: unrestricted" {
+        emif2_sdram_type 3 rw "SDRAM type selection:Set to 0x4 for LPDDR2-S4. . Set to 0x5 for LPDDR2-S2. . All other values are reserved. .";
+        emif2_sdram_ibank_pos 2 rw "Internal bank position:Set to 0x0 to assign internal bank address bits from the L3 address as shown in, 64-Byte Linear Read Starting at Address 0x0, and , 64-Byte Linear Read Starting at Address 0x8 (LPDDR2-S2), in , Memory Subsystem. . Set to 0x1, 0x2, or 0x3 to assign internal bank address bits from the L3 address as shown in, 64-Byte Linear Read Starting at Address 0x8 (LPDDR2-S4), , 64-Byte Linear Read Starting at Address 0x10, and , 64-Byte Linear Read Starting at Address 0x18, in , Memory Subsystem. .";
+        _ 3 mbz;
+        emif2_sdram_ddr2_ddqs 1 rw "DDR2 differential DQS enable:Set to 0 for single ended DQS. . Set to 1 for differential DQS. . This bit is only for DDR2 mode; because the device supports LPDDR2, this bit is don't care. .";
+        _ 2 mbz;
+        emif2_sdram_ddr_disable_dll 1 rw "Disable DLL select:Set to 0x0 to enable DLL inside SDRAM. . Set to 0x1 to disable DLL inside SDRAM. .";
+        _ 4 mbz;
+        emif2_sdram_narrow_mode 2 rw "SDRAM data bus width:Set to 0x0 for 64-bit width. . Set to 0x1 for 32-bit width. . Set to 0x2 for 16-bit width. . All other values are reserved. .";
+        emif2_sdram_cl 4 rw type(emif1_sdram_cl_status) "CAS latency (RL latency). The value of this field defines the CAS latency to be used when accessing connected SDRAM devices:Supported for LPDDR2-SDRAM: . All other values are reserved. .";
+        emif2_sdram_rowsize 3 rw "Row size. Defines the number of row address bits of connected SDRAM devices:Set to 0x0 for 9 row bits. . Set to 0x1 for 10 row bits. . Set to 0x2 for 11 row bits. . Set to 0x3 for 12 row bits. . Set to 0x4 for 13 row bits. . Set to 0x5 for 14 row bits. . Set to 0x6 for 15 row bits. . Set to 0x7 for 16 row bits. . This field is used only when the ibank_pos field in the SDRAM Config register is set to 0x1, 0x2, or 0x3. .";
+        emif2_sdram_ibank 3 rw "Internal bank setup. Defines number of banks inside connected SDRAM devices:Set to 0x0 for 1 bank. . Set to 0x1 for 2 banks. . Set to 0x2 for 4 banks. . Set to 0x3 for 8 banks. . All other values are reserved. .";
+        emif2_sdram_ebank 1 rw "External CS setup. Defines whether SDRAM accesses will use 1 or 2 CS lines. Set to 0 to use pad_cs_o_n[0] only:Set to 0x0 to use only pad_cs_o_n[0]. . Set to 0x1 to use pad_cs_o_n[1:0]. . This bit is automatically set to 0 if either the cs0nvmen or cs1nvmen field in the LPDDR2-NVM is set to 1. .";
+        emif2_sdram_pagesize 3 rw "Page size. Defines the internal page size of the connected SDRAM devices:Set to 0x0 for 256-word page (8 column bits). . Set to 0x1 for 512-word page (9 column bits). . Set to 0x2 for 1024-word page (10 column bits). . Set to 0x3 for 2048-word page (11 column bits). . All other values are reserved. .";
+    };
+    
+    register control_wkup_prot_emif2_sdram_config2_reg addr(base, 0x11C) "Protection EMIF1 SDRAM configuration register 2 Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 1 mbz;
+        emif2_sdram_cs1nvmen 1 rw "CS1 LPDDR2-NVM enable:Set to 0x1 if LPDDR2-NVM is connected to CS1. . This bit is automatically set to 0x0 if the sdram_type field in the SDRAM Config register is not set to LPDDR2. .";
+        _ 24 mbz;
+        emif2_sdram_rdbnum 2 rw "Row buffer setup. Defines the number of row buffers inside the connected LPDDR2-NVM devices:Set to 0x0 for 1 row buffer. . Set to 0x1 for 2 row buffers. . Set to 0x2 for 4 row buffers. . Set to 0x3 for 8 row buffers. . All other values are reserved. .";
+        _ 1 mbz;
+        emif2_sdram_rdbsize 3 rw "Row data buffer size. Defines the row data buffer size of connected LPDDR2-NVM devices:Set to 0x0 for 32 bytes. . Set to 0x1 for 64 bytes. . Set to 0x2 for 128 bytes. . Set to 0x3 for 256 bytes. . Set to 0x4 for 512 bytes. . Set to 0x5 for 1024 bytes. . Set to 0x6 for 2048 bytes. . Set to 0x7 for 4096 bytes. .";
+    };
+
+    constants mode_status width(1) "" {
+        MODE_0 = 0 "hwobs_int_prm_i";
+        MODE_1 = 1 "hwobs_int_cm1_i";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_0 addr(base, 0x460) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_1 addr(base, 0x464) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_2 addr(base, 0x468) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_3 addr(base, 0x46C) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_4 addr(base, 0x470) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_5 addr(base, 0x474) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_6 addr(base, 0x478) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_7 addr(base, 0x47C) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_8 addr(base, 0x480) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_9 addr(base, 0x484) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_10 addr(base, 0x488) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_11 addr(base, 0x48C) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_12 addr(base, 0x490) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_13 addr(base, 0x494) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_14 addr(base, 0x498) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_15 addr(base, 0x49C) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_16 addr(base, 0x4A0) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_17 addr(base, 0x4A4) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_18 addr(base, 0x4A8) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_19 addr(base, 0x4AC) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_20 addr(base, 0x4B0) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_21 addr(base, 0x4B4) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_22 addr(base, 0x4B8) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_23 addr(base, 0x4BC) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_24 addr(base, 0x4C0) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_25 addr(base, 0x4C4) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_26 addr(base, 0x4C8) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_27 addr(base, 0x4CC) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_28 addr(base, 0x4D0) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_29 addr(base, 0x4D4) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_30 addr(base, 0x4D8) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+    
+    register control_wkup_conf_debug_sel_tst_i_31 addr(base, 0x4DC) "Select mode for debug port Access conditions. Read: unrestricted, Write: unrestricted" {
+        _ 31 mbz;
+        mode 1 rw type(mode_status) "Select one of the following signals:";
+    };
+};

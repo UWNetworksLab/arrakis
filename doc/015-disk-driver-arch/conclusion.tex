@@ -1,0 +1,34 @@
+In the course of this lab project we successfully implemented an \ac{ahci}
+driver and supporting code for data storage and retrieval.
+
+\section{Flounder Modifications}
+
+The extensions added to flounder provide a very simple and extensible way to
+interface with disks. The overhead incurred is acceptable in the trade-off for
+simplicity and modularity. The seperation of interface definition for \ac{ata}
+from implementation of command dispatching to the device allows simple addition
+of further \ac{ata} transports, such as additional \acs{pata}/\acs{sata}
+controllers.
+
+\section{Security}
+
+The \acs{ahci} driver demonstrates the trade-off when dealing with \acs{dma}.
+If a domain is allowed full control over the configuration of \acs{dma}
+aspects, it can obtain full read/write access to physical memory. To mitigate
+this problem, the management service would have to check and validate any
+memory regions supplied before allowing a command to execute. If only trusted
+domains are allowed to bind to the \acs{ahci} driver, these checks are not
+neccessary. This is a valid assumption, as filesystems and blockdevice-like
+services are the only ones that should be allowed raw access to disks.
+
+\section{Performance}
+
+Performance is in the same order of magnitude as seen on Linux for large
+blocksizes and random access. There is some bottleneck during read operations
+that could relate either to interrupt dispatching or memcopy performance.  To
+achieve high throughput on sequential workloads with small blocksizes, a
+prefetcher of some sort is necessary. A possible solution would be to have a
+cache that stores pages or larger chunks of data. A read operation would then
+have to read multiples of the cached size if the data is not present in the
+cache. If data is cached, the request can be completed much faster without
+needing to consult the disk.

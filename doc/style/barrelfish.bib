@@ -1,0 +1,1260 @@
+@comment{{Suggested rules for editing the bib file, so we all stay sane and
+have pretty bibliographies in our papers:
+
+  0. for any new entries, construct the key as either:
+     <name of system>:<venue>
+     or:
+     <first author's surname>:<venue>
+     or:
+     <first author's surname>:<most significant word from title>:<venue>
+  1. keep entries in alphabetical order, sorted by key
+  2. for any venue from which we have more than one entry, define a string
+     for the booktitle or journal, and place it in the accompanying defs.bib
+  3. use the location field rather than the address for conferences
+  4. for the month field, use the unquoted strings jan/feb/mar/etc.
+     -- this allows abbreviating bib styles to easily abbreviate them
+  5. if importing bib entries from IEEE Xplore, ACM DL, DBLP, Citeseer etc.
+     PLEASE clean them up to match these guidelines, in particular:
+      * remove the publisher field unless it really isn't obvious
+      * remove the useless New York address that ACM DL always puts on bib entries
+      * check for and {Protect} any words in the title that should be
+        capitalised
+
+Note that this file will not compile without defs.bib; ie. you need to do:
+  \bibliography{defs,thisfile}
+}}
+
+@article{Liedtke_GPT,
+  author =	 "Jochen Liedtke",
+  title =	 "Page Table Structures For Fine-Grain Virtual Memory",
+  journal =	 "IEEE Technical Committee on Computer Architecture
+                  Newsletter",
+  year =	 1994,
+  keywords =	 "GPT"
+}
+
+@Manual{intelsa,
+  title =	 {Intel 64 and IA-32 Architectures Software
+                  Developer's Manual},
+  organization = {Intel Corporation},
+  month =	 sep,
+  year =	 2008
+}
+
+@Manual{amdsa,
+  title =	 {AMD64 Architecture Programmer's Manual},
+  organization = {Advanced Micro Devices},
+  month =	 sep,
+  year =	 2007
+}
+
+@TechReport{rockcreek_core_eas,
+  author = 	 {Michael Konow},
+  title = 	 {{Rock Creek Core}},
+  institution =  {Intel Microprocessor Technology Laboratories (MTL)},
+  year = 	 2010,
+  type =	 {External-architecture Specification (EAS)},
+  number = 	 {Revision 0.7},
+  month = 	 {January 5}}
+
+@TechReport{rockcreek_l2_eas,
+  author = 	 {Bibiche Geuskens and Saurabh Dighe},
+  title = 	 {{Rock Creek L2}},
+  institution =  {Intel Microprocessor Technology Laboratories (MTL)},
+  year = 	 2010,
+  type =	 {External-architecture Specification (EAS)},
+  number = 	 {Revision 0},
+  month = 	 {January 5}}
+
+@TechReport{rockcreek_eas,
+  author = 	 {Yatin Hoskote and Greg Ruhl},
+  title = 	 {{Rock Creek}},
+  institution =  {Intel Microprocessor Technology Laboratories (MTL)},
+  year = 	 2009,
+  type =	 {External-architecture Specification (EAS)},
+  number = 	 {Revision 0.91},
+  month = 	 {September 16}}
+
+@TechReport{rockcreek_lut_eas,
+  author = 	 {Jason Howard},
+  title = 	 {{Rock Creek System Address Look up Table \& Configuration Registers}},
+  institution =  {Intel Microprocessor Technology Laboratories (MTL)},
+  year = 	 2010,
+  type =	 {External-architecture Specification (EAS)},
+  number = 	 {Revision 0.1},
+  month = 	 {January 5}}
+
+@TechReport{rockcreek_fpga_mas,
+  author = 	 {Mattias Steidl and Michael Kauschke},
+  title = 	 {{Rock Creek System FPGA}},
+  institution =  {Intel Microprocessor Technology Laboratories (MTL)},
+  year = 	 2009,
+  type =	 {Micro Architecture Specification (MAS)},
+  number = 	 {Revision 0.21},
+  month = 	 {October}}
+
+@inproceedings{adya:stackripping:usenix02,
+  author = {Atul Adya and John Howell and Marvin Theimer and William J. Bolosky
+            and John R. Douceur},
+  title = {Cooperative task management without manual stack management},
+  booktitle = usenixatc02,
+  month = jun,
+  year = 2002
+}
+
+@article{ball:rig:ieeetse76,
+ author = {Ball, J. E. and Feldman, J. and Low, J. R. and Rashid, R. and Rovner,
+P.},
+ title = {{RIG}, {Rochester}'s Intelligent Gateway: System Overview},
+ journal = {IEEE Trans. Softw. Eng.},
+ volume = {2},
+ number = {4},
+ year = 1976,
+ issn = {0098-5589},
+ pages = {321--328},
+ doi = {http://dx.doi.org/10.1109/TSE.1976.229890},
+}
+
+@inproceedings{barrelfish:sosp09,
+  title = {The multikernel: a new {OS} architecture for scalable
+                  multicore systems},
+  author = {Andrew Baumann and Paul Barham and Pierre-Evariste Dagand
+                  and Tim Harris and Rebecca Isaacs and Simon Peter
+                  and Timothy Roscoe and Adrian Sch\"{u}pbach and
+                  Akhilesh Singhania},
+  booktitle = sosp09,
+  year = 2009,
+  month = oct
+}
+
+@inproceedings{baumann:hotos09,
+  title = {Your computer is already a distributed system. {Why} isn't your
+           {OS}?},
+  author = {Andrew Baumann and Simon Peter and Adrian Sch\"{u}pbach and Akhilesh
+Singhania and Timothy Roscoe and Paul Barham and Rebecca Isaacs},
+  booktitle = hotos09,
+  year = {2009},
+  month = may,
+  location = {Monte Verita, Switzerland}
+}
+
+@manual{beehive:hwman,
+  title = {Beehive: A many-core computer for {FPGA}s (v5)},
+  author = {Chuck Thacker},
+  organization = {MSR Silicon Valley},
+  month = jan,
+  year = 2010,
+  note = {\url{http://projects.csail.mit.edu/beehive/BeehiveV5.pdf}},
+  annote = {unpublished (in principle!). available (to licensees only?) at
+    http://research.microsoft.com/en-us/um/people/birrell/beehive/BeehiveV5.pdf}
+}
+
+@article{birrell:rpc:tocs84,
+  author = {Andrew D. Birrell and Bruce Jay Nelson},
+  title = {Implementing Remote Procedure Calls},
+  journal = tocs,
+  year = 1984,
+  volume = 2,
+  pages = {39--59},
+  keywords = {RPC}
+}
+
+@inproceedings{cellular_disco:sosp99,
+  author = {Govil,, Kinshuk and Teodosiu,, Dan and Huang,, Yongqiang and
+Rosenblum,, Mendel},
+  title = {{Cellular Disco}: resource management using virtual clusters on
+shared-memory multiprocessors},
+  booktitle = sosp99,
+  year = {1999},
+  isbn = {1-58113-140-2},
+  pages = {154--169},
+  location = {Charleston, SC, USA},
+  doi = {http://doi.acm.org/10.1145/319151.319162}
+}
+
+@inproceedings{chapin:hive:sosp95,
+  author = {John Chapin and Mendel Rosenblum and Scott Devine and Tirthankar Lahiri and Dan Teodosiu and Anoop Gupta},
+  title = {{Hive}: Fault Containment for Shared-Memory Multiprocessors},
+  booktitle = sosp95,
+  year = 1995,
+  month = dec
+}
+
+@inproceedings{charles:x10,
+ author = {Charles, Philippe and Grothoff, Christian and Saraswat, Vijay and Donawa, Christopher and Kielstra, Allan and Ebcioglu, Kemal and von Praun, Christoph and Sarkar, Vivek},
+ title = {{X10}: an object-oriented approach to non-uniform cluster computing},
+ booktitle = oopsla05,
+ year = 2005,
+ isbn = {1-59593-031-0},
+ pages = {519--538},
+}
+
+@manual{corba,
+  title =        "{CORBA} 3.1 Specification",
+  organization = "Object Management Group, Inc.",
+  year =         2008,
+  month =        jan,
+  howpublished = "{\url{http://www.omg.org/spec/CORBA/3.1/}}"
+}
+
+@inproceedings{corbato:multics,
+  author = {F. J. Corbato and V. A. Vyssotsky},
+  title = {Introduction and Overview of the {Multics} System},
+  booktitle = {Proceedings of the Fall Joint Computer Conference, part {I}},
+  year = 1965
+}
+
+
+@inproceedings{corey:osdi08,
+  author = {Silas Boyd-Wickizer and Haibo Chen and Rong Chen and Yandong
+Mao and Frans Kaashoek and Robert Morris and Aleksey Pesterev and Lex Stein and
+Ming Wu and Yuehua Dai and Yang Zhang and Zheng Zhang},
+  title = {{Corey}: An Operating System for Many Cores},
+  booktitle = osdi08,
+  year = 2008,
+  pages = {43--57},
+  month = dec
+}
+
+@inproceedings{dagand:fof:plos09,
+  title = {{Filet-o-Fish}: practical and dependable domain-specific languages
+           for {OS} development},
+  author = {Pierre-Evariste Dagand and Andrew Baumann and Timothy Roscoe},
+  booktitle = proc # {5th Workshop on Programming Languages and Operating Systems (PLOS)},
+  year = {2009},
+  month = oct,
+  doi = {http://doi.acm.org/10.1145/1713254.1713263},
+  location = {Big Sky, MT, USA},
+  note = {}
+}
+
+@TechReport{davis:bee3,
+  author = 	 {John D.Davis and Charles P.Thacker and Chen Chang},
+  title = 	 {{BEE3}: Revitalizing Computer Architecture Research},
+  institution =  {Microsoft Research},
+  year = 	 2009,
+  type =	 {Technical Report},
+  number =	 {MSR-TR-2009-45}
+}
+
+@manual{dcom,
+  title =        "Distributed Component Object Model (DCOM) Remote Protocol Specification",
+  organization = "Microsoft Corporation",
+  year =         2010,
+  month =        mar,
+  annote = "unstable url: http://msdn.microsoft.com/en-us/library/cc226801(PROT.13).aspx"
+}
+
+@inproceedings{dice:tlrw:transact09,
+  author = {Dice, David and Shavit, Nir},
+  title = {{TLRW}: Return of the Read-Write Lock},
+  booktitle = proc # {4th ACM SIGPLAN Workshop on
+                  Transactional Computing},
+  pdf = {http://research.sun.com/scalable/pubs/TRANSACT2009-TLRW.pdf},
+  year = 2009,
+  month = feb
+}
+
+@article{disco:tocs97,
+  author = {Edouard Bugnion and Scott Devine and Kinshuk Govil and Mendel
+Rosenblum},
+  title = {Disco: running commodity operating systems on scalable
+multiprocessors},
+  journal = tocs,
+  volume = {15},
+  number = {4},
+  year = {1997},
+  issn = {0734-2071},
+  pages = {412--447},
+  doi = {http://doi.acm.org/10.1145/265924.265930}
+}
+
+@book{eclipse,
+  author = {Krzysztof R. Apt and Marg G. Wallace},
+  title = {Constraint Logic Programming using
+           ECL\textsuperscript{i}PS\textsuperscript{e}},
+  publisher = {Cambridge University Press},
+  year = 2007
+}
+
+@inproceedings{eide:flick:pldi97,
+  author = {Eric Eide and Kevin Frei and Bryan Ford and Jay Lepreau
+                  and Gary Lindstrom},
+  title = {Flick: A Flexible, Optimizing {IDL} Compiler},
+  booktitle = pldi97,
+  year = 1997,
+  location = {Las Vegas, NV, USA},
+  month = jun
+}
+
+@inproceedings{fahndrich:messages:eurosys06,
+  author = { Manuel F\"{a}hndrich and Mark Aiken and Chris Hawblitzel
+             and Orion Hodson and Galen Hunt and James R. Larus
+             and Steven Levi },
+  title = { Language Support for Fast and Reliable Message-based Communication
+            in {Singularity} {OS} },
+  booktitle = eurosys06,
+  year = 2006,
+  location = Leuven,
+  month = apr
+}
+
+@article{feitelson:gangscheduling:JPDC92,
+  author = {Dror G. Feitelson and Larry Rudolph},
+  title = {Gang scheduling performance benefits for fine-grain synchronization},
+  journal = {Journal of Parallel and Distributed Computing},
+  volume = 16,
+  pages = {306--318},
+  year = 1992
+}
+
+@inproceedings{flash-ossup:asplos96,
+  author = {Ben Verghese and Scott Devine and Anoop Gupta and Mendel Rosenblum},
+  title = {Operating system support for improving data locality on {CC-NUMA}
+compute servers},
+  booktitle = asplos96,
+  year = {1996},
+  pages = {279--289}
+}
+
+@inproceedings{fluet:manticore,
+ author = {Fluet, Matthew and Rainey, Mike and Reppy, John and Shaw, Adam and Xiao, Yingqi},
+ title = {Manticore: a heterogeneous parallel language},
+ booktitle = proc # {2007 Workshop on Declarative Aspects of Multicore
+                     Programming (DAMP'07)},
+ year = 2007,
+ isbn = {978-1-59593-690-5},
+ pages = {37--44},
+ doi = {http://doi.acm.org/10.1145/1248648.1248656},
+}
+
+@inproceedings{ford:inheritance:osdi96,
+  author = {Bryan Ford and Sai R. Susarla},
+  title = {{CPU} Inheritance Scheduling},
+  pages = {91--106},
+  isbn = {1-880446-82-0},
+  booktitle = osdi96,
+  month = oct,
+  location = {Berkeley, CA, USA},
+  year = 1996
+}
+
+@article{fos:osr09,
+  author = {Wentzlaff, David and Agarwal, Anant},
+  title = {Factored operating systems (fos): the case for a scalable operating system for multicores},
+  journal = osr,
+  volume = {43},
+  number = {2},
+  year = {2009},
+  issn = {0163-5980},
+  pages = {76--85},
+  doi = {http://doi.acm.org/10.1145/1531793.1531805}
+}
+
+@inproceedings{fos:socc10,
+  author = {David Wentzlaff and Charles {Gruenwald III} and
+           Nathan Beckmann and Kevin Modzelewski and Adam Belay and
+           Lamia Youseff and Jason Miller and Anant Agarwal},
+  title = {An Operating System for Multicore and Clouds: Mechanisms
+          and Implementation},
+  booktitle = {ACM Symposium on Cloud Computing (SOCC)},
+  year = 2010,
+  month = jun,
+  location = {Indianapolis, IN, USA}
+}
+
+@inproceedings{frigo:cilk,
+ author = {Frigo, Matteo and Leiserson, Charles E. and Randall, Keith H.},
+ title = {The implementation of the {Cilk-5} multithreaded language},
+ booktitle = pldi98,
+ year = {1998},
+ isbn = {0-89791-987-4},
+ pages = {212--223},
+ doi = {http://doi.acm.org/10.1145/277650.277725},
+}
+
+@inproceedings{haeberlen:idl4:weiss00,
+  author = {Andreas Haeberlen and Jochen Liedtke and Yoonho Park
+                  and Lars Reuther and Volkmar Uhlig},
+  title = {Stub-code Performance is Becoming Important},
+  booktitle = proc # {USENIX Workshop on Industrial Experiences with
+                  Systems Software (WEISS)},
+  year = 2000,
+  location = {San Diego, CA, USA},
+  month = oct
+}
+
+@inproceedings{he:preemption:hpc05,
+  author = {He, Bijun and
+               {Scherer III}, William N. and
+               Scott, Michael L.},
+  title = {Preemption Adaptivity in Time-Published Queue-Based Spin Locks},
+  booktitle = proc # {12th International Conference on High Performance Computing},
+  year = {2005},
+  pages = {7-18},
+  doi = {http://dx.doi.org/10.1007/11602569_6}
+}
+
+@inproceedings{helios:sosp09,
+  author = {Nightingale, Edmund B. and Hodson, Orion and McIlroy, Ross and Hawblitzel, Chris and Hunt, Galen},
+  title = {Helios: heterogeneous multiprocessing with satellite kernels},
+  booktitle = sosp09,
+  year = 2009,
+  isbn = {978-1-60558-752-3},
+  pages = {221--234},
+  location = {Big Sky, MT, USA},
+  doi = {http://doi.acm.org/10.1145/1629575.1629597}
+}
+
+@article{hillmarty:amdahl:2008,
+  author = {Mark D. Hill and Michael R. Marty},
+  title = {Amdahl's Law in the Multicore Era},
+  journal = {{IEEE} Computer},
+  month = jul,
+  year = 2008
+}
+
+@Manual{hp:espeak:2001,
+  title = 	 {e-speak Architectural Specification},
+  author = 	 {{Hewlett-Packard Company}},
+  edition = 	 {Release A.03.14.00},
+  month = 	 {August},
+  year = 	 2001,
+  note =
+{\url{http://www.hpl.hp.com/personal/Alan_Karp/espeak/Architecture.pdf},
+retrieved May 2010}}
+
+@manual{intel:rcce,
+  author = {Tim Mattson and van der Wijngaart, Rob},
+  organization = {{Intel Corporation}},
+  title = {{RCCE}: a Small Library for Many-Core Communication},
+  month = mar,
+  year = 2010,
+  note = {Version 1.05},
+  url = "http://techresearch.intel.com/UserFiles/en-us/Media/RCCE_Specification_033010_1.pdf"
+}
+
+@misc{intel:scc:2009,
+  author = {{Intel Corporation}},
+  title = {Single-chip Cloud Computer},
+  howpublished = {\url{http://techresearch.intel.com/articles/Tera-Scale/1826.htm}},
+  month = dec,
+  year = 2009
+}
+
+@inproceedings{intel:scc:isscc10,
+  author = {Jason Howard and Saurabh Dighe and Yatin Hoskote and
+            Sriram Vangal and David Finan and Gregory Ruhl and
+            David Jenkins and Howard Wilson and Nitin Borkar and
+            Gerhard Schrom and Fabrice Pailet and Shailendra Jain and
+            Tiju Jacob and Satish Yada and Sraven Marella and
+            Praveen Salihundam and Vasantha Erraguntla and
+            Michael Konow and Michael Riepen and Guido Droege and
+            Joerg Lindemann and Matthias Gries and Thomas Apel and
+            Kersten Henriss and Tor Lund-Larsen and Sebastian Steibl and
+            Shekhar Borkar and Vivek De and Van Der Wijngaart, Rob and
+            Timothy Mattson},
+  title = {A 48-Core {IA}-32 Message-Passing Processor with {DVFS} in 45nm
+           {CMOS}},
+  booktitle = {International Solid-State Circuits Conference},
+  doi = {http://dx.doi.org/10.1109/ISSCC.2010.5434077},
+  pages = {108--109},
+  year = {2010},
+  month = feb
+}
+
+@inproceedings{isard:ame,
+ author = {Isard, Michael and Birrell, Andrew},
+ title = {Automatic mutual exclusion},
+ booktitle = hotos07,
+ year = 2007,
+ pages = {1--6},
+ location = {San Diego, CA},
+ }
+
+@inproceedings{jones:parallelizing:hotpar09,
+  title = {Parallelizing the Web Browser},
+  author = {Christopher Grant Jones and Rose Liu and Leo Meyerovich and Krste Asanovi\'{c} and Rastislav Bodik},
+  booktitle = hotpar09,
+  year = 2009,
+  month = mar
+}
+
+@manual{k42:scheduling,
+  author = {{IBM K42 Team}},
+  title = {Scheduling in {K42}},
+  month = aug,
+  year = 2002,
+  note = {Available from \url{http://www.research.ibm.com/K42/}},
+  url = {http://www.research.ibm.com/K42/white-papers/Scheduling.pdf}
+}
+
+@article{k42:tocs07,
+  author = {Jonathan Appavoo and Dilma {Da Silva} and Orran Krieger and Marc
+Auslander and Michal Ostrowski and Bryan Rosenburg and Amos Waterland and Robert
+W. Wisniewski and Jimi Xenidis and Michael Stumm and Livio Soares},
+  title = {Experience distributing objects in an {SMMP} {OS}},
+  journal = tocs,
+  volume = {25},
+  number = {3},
+  year = {2007},
+  issn = {0734-2071},
+  doi = {http://doi.acm.org/10.1145/1275517.1275518}
+}
+
+@article{karp:espeak:cacm03,
+ author = {Karp, Alan H.},
+ title = {E-speak e-xplained},
+ journal = cacm,
+ volume = {46},
+ number = {7},
+ year = {2003},
+ issn = {0001-0782},
+ pages = {112--118},
+ doi = {http://doi.acm.org/10.1145/792704.792708},
+ }
+
+@TechReport{katcher:postmark,
+  author = 	 {Jeffrey Katcher},
+  title = 	 {{PostMark}: A New File System Benchmark},
+  institution =  {Network Appliance},
+  year = 	 1997,
+  type =	 {Technical Report},
+  number =	 {TR3022}
+}
+
+@article{krantz:rig:ieeecs82,
+author = {K. A. Lantz and K. D. Gradischnig and J. A. Feldman and R. F. Rashid},
+title = {Rochester's Intelligent Gateway},
+journal ={IEEE Computer},
+volume = {15},
+issn = {0018-9162},
+year = {1982},
+pages = {54-68},
+doi = {http://doi.ieeecomputersociety.org/10.1109/MC.1982.1653859},
+}
+
+@inproceedings{krohn:events,
+ title = {Events Can Make Sense},
+ author = {Maxwell Krohn and Eddie Kohler and {M. Frans} Kaashoek},
+ booktitle = usenixatc07,
+ pages = {87--100},
+ year = 2007,
+}
+
+@inproceedings{levin:hydra:sosp75,
+  author = {R. Levin and E. Cohen and W. Corwin and F. Pollack and W. Wulf},
+  title = {Policy/Mechanism separation in {Hydra}},
+  booktitle = sosp75,
+  year = 1975,
+  month = nov
+}
+@inproceedings{Liedtke:1993:IIK:168619.168633,
+ author = {Liedtke, Jochen},
+ title = {Improving {IPC} by Kernel Design},
+ booktitle = {Proceedings of the Fourteenth ACM Symposium on Operating Systems Principles},
+ series = {SOSP '93},
+ year = {1993},
+ isbn = {0-89791-632-8},
+ location = {Asheville, North Carolina, USA},
+ pages = {175--188},
+ numpages = {14},
+ url = {http://doi.acm.org/10.1145/168619.168633},
+ doi = {10.1145/168619.168633},
+ acmid = {168633},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+}
+
+@inproceedings{lithe:pldi10,
+  author = {Heidi Pan and Benjamin Hindman and Krste Asanovi\'{c}},
+  title = {Composing Parallel Software Efficiently with Lithe},
+  booktitle = pldi10,
+  year = 2010,
+  location = {Toronto, ON, Canada},
+  month = jun
+}
+
+@inproceedings{logp:ppopp93,
+  author = {Culler, David and Karp, Richard and Patterson, David and Sahay, Abhijit and Schauser, Klaus Erik and Santos, Eunice and Subramonian, Ramesh and von Eicken, Thorsten},
+  title = {{LogP}: towards a realistic model of parallel computation},
+  booktitle = ppopp93,
+  year = 1993,
+  isbn = {0-89791-589-5},
+  location = {San Diego, CA, USA},
+  pages = {1--12},
+  numpages = 12,
+  url = {http://portal.acm.org/citation.cfm?id=155332.155333},
+  doi = {10.1145/155332.155333},
+  acmid = 155333,
+  keywords = {PRAM, complexity analysis, massively parallel processors, parallel algorithms, parallel models}
+}
+
+@article{lrpc:tocs90,
+  author = {Brian N. Bershad and Thomas E. Anderson and Edward D. Lazowska and
+Henry M. Levy},
+  title = {Lightweight Remote Procedure Call},
+  journal = tocs,
+  volume = {8},
+  number = {1},
+  year = {1990},
+  issn = {0734-2071},
+  pages = {37--55}
+}
+
+@misc{lwip,
+  title = {{lwIP}},
+  key = {lwIP},
+  note = {\url{http://savannah.nongnu.org/projects/lwip/}}
+}
+
+@Book{hank:capabilities,
+  author = 	 {Henry M. Levy},
+  title = 	 {Capability-based Computer Systems},
+  publisher = 	 {Digital Press},
+  year = 	 1984}
+
+@inproceedings{Clark:1985:SSU:323647.323645,
+ author = {Clark, David D.},
+ title = {The Structuring of Systems Using Upcalls},
+ booktitle = {Proceedings of the Tenth ACM Symposium on Operating Systems Principles},
+ series = {SOSP '85},
+ year = {1985},
+ isbn = {0-89791-174-1},
+ location = {Orcas Island, Washington, USA},
+ pages = {171--180},
+ numpages = {10},
+ url = {http://doi.acm.org/10.1145/323647.323645},
+ doi = {10.1145/323647.323645},
+ acmid = {323645},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+@inproceedings{marlow:runtime,
+ author = {Marlow, Simon and Peyton Jones, Simon and Singh, Satnam},
+ title = {Runtime support for multicore {H}askell},
+ booktitle = icfp09,
+ year = {2009},
+ isbn = {978-1-60558-332-7},
+ pages = {65--78},
+ doi = {http://doi.acm.org/10.1145/1596550.1596563},
+}
+
+
+@inproceedings{mcrt:eurosys07,
+  author = {Bratin Saha and Ali-Reza Adl-Tabatabai and Anwar Ghuloum and Mohan Rajagopalan and Richard L. Hudson and Leaf Peterson and Vijay Menon and Brian Murphy and Tatiana Shpeisman and Eric Sprangle and Anwar Rohillah and Doug Carmean and Jesse Fang},
+  title = {Enabling scalability and performance in a large scale {CMP} environment},
+  booktitle = eurosys07,
+  month = mar,
+  year = 2007
+}
+
+@manual{mpi,
+  title = {MPI: A Message-Passing Interface Standard},
+  organization = {Message Passing Interface Forum},
+  note = {Version 2.2},
+  month = {September},
+  year = 2009
+}
+
+@techreport{nasa:nas_benchmark,
+  author = {Van der Wijngaart, Rob F.},
+  title = {{NAS} Parallel Benchmarks Version 3.3},
+  number = {NAS-02-007},
+  institution = {NASA Advanced Supercomputing Division},
+  year = 2002,
+  month = oct,
+  address = {Moffett Field, CA, USA},
+  url = "http://www.nas.nasa.gov/News/Techreports/2002/PDF/nas-02-007.pdf"
+}
+
+@inproceedings{nishtala:hotpar09,
+  author = {Nishtala, Rajesh and Yelick, Katherine A.},
+  title = {Optimizing Collective Communication on Multicores},
+  booktitle = hotpar09,
+  year = 2009,
+  month = mar
+}
+
+@manual{openmp,
+  title = {OpenMP Application Programming Interface},
+  organization = {{OpenMP Architecture Review Board}},
+  note = {Version 3.0},
+  year = 2008
+}
+
+@inproceedings{ousterhout:coscheduling:DCS82,
+  author = {John Ousterhout},
+  title = {Scheduling Techniques for Concurrent Systems},
+  booktitle = {{IEEE} Distributed Computer Systems},
+  year = 1982
+}
+
+@article{ousterhout:medusa,
+  author = {John K. Ousterhout and Donald A. Scelza and Pradeep S. Sindhu},
+  title = {Medusa: An Experiment in Distributed Operating System Structure},
+  journal = cacm,
+  volume = {23},
+  number = {2},
+  month = feb,
+  year = 1980
+}
+
+@inproceedings{pankratius:multicore_experience:iwmse08,
+  author = {Victor Pankratius and Christoph Schaefer and Ali Jannesari and Walter F. Tichy},
+  title = {Software engineering for multicore systems -- an experience report},
+  booktitle = proc # {1st International Workshop on Multicore Software Engineering},
+  month = may,
+  year = 2008
+}
+
+@article{planas:hierarchical,
+ author = {Planas, Judit and Badia, Rosa M. and Ayguad\'{e}, Eduard and Labarta, Jesus},
+ title = {Hierarchical Task-Based Programming With {StarSs}},
+ journal = {International Journal of High Performance Computing Applications},
+ volume = {23},
+ number = {3},
+ year = {2009},
+ issn = {1094-3420},
+ pages = {284--299},
+ doi = {http://dx.doi.org/10.1177/1094342009106195},
+ publisher = {Sage Publications, Inc.},
+}
+
+@inproceedings{rashid:accent:sosp81,
+ author = {Rashid, Richard F. and Robertson, George G.},
+ title = {Accent: A communication oriented network operating system kernel},
+ booktitle = sosp81,
+ year = {1981},
+ isbn = {0-89791-062-1},
+ pages = {64--75},
+ location = {Pacific Grove, California, United States},
+ doi = {http://doi.acm.org/10.1145/800216.806593},
+ }
+
+@inproceedings{rbed:rtss03,
+  title = {Dynamic Integrated Scheduling of Hard Real-Time,
+                  Soft Real-Time and Non-Real-Time Processes},
+  author = {Scott A. Brandt and Scott A. Banachowski and Caixue
+                  Lin and Timothy Bisson},
+  year = 2003,
+  bibdate = {2005-01-25},
+  bibsource = {DBLP,
+                  http://dblp.uni-trier.de/db/conf/rtss/rtss2003.html#BrandtBLB03},
+  booktitle = proc # {24th IEEE Real-Time Systems Symposium},
+  isbn = {0-7695-2044-8},
+  url = {http://csdl.computer.org/comp/proceedings/rtss/2003/2044/00/20440396abs.htm}
+}
+
+@inproceedings{reppy:parallel,
+ author = {Reppy, John and Russo, Claudio V. and Xiao, Yingqi},
+ title = {Parallel concurrent {ML}},
+ booktitle = icfp09,
+ year = {2009},
+ isbn = {978-1-60558-332-7},
+ pages = {257--268},
+ doi = {http://doi.acm.org/10.1145/1596550.1596588},
+}
+
+@article{roofline:cacm09,
+  author = {Williams, Samuel and Waterman, Andrew and Patterson, David},
+  title = {Roofline: an insightful visual performance model for multicore architectures},
+  journal = cacm,
+  volume = {52},
+  number = {4},
+  year = {2009},
+  issn = {0001-0782},
+  pages = {65--76},
+  doi = {http://doi.acm.org/10.1145/1498765.1498785}
+}
+
+@inproceedings{roscoe:hotos07,
+  title = {{Hype and Virtue}},
+  author = {Timothy Roscoe and Kevin Elphinstone and Gernot Heiser},
+  booktitle = hotos07,
+  year = {2007},
+  month = may,
+  location = {San Diego, CA, USA}
+}
+
+@inproceedings{rtid:hotos07,
+  author = {Mohan Rajagopalan and Brian T. Lewis and Todd A. Anderson},
+  title = {Thread scheduling for multi-core platforms},
+  booktitle = hotos07,
+  month = may,
+  year = 2007
+}
+
+@inproceedings{schuepbach:mmcs08,
+  author = {Adrian Sch\"{u}pbach and Simon Peter and Andrew Baumann
+                  and Timothy Roscoe and Paul Barham
+                  and Tim Harris and Rebecca Isaacs},
+  title = {Embracing diversity in the {Barrelfish} manycore
+                  operating system},
+  booktitle = proc # {1st Workshop on Managed Multi-Core Systems},
+  year = 2008,
+  month = jun
+}
+
+@inproceedings{scott:scalable:ppopp01,
+  author = {Scott, Michael L. and {Scherer III}, William N.},
+  title = {Scalable queue-based spin locks with timeout},
+  booktitle = ppopp01,
+  year = 2001,
+  pages = {44--52},
+  doi = {http://doi.acm.org/10.1145/379539.379566}
+}
+
+@inproceedings{sel4:iies08,
+  author = {Elkaduwe,, Dhammika and Derrin,, Philip and Elphinstone,, Kevin},
+  title = {Kernel design for isolation and assurance of physical memory},
+  booktitle = proc # {1st workshop on isolation and
+                integration in embedded systems (IIES '08)},
+  year = {2008},
+  isbn = {978-1-60558-126-2},
+  pages = {35--40},
+  location = {Glasgow, Scotland},
+  doi = {http://doi.acm.org/10.1145/1435458.1435465},
+  annote = {describes cap model in most detail}
+}
+
+@manual{sel4:refman,
+  title = {{seL4} Reference Manual},
+  author = {Philip Derrin and Dhammika Elkaduwe and Kevin
+                  Elphinstone},
+  organization = {NICTA},
+  year = 2006,
+  note = {\url{http://www.ertos.nicta.com.au/research/sel4/sel4-refman.pdf}}
+}
+
+@inproceedings{sel4:sosp09,
+  author = {Gerwin Klein and Kevin Elphinstone and Gernot Heiser and
+June Andronick and David Cock and Philip Derrin and Dhammika Elkaduwe and Kai
+Engelhardt and Rafal Kolanski and Michael Norrish and Thomas Sewell and Harvey
+Tuch and Simon Winwood},
+  title = {{seL4}: Formal Verification of an {OS} Kernel},
+  booktitle = sosp09,
+  location = {Big Sky, MT, USA},
+  year = 2009,
+  month = oct
+}
+
+@techreport{sunrpc,
+  author = {R. Thurlow},
+  title = {{RPC}: Remote Procedure Call Protocol Specification Version 2},
+  institution = {Sun Microsystems},
+  year = 2009,
+  month = may,
+  type = {RFC},
+  number = {5531}
+}
+
+@inproceedings{tessellation:hotpar09,
+  author = {R. Liu and K. Klues and S. Bird and S. Hofmeyr and K. Asanovi\'c and J. Kubiatowicz},
+  title = {{Tessellation}: Space-Time Partitioning in a Manycore Client
+                  {OS}},
+  booktitle = hotpar09,
+  year = 2009,
+  month = mar
+}
+
+@article{thacker:firefly,
+  author = {Chuck Thacker and Lawrence Stewart},
+  title = {Firefly: a multiprocessor workstation},
+  journal = {Computer Architecture News},
+  volume = {15},
+  number = {5},
+  year = 1987
+}
+
+@InProceedings{tornado:osdi99,
+  author = 	 {Ben Gamsa and Orran Krieger and Jonathan Appavoo and
+                  Michael Stumm},
+  title = 	 {Tornado: Maximising Locality and Concurrency in a
+                  Shared Memory Multiprocessor Operating System},
+  booktitle = 	 osdi99,
+  pages =	 {87--100},
+  year =	 1999,
+  location =	 {New Orleans, LA, USA},
+  month =	 feb,
+  keywords =	 {false sharing, caches, NUMA, object-orientation,
+                  protected procedure call},
+  annote =	 {implemented OS from scratch, runs on Toronto
+                  architecture and SimOS, complete system}
+}
+
+@article{urpc:tocs91,
+  author = {Brian N. Bershad and Thomas E. Anderson and Edward D. Lazowska and
+Henry M. Levy},
+  title = {User-level interprocess communication for shared memory
+multiprocessors},
+  journal = tocs,
+  volume = {9},
+  number = {2},
+  year = {1991},
+  issn = {0734-2071},
+  pages = {175--198},
+  doi = {http://doi.acm.org/10.1145/103720.114701}
+}
+
+@inproceedings{Anderson:1991:SAE:121132.121151,
+ author = {Anderson, Thomas E. and Bershad, Brian N. and Lazowska, Edward D. and Levy, Henry M.},
+ title = {Scheduler Activations: Effective Kernel Support for the User-level Management of Parallelism},
+ booktitle = {Proceedings of the Thirteenth ACM Symposium on Operating Systems Principles},
+ series = {SOSP '91},
+ year = {1991},
+ isbn = {0-89791-447-3},
+ location = {Pacific Grove, California, USA},
+ pages = {95--109},
+ numpages = {15},
+ url = {http://doi.acm.org/10.1145/121132.121151},
+ doi = {10.1145/121132.121151},
+ acmid = {121151},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+@inproceedings{Hand:1999:SNO:296806.296812,
+ author = {Hand, Steven M.},
+ title = {Self-paging in the Nemesis Operating System},
+ booktitle = {Proceedings of the Third Symposium on Operating Systems Design and Implementation},
+ series = {OSDI '99},
+ year = {1999},
+ isbn = {1-880446-39-1},
+ location = {New Orleans, Louisiana, USA},
+ pages = {73--86},
+ numpages = {14},
+ url = {http://dl.acm.org/citation.cfm?id=296806.296812},
+ acmid = {296812},
+ publisher = {USENIX Association},
+ address = {Berkeley, CA, USA},
+} 
+@inproceedings{Brandt:2003:DIS:956418.956606,
+ author = {Brandt, Scott A. and Banachowski, Scott and Lin, Caixue and Bisson, Timothy},
+ title = {Dynamic Integrated Scheduling of Hard Real-Time, Soft Real-Time and Non-Real-Time Processes},
+ booktitle = {Proceedings of the 24th IEEE International Real-Time Systems Symposium},
+ series = {RTSS '03},
+ year = {2003},
+ isbn = {0-7695-2044-8},
+ pages = {396--},
+ url = {http://dl.acm.org/citation.cfm?id=956418.956606},
+ acmid = {956606},
+ publisher = {IEEE Computer Society},
+ address = {Washington, DC, USA},
+}
+@inproceedings{walker:locus:sosp83,
+  author = {Bruce Walker and Gerald Popek and Robert English and Charles Kline and Greg Thiel},
+  title = {The {LOCUS} Distributed Operating System},
+  booktitle = sosp83,
+  month = oct,
+  year = 1983
+}
+
+@inproceedings{weil:ceph:osdi06,
+  author = {Sage A. Weil and Scott A. Brandt and Ethan L. Miller and Darrell
+D. E. Long and Carlos Maltzahn},
+  title = {Ceph: A Scalable, High-Performance Distributed File System},
+  booktitle = osdi06,
+  month = nov,
+  year = 2006
+}
+
+@inproceedings{welch:panasas:fast08,
+  author = {Brent Welch and Marc Unangst and Zainul Abbasi and Garth Gibson and Brian Mueller and Jason Small and Jim Zelenka and Bin Zhou},
+  title = {Scalable Performance of the {Panasus} Parallel File System},
+  booktitle = fast08,
+  month = feb,
+  year = 2008
+}
+
+@article{whaley:atlas:parcomp01,
+  author = {R. Clint Whaley and Antoine Petitet and Jack J. Dongarra},
+  title = {Automated empirical optimization of software and the {ATLAS} project},
+  journal = {Parallel Computing},
+  volume = {27},
+  number = {1--2},
+  pages = {3--35},
+  year = 2001
+}
+
+@book{wulf:hydra:81,
+  author = {William A. Wulf and Roy Levin and Samuel P. Harbison},
+  title = {{HYDRA/C.mmp}: An Experimental Computer System},
+  publisher = {{McGraw}-Hill Book Company},
+  year = 1981
+}
+
+@inproceedings{zhang:cmp_cache_sharing:ppopp10,
+  author = {Eddy Z. Zhang and Yunlian Jiang and Xipeng Shen},
+  title = {Does Cache Sharing on Modern {CMP} Matter to the Performance of Contemporary Multithreaded Programs?},
+  booktitle = ppopp10,
+  month = jan,
+  year = 2010
+}
+
+@Misc{grub,
+  title = 	 {GNU GRand Unified Boot loader (GRUB)},
+  note = 	 {\url{http://www.gnu.org/software/grub/}}}
+
+
+@inproceedings{nishtala:optimizing-collective:hotpar09,
+    author = {Nishtala, R. and Yelick},
+    institution = {Berkeley, CA, USA},
+    journal = {HotPar 2009},
+    keywords = {memory-communication},
+    month = {March},
+    posted-at = {2010-02-09 09:20:31},
+    priority = {0},
+    title = {Optimizing Collective Communication on Multicores},
+    year = {2009}
+}
+@inproceedings{Giacomoni:2008:FEP:1345206.1345215,
+ author = {Giacomoni, John and Moseley, Tipp and Vachharajani, Manish},
+ title = {FastForward for Efficient Pipeline Parallelism: A Cache-optimized Concurrent Lock-free Queue},
+ booktitle = {Proceedings of the 13th ACM SIGPLAN Symposium on Principles and Practice of Parallel Programming},
+ series = {PPoPP '08},
+ year = {2008},
+ isbn = {978-1-59593-795-7},
+ location = {Salt Lake City, UT, USA},
+ pages = {43--52},
+ numpages = {10},
+ url = {http://doi.acm.org/10.1145/1345206.1345215},
+ doi = {10.1145/1345206.1345215},
+ acmid = {1345215},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {fastforward, linearizability, lock-free, multicore, multiprocessors, nonblocking synchronization, pipeline parallel, queue},
+} 
+@article{Ganger:2002:FFA:505452.505455,
+ author = {Ganger, Gregory R. and Engler, Dawson R. and Kaashoek, M. Frans and Brice\~{n}o, Hector M. and Hunt, Russell and Pinckney, Thomas},
+ title = {Fast and Flexible Application-level Networking on Exokernel Systems},
+ journal = {ACM Trans. Comput. Syst.},
+ issue_date = {February 2002},
+ volume = {20},
+ number = {1},
+ month = feb,
+ year = {2002},
+ issn = {0734-2071},
+ pages = {49--83},
+ numpages = {35},
+ url = {http://doi.acm.org/10.1145/505452.505455},
+ doi = {10.1145/505452.505455},
+ acmid = {505455},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {Extensible systems, OS structure, fast servers, network services},
+} 
+@inproceedings{Black:1997:PIV:648046.745222,
+ author = {Black, Richard and Barham, Paul T. and Donnelly, Austin and Stratford, Neil},
+ title = {Protocol Implementation in a Vertically Structured Operating System},
+ booktitle = {Proceedings of the 22Nd Annual IEEE Conference on Local Computer Networks},
+ series = {LCN '97},
+ year = {1997},
+ isbn = {0-8186-8141-1},
+ pages = {179--188},
+ numpages = {10},
+ url = {http://dl.acm.org/citation.cfm?id=648046.745222},
+ acmid = {745222},
+ publisher = {IEEE Computer Society},
+ address = {Washington, DC, USA},
+} 
+
+
+@Misc{newlib,
+  author = 	 {Sourceware},
+  title = 	 {Newlib},
+  howpublished = {\url{http://www.sourceware.org/newlib/}},
+  month = 	 {November},
+  year = 	 2013}
+
+@TechReport{btn000-overview,
+  author = 	 bft,
+  title = 	 {{Barrelfish Architectural Overview}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 000,
+  month = 	 jun}
+
+@TechReport{btn001-glossary,
+  author = 	 bft,
+  title = 	 {{Barrelfish Glossary}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 001,
+  month = 	 may}
+
+@TechReport{btn002-mackerel,
+  author = 	 bft,
+  title = 	 {{Mackerel 1.2 User Guide}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 002,
+  month = 	 apr}
+
+@TechReport{btn003-hake,
+  author = 	 bft,
+  title = 	 {{Hake}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 003,
+  month = 	 apr}
+
+@TechReport{btn004-vm,
+  author = 	 bft,
+  title = 	 {{Virtual Memory in Barrelfish}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 004,
+  month = 	 feb}
+
+@TechReport{btn005-scc,
+  author = 	 bft,
+  title = 	 {{Barrelfish on the Intel Single-chip Cloud Computer}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 005,
+  month = 	 sep}
+
+@TechReport{btn006-routing,
+  author = 	 bft,
+  title = 	 {{Routing in Barrelfish}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2011,
+  type = 	 btn,
+  number = 	 006,
+  month = 	 may}
+
+@TechReport{btn007-beehive,
+  author = 	 bft,
+  title = 	 {{Barrelfish on the Beehive experimental platform}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 007,
+  month = 	 jun}
+
+@TechReport{btn008-tracing,
+  author = 	 bft,
+  title = 	 {{Tracing and Visualization}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 008,
+  month = 	 jun}
+
+@TechReport{btn009-notifications,
+  author = 	 bft,
+  title = 	 {{Message Notifications}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 009,
+  month = 	 jun}
+
+@TechReport{btn010-spec,
+  author = 	 bft,
+  title = 	 {{Barrelfish Specification}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2011,
+  type = 	 btn,
+  number = 	 010,
+  month = 	 jul}
+
+@TechReport{btn011-idc,
+  author = 	 bft,
+  title = 	 {{Inter-dispatcher communication in Barrelfish}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 011,
+  month = 	 oct}
+
+@TechReport{btn012-services,
+  author = 	 bft,
+  title = 	 {{Barrelfish OS Services}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2010,
+  type = 	 btn,
+  number = 	 012,
+  month = 	 aug}
+
+@TechReport{btn013-capabilities,
+  author = 	 bft,
+  title = 	 {{Capability Management in Barrelfish}},
+  institution =  {Systems Group, ETH Zurich},
+  year = 	 2011,
+  type = 	 btn,
+  number = 	 013,
+  month = 	 mar}
+
+@article{gem5:sigarch11,
+ author = {Binkert, Nathan and Beckmann, Bradford and Black, Gabriel and Reinhardt, Steven K. and Saidi, Ali and Basu, Arkaprava and Hestness, Joel and Hower, Derek R. and Krishna, Tushar and Sardashti, Somayeh and Sen, Rathijit and Sewell, Korey and Shoaib, Muhammad and Vaish, Nilay and Hill, Mark D. and Wood, David A.},
+ title = {The Gem5 Simulator},
+ journal = {SIGARCH Comput. Archit. News},
+ volume = {39},
+ number = {2},
+ month = aug,
+ year = {2011},
+ pages = {1--7},
+ address = {New York, NY, USA},
+}
+
+@article{m5:micro06,
+  title={The M5 simulator: Modeling networked systems},
+  author={Binkert, Nathan L. and Dreslinski, Ronald G. and Hsu, Lisa R. and Lim, Kevin T. and Saidi, Ali G. and Reinhardt, Steven K.},
+  journal={Micro, IEEE},
+  volume={26},
+  number={4},
+  pages={52--60},
+  year={2006},
+}
+
+@article{gems:sigarch05,
+  title={Multifacet's general execution-driven multiprocessor simulator ({GEMS}) toolset},
+  author={Martin, Milo MK. and Sorin, Daniel J. and Beckmann, Bradford M. and Marty, Michael R. and Xu, Min and Alameldeen, Alaa R. and Moore, Kevin E. and Hill, Mark D. and Wood, David A.},
+  journal={ACM SIGARCH Computer Architecture News},
+  volume={33},
+  number={4},
+  pages={92--99},
+  year={2005},
+  publisher={ACM}
+}
+
+
+@TechReport{btn019-devicedrivers,
+  author =     bft,
+  title =      {{Device Drivers in Barrelfish}},
+  institution =  {Systems Group, ETH Zurich},
+  year =   2013,
+  type =   btn,
+  number =     019,
+  month =      dec}
+
+
+
+@article{Lamport:1978:TCO:359545.359563,
+ author = {Lamport, Leslie},
+ title = {Time, Clocks, and the Ordering of Events in a Distributed System},
+ journal = {Commun. ACM},
+ issue_date = {July 1978},
+ volume = {21},
+ number = {7},
+ month = jul,
+ year = {1978},
+ issn = {0001-0782},
+ pages = {558--565},
+ numpages = {8},
+ url = {http://doi.acm.org/10.1145/359545.359563},
+ doi = {10.1145/359545.359563},
+ acmid = {359563},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {clock synchronization, computer networks, distributed systems, multiprocess systems},
+} 
+

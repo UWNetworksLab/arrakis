@@ -1,0 +1,357 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Universitaetstr. 6, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * omap_uart.dev
+ *
+ * DESCRIPTION: OMAP4430 UART
+ *
+ * This is derived from:
+ *
+ * OMAP4430 Multimedia Device Silicon Revision 2.x Technical Reference
+ * Manual Version O (OMAP4430_ES2.x_PUBLIC_TRM_vO.pdf)
+ *
+ * This file only incorporates the parts relevant for UART operation.
+ * Registers relevant for IrDA, CIR, and other modes are not yet
+ * described. 
+ */
+
+device omap_uart msbfirst ( addr base ) "OMAP4430 UART" {
+    
+    register THR wo addr (base, 0x0) "Transmit holding" {
+        _       24;
+        thr     8 wo       "Transmit holding register";
+    };
+
+    register RHR ro also addr (base, 0x0) "Receive holding" {
+        _       24;
+        rhr     8 ro       "Receive holding register";
+    };
+
+    register DLL rw also addr (base, 0x0) "Divisor latch low" {
+        _         24;
+        clock_lsb 8 rw     "Divisor latch low";
+    };
+
+    register IER rw addr (base, 0x4) "Interrupt enable" {
+        _          24;
+        cts_it     1    "CTS interrupt enable";
+        rts_it     1    "RTS interrupt enable";
+        xoff_it    1    "XOFF interrupt enable";
+        sleep_mode 1    "Sleep mode (stop baud rate clk when module inactive)";
+        modem_sts_it 1  "Modem status register interrupt enable";
+        line_sts_it 1   "Receiver line status interrupt enable";
+        thr_it     1    "THR interrupt enable";
+        rhr_it     1    "RHR interrupt enable";
+    };
+
+    constants it_type "Interrupt type" {
+        it_modem    = 0x0       "Modem interrupt";
+        it_thr      = 0x1       "THR interrupt";
+        it_rhr      = 0x2       "RHR interrupt";
+        it_rlse     = 0x3       "Receiver line status error";
+        it_rxtimeout= 0x6       "RX time-out";
+        it_xoff     = 0x8       "XOFF/special character";
+        it_cts      = 0x10      "CTS, RTS, DSR change state from active to inactive";
+    };
+
+    register IIR ro addr (base, 0x8) "Interrupt identification" {
+        _          24;
+        fcr_mirror 2    "Mirror contents of FCR[0]";
+        it_type    5 type(it_type)      "Interrupt type";
+        it_pending 1    "No interrupt pending";
+    };
+
+    register DLH rw also addr (base, 0x4) "Divisor latch high" {
+        _          26;
+        clock_msb  6  rw   "Divisor latch high";
+    };
+
+    register FCR wo also addr (base, 0x8) "FIFO control" {
+        _             24;
+        rx_fifo_trig  2 "RX FIFO trigger level";
+        tx_fifo_trig  2 "TX FIFO trigger level";
+        dma_mode      1 "Enable DMA mode";
+        tx_fifo_clear 1 "Clear TX FIFO";
+        rx_fifo_clear 1 "Clear RX FIFO";
+        fifo_en       1 "Enable TX/RX FIFOs";
+    };
+
+    constants sw_flow "Software flow control" {
+        none                = 0b00   "No transmit flow control";
+        xon1xoff1           = 0b10   "XON1, XOFF1";
+        xon2xoff2           = 0b01   "XON2, XOFF2";
+        xon12xoff12         = 0b11   "XON1, XON2: XOFF1, XOFF2";
+    };
+
+    register EFR wo also addr (base, 0x8) "Enhanced feature register" {
+        _                 24;
+        auto_cts_en       1     "Enable auto-CTS flow control";
+        auto_rts_en       1     "Enable auto-RTS flow control";
+        special_char_detect 1   "Enable special character detect";
+        enhanced_en       1     "Enable writing to IER";
+        sw_tx_flow_control 2 type(sw_flow)      "Software TX flow control";
+        sw_rx_flow_control 2 type(sw_flow)      "Software RX flow control";
+    };
+
+    constants char_length "RX/TX char length" {
+        wl_5bits       = 0    "5 bits";
+        wl_6bits       = 1    "6 bits";
+        wl_7bits       = 2    "7 bits";
+        wl_8bits       = 3    "8 bits";
+    };
+
+    register LCR rw addr (base, 0xc) "Line control" {
+        _               24;
+        div_en          1       "Divisor latch enable";
+        break_en        1       "Break control enable";
+        parity_type2    1       "Parity format";
+        parity_type1    1       "Even parity if LCR.parity_en = 1";
+        parity_en       1       "Parity enable";
+        nb_stop         1       "Number of stop bits";
+        char_length     2 type(char_length)     "TX/RX char length";
+    };
+
+    register XON1 rw addr (base, 0x10) "XON1 character" {
+        _            24;
+        xon_word1    8     "XON1 character";
+    };
+
+    register MCR rw also addr (base, 0x10) "Modem control" {
+        _            25;
+        tcr_tlr      1  "Enable access to TCR and TLR";
+        xon_en       1  "Enable XON any function";
+        loopback_en  1  "Enable local loopback mode";
+        cd_sts_ch    1  "In loopback, force DCD in low, IRQ out inactive";
+        ri_sts_ch    1  "In loopback, force RI input low";
+        rts          1  "Force RTS output active (low)";
+        dtr          1  "Force DTR output active (low)";
+    };
+
+    register LSR ro addr (base, 0x14) "Line status" {
+        _               24;
+        rx_fifo_sts     1       "RX FIFO error";
+        tx_sr_e         1       "THR and TX FIFO empty";
+        tx_fifo_e       1       "THR empty";
+        rx_bi           1       "RX break detected";
+        rx_fe           1       "RX FIFO framing error";
+        rx_pe           1       "RX FIFO parity error";
+        rx_oe           1       "RX FIFO overflow";
+        rx_fifo_e       1       "RX FIFO not empty";
+    };
+
+    register XON2 rw also addr (base, 0x14) "XON2 character" {
+        _          24;
+        xon_word2  8    "XON2 character";
+    };
+
+    register TCR rw addr (base, 0x18) "Transmission control" {
+        _                  24;
+        rx_fifo_trig_start 4    "RX FIFO trigger level to RESTORE transmission";
+        rx_fifo_trig_halt  4    "RX FIFO trigger level to HALT transmission";
+    };
+
+    register XOFF1 rw also addr (base, 0x18) "XOFF1 character" {
+        _           24;
+        xoff_word1  8     "XOFF1 character";
+    };
+
+    register MSR ro also addr (base, 0x18) "Modem status" {
+        _         24;
+        ncd_sts   1     "Complement of DCD input";
+        nri_sts   1     "Complement of RI input";
+        ndsr_sts  1     "Complement of DSR input";
+        ncts_sts  1     "Complement of CTS input";
+        dcd_sts   1     "DCD input changed. Cleared on read.";
+        ri_sts    1     "RI input changed. Cleared on read.";
+        dsr_sts   1     "DSR input changed. Cleared on read.";
+        cts_sts   1     "CTS input changed. Cleared on read.";
+    };
+
+    register SPR rw addr (base, 0x1c) "Scratchpad" {
+        _                 24;
+        spr_word          8     "Scratchpad";
+    };
+
+    register TLR rw also addr (base, 0x1c) "Trigger level" {
+        _                 24;
+        rx_fifo_trig_dma  4       "RX FIFO trigger level";
+        tx_fifo_trig_dma  4       "TX FIFO trigger level";
+    };
+
+    register XOFF2 rw also addr (base, 0x1c) "XOFF2 character" {
+        _                 24;
+        xoff_word2        8     "XOFF2 character";
+    };
+
+    constants serial_mode "Serial mode" {
+        sm_uart16x      = 0x0   "UART 16x mode";
+        sm_sir          = 0x1   "SIR mode";
+        sm_uart16xauto  = 0x2   "UART 16x auto-baud";
+        sm_uart13x      = 0x3   "UART 13x mode";
+        sm_mir          = 0x4   "MIR mode";
+        sm_fir          = 0x5   "FIR mode";
+        sm_cir          = 0x6   "CIR mode";
+        sm_disable      = 0x7   "Disable";
+    };
+
+    register MDR1 rw addr (base, 0x20) "Mode definition 1" {
+        _                  24;
+        frame_end_mode     1    "0 = Frame length method, 1 = EOT bit method";
+        sip_mode           1    "Enable automatic SIP mode";
+        sct                1    "Store and control IrDA transmission";
+        set_txir           1    "IRTX pin output forced high";
+        ir_sleep           1    "Enable IrDA/CIR sleep mode";
+        mode_select        3 type(serial_mode)      "Serial mode select";
+    };
+
+    register MDR2 rw addr (base, 0x24) "Mode definition 2" {
+        _              24;
+        set_txir_alt   1    "Enable alternate mode for SET_TXIR";
+        irrxinvert     1    "IrDA mode: Invert RX pin";
+        cir_pulse_mode 2    "CIR pulse modulation width";
+        uart_pulse     1    "UART mode: Enable pulse shaping";
+        sts_fifo_trig  2    "IrDA mode: Frame status FIFO threshold";
+        irtx_underrun  1    "IrDA transmission underrun";
+    };
+
+    constants parity_type width(2) "Parity type" {
+        par_none = 0b00 "No parity";
+        par_spc  = 0b01 "Space parity";
+        par_even = 0b10 "Even parity";
+        par_odd  = 0b11 "Odd parity";
+    };
+
+    constants baud_rate width(5) "Baud rate" {
+        baud_none       =  0x0   "No speed specified";
+        baud115200      =  0x1  "115200 baud";
+        baud57600       =  0x2  "57600 baud";
+        baud38400       =  0x3  "38400 baud";
+        baud28800       =  0x4  "28800 baud";
+        baud19200       =  0x5  "19200 baud";
+        baud14400       =  0x6  "14400 baud";
+        baud9600        =  0x7  "9600 baud";
+        baud4800        =  0x8  "4800 baud";
+        baud2400        =  0x9  "2400 baud";
+        baud1200        =  0xA  "1200 baud";
+    };
+
+    register UASR ro addr(base, 0x38) "Autobauding status" {
+        _           24;
+        parity      2 type(parity_type) "Parity";
+        bit_by_char 1                   "1=8 bits per char";
+        speed       5 type(baud_rate)   "Baud rate";
+    };
+
+    register ACR rw addr(base, 0x3C) "Auxiliary control" {
+        _               24;
+        pulse_type      1       "Pulse width (1 = 1.6us, 0 = 3/16 baud";
+        sd_mod          1       "SD pin set to low if 1";
+        dis_ir_rx       1       "Disable RX input";
+        dis_tx_underrun 1       "TX underrun is disabled";
+        send_sip        1       "Send serial IR interaction pulse (SIP)";
+        sctx_en         1       "Store and controlled TX start";
+        abort_en        1       "Frame abort enable";
+	eot_en		1	"End-of-transmission bit";
+    };
+  
+    register SCR rw addr (base, 0x40) "Supplementary control" {
+        _                       24;
+        rx_trig_granu1  1       "Enable granularity 1 trigger RX level";
+        tx_trig_granu1  1       "Enable granularity 1 trigger TX level";
+        dsr_it          1       "Enable DSR interrupt";
+        rx_cts_dsr_wake_up_enable 1     "Enable wake-up interrupt";
+        tx_empty_ctl_it 1       "Enable THR interrupt on TX FIFO empty";
+        dma_mode_2              2       "DMA mode select";
+        dma_mode_ctl    1       "0 = set DMA mode via 1=FCR[3], 0=SCR[2:1]";
+    };
+
+    register SSR rw addr (base, 0x44) "Supplementary status" {
+        _               29;
+        dma_counter_rst 1 rw    "Reset DMA counter on FIFO reset";
+        rx_cts_dsr_wake_up_sts 1 ro "Falling edge detected on RX, CTS, or DSR";
+        tx_fifo_full    1 ro    "TX FIFO is full";
+    };
+
+    register MVR ro addr (base, 0x50) "Module version" type(uint32);
+
+    register SYSC rw addr (base, 0x54) "System configuration" {
+        _                  27;
+        idlemode           2    "Power management idle mode";
+        enawakeup          1    "Enable wake-up capability";
+        softreset          1    "Soft-reset the module";
+        autoidle           1    "Enable automatic OCP clock gating";
+    };
+
+    register SYSS ro addr (base, 0x58) "System status" {
+        _                  31;
+        resetdone          1    "Reset complete";
+    };
+
+    register WER rw addr (base, 0x5C) "Wakeup enable" {
+        _               24;
+        tx_wakeup       1       "TX event can wake up system";
+        rx_lsi          1       "Receiver line status interrupt can wakeup";
+        rhr_int         1       "RHR can wake up system";
+        rx_activity     1       "RX activity can wake up system";
+        dcd_cd_activity 1       "DCD CD activity can wake up system";
+        ri_activity     1       "RI activity can wake up system";
+        dsr_activity    1       "DSR activity can wake up system";
+        cts_activity    1       "CTS activity can wake up system";
+    };
+  
+    register CPFS rw addr (base, 0x60) "Carrier frequency prescaler" {
+        _       24;
+        scale   8       "System clock freq. prescaler (12x multiple)";
+    };
+  
+  
+    register RFLVL ro addr (base, 0x64) "RX FIFO level" {
+        _       24;
+        lvl     8  ro  "Receive FIFO level";
+    };
+  
+    register TFLVL ro addr (base, 0x68) "TX FIFO level" {
+        _       24;
+        lvl     8  ro  "Transmit FIFO level";
+    };
+  
+    register IER2 rw addr (base, 0x6C) "Interrupt enable 2" {
+        _       30;
+        tfe     1  rw  "Transmit FIFO empty";
+        rfe     1  rw  "Receive FIFO empty";
+    };
+  
+    register ISR2 rw addr (base, 0x70) "Interrupt status 2" {
+        _       30;
+        tfs     1  rw  "Transmit FIFO empty";
+        rfs     1  rw  "Receive FIFO empty";
+    };
+
+    register FSEL rw addr (base, 0x74) "Frequency selection" {
+        _       24;
+        f       8  rw   "Frequency";
+    };
+  
+    register MDR3 rw addr (base, 0x80) "Mode definiton register 3" {
+        _               29;
+        tx_dma_th       1    "Enable to set different TXDMA threshold";
+        ndef_freq       1    "Enable NONDEFAULT fclk frequencies";
+        d_cir_rx_demod  1    "Disable CIR RX demodulation";
+    };
+
+    register TXDT rw addr (base, 0x84) "Transmit DMA threshold" {
+        _       24;
+        tdt     8  rw   "Threshold";
+    };
+
+};
+  
+      
+
+

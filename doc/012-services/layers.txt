@@ -1,0 +1,44 @@
+Top down
+
+
+Apps:
+- regular apps (web server, web browser, etc.)
+
+Shell:
+- shell
+
+Interaction and I/O:
+- storage management
+- network stack
+- terminal
+
+Resource Management and Protection:
+- resource management and accounting
+- principals
+- power management
+
+Devices:
+- device drivers 
+- bus management
+- device management
+
+Synchronisation:
+- lock service
+
+Communication and Process Management:
+- binding
+- naming
+- group communication
+- routing
+- process management
+- threading
+
+skb:
+- skb
+
+Base functionality:
+- capability management
+- memory allocation
+- basic communication
+- virtual memory??
+

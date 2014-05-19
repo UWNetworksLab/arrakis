@@ -1,0 +1,368 @@
+ioapic(4, 4273995776, 0).
+ioapic(5, 3489660928, 24).
+
+rootbridge(addr(0, 0, 0), childbus(0, 127), mem(2952790016, 3489660927)).
+% rootbridge(addr(0, 0, 0), childbus(0, 127), mem(0, 536870911)).
+
+bar(addr(0, 4, 0), 0, 2957049856, 16777216, mem, nonprefetchable, 64).
+bar(addr(0, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(0, 6, 0), 0, 2957049856, 67108864, mem, nonprefetchable, 64).
+bar(addr(0, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(0, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(0, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(0, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(0, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(0, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(0, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+
+bar(addr(1, 4, 0), 0, 2957049856, 16777216, mem, nonprefetchable, 64).
+bar(addr(1, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(1, 6, 0), 0, 2957049856, 67108864, mem, nonprefetchable, 64).
+bar(addr(1, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(1, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(1, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(1, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(1, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(1, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(1, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(2, 4, 0), 0, 2957049856, 16777216, mem, nonprefetchable, 64).
+bar(addr(2, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(2, 6, 0), 0, 2957049856, 67108864, mem, nonprefetchable, 64).
+bar(addr(2, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(2, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(2, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(2, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(2, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(2, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(2, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(3, 4, 0), 0, 2957049856, 16777216, mem, nonprefetchable, 64).
+bar(addr(3, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(3, 6, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(3, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(3, 8, 0), 0, 2957049856, 67108864, mem, nonprefetchable, 64).
+bar(addr(3, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(3, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(3, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(3, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(3, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(4, 4, 0), 0, 2957049856, 16777216, mem, nonprefetchable, 64).
+bar(addr(4, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(4, 6, 0), 0, 2957049856, 67108864, mem, nonprefetchable, 64).
+bar(addr(4, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(4, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(4, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(4, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(4, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(4, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(4, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(5, 4, 0), 0, 2957049856, 16777216, mem, nonprefetchable, 64).
+bar(addr(5, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(5, 6, 0), 0, 2957049856, 67108864, mem, nonprefetchable, 64).
+bar(addr(5, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(5, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(5, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(5, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(5, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(5, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(5, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(6, 4, 0), 0, 2957049856, 16777216, mem, nonprefetchable, 64).
+bar(addr(6, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(6, 6, 0), 0, 2957049856, 67108864, mem, nonprefetchable, 64).
+bar(addr(6, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(6, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(6, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(6, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(6, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(6, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(6, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(7, 4, 0), 0, 2957049856, 16777216, mem, nonprefetchable, 64).
+bar(addr(7, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(7, 6, 0), 0, 2957049856, 67108864, mem, nonprefetchable, 64).
+bar(addr(7, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(7, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(7, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(7, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(7, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(7, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(7, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(8, 4, 0), 0, 2957049856, 16777216, mem, nonprefetchable, 64).
+bar(addr(8, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(8, 6, 0), 0, 2957049856, 67108864, mem, nonprefetchable, 64).
+bar(addr(8, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(8, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(8, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(8, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(8, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(8, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(8, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(9, 4, 0), 0, 2957049856, 16384, mem, nonprefetchable, 64).
+bar(addr(9, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(9, 6, 0), 0, 2957049856, 65536, mem, nonprefetchable, 64).
+bar(addr(9, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(9, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(9, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(9, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(9, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(9, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(9, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(10, 4, 0), 0, 2957049856, 16384, mem, nonprefetchable, 64).
+bar(addr(10, 5, 0), 0, 2957049856, 33554432, mem, nonprefetchable, 64).
+bar(addr(10, 6, 0), 0, 2957049856, 65536, mem, nonprefetchable, 64).
+bar(addr(10, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(10, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(10, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(10, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(10, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(10, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(10, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(11, 4, 0), 0, 2957049856, 16384, mem, nonprefetchable, 64).
+bar(addr(11, 5, 0), 0, 2957049856, 32768, mem, nonprefetchable, 64).
+bar(addr(11, 6, 0), 0, 2957049856, 65536, mem, nonprefetchable, 64).
+bar(addr(11, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(11, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(11, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(11, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(11, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(11, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(11, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(12, 4, 0), 0, 2957049856, 16384, mem, nonprefetchable, 64).
+bar(addr(12, 5, 0), 0, 2957049856, 32768, mem, nonprefetchable, 64).
+bar(addr(12, 6, 0), 0, 2957049856, 65536, mem, nonprefetchable, 64).
+bar(addr(12, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(12, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(12, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(12, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(12, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(12, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(12, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(13, 4, 0), 0, 2957049856, 16384, mem, nonprefetchable, 64).
+bar(addr(13, 5, 0), 0, 2957049856, 32768, mem, nonprefetchable, 64).
+bar(addr(13, 6, 0), 0, 2957049856, 65536, mem, nonprefetchable, 64).
+bar(addr(13, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(13, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(13, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(13, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(13, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(13, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(13, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(14, 4, 0), 0, 2957049856, 16384, mem, nonprefetchable, 64).
+bar(addr(14, 5, 0), 0, 2957049856, 32768, mem, nonprefetchable, 64).
+bar(addr(14, 6, 0), 0, 2957049856, 65536, mem, nonprefetchable, 64).
+bar(addr(14, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(14, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(14, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(14, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(14, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(14, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(14, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+bar(addr(15, 4, 0), 0, 2957049856, 16384, mem, nonprefetchable, 64).
+bar(addr(15, 5, 0), 0, 2957049856, 32768, mem, nonprefetchable, 64).
+bar(addr(15, 6, 0), 0, 2957049856, 65536, mem, nonprefetchable, 64).
+bar(addr(15, 7, 0), 0, 2957049856, 131072, mem, nonprefetchable, 64).
+bar(addr(15, 8, 0), 0, 2957049856, 262144, mem, nonprefetchable, 64).
+bar(addr(15, 9, 0), 0, 2957049856, 524288, mem, nonprefetchable, 64).
+bar(addr(15, 10, 0), 0, 2957049856, 1048576, mem, nonprefetchable, 64).
+bar(addr(15, 11, 0), 0, 2957049856, 2097152, mem, nonprefetchable, 64).
+bar(addr(15, 12, 0), 0, 2957049856, 4194304, mem, nonprefetchable, 64).
+bar(addr(15, 13, 0), 0, 2957049856, 8388608, mem, nonprefetchable, 64).
+
+
+
+
+
+
+
+bridge(pcie, addr(0, 1, 0), 4318, 880, 6, 4, 1, secondary(1)).
+bridge(pcie, addr(0, 2, 0), 4318, 880, 6, 4, 1, secondary(8)).
+bridge(pcie, addr(0, 3, 0), 4318, 880, 6, 4, 1, secondary(15)).
+device(pcie, addr(0, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(0, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(0, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(0, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(0, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(0, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(0, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(0, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(0, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(0, 13, 0), 4318, 873, 5, 0, 0, -1).
+bridge(pcie, addr(1, 1, 0), 4318, 880, 6, 4, 1, secondary(2)).
+bridge(pcie, addr(1, 2, 0), 4318, 880, 6, 4, 1, secondary(5)).
+device(pcie, addr(1, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(1, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(1, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(1, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(1, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(1, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(1, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(1, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(1, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(1, 13, 0), 4318, 873, 5, 0, 0, -1).
+bridge(pcie, addr(2, 1, 0), 4318, 880, 6, 4, 1, secondary(3)).
+bridge(pcie, addr(2, 2, 0), 4318, 880, 6, 4, 1, secondary(4)).
+device(pcie, addr(2, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(2, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(2, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(2, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(2, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(2, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(2, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(2, 11, 0), 4318, 873, 5, 0, 0, -1).
+bridge(pcie, addr(5, 1, 0), 4318, 880, 6, 4, 1, secondary(6)).
+device(pcie, addr(2, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(2, 13, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(3, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(6, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(6, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(3, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(3, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(3, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(3, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(3, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(3, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(3, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(3, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(3, 13, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(4, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(4, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(4, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(4, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(4, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(4, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(4, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(4, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(4, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(4, 13, 0), 4318, 873, 5, 0, 0, -1).
+bridge(pcie, addr(5, 2, 0), 4318, 880, 6, 4, 1, secondary(7)).
+device(pcie, addr(5, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(5, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(5, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(5, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(5, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(5, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(5, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(5, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(5, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(5, 13, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(6, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(6, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(6, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(6, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(6, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(6, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(6, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(6, 13, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(7, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(7, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(7, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(7, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(7, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(7, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(7, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(7, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(7, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(7, 13, 0), 4318, 873, 5, 0, 0, -1).
+bridge(pcie, addr(8, 1, 0), 4318, 880, 6, 4, 1, secondary(9)).
+bridge(pcie, addr(8, 2, 0), 4318, 880, 6, 4, 1, secondary(12)).
+device(pcie, addr(8, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(8, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(8, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(8, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(8, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(8, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(8, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(8, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(8, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(8, 13, 0), 4318, 873, 5, 0, 0, -1).
+bridge(pcie, addr(9, 1, 0), 4318, 880, 6, 4, 1, secondary(10)).
+bridge(pcie, addr(9, 1, 0), 4318, 880, 6, 4, 1, secondary(11)).
+device(pcie, addr(9, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(9, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(9, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(9, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(9, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(9, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(9, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(9, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(9, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(9, 13, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(10, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(10, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(10, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(10, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(10, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(10, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(10, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(10, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(10, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(10, 13, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(11, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(11, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(11, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(11, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(11, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(11, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(11, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(11, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(11, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(11, 13, 0), 4318, 873, 5, 0, 0, -1).
+bridge(pcie, addr(12, 1, 0), 4318, 880, 6, 4, 1, secondary(13)).
+bridge(pcie, addr(12, 1, 0), 4318, 880, 6, 4, 1, secondary(14)).
+device(pcie, addr(12, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(12, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(12, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(12, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(12, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(12, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(12, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(12, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(12, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(12, 13, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(13, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(13, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(13, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(13, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(13, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(13, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(13, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(13, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(13, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(13, 13, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(14, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(14, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(14, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(14, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(14, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(14, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(14, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(14, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(14, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(14, 13, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(15, 4, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(15, 5, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(15, 6, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(15, 7, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(15, 8, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(15, 9, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(15, 10, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(15, 11, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(15, 12, 0), 4318, 873, 5, 0, 0, -1).
+device(pcie, addr(15, 13, 0), 4318, 873, 5, 0, 0, -1).
+
+
+
+

@@ -1,0 +1,278 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_ipipeif.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_ipipeif msbfirst ( addr base ) "" {
+    
+
+    constants syncoff_status width(1) "" {
+        SYNCOFF_0 = 0 "VD output mask is disabled.";
+        SYNCOFF_1 = 1 "VD output mask is enabled.";
+    };
+
+    constants enable_status width(1) "" {
+        ENABLE_0 = 0 "disable";
+        ENABLE_1 = 1 "enable";
+    };
+    
+    register ipipeif_enable addr(base, 0x0) "IPIPEIF Enable." {
+        _ 30 mbz;
+        syncoff 1 rw type(syncoff_status) "VD output mask This register masks the VD output to the IPIPE module. This can be useful when one wants to read data from SDRAM which are stored in a double buffer. If the VD is not masked each time we start the module an new VD will be generated to the IPIPEIF module. Let's consider two buffers A and B of N lines each. *This bit field is latched by VD.";
+        enable 1 rw type(enable_status) "IPIPE I/F Enable This register is used to start the operation of SDRAM buffer memory read and generates SYNC signals. This register is available when INPSRC1 or INPSCR2 = 1, 2 or 3.";
+    };
+
+    constants inpsrc1_status width(2) "" {
+        INPSRC1_0 = 0 "VPORT_RAW";
+        INPSRC1_1 = 1 "SDRAM_RAW";
+        INPSRC1_3 = 3 "SDRAM_YUV";
+        INPSRC1_2 = 2 "ISIF_DARKFM Input ports to DFS submodule are ISIF and SDRAM.";
+    };
+
+    constants datasft_status width(3) "" {
+        DATASFT_6 = 6 "Output data[11:0] = (read data[15:4]&gt;&gt; 4)&amp; 0x0FFF";
+        DATASFT_1 = 1 "Output data[11:0] = (read data[11:0]&lt;&lt; 1)&amp; 0x0FFF";
+        DATASFT_7 = 7 "Output data[11:0] = (read data[15:4]&gt;&gt; 4)&amp; 0x0FFF";
+        DATASFT_0 = 0 "Output data[11:0] = (read data[11:0])&amp; 0x0FFF";
+        DATASFT_2 = 2 "Output data[11:0] = (read data[11:0]&lt;&lt; 2)&amp; 0x0FFF";
+        DATASFT_4 = 4 "Output data[11:0] = (read data[11:0]&lt;&lt; 4)&amp; 0x0FFF";
+        DATASFT_5 = 5 "Output data[11:0] = (read data[15:4]&gt;&gt; 4)&amp; 0x0FFF";
+        DATASFT_3 = 3 "Output data[11:0] = (read data[11:0]&lt;&lt; 3)&amp; 0x0FFF";
+    };
+
+    constants clksel_status width(1) "" {
+        CLKSEL_0 = 0 "Selects the pixel clock from the VPORT.";
+        CLKSEL_1 = 1 "Selects the pixel clock from the fractional clock divider. The fractional clock divider value is setup with the register.";
+    };
+
+    constants unpack_status width(2) "" {
+        UNPACK_0 = 0 "16 bits / pixel";
+        UNPACK_1 = 1 "8 bits / pixel";
+        UNPACK_3 = 3 "12 bits / pixel";
+        UNPACK_2 = 2 "8 bits / pixel + inverse A law (8 bits to 10 bits)";
+    };
+
+    constants inpsrc2_status width(2) "" {
+        INPSRC2_0 = 0 "ISIF";
+        INPSRC2_1 = 1 "SDRAM_RAW";
+        INPSRC2_3 = 3 "SDRAM_YUV";
+        INPSRC2_2 = 2 "ISIF_DARKFM Input ports to DFS submodule are VPORT and SDRAM.";
+    };
+
+    constants decim_status width(1) "" {
+        DECIM_0 = 0 "No decimation";
+        DECIM_1 = 1 "Decimation";
+    };
+
+    constants oneshot_status width(1) "" {
+        ONESHOT_0 = 0 "Continuous mode";
+        ONESHOT_1 = 1 "One shot mode";
+    };
+    
+    register ipipeif_cfg1 addr(base, 0x4) "IPIPEIF Configuration #1" {
+        _ 16 mbz;
+        inpsrc1 2 rw type(inpsrc1_status) "Selects the source for the mux (VPORT / ISIF / SDRAM) as well as the data format type.";
+        datasft 3 rw type(datasft_status) "SDRAM read data shift This register is available when INPSRC1 or INPSRC2 = 1 or 2, that is, when data are read from SDRAM.";
+        clksel 1 rw type(clksel_status) "IPIPEIF and IPIPE module pixel clock selection. This register must be set to 1 when INPSRC1 or INPSRC2 = 1 or 3, that is, data are solely read from SDRAM (VPORT inactive).";
+        unpack 2 rw type(unpack_status) "8-Bit, 12-bit Packed Mode When sensor raw data are stored in 8-bit packed mode or 12-bit packed mode, this register should code 1 or 3. This register is effective when INPSRC = 1 or 2.";
+        avgfilt 1 rw type(enable_status) "Averaging Filter It applies (1,2,1) filter for the RGB/YCbCr data. *This bit field is latched by VD.";
+        _ 3 mbz;
+        inpsrc2 2 rw type(inpsrc2_status) "Selects the source for the mux (ISIF / SDRAM) as well as the data format type.";
+        decim 1 rw type(decim_status) "Pixel Decimation The decimation rate defined by RSZ register. *This bit field is latched by VD.";
+        oneshot 1 rw type(oneshot_status) "One Shot Mode This register is available when INPSRC = 1 or 3.";
+    };
+    
+    register ipipeif_ppln addr(base, 0x8) "IPIPEIF Interval of HD / Start pixel in HD" {
+        _ 16 mbz;
+        _ 3 mbz;
+        ppln 13 rw "Case-1: Interval of Horizontal Sync (HD) Specifies the interval of horizontal sync. This register is available when INPSRC = 1 or 3. Case-2: Start Pixel in Horizontal Sync (HD) Specifies the start pixel in horizontal sync. This register is available when INPSRC = 2 *This bit field is latched by VD.";
+    };
+    
+    register ipipeif_lpfr addr(base, 0xC) "IPIPEIF Interval of VD / Start line in VD" {
+        _ 16 mbz;
+        _ 3 mbz;
+        lpfr 13 rw "Case-1: Interval of Vertical Sync (VD) Specifies the interval of vertical sync. This register is available when INPSRC = 1 or 3. Case-2: Start Pixel in Vertical Sync (VD) Specifies the start line in vertical sync. This register is available when INPSRC = 2 *This bit field is latched by VD.";
+    };
+    
+    register ipipeif_hnum addr(base, 0x10) "IPIPEIF Number of valid pixels per line" {
+        _ 16 mbz;
+        _ 3 mbz;
+        hnum 13 rw "The Number of Valid Pixels in a Line Specifies the number of valid pixels in a horizontal line. This register is available when INPSRC = 1, 2 or 3 *This bit field is latched by VD.";
+    };
+    
+    register ipipeif_vnum addr(base, 0x14) "IPIPEIF Number of valid lines per frame" {
+        _ 19 mbz;
+        vnum 13 rw "The Number of Valid Line in a Vertical Specifies the number of valid line in a vertical. This register is available when INPSRC = 1, 2 or 3 *This bit field is latched by VD.";
+    };
+    
+    register ipipeif_addru addr(base, 0x18) "IPIPEIF Memory Address (Upper)" {
+        _ 21 mbz;
+        addru 11 rw "Memory Address - Upper Memory address upper 11-bits are specified in units of 32-bytes This register is available when INPSRC = 1, 2 or 3. *This bit field is latched by VD.";
+    };
+    
+    register ipipeif_addrl addr(base, 0x1C) "IPIPEIF Memory Address (Lower)" {
+        _ 16 mbz;
+        addrl 16 rw "Memory Address - Lower Memory address lower 16-bits are specified in units of 32-bytes. This register is available when INPSRC = 1, 2 or 3. *This bit field is latched by VD.";
+    };
+    
+    register ipipeif_adofs addr(base, 0x20) "IPIPEIF Address offset" {
+        _ 20 mbz;
+        adofs 12 rw "Specifies the SDRAM stride for each line in units of 32-bytes. This register is available when reading data from SDRAM: INPSRC1 or INPSRC2 = 1, 2 or 3. Assuming that the first line is at position ADDR, the second line is at address ADDR+ ADOFS, etc. *This bit field is latched by VD.";
+    };
+    
+    register ipipeif_rsz addr(base, 0x24) "IPIPEIF Horizontal Resizing Parameter on IPIPE data path" {
+        _ 25 mbz;
+        rsz 7 rw "Horizontal Resizing Parameter for IPIPE data path Specifies the horizontal resizing parameter. The RSZ register can be configured within 16 to 112 range. This resizing ratio is determined by 16/RSZ (= 1/1 to 1/7) *This bit field is latched by VD.";
+    };
+    
+    register ipipeif_gain addr(base, 0x28) "IPIPEIF Gain Parameter" {
+        _ 22 mbz;
+        gain 10 rw "Gain Parameter Specifies the gain applied to RAW data before it is forwarded to the IPIPE module. The gain value is expressed using the U10Q9 fractional format. The range is from 0.00195 (1/512) to 1.99805(1023/512). By default the unity gain is applied, that is, IPIPEIF_GAIN.GAIN = 0x200. The gain is applied to RAW data only (IPIPEIF_CFG1.INPSRC2 != 3): the gain is not applied if the input data is YCbCr. *This bit field is latched by VD.";
+    };
+
+    constants bits_status width(1) "" {
+        BITS_0 = 0 "8bit to 10bit DPCM decompression";
+        BITS_1 = 1 "8bit to 12bit DPCM decompression";
+    };
+
+    constants pred_status width(1) "" {
+        PRED_0 = 0 "Simple predictor";
+        PRED_1 = 1 "Advanced predictor";
+    };
+
+    constants ena_status width(1) "" {
+        ENA_0 = 0 "DPCM off (no decompression)";
+        ENA_1 = 1 "DPCM on";
+    };
+    
+    register ipipeif_dpcm addr(base, 0x2C) "IPIPEIF DPCM configuration This register applies only if .UNPACK = 1, that is, RAW8 data is read from SDRAM." {
+        _ 29 mbz;
+        bits 1 rw type(bits_status) "DPCM bit mode for SDRAM data";
+        pred 1 rw type(pred_status) "DPCM prediction mode for SDRAM data";
+        ena 1 rw type(ena_status) "DPCM decompression enable for SDRAM data.";
+    };
+
+    constants yuv8p_status width(1) "" {
+        YUV8P_0 = 0 "Y output on even pixels C output on odd pixels";
+        YUV8P_1 = 1 "C output on even pixels Y output on odd pixels";
+    };
+
+    constants yuv8_status width(1) "" {
+        YUV8_0 = 0 "YUV16";
+        YUV8_1 = 1 "YUV8 to 16";
+    };
+
+    constants dfsdir_status width(1) "" {
+        DFSDIR_0 = 0 "VPORT IF(capture frame) - SDRAM (dark frame)";
+        DFSDIR_1 = 1 "SDRAM (capture frame) - VPORT IF(dark frame)";
+    };
+
+    constants yuv16_status width(1) "" {
+        YUV16_0 = 0 "12-bit RAW data";
+        YUV16_1 = 1 "16-bit YUV data";
+    };
+
+    constants vdpol_status width(1) "" {
+        VDPOL_0 = 0 "Positive";
+        VDPOL_1 = 1 "Negative";
+    };
+
+    constants intsw_status width(1) "" {
+        INTSW_0 = 0 "Start position of VD from VPORT interface";
+        INTSW_1 = 1 "Start position of VD from ISIF module";
+    };
+    
+    register ipipeif_cfg2 addr(base, 0x30) "IPIPEIF Configuration #2" {
+        _ 24 mbz;
+        yuv8p 1 rw type(yuv8p_status) "8-bit YUV data unpacking to 16 bits When IPIPEIF_CFG1.INPSRC2 = 0 and IPIPEIF_CFG2.YUV16 = 1, the 8-bit YUV data are transformed into 16-bit YUV data. The way the data are unpacked from 8 bits to 16 bits is controlled by the IPIPEIF_CFG2.YUV8P register. The upper 8 bits of the 16-bit output are set to 0.";
+        yuv8 1 rw type(yuv8_status) "YUV 8bit mode When ISIF_CFG1.INPSRC2 = 0 and YUV16 = 1, setting this bit to 1 enables the conversion from 8-bit YUV input to 16-bit YUV. This register is used when the input data from the ISIF module is 8-bit YUV data.";
+        dfsdir 1 rw type(dfsdir_status) "DFS direction Selects the direction of dark frame subtraction.";
+        _ 1 mbz;
+        yuv16 1 rw type(yuv16_status) "Data type selection. The behavior of this bit field depends upon other register settings. The functionality is best explained with the following pseudo code: if ((CFG1.INPSRC2==0 &amp;amp;&amp;amp; CFG2.YUV16) || CFG1.INPSRC2==3) { data_out[15:0] = yuv[15:0] } else if (CFG1.INPSRC2==1 &amp;amp;&amp;amp; CFG2.YUV16 &amp;amp;&amp;amp; CFG1.UNPACK=1) { data_out[15:8] = gain_clip[7:0]; data_out[ 7:0] = 0; } else { data_out[15:12] = 0; data_out[11: 0] = gain_clip[11:0]; } where: o data_out[15:0] = 16-bit YUV or 12-bit RAW data to ipipe o yuv[15:0] = 16-bit YUV data from 'horizontal pixel decimator' block. o gain_clip[11:0] = 12-bit RAW data from 'gain' block.";
+        vdpol 1 rw type(vdpol_status) "VD Sync Polarity When input VD is active low SYNC pulse, this bit needs to be set to 1.";
+        hdpol 1 rw type(vdpol_status) "HD Sync Polarity When input HD is active low SYNC pulse, this bit needs to be set to 1.";
+        intsw 1 rw type(intsw_status) "IPIPEIF interrupt source selection. This register select the interrupt source.";
+    };
+
+    constants alnsync_status width(1) "" {
+        ALNSYNC_0 = 0 "Disable";
+        ALNSYNC_1 = 1 "Enable";
+    };
+    
+    register ipipeif_inirsz addr(base, 0x34) "IPIPEIF resize initial position - IPIPE data path." {
+        _ 18 mbz;
+        alnsync 1 rw type(alnsync_status) "Align the HSYNC, VSYNC to initial position defined by INIRSZ.";
+        inirsz 13 rw "Offset used to re-initialize the HD/VD position after resizer. From 0 to 8191 PCLK cycles. Skips INIRSZ pixels for every line.";
+    };
+    
+    register ipipeif_oclip addr(base, 0x38) "IPIPEIF output clipping value" {
+        _ 20 mbz;
+        oclip 12 rw "Output clipping value after gain control on IPIPE data path. This value is in U12Q0 data format.";
+    };
+    
+    register ipipeif_dtudf addr(base, 0x3C) "IPIPEIF data underflow detection" {
+        _ 16 mbz;
+        _ 15 mbz;
+        dtudf 1 rw "Data under flow error status register. Reading 1 shows there is data under flow and at least one data is corrupted while reading from SDRAM. Writing 1 to this register clears (=0) the error (=1) status. Underflow errors are non recoverable at ISP level, need to do a soft reset at ISS level. The IPIPEIF_UDF interrupt is generated when an underflow happens. The interrupt avoids polling this register for errors.";
+    };
+    
+    register ipipeif_clkdiv addr(base, 0x40) "IPIPEIF CLOCK DIVIDER" {
+        _ 16 mbz;
+        clkdiv 16 rw "IPIPEIF clock rate configuration IPIPE/IPIPEIF clock frequency = M/N x ISS_FCLK clock frequency. We have M = CLKDIV[15:8] + 1 and N = CLKDIV[7:0] + 1 This register is available when IPIPEIF_CFG1.CLKSEL = 1.";
+    };
+    
+    register ipipeif_dpc1 addr(base, 0x44) "IPIPEIF defect pixel correction #1" {
+        _ 16 mbz;
+        _ 3 mbz;
+        ena 1 rw type(alnsync_status) "DPC enable. Applies DPC for video port data, ISIF input path.";
+        th 12 rw "DPC threshold value";
+    };
+    
+    register ipipeif_dpc2 addr(base, 0x48) "IPIPEIF defect pixel correction #2" {
+        _ 19 mbz;
+        ena 1 rw type(alnsync_status) "DPC enable. Applies DPC for SDRAM input path.";
+        th 12 rw "DPC threshold value";
+    };
+
+    constants decim_status1 width(1) "" {
+        DECIM_0_1 = 0 "No Decimation";
+        DECIM_1_1 = 1 "Decimate";
+    };
+    
+    register ipipeif_rsz3a addr(base, 0x54) "IPIPEIF HORIZONTAL RESIZING PARAMETER FOR H3A" {
+        _ 16 mbz;
+        _ 6 mbz;
+        decim 1 rw type(decim_status1) "Pixel Decimation Enable The decimation rate defined by the RSZ bit field. *This bit field is latched by VD.";
+        avgfilt 1 rw type(alnsync_status) "Averaging Filter It applies a (1, 2, 1) filter for the RGB/YCbCr data. *This bit field is latched by VD.";
+        _ 1 mbz;
+        rsz 7 rw "Horizontal Resizing Parameter for H3A data path Specifies the horizontal resizing parameter. The RSZ register can be configured within 16 to 112 range. This resizing ratio is determined by 16/RSZ (= 1/1 to 1/7) *This bit field is latched by VD.";
+    };
+    
+    register ipipeif_inirsz3a addr(base, 0x58) "IPIPEIF resize initial position - H3A data path." {
+        _ 18 mbz;
+        alnsync 1 rw type(alnsync_status) "Align the HD, VD to initial position defined by the INIRSZ bit field. It means that HD and VD are effectively shifted by INIRSZ pixel clock cycles.";
+        inirsz 13 rw "Offset used to re-initialize the HD/VD position after resizer. From 0 to 8191 PCLK cycles. Skips INIRSZ pixels for every line.";
+    };
+};

@@ -1,0 +1,27 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/bomp_benchmark
+--
+--------------------------------------------------------------------------
+
+let template = application { 
+      addLibraries = [ "bench" ],
+      architectures = [ "x86_64" ]
+      }
+in
+  [ build template { target = "phases_bench", cFiles = [ "phases.c" ] },
+    build template { target = "apicdrift_bench", cFiles = [ "clockdrift.c" ] },
+    build template { target = "phases_scale_bench", cFiles = [ "phases_scale.c" ] },
+    build application {
+                target = "placement_bench",
+                cFiles = [ "placement.c" ],
+                addLibraries = [ "bench", "rcce" ],
+                architectures = [ "x86_64" ]
+              }
+  ]

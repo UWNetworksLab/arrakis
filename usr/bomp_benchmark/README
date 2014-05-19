@@ -1,0 +1,17 @@
+libbomp Benchmarks
+==================
+
+This is a subset of the benchmarks contained in the "NAS Parallel
+Benchmarks 2.3 OpenMP C version" benchmark suite (see
+http://www.nas.nasa.gov/NAS/NPB/).
+
+The EP, BT, LU, MG and SP benchmarks are currently excluded because
+they use features not currently supported by libbomp or Barrelfish
+(like Thread-Local Storage or file operations).
+
+Linux Version
+=============
+
+A Linux Makefile is provided to easily build the benchmarks using both
+libGOMP and libbomp for easy cross-comparison of benchmark results
+between libGOMP, libbomp, Linux and Barrelfish.

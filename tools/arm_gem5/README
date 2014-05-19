@@ -1,0 +1,19 @@
+ARM on Gem5 usage and installation instructions:
+
+1. Build Barrelfish for Arm on Gem5 (see Barrelfish wiki for further instructions)
+   NOTE: Be sure to set 'armv7_platform' in <build_dir>/hake/Config.hs to
+   'gem5' in order to enable the cache quirk workarounds for gem5 and proper offsets
+   for the platform simulated by gem5.
+
+2. If you are a member of ETH or Microsoft Research with access to the Barrelfish development tools continue with point 6 otherwise do steps 3 to 5
+
+3. Get the gem5 simulator with 'hg clone http://repo.gem5.org/gem5 -r 0fea324c832c gem5' (this is the current mercurial tip of Gem5 but future versions may also work)
+
+4. Build gem5 with 'scons build/ARM/gem5.fast' and add the binary to the PATH 
+
+5. In your Barrelfish build directory run 'make arm_gem5' to run the simulation
+
+6. To get the output of Barrelfish you can use 'telnet localhost 3456'
+
+NOTE 1: You can print the supported options of the gem5 script with 'gem5.fast ../tools/gem5/gem5script.py -h'
+NOTE 2: If you use --cpu-type=arm_detailed (use make arm_gem5_detailed), the simulation takes a long time (depending on your machine up to an hour just to boot Barrelfish) 

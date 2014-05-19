@@ -1,0 +1,39 @@
+Filesystem design
+-----------------
+
+libc is designed to be modular in such a way that you can implement
+different backend filesystems. For example on a UNIX system you want
+fopen() to call into the POSIX open() system call. On some deeply
+embedded system you may simply have some hardcoded files stored in 
+the binary itself. On some other non-POSIX system there is likely to be
+some other way of accessing file data.
+
+The filesystem implementation are stored in:
+
+src/c/fs-$FILESYSTEM
+
+test code for each filesystem should be placed in
+
+test/fs-$FILESYSTEM
+
+The SConstruct takes a "filesystem" argument, so the filesystem can be
+chosen at compile time, in the same manner as system, or architecture.
+
+
+Current filesystems
+-------------------
+fs-null:
+
+This is a no-op filesystem. fopen() will always fail, as will remove(), 
+rename() etc. This is appropriate to use when you don't want to provide
+a filesystem.
+
+fs-bootinfo:
+
+This is a filesystem that uses objects in the L4 bootinfo as files. It
+is a read-only filesystem.
+
+Temporary Files
+---------------
+Currently tempory files a handled on a per-system basis. This is not ideal
+and will likely change. The are implemented in sys_tmpfile.c

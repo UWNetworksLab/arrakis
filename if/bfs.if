@@ -1,0 +1,167 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, 2011, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+
+interface bfs "BFS interface" {
+
+/* -----------------------------------------------
+ * Typedefs and structs
+ */
+
+typedef uint64 object_key;
+typedef uint64 chunk_id;
+
+/* From BFS.h */
+typedef enum
+{
+	INVALID_OBJ,
+	BFS_FILE,
+	BFS_DIR
+}  OBJECT_TYPE;
+
+/* From servers.h */
+typedef enum {
+	INVALID_SERVER,
+	DIR_SERVER,
+	STORAGE_SERVER,
+	CLIENT,
+	NAME_SERVER
+} SERVER_TYPE;
+
+/* From DS.h */
+/*
+ * Object open permissions.
+ */
+typedef enum {
+	READ_ONLY,
+	WRITE_ONLY,
+	READ_WRITE
+} OBJECT_ACCESS_PERM;
+
+/* -----------------------------------------------
+ * Storage Server
+ * -----------------------------------------------
+ *
+ * Overview
+ * --------
+ * The storage server implements a log-structured data store,
+ * from which data can be read or written in terms of chunks.
+ * A chunk is a block of data of a specific size with a 
+ * unique ID.  A client or directory server can read or 
+ * write chunks from the storage by passing the ID of the chunk.
+ */
+
+/* XXX For now we pass the frame cap every time.
+   Not efficient but simple. */
+rpc ss_read_chunk(
+    in chunk_id cid,
+    in uint32   coffset,
+    in uint32   size,
+    in cap      frame,
+    in uint32   foffset);
+
+rpc ss_write_chunk(
+    in chunk_id cid,
+    in uint32   coffset,
+    in uint32   size,
+    in cap      frame,
+    in uint32   foffset);
+
+rpc ss_delete_chunk(
+    in chunk_id cid
+);
+
+message ss_shutdown();
+
+/* -----------------------------------------------
+ * Name Server
+ * -----------------------------------------------
+ *
+ * Overview
+ * --------
+ * The name server implements both a name service and a distributed
+ * lock service.  It keeps track of all the other servers running
+ * in the system, and manages the locking of common state for all
+ * instances the directory server.
+ */
+
+/* Dir and storage servers must register */
+message ns_register_server(uint32 server_type, uint64 server_guid);
+
+/* Servers can request list of currently registered servers */
+/* nb generation increments when the list changes. */
+rpc ns_query_registered_servers(in uint32 server_ordinal,
+    out uint32 generation,
+    out SERVER_TYPE server_type,
+    out uint64 server_guid);
+
+/* Lock/unlock invocations would be more naturally expressed
+ * as call/response with separate failure/success response
+ * messages.  Use RPC here just to simplify the async version.
+ */
+rpc ns_lock(/*in object_key objects*/
+    in object_key object
+    , out errval err);
+
+rpc ns_unlock(in object_key object, out errval err);
+
+/* -----------------------------------------------
+ * Directory Server
+ * -----------------------------------------------
+ *
+ * Overview
+ * --------
+ * The directory server manages the metadata of the file
+ * system on the storage servers and implements the file
+ * system interface for the clients.  It also maintains
+ * a simple data cache of file chunks.
+ *
+ * Multiple directory servers running at the same time
+ * will share common metadata structures and invoke
+ * locking operations on the name server as required.
+ */
+
+/* Create a file or directory.
+ * Returns the key of the object that was created.
+ */
+rpc ds_create(
+    in  OBJECT_TYPE         ob_type,
+    in  OBJECT_ACCESS_PERM  ob_perm,
+    in  string              ob_name,
+    in  uint64              client_id,
+    out object_key          object);
+
+rpc ds_open(        
+    in  OBJECT_TYPE         ob_type,
+    in  OBJECT_ACCESS_PERM  ob_perm,
+    in  string              ob_name,
+    in  uint64	            client_id,
+    out object_key          object);
+
+message ds_shutdown();
+
+/* From name server. */
+message ds_invalidate_cache(object_key object);
+
+/* -----------------------------------------------
+ * State Maintenance
+ * -----------------------------------------------
+ * XXX TO DO: make the maintenance of replicated state
+ * be implicit via a consensus protocol.
+ * 
+ * Name server can broadcast current list of servers
+ * to all SS and DS servers in the system.  This is a
+ * one-way notification.
+ */
+message ss_notify_registered_servers(
+	uint64   server);
+message ds_notify_registered_servers(
+	uint64   server);
+
+};

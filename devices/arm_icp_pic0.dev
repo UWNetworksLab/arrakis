@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * arm_icp_pic0.dev
+ *
+ * DESCRIPTION: Primary interrupt controller for integrator/cp
+ *
+ * This is derived from:
+ *
+ * Integrator/CP User Guide
+ * (DUI0159B_integratorcp_1_0_ug.pdf)
+ *
+ */
+
+device arm_icp_pic0 msbfirst ( addr base ) "ARM Integrator Primary PIC"
+{
+   regtype source "Interrupt controller sources" {
+    _           3;
+    TS_PENINT   1 "Touchscreen pen-down event interrupt";
+    ETH_INT     1 "Ethernet interface interrupt";
+    CPPLDINT    1 "Interrupt from secondary interrupt controller";
+    AACIINT     1 "Audio interface interrupt";
+    MMCIINT1    1 "MultiMedia card interface 1";
+    MMCIINT0    1 "MultiMedia card interface 0";
+    CLCDCINT    1 "Display controller interrupt";
+    _          11; 
+    LM_LLINT1   1 "Logic module low-latency interrupt 1";
+    LM_LLINT0   1 "Logic module low-latency interrupt 0";
+    RTCINT      1 "Real time clock interrupt";
+    TIMERINT2   1 "Counter-timer 2 interrupt";
+    TIMERINT1   1 "Counter-timer 1 interrupt";
+    TIMERINT0   1 "Counter-timer 0 interrupt";
+    MOUSEINT    1 "Mouse interrupt";
+    KBDINT      1 "Keyboard interrupt";
+    UARTINT1    1 "UART 1 interrupt";
+    UARTINT0    1 "UART 0 interrupt";
+    SOFTINT     1 "Software interrupt";
+   };
+
+   register PIC_IRQ_STATUS ro addr (base, 0x00) "IRQ gated interrupt status"
+       type(source);
+
+   register PIC_IRQ_RAWSTAT ro addr (base, 0x04) "IRQ raw interrupt status"
+       type(source);
+
+   register PIC_IRQ_ENABLESET rw addr (base, 0x08) "IRQ enable set"
+       type(source);
+
+   register PIC_IRQ_ENABLECLR wo addr (base, 0x0c) "IRQ enable clear"
+       type(source);
+
+   register PIC_INT_SOFTSET rw addr (base, 0x10) "Software interrupt set"
+       type(source);
+
+   register PIC_INT_SOFTCLR wo addr (base, 0x14) "Software interrupt clear"
+       type(source);
+
+   register PIC_FIQ_STATUS ro addr (base, 0x20) "FIQ gated interrupt status"
+       type(source);
+
+   register PIC_FIQ_RAWSTAT ro addr (base, 0x24) "FIQ raw interrupt status"
+       type(source);
+
+   register PIC_FIQ_ENABLESET rw addr (base, 0x28) "FIQ enable set"
+       type(source);
+
+   register PIC_FIQ_ENABLECLR wo addr (base, 0x2c) "FIQ enable clear"
+       type(source);
+};

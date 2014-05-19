@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ *
+ * A simple interface used by usr/tests/thcrpctest
+ */
+
+interface ping_pong "Ping-Pong async example Interface" {
+        // The following messages are used in the test program
+
+	message rsrc_join_request(uint32 id);
+	message rsrc_join_reply();
+	message init();
+	call ping(uint64 val);
+	response pong(uint64 val);
+
+	call slow_op(uint64 val);
+	response slow_reply(uint64 val);
+
+        call stop();
+
+        rpc testrpc(in uint64 testin, out uint64 testout);
+        rpc testrpc2(in uint64 testin, out uint64 testout);
+
+        rpc outoforder(in uint64 seq_in,
+                       out uint64 seq_out,
+                       in uint64 testin,
+                       out uint64 testout);
+
+        // The following messages are not used in practice, but
+        // exercise the THC Flounder back-end
+
+        message str0(uint32 arg1, string s);
+        call str1(uint32 arg1, string s);
+        response str2(uint32 arg1, string s);
+        rpc str3(in uint32 arg1, in string s);
+        rpc str4(out uint32 arg1, out string s);
+        rpc str5(in uint64 seq_in,
+                 out uint64 seq_out,
+                 in uint32 arg1, in string s);
+        rpc str6(in uint64 seq_in,
+                 out uint64 seq_out,
+                 out uint32 arg1, out string s);
+
+        message arr0(uint32 arg1, char a[l]);
+        call arr1(uint32 arg1, char a[l]);
+        response arr2(uint32 arg1, char a[l]);
+};

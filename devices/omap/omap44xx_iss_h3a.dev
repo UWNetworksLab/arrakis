@@ -1,0 +1,301 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_h3a.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_h3a msbfirst ( addr base ) "" {
+    
+    
+    register h3a_pid addr(base, 0x0) "Peripheral Revision and Class Information" {
+        scheme 2 ro "";
+        _ 2 mbz;
+        func 12 ro "";
+        rtl 5 ro "";
+        major 3 ro "";
+        _ 2 mbz;
+        minor 6 ro "";
+    };
+
+    constants ovf_status width(1) "" {
+        OVF_0 = 0 "Read 0: No overflow pending Write 0: Status bit unchanged";
+        OVF_1 = 1 "Read 1: Overflow happened while writing out the data. Output data likely to be corrupted. Write 1: Clear the status bit.";
+    };
+
+    constants af_vf_en_status width(1) "" {
+        AF_VF_EN_0 = 0 "4 Color Horizontal FV only";
+        AF_VF_EN_1 = 1 "1 Color Horizontal FV and 1 Color Vertical FV";
+    };
+
+    constants aew_med_en_status width(1) "" {
+        AEW_MED_EN_0 = 0 "Disable Auto Focus median filter";
+        AEW_MED_EN_1 = 1 "Enable Auto Focus median filter";
+    };
+
+    constants aew_en_status width(1) "" {
+        AEW_EN_0 = 0 "Disable Auto exposure/white balance";
+        AEW_EN_1 = 1 "Enable Auto exposure/white balance";
+    };
+
+    constants fvmode_status width(1) "" {
+        FVMODE_0 = 0 "Sum mode.";
+        FVMODE_1 = 1 "Peak mode.";
+    };
+
+    constants af_med_en_status width(1) "" {
+        AF_MED_EN_0 = 0 "Disable AF median filter.";
+        AF_MED_EN_1 = 1 "Enable AF median filter.";
+    };
+
+    constants af_alaw_en_status width(1) "" {
+        AF_ALAW_EN_0 = 0 "Disable Auto Focus A-law table";
+        AF_ALAW_EN_1 = 1 "Enable Auto Focus A-law table";
+    };
+
+    constants af_en_status width(1) "" {
+        AF_EN_0 = 0 "Disable Auto Focus Engine";
+        AF_EN_1 = 1 "Enable Auto Focus Engine";
+    };
+    
+    register h3a_pcr addr(base, 0x4) "Peripheral Control Register" {
+        ave2lmt 10 rw "AE/AWB Saturation Limit This is the value that all sub sampled pixels in the AE/AWB engine are compared to. If the data is greater or equal to this data then the block is considered saturated.";
+        ovf 1 rw type(ovf_status) "H3A module overflow status bit. If the H3A module overflows it will keep sending data. The software can read this status bit during vertical blanking period to ensure that no overflow happened while writing out the data to SDRAM. There is also an interrupt at ISP level (H3A_OVF) which can be used to monitor this.";
+        af_vf_en 1 rw type(af_vf_en_status) "AF Vertical Focus Enable";
+        aew_med_en 1 rw type(aew_med_en_status) "AE/AWB Median filter Enable If the median filter is enabled, then the 1st 2 and last 2 pixels in the frame are not filtered.";
+        busyaeawb 1 ro "Busy bit for AE/AWB";
+        aew_alaw_en 1 rw type(ovf_status) "AE/AWB A-law Enable";
+        aew_en 1 rw type(aew_en_status) "AE/AWB enable";
+        busyaf 1 ro "Busy bit for AF.";
+        fvmode 1 rw type(fvmode_status) "Focus Value Accumulation Mode";
+        rgbpos 3 rw "Red, Green, and blue pixel location in the AF windows RGBPOS(0): GR and GB as Bayer pattern RGBPOS(1): RG and GB as Bayer pattern RGBPOS(2): GR and BG as Bayer pattern RGBPOS(3): RG and BG as Bayer pattern RGBPOS(4): GG and RB as custom pattern RGBPOS(5): RB and GG as custom pattern 6 and 7 are reserved This Value is only used if VF is disabled";
+        med_th 8 rw "Median filter threshold.";
+        af_med_en 1 rw type(af_med_en_status) "Auto Focus Median filter Enable If the median filter is enabled, then the 1st 2 and last 2 pixels in the frame are not in the valid region. Therefore the paxel start/end and IIR filter start positions should not be set within the 1st and last 2 pixels.";
+        af_alaw_en 1 rw type(af_alaw_en_status) "AF A-law table enable";
+        af_en 1 rw type(af_en_status) "AF enable";
+    };
+    
+    register h3a_afpax1 addr(base, 0x8) "Setup for the AF Engine Paxel Configuration" {
+        _ 8 mbz;
+        paxw 8 rw "AF Engine Paxel Width The width of the paxel is the value of this register plus 1 multiplied by 2. The minimum width is 16 pixels if the pixel clock is half or less of the ISS_FLCK clock. If the pixel clock is equal to the ISS_FLCK clock, the minimum width is 32 pixels. * This value is shadowed and latched on the rising edge of VSYNC.";
+        _ 8 mbz;
+        paxh 8 rw "AF Engine Paxel Height The height of the paxel is the value of this register plus 1 multiplied by 2 with a final value of 2-256 (even) * This value is shadowed and latched on the rising edge of VSYNC.";
+    };
+    
+    register h3a_afpax2 addr(base, 0xC) "Setup for the AF Engine Paxel Configuration" {
+        _ 11 mbz;
+        afinch 4 rw "AF Engine Column Increments Number of columns to increment in a paxel plus 1 multiplied by 2. Thus, the number of columns that can be skipped between two processed line pairs is 2-32 (even). The starting two columns in a paxel are first processed before this field is applied. This must be set so that there are at least 4 samples on a line when combined with the number of horizontal paxels. * This value is shadowed and latched on the rising edge of VSYNC.";
+        afincv 4 rw "AF Engine Line Increments Number of lines to increment in a Paxel plus 1 multiplied by 2. Incrementing the line in a paxel is always done on a line pair due to the fact that the RGB pattern falls in two lines. If all the lines are to be processed, this field should be set to zero, and thus line count is incremented by 2 following a line pair. Thus, the number of lines that can be skipped between two processed line pairs is 0-30 (even). The starting two lines in a paxel are first processed before this field is applied. * This value is shadowed and latched on the rising edge of VSYNC.";
+        paxvc 7 rw "AF Engine Vertical Paxel Count The number of paxels in the vertical direction plus 1. The maximum number of vertical paxels in a frame should not exceed 128. The value should be set to ensure that the bandwidth requirements and buffer size are not exceeded. * This value is shadowed and latched on the rising edge of VSYNC.";
+        paxhc 6 rw "AF Engine Horizontal Paxel Count The number of paxels in the horizontal direction plus 1. It is illegal to set a number that is greater than 35 (total of 36 paxels in the horizontal direction). The minimum number of paxels should be 2 (valid range for the field is 1-35). * This value is shadowed and latched on the rising edge of VSYNC.";
+    };
+    
+    register h3a_afpaxstart addr(base, 0x10) "Start Position for AF Engine Paxels" {
+        _ 4 mbz;
+        paxsh 12 rw "AF Engine Paxel Horizontal start position Range: 2-4094 PAXSH must be equal to or greater than (IIRSH + 2) This value must be even if Vertical mode is not enabled. If Vertical mode is enabled then the lower bit of PAXSH and IIRSH must be equal. * This value is shadowed and latched on the rising edge of VSYNC.";
+        _ 4 mbz;
+        paxsv 12 rw "AF Engine Paxel Vertical start position Range: 0-4095 Sets the vertical line for the first paxel. This value must be greater then or equal to 8 if the vertical mode is enabled. * This value is shadowed and latched on the rising edge of VSYNC.";
+    };
+    
+    register h3a_afiirsh addr(base, 0x14) "Start Position for IIRSH" {
+        _ 20 mbz;
+        iirsh 12 rw "AF Engine IIR Horizontal Start Position Range from 0-4094. When the horizontal position of a line equals this value the shift registers are cleared on the next pixel. This value must be even if Vertical mode is not enabled. If vertical mode is enabled then the lower bit must match the paxel horizontal start position. * This value is shadowed and latched on the rising edge of VSYNC.";
+    };
+    
+    register h3a_afbufst addr(base, 0x18) "SDRAM destination address for AF engine statistics" {
+        afbufst 27 rw "SDRAM destination address for AF engine statistics The SDRAM destination address for the AF statistics. The 6 LSBs are ignored, address must be on a 64-byte boundary. This field can be altered even when the AF is busy. Change will take place only for the next frame. However, note that reading this register will always give the latest value.";
+        _ 5 mbz;
+    };
+    
+    register h3a_afcoef010 addr(base, 0x1C) "IIR filter coefficient data for SET 0." {
+        _ 4 mbz;
+        coeff1 12 rw "AF Engine IIR filter Coefficient #1 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+        _ 4 mbz;
+        coeff0 12 rw "AF Engine IIR filter Coefficient #0 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef032 addr(base, 0x20) "IIR filter coefficient data for SET 0." {
+        _ 4 mbz;
+        coeff3 12 rw "AF Engine IIR filter Coefficient #3 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+        _ 4 mbz;
+        coeff2 12 rw "AF Engine IIR filter Coefficient #2 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef054 addr(base, 0x24) "IIR filter coefficient data for SET 0." {
+        _ 4 mbz;
+        coeff5 12 rw "AF Engine IIR filter Coefficient #5 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+        _ 4 mbz;
+        coeff4 12 rw "AF Engine IIR filter Coefficient #4 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef076 addr(base, 0x28) "IIR filter coefficient data for SET 0." {
+        _ 4 mbz;
+        coeff7 12 rw "AF Engine IIR filter Coefficient #7 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+        _ 4 mbz;
+        coeff6 12 rw "AF Engine IIR filter Coefficient #6 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef098 addr(base, 0x2C) "IIR filter coefficient data for SET 0." {
+        _ 4 mbz;
+        coeff9 12 rw "AF Engine IIR filter Coefficient #9 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+        _ 4 mbz;
+        coeff8 12 rw "AF Engine IIR filter Coefficient #8 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef0010 addr(base, 0x30) "IIR filter coefficient data for SET 0." {
+        _ 20 mbz;
+        coeff10 12 rw "AF Engine IIR filter Coefficient #10 (Set 0) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef110 addr(base, 0x34) "IIR filter coefficient data for SET 1." {
+        _ 4 mbz;
+        coeff1 12 rw "AF Engine IIR filter Coefficient #1 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+        _ 4 mbz;
+        coeff0 12 rw "AF Engine IIR filter Coefficient #0 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef132 addr(base, 0x38) "IIR filter coefficient data for SET 1." {
+        _ 4 mbz;
+        coeff3 12 rw "AF Engine IIR filter Coefficient #3 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+        _ 4 mbz;
+        coeff2 12 rw "AF Engine IIR filter Coefficient #2 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef154 addr(base, 0x3C) "IIR filter coefficient data for SET 1." {
+        _ 4 mbz;
+        coeff5 12 rw "AF Engine IIR filter Coefficient #5 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+        _ 4 mbz;
+        coeff4 12 rw "AF Engine IIR filter Coefficient #4 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef176 addr(base, 0x40) "IIR filter coefficient data for SET 1." {
+        _ 4 mbz;
+        coeff7 12 rw "AF Engine IIR filter Coefficient #7 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+        _ 4 mbz;
+        coeff6 12 rw "AF Engine IIR filter Coefficient #6 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef198 addr(base, 0x44) "IIR filter coefficient data for SET 1." {
+        _ 4 mbz;
+        coeff9 12 rw "AF Engine IIR filter Coefficient #9 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+        _ 4 mbz;
+        coeff8 12 rw "AF Engine IIR filter Coefficient #8 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_afcoef1010 addr(base, 0x48) "IIR filter coefficient data for SET 1." {
+        _ 20 mbz;
+        coeff10 12 rw "AF Engine IIR filter Coefficient #10 (Set 1) The range is signed -32 &amp;lt;= value &amp;lt;= 31 +63/64";
+    };
+    
+    register h3a_aewwin1 addr(base, 0x4C) "Configuration for AE/AWB Windows." {
+        winh 8 rw "AE/AWB Engine Window Height This specifies the window height in an even number of pixels, the window height is the value plus 1 multiplied by 2. The final value can be from 2-512 (even) * This value is shadowed and latched on the rising edge of VSYNC.";
+        _ 3 mbz;
+        winw 8 rw "AE/AWB Engine Window Width This specifies the window width in an even number of pixels, the window width is the value plus 1 multiplied by 2. The minimum width is 16 pixels if the pixel clock is half or less of the ISS_FLCK clock. If the pixel clock is equal to the ISS_FLCK clock, the minimum width is 32 pixels. * This value is shadowed and latched on the rising edge of VSYNC.";
+        winvc 7 rw "AE/AWB Engine Vertical Window Count The number of windows in the vertical direction plus 1. The maximum number of vertical windows in a frame should not exceed 128. The value should be set to ensure that the bandwidth requirements and buffer size are not exceeded * This value is shadowed and latched on the rising edge of VSYNC.";
+        winhc 6 rw "AE/AWB Engine Horizontal Window Count The number of horizontal windows plus 1. The maximum number of horizontal windows is 35 plus 1 (36). The minimum number of windows should be 2 (valid range for the field is 1-35). * This value is shadowed and latched on the rising edge of VSYNC.";
+    };
+    
+    register h3a_aewinstart addr(base, 0x50) "Start position for AE/AWB Windows." {
+        _ 4 mbz;
+        winsv 12 rw "AE/AWB Engine Vertical Window Start Position Sets the first line for the first window. Range 0-4095 * This value is shadowed and latched on the rising edge of VSYNC.";
+        _ 4 mbz;
+        winsh 12 rw "AE/AWB Engine Horizontal Window Start Position Sets the horizontal position for the first window on each line. Range 0-4095 * This value is shadowed and latched on the rising edge of VSYNC.";
+    };
+    
+    register h3a_aewinblk addr(base, 0x54) "Start position and height for black line of AE/AWB Windows" {
+        _ 4 mbz;
+        winsv 12 rw "AE/AWB Engine Vertical Window Start Position for single black line of windows Sets the first line for the single black line of windows. * This value is shadowed and latched on the rising edge of VSYNC. Range 0-4095 Note that the horizontal start and the horizontal number of windows will be similar to the regular windows";
+        _ 9 mbz;
+        winh 7 rw "AE/AWB Engine Window Height for the single black line of windows This specifies the window height in an even number of pixels, the window height is the value plus 1 multiplied by 2. The final value can be from 2-256 (even) * This value is shadowed and latched on the rising edge of VSYNC.";
+    };
+    
+    register h3a_aewsubwin addr(base, 0x58) "Configuration for subsample data in AE/AWB window." {
+        _ 20 mbz;
+        aewincv 4 rw "AE/AWB Engine Vertical Sampling Point Increment Sets vertical distance between sub-samples within a window plus 1 multiplied by 2. The final range is 2-32. * This value is shadowed and latched on the rising edge of VSYNC.";
+        _ 4 mbz;
+        aewinch 4 rw "AE/AWB Engine Horizontal Sampling Point Increment Sets horizontal distance between sub-samples within a window plus 1 multiplied by 2. The final range is 2-32. * This value is shadowed and latched on the rising edge of VSYNC.";
+    };
+    
+    register h3a_aewbufst addr(base, 0x5C) "SDRAM destination address for AE/AWB engine statistics" {
+        aewbufst 27 rw "SDRAM destination address for AE/AWB engine statistics The start location in SDRAM for the AE/AWB statistics. The 6 LSB are ignored, address should be on a 64-byte boundary This field can be altered even when the AE/AWB is busy. Change will take place only for the next frame. However, note that reading this register will always give the latest value.";
+        _ 5 mbz;
+    };
+    
+    register h3a_aewcfg addr(base, 0x60) "Configuration for AE/AWB" {
+        _ 22 mbz;
+        aefmt 2 rw "AE/AWB output format 0 = sum of squares 1 = min/max 2 = sum only; no sum of squares or min/max * This value is shadowed and latched on the rising edge of VSYNC";
+        _ 4 mbz;
+        sumshft 4 rw "AE/AWB engine shift value for the accumulation of pixel values This bit field sets the right shift value which is applied on the result of the pixel accumulation before it is stored in the packet. The accumulation takes place on 26 bits which is enough for 10-bit data and a maximum widow size of 512 x 512 which results into the accumulation of 256 x 256 pixels of the same color. The shift value must be set such that the result fits on 16 bits. SUMSHFT = right shift value. Range: 0 -15 * This value is shadowed and latched on the rising edge of VSYNC";
+    };
+    
+    register h3a_line_start addr(base, 0x64) "Line Framing Logic Register In certain cases the number of clock cycles between HD pulses will be greater than the line buffer included in the H3A module. The framing module prior to the line buffer enables to control the data which is input to the line buffer." {
+        slv 16 wo "Start Line Vertical Specifies how many lines after the VD rising edge the real frame starts.";
+        line_start 16 rw "Line Start The framing module uses the LINE_START bit field to find the position of the first pixel to place into the line buffer. Range: 0-65535";
+    };
+    
+    register h3a_vfv_cfg1 addr(base, 0x68) "Vertical focus value configuration 1." {
+        vcoef1_3 8 rw "Vertical FV FIR 1 coefficient 3";
+        vcoef1_2 8 rw "Vertical FV FIR 1 coefficient 2";
+        vcoef1_1 8 rw "Vertical FV FIR 1 coefficient 1";
+        vcoef1_0 8 rw "Vertical FV FIR 1 coefficient 0";
+    };
+    
+    register h3a_vfv_cfg2 addr(base, 0x6C) "Vertical focus value configuration 2." {
+        vthr1 16 rw "Threshold for vertical FV FIR 1";
+        _ 8 mbz;
+        vcoef1_4 8 rw "Vertical FV FIR 1 coefficient 4";
+    };
+    
+    register h3a_vfv_cfg3 addr(base, 0x70) "Vertical focus value configuration 4." {
+        vcoef2_3 8 rw "Vertical FV FIR 2 coefficient 3";
+        vcoef2_2 8 rw "Vertical FV FIR 2 coefficient 2";
+        vcoef2_1 8 rw "Vertical FV FIR 2 coefficient 1";
+        vcoef2_0 8 rw "Vertical FV FIR 2 coefficient 0";
+    };
+    
+    register h3a_vfv_cfg4 addr(base, 0x74) "Vertical focus value configuration 4." {
+        vthr2 16 rw "Threshold for vertical FV FIR 2";
+        _ 8 mbz;
+        vcoef2_4 8 rw "Vertical FV FIR 2 coefficient 4";
+    };
+    
+    register h3a_hvf_thr addr(base, 0x78) "Horizontal Focus Value Threshold" {
+        hthr2 16 rw "Threshold for horizontal FV IIR 2";
+        hthr1 16 rw "Threshold for horizontal FV IIR 1";
+    };
+
+    constants id_status width(17) "" {
+        ID_0 = 0 "This bit field must be set to 0xCA00 to enable AF advanced mode.";
+    };
+
+    constants af_mode_status width(1) "" {
+        AF_MODE_0 = 0 "Normal Mode";
+        AF_MODE_1 = 1 "Advanced mode. .ID must be set to 0xCA00 to enable this functionality.";
+    };
+    
+    register h3a_advanced addr(base, 0x7C) "Normal and Advanced AF stats collection mode" {
+        id 17 rw type(id_status) "";
+        _ 14 mbz;
+        af_mode 1 rw type(af_mode_status) "AF engine mode.";
+    };
+};

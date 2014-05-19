@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, 2011 ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface pci "The PCI Interface" {
+    typedef uint32 caps_per_bar[6]; // 6 == PCI_NBARS
+
+    /* Init PCI device */
+    rpc init_pci_device(in uint32 class_code,
+                        in uint32 sub_class,
+                        in uint32 prog_if,
+                        in uint32 vendor_id,
+                        in uint32 device_id,
+                        in uint32 bus,
+                        in uint32 dev,
+                        in uint32 fun,
+                        in uint8 coreid,  // core ID for interrupt handler
+                        in uint32 vector, // interrupt vector (0 == no interrupt)
+                        out errval err,
+                        out uint8 nr_allocated_bars,
+                        out caps_per_bar caps_per_bar);
+
+    /* Init legacy IO device */
+    rpc init_legacy_device(in uint16 iomin,
+                           in uint16 iomax,
+                           in uint8 irq,
+                           in uint8 coreid, // core ID for interrupt handler
+                           in uint32 vector,// interrupt vector (0 == no interrupt)
+                           out errval err,
+                           out cap iocap);
+
+    /* request the cap for a previously-initialised device */
+    rpc get_cap(in uint32 idx, in uint32 cap_nr,
+                out errval err, out cap cap, out uint8 type);
+
+    /* Kludge: retrieve frame cap to VBE BIOS
+    rpc get_vbe_bios_cap(out errval err, out cap cap, out uint32 size);
+    rpc reset(out errval err);
+    rpc sleep(in int state, out errval err);  */
+
+    /* read PCI conf header */
+    rpc read_conf_header(in uint32 dword, out errval err, out uint32 val);
+
+    /* write PCI conf header */
+    rpc write_conf_header(in uint32 dword, in uint32 val, out errval err);
+
+    /* Enable MSI-X for the specified PCI device. */
+    rpc msix_enable(out errval err,
+                    out uint16 vec_count);
+
+    /* Configure specified MSI-X vector */
+    rpc msix_vector_init(in uint16 idx,        /* Index of MSI-X vector */
+                         in uint8 destination, /* Interrupt Destination */
+                         in uint8 vector,      /* Interrupt Vector */
+                         out errval err);
+};

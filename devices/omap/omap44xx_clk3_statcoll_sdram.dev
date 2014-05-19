@@ -1,0 +1,254 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_clk3_statcoll_sdram.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_clk3_statcoll_sdram msbfirst ( addr base ) "" {
+    
+
+    constants stdhosthdr_corereg_vendorcode_status width(1) "" {
+        STDHOSTHDR_COREREG_VENDORCODE_0_r = 0 "Third-party vendor.";
+        STDHOSTHDR_COREREG_VENDORCODE_1_r = 1 "";
+    };
+    
+    register l3_stcol_stdhosthdr_corereg addr(base, 0x0) "" {
+        _ 10 mbz;
+        stdhosthdr_corereg_corecode 6 ro "The Core Code field is a constant reporting a vendor-specific core generator code. Type: Constant. Reset value: 0x3A.";
+        _ 15 mbz;
+        stdhosthdr_corereg_vendorcode 1 ro type(stdhosthdr_corereg_vendorcode_status) "The Vendor Code field is a constant reporting the core generator vendor code. Type: Constant. Reset value: 0x1.";
+    };
+    
+    register l3_stcol_stdhosthdr_versionreg addr(base, 0x4) "" {
+        stdhosthdr_versionreg_revisionid 8 ro "The Revision Identifier field is a constant reporting the core generator revision number. Type: Constant. Reset value: 0x0.";
+        stdhosthdr_versionreg_coreparamschecksum 24 ro "Reserved. Type: Reserved. Reset value: Reserved.";
+    };
+    
+    register l3_stcol_en addr(base, 0x8) "" {
+        _ 31 mbz;
+        en 1 rw "Enable performance monitoring, this will also shut down the clock if En = 0 Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_soften addr(base, 0xC) "" {
+        _ 31 mbz;
+        soften 1 rw "Software enable for performance monitoring Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_trigen addr(base, 0x14) "" {
+        _ 31 mbz;
+        trigen 1 rw "TrigEn when set, it enable the external trigger start and stop Type: Control. Reset value: 0x0.";
+    };
+
+    constants reqevt_status width(4) "" {
+        REQEVT_0 = 0 "Collect is disabled default value";
+        REQEVT_1 = 1 "Collect all event: hit always (cycle)";
+        REQEVT_2 = 2 "Collect transfers: actually used cycle for transferring aN NTTP word";
+        REQEVT_3 = 3 "Collect wait cycle: transfer has been delayed by source";
+        REQEVT_4 = 4 "Collect busy: transfer has been delayed by destination";
+        REQEVT_5 = 5 "Collect packet: new packet start";
+        REQEVT_6 = 6 "Collect data: data cycle transfer, write for requests, read for responses";
+        REQEVT_7 = 7 "Collect idles: transfer is not initiated by source";
+        REQEVT_8 = 8 "Collect latency: hit when actually detecting debug bit on response links";
+    };
+    
+    register l3_stcol_reqevt addr(base, 0x18) "" {
+        _ 28 mbz;
+        reqevt 4 rw type(reqevt_status) "Req event select Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_rspevt addr(base, 0x1C) "" {
+        _ 28 mbz;
+        rspevt 4 rw type(reqevt_status) "Rsp event select Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_evtmux_sel0 addr(base, 0x20) "" {
+        _ 29 mbz;
+        evtmux_sel0 3 rw "The select of the mux 0 Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_evtmux_sel1 addr(base, 0x24) "" {
+        _ 29 mbz;
+        evtmux_sel1 3 rw "The select of the mux 1 Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_evtmux_sel2 addr(base, 0x28) "" {
+        _ 29 mbz;
+        evtmux_sel2 3 rw "The select of the mux 2 Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_evtmux_sel3 addr(base, 0x2C) "" {
+        _ 29 mbz;
+        evtmux_sel3 3 rw "The select of the mux 3 Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_evtmux_sel4 addr(base, 0x30) "" {
+        _ 29 mbz;
+        evtmux_sel4 3 rw "The select of the mux 4 Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_dump_identifier addr(base, 0x40) "" {
+        _ 30 mbz;
+        dump_identifier 2 ro "Probe identifier Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_dump_collecttime addr(base, 0x44) "" {
+        _ 16 mbz;
+        dump_collecttime 16 rw "Number of cycle to wait between two statistics frame Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_dump_slvaddr addr(base, 0x48) "" {
+        _ 27 mbz;
+        dump_slvaddr 5 ro "Dump slave address Type: Control. Reset value: 0x19.";
+    };
+    
+    register l3_stcol_dump_mstaddr addr(base, 0x4C) "" {
+        _ 24 mbz;
+        dump_mstaddr 8 ro "Dump master address Type: Control. Reset value: 0xE0.";
+    };
+    
+    register l3_stcol_dump_slvofs rw addr(base, 0x50) "" type(uint32);
+    
+    register l3_stcol_dump_manual addr(base, 0x54) "" {
+        _ 31 mbz;
+        dump_manual 1 rw "Define the dump mode: if != 0 the dump is controlled by the Send register. Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_dump_send addr(base, 0x58) "" {
+        _ 31 mbz;
+        dump_send 1 rw "In manual mode, is used to send the dump content and initialize the counters. Type: Give_AutoCleared. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_globalen addr(base, 0xAC) "" {
+        _ 31 mbz;
+        filter_i_globalen 1 rw "Filter global enable Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_addrmin addr(base, 0xB0) "" {
+        _ 9 rsvd;
+        filter1_addrmin 23 rw "min addr range Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_addrmax addr(base, 0xB4) "" {
+        _ 9 rsvd;
+        filter1_addrmax 23 rw "max addr range Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_addren addr(base, 0xB8) "" {
+        _ 31 rsvd;
+        filter1_addren 1 rw "max filtering enable Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_en_k addr(base, 0xBC) "" {
+        _ 31 mbz;
+        filter_i_en0 1 rw "Enable filter stage 0 Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_mask_m_rd addr(base, 0xC0) "" {
+        _ 31 mbz;
+        filter_i_mask_m_rd 1 rw "Mask/Match of Rd Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_mask_m_wr addr(base, 0xC4) "" {
+        _ 31 mbz;
+        filter_i_mask_m_wr 1 rw "Mask/Match of Wr Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_mask_m_mstaddr addr(base, 0xC8) "" {
+        _ 24 mbz;
+        filter_i_mask_m_mstaddr 8 rw "Mask/Match of MstAddr Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_mask_m_err addr(base, 0xD0) "" {
+        _ 31 mbz;
+        filter_i_mask_m_err 1 rw "Mask/Match of Err Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_mask_m_userinfo addr(base, 0xD4) "" {
+        _ 14 mbz;
+        filter_i_mask_m_userinfo 18 rw "Mask/Match of UserInfo Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_match_m_rd addr(base, 0xE0) "" {
+        _ 31 mbz;
+        filter_i_match_m_rd 1 rw "Mask/Match of Rd Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_match_m_wr addr(base, 0xE4) "" {
+        _ 31 mbz;
+        filter_i_match_m_wr 1 rw "Mask/Match of Wr Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_match_m_mstaddr addr(base, 0xE8) "" {
+        _ 24 mbz;
+        filter_i_match_m_mstaddr 8 rw "Mask/Match of MstAddr Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_match_m_err addr(base, 0xF0) "" {
+        _ 31 mbz;
+        filter_i_match_m_err 1 rw "Mask/Match of Err Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_filter_i_match_m_userinfo addr(base, 0xF4) "" {
+        _ 14 mbz;
+        filter_i_match_m_userinfo 18 rw "Mask/Match of UserInfo Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_op_i_threshold_minval addr(base, 0x1F0) "" {
+        _ 20 mbz;
+        op_i_threshold_minval 12 rw "Min value Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_stcol_op_i_threshold_maxval addr(base, 0x1F4) "" {
+        _ 20 mbz;
+        op_i_threshold_maxval 12 rw "Max value Type: Control. Reset value: 0x0.";
+    };
+
+    constants op_i_evtinfosel_status width(2) "" {
+        OP_i_EVTINFOSEL_0 = 0 "Select len from event info list";
+        OP_i_EVTINFOSEL_1 = 1 "Select pressure if available from event info list";
+        OP_i_EVTINFOSEL_2 = 2 "Select latency if available from event info list";
+    };
+    
+    register l3_stcol_op_i_evtinfosel addr(base, 0x1F8) "" {
+        _ 30 mbz;
+        op_i_evtinfosel 2 rw type(op_i_evtinfosel_status) "Select event info data to add to counter (len/press or latency) Type: Control. Reset value: 0x0.";
+    };
+
+    constants op_i_sel_status width(4) "" {
+        OP_i_SEL_0 = 0 "Increment counter on each mask/match filter hit";
+        OP_i_SEL_1 = 1 "Increment counter on each min/max level hit";
+        OP_i_SEL_2 = 2 "Add to counter the selected event info value (len/press or latency)";
+        OP_i_SEL_3 = 3 "increment counter when all filter event hits (And(Fi))";
+        OP_i_SEL_4 = 4 "Increment counter if any of filter event hits (Or(Fi))";
+        OP_i_SEL_5 = 5 "Add to counter the number of current request event that hit";
+        OP_i_SEL_6 = 6 "Add to counter the number of current response event that hit";
+        OP_i_SEL_7 = 7 "Add to counter the number of all event that hit";
+        OP_i_SEL_8 = 8 "Increment counter on each selected external event hit";
+    };
+    
+    register l3_stcol_op_i_sel addr(base, 0x1FC) "" {
+        _ 28 mbz;
+        op_i_sel 4 rw type(op_i_sel_status) "Select logical operation Type: Control. Reset value: 0x0.";
+    };
+};

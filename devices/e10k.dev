@@ -1,0 +1,2555 @@
+/*
+ * Copyright (c) 2011, 2013, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * e10k.dev
+ *
+ * DESCRIPTION: Intel 82599 10 GbE Controller
+ *
+ * Numbers in comments refer to the Intel 82599 10 GbE Controller Datasheet
+ * 322429-007, Revison 2.6, December 2010
+ */
+
+device e10k lsbfirst ( addr base ) "Intel 82599 10 GbE Controller" {
+
+  /************************************
+   * 8.2.3.1 General control registers
+   ***********************************/
+
+  // 8.2.3.1
+  register ctrl rw addr(base, 0x00000) "Device control" {
+    _           2 mbz;
+    pcie_md     1 "PCIe Master Disable";
+    lrst        1 "Link reset";
+    _           22 rsvd;
+    rst         1 "Device reset";
+    _           5 rsvd;
+  };
+
+  constants lanid "LAN ID" {
+    lan_0       = 0b00 "LAN 0";
+    lan_1       = 0b01 "LAN 1";
+    lan_not_u1  = 0b10 "LAN ID not used";
+    lan_not_u2  = 0b11 "LAN ID not used";
+  };
+
+  // 8.2.3.1.1
+  register status ro addr(base, 0x00008) "Device status" {
+    _           2;
+    lan_id      2 type(lanid) "LAN ID";
+    _           3;
+    link_up     1 "Linkup Status Indication";
+    _           2;
+    num_vfs     8 "Num VFs";
+    iov_active  1 "IOV Active";
+    pcie_mes    1 "PCIe Master Enable Status";
+    _           12;
+  };
+
+  // 8.2.3.1.2
+  register ctrl_ext rw addr(base, 0x00018) "Extended Device Control Register" {
+    _           14 rsvd;
+    pfrstd      1 "PF Reset Done";
+    _           1 rsvd;
+    ns_dis      1 "NO Snoop Disable"; /* Not in spec, but set by FBSD/Linux */
+    ro_dis      1 "Relaxed Ordering Disable";
+    _           8 rsvd;
+    ext_vlan    1 "Extended VLAN";
+    _           1 rsvd;
+    drv_load    1 "Driver loaded ";
+    _           3 rsvd;
+  };
+
+  // 8.2.3.1.3
+  register esdp rw addr(base, 0x00020) "Extended SDP Control" {
+    sdp0_data   1 "SDP0 Data Value";
+    sdp1_data   1 "SDP1 Data Value";
+    sdp2_data   1 "SDP2 Data Value";
+    sdp3_data   1 "SDP3 Data Value";
+    sdp4_data   1 "SDP4 Data Value";
+    sdp5_data   1 "SDP5 Data Value";
+    sdp6_data   1 "SDP6 Data Value";
+    sdp7_data   1 "SDP7 Data Value";
+    sdp0_iodir  1 "SDP0 Pin Directionality";
+    sdp1_iodir  1 "SDP1 Pin Directionality";
+    sdp2_iodir  1 "SDP2 Pin Directionality";
+    sdp3_iodir  1 "SDP3 Pin Directionality";
+    sdp4_iodir  1 "SDP4 Pin Directionality";
+    sdp5_iodir  1 "SDP5 Pin Directionality";
+    sdp6_iodir  1 "SDP6 Pin Directionality";
+    sdp7_iodir  1 "SDP7 Pin Directionality";
+    sdp0_native 1 "SDP0 Operating Mode";
+    sdp1_native 1 "SDP1 Operating Mode";
+    sdp2_native 1 "SDP2 Operating Mode";
+    sdp3_native 1 "SDP3 Operating Mode";
+    sdp4_native 1 "SDP4 Operating Mode";
+    sdp5_native 1 "SDP5 Operating Mode";
+    sdp6_native 1 "SDP6 Operating Mode";
+    sdp7_native 1 "SDP7 Operating Mode";
+    _           2 rsvd;
+    sdp2_ts_tt1 1 "SDP2 Native Mode Functionality";
+    sdp3_ts_tt0 1 "SDP3 Native Mode Functionality";
+    sdp4_func   1 "SDP4 Native Mode Functionality";
+    sdp5_func   1 "SDP5 Native Mode Functionality";
+    sdp6_ts_tt1 1 "SDP6 Native Mode Functionality";
+    sdp7_ts_tt0 1 "SDP7 Native Mode Functionality";
+  };
+
+  // 8.2.3.1.4
+  register i2cctl rw addr(base, 0x00028) "I2C Control" {
+    i2c_clkin   1 "I2C_CLK In Value";
+    i2c_clkout  1 "I2C_CLK Out Value";
+    i2c_datain  1 "I2C_DATA In Value";
+    i2c_dataout 1 "I2C_DATA Out Value";
+    _           28 rsvd;
+  };
+
+  constants ledmode "LED Mode" {
+    link_up     = 0b0000 "Link established and maintained";
+    link_10g    = 0b0001 "10G Link established and maintained";
+    mac_act     = 0b0010 "MAC activity";
+    filter_act  = 0b0011 "MAC activity that passed MAC filters";
+    link_act    = 0b0100 "Steady when link good, blinking on activity";
+    link_1g     = 0b0101 "1G Link established and maintained";
+    link_100    = 0b0110 "100M Link established and maintained";
+    led_on      = 0b1110 "LED on";
+    led_off     = 0b1111 "LED off";
+  };
+
+  // 8.2.3.1.5
+  register ledctl rw addr(base, 0x00200) "LED Control" {
+    led0_mode   4 type(ledmode) "LED0 Mode";
+    _           1 rsvd;
+    glob_blmode 1 "GLOBAL blink mode";
+    led0_ivrt   1 "LED0 Invert";
+    led0_blink  1 "LED0 Blink";
+
+    led1_mode   4 type(ledmode) "LED1 Mode";
+    _           2 rsvd;
+    led1_ivrt   1 "LED1 Invert";
+    led1_blink  1 "LED1 Blink";
+
+    led2_mode   4 type(ledmode) "LED2 Mode";
+    _           2 rsvd;
+    led2_ivrt   1 "LED2 Invert";
+    led2_blink  1 "LED2 Blink";
+
+    led3_mode   4 type(ledmode) "LED3 Mode";
+    _           2 rsvd;
+    led3_ivrt   1 "LED3 Invert";
+    led3_blink  1 "LED3 Blink";
+  };
+
+  // 8.2.3.1.6
+  register exvet rw addr(base, 0x05078) "Extended VLAN Ether Type " {
+    _           16 rsvd;
+    vet_ext     16 "Outer-VLAN Ether Type";
+  };
+
+
+  /************************************
+   * 8.2.3.2 EEPROM/Flash Registers
+   ***********************************/
+
+  constants fwe_control "Flash Write Enable Control" {
+    fwe_erase   = 0b00 "Flash erase";
+    fwe_nowrite = 0b01 "Flash writes disabled";
+    fwe_write   = 0b10 "Flash writes enabled";
+  };
+
+  constants eeprom_size "EEPROM Size" {
+    eesz_16K    = 0b0100 "16Kb, 2B Address Size";
+    eesz_32K    = 0b0101 "32Kb, 2B Address Size";
+    eesz_64K    = 0b0110 "64Kb, 2B Address Size";
+    eesz_128K   = 0b0111 "128Kb, 2B Address Size";
+    eesz_256K   = 0b1000 "256Kb, 2B Address Size";
+  };
+
+  // 8.2.3.2.1
+  register eec rw addr(base, 0x10010) "EEPROM/Flash Control Register" {
+    ee_sk       1 "Clock input to the EEPROM";
+    ee_cs       1 "Chip select input to the EEPROM";
+    ee_di       1 "Data input to the EEPROM";
+    ee_do       1 ro "Data output bit from the EEPROM";
+    fwe         2 type(fwe_control) "Flash Write Enable Control";
+    ee_req      1 "Request EEPROM Access";
+    ee_gnt      1 ro "Grant EEPROM Access";
+    ee_pres     1 ro "EEPROM Present";
+    auto_rd     1 ro "EEPROM Auto-Read Done";
+    _           1 rsvd;
+    ee_size     4 ro type(eeprom_size) "EEPROM Size";
+    pci_anadon  1 ro "PCIe Analog Done";
+    pci_cordon  1 ro "PCIe Core Done";
+    pci_gendon  1 ro "PCIe General Done";
+    pci_fundon  1 ro "PCIe Function Done";
+    core_done   1 ro "Core Done";
+    core_csrdon 1 ro "Core CSR Done";
+    mac_done    1 ro "MAC Done";
+    _           10 rsvd;
+  };
+
+  // 8.2.3.2.2
+  register eerd rw addr(base, 0x10014) "EEPROM Read Register" {
+    start       1 "Start Read";
+    done        1 "Read Done";
+    addr        14 "Read Address";
+    data        16 "Read Data";
+  };
+
+  // 8.2.3.2.3 (page 462)
+  register fla rw addr(base, 0x1001C) "Flash Access Register" {
+    fl_sck      1 "Clock input to the Flash";
+    fl_ce       1 "Chip select input to the Flash";
+    fl_si       1 "Data input to the Flash";
+    fl_so       1 ro "Data output bit from the Flash";
+    fl_req      1 "Request Flash Access";
+    fl_gnt      1 "Grant Flash Access";
+    _           24 mbz;
+    fl_busy     1 ro "Flash Busy";
+    fl_er       1 "Flash Erase Command";
+  };
+
+  // 8.2.3.2.4
+  register eemngctl rw addr(base, 0x10110) "Manageability EEPROM Control Register" {
+    addr        15 "EEPROM address to read or write";
+    start       1 "Start";
+    write       1 "Write";
+    eebusy      1 "EPROM Busy";
+    _           13 rsvd;
+    done        1 "Transaction Done";
+  };
+
+  // 8.2.3.2.5
+  register eemngdata rw addr(base, 0x10114) "Manageability EEPROM Read/Write Data" {
+    wrdata      16 "Data to be written to the EEPROM";
+    rddata      16 ro "Data returned from the EEPROM read";
+  };
+
+  constants flmng_command "Commands to access flash" {
+    fl_read     = 0b00 "Read command";
+    fl_write    = 0b01 "Write command";
+    fl_secerase = 0b10 "Sector erase";
+    fl_erase    = 0b11 "Erase";
+  };
+
+  // 8.2.3.2.6
+  register flmngctl rw addr(base, 0x10118) "Manageability Flash Control Register" {
+    addr        24 "Flash address to read or write";
+    cmd         2 type(flmng_command) "Command";
+    cmdv        1 "Command Valid";
+    flbusy      1 "Flash Busy";
+    _           2 rsvd;
+    done        1 rc "Read Done";
+    wrdone      1 "Global Done";
+  };
+
+  // 8.2.3.2.7
+  register flmngdata rw addr(base, 0x1011C) "Manageability Flash Read Data" {
+    data        32 "Read/Write Data";
+  };
+
+  // 8.2.3.2.8
+  register flop rw addr(base, 0x1013C) "Flash Opcode Register" {
+    serase      8 "Flash Block Erase Instruction";
+    derase      8 "Flash Device Erase Instruction";
+    _           16 rsvd;
+  };
+
+  // 8.2.3.2.9
+  register grc rw addr(base, 0x10200) "General Receive Control" {
+    mng_en      1 ro "Manageability Enable";
+    apme        1 "Advance Power Management Enable";
+    _           30 rsvd;
+  };
+
+  /************************************
+   * 8.2.3.3 Flow Control Registers
+   ***********************************/
+
+  // 8.2.3.3.1
+  register pfctop rw addr(base, 0x03008) "Priority Flow Control Type Opcode" {
+    fct         16 "Priority Flow Control EtherType";
+    fcop        16 "Priority Flow Control Opcode";
+  };
+
+  // 8.2.3.3.2
+  regarray fcttv rw addr(base, 0x03200) [4] "Flow Control Transmit Timer Value" {
+    ttv0        16 "Transmit Timer Value 2n";
+    ttv1        16 "Transmit Timer Value 2n+1";
+  };
+
+  // 8.2.3.3.3
+  regarray fcrtl rw addr(base, 0x03220) [8] "Flow Control Receive Threshold Low" {
+    _           5 rsvd;
+    rtl         14 "Receive Threshold Low n";
+    _           12 rsvd;
+    xone        1 "XON Enable n";
+  };
+
+  // 8.2.3.3.4
+  regarray fcrth rw addr(base, 0x03260) [8] "Flow Control Receive Threshold High" {
+    _           5 rsvd;
+    rth         14 "Receive Threshold High n";
+    _           12 rsvd;
+    fcen        1 "Transmit flow control enable for packet buffer n";
+  };
+
+  // 8.2.3.3.5
+  register fcrtv rw addr(base, 0x032A0) "Flow Control Refresh Threshold Value" {
+    fc_refth    16 "Flow Control Refresh Threshold";
+    _           16 rsvd;
+  };
+
+  // 8.2.3.3.6
+  register tfcs ro addr(base, 0x0CE00) "Transmit Flow Control Status" {
+    tc_xon      8 "Set if flow control is in XON state";
+    _           24 rsvd;
+  };
+
+  constants tfc_status "Transmit Flow Control Status" {
+    tfc_dis     = 0b00 "Transmit flow control disabled";
+    lfc_en      = 0b01 "Link flow control enabled";
+    pfc_en      = 0b10 "Priority flow control enabled";
+  };
+
+  // 8.2.3.3.7
+  register fccfg rw addr(base, 0x03D00) "Flow Control Configuration" {
+    _           3 rsvd;
+    tfce        2 type(tfc_status) "Transmit Flow Control Enable";
+    _           27 rsvd;
+  };
+
+
+  /************************************
+   * 8.2.3.4 PCIe Registers
+   ***********************************/
+
+  constants pcie_capability_version "PCIe Capability Version" {
+    ver1        = 0b0 "Capability version: 0x1";
+    ver2        = 0b1 "Capability version: 0x2";
+  };
+
+  // 8.2.3.4.1
+  register gcr rw addr(base, 0x11000) "PCIe Control Register" {
+    _           9 rsvd;
+    ctrsen      1 "Completion Timeout resend enable";
+    _           1 rsvd;
+    no_resend   2 "Number of resends";
+    _           5 rsvd;
+    pcie_capver 1 type(pcie_capability_version) "PCIe Capability Version";
+    _           2 rsvd;
+    hdrlog_inv  1 "hdr_log inversion";
+    _           10 rsvd;
+  };
+
+  // 8.2.3.4.2
+  register gscl_1 rw addr(base, 0x11010) "PCIe Statistic Control Register #1" {
+    gio_cnt_en0 1 "Enables PCIe statistic counter number 0";
+    gio_cnt_en1 1 "Enables PCIe statistic counter number 1";
+    gio_cnt_en2 1 "Enables PCIe statistic counter number 2";
+    gio_cnt_en3 1 "Enables PCIe statistic counter number 3";
+    lbc_en0     1 "LBC Enable 0";
+    lbc_en1     1 "LBC Enable 1";
+    lbc_en2     1 "LBC Enable 2";
+    lbc_en3     1 "LBC Enable 3";
+    _           19 rsvd;
+    gio_cnt_tst 1 "Test Bit";
+    gio_64bit   1 "Enables two 64-bit counters instead of four 32-bit counters";
+    gio_cnt_rst 1 "Reset indication of PCIe statistic counters";
+    gio_cnt_stp 1 "Stop indication of PCIe statistic counters.";
+    gio_cnt_sta 1 "Start indication of PCIe statistic counters.";
+  };
+
+  constants pcie_statenc "PCIe Statistic Events Encoding" {
+    bad_tlp     = 0x00 "Bad TLP from LL";
+    no_req_tout = 0x10 "Requests that reached timeout";
+    nack_dllp   = 0x20 "NACK DLLP received";
+    repl_tout   = 0x21 "Replay happened in retry buffer";
+    recv_error  = 0x22 "Receive error";
+    repl_rollov = 0x23 "Replay roll over";
+    resnd_pkg   = 0x24 "Re-sending packets";
+    sp_linkdown = 0x25 "Surprise link down";
+    ltssm_l0_rt = 0x30 "LTSSM in L0s in both Rx and Tx";
+    ltssm_l0_rx = 0x31 "LTSSM in L0s in Rx";
+    ltssm_l0_tx = 0x32 "LTSSM in L0s in Tx";
+    ltssm_l1act = 0x33 "LTSSM in L1 active";
+    ltssm_l1sft = 0x34 "LTSSM in L1 software";
+    ltssm_recov = 0x35 "LTSSM in recovery";
+  };
+
+  // 8.2.3.4.3
+  register gscl_2 rw addr(base, 0x11014) "PCIe Statistic Control Register #2" {
+    gio_evcnt0  8 type(pcie_statenc) "Event number that counter 0 counts";
+    gio_evcnt1  8 type(pcie_statenc) "Event number that counter 1 counts";
+    gio_evcnt2  8 type(pcie_statenc) "Event number that counter 2 counts";
+    gio_evcnt3  8 type(pcie_statenc) "Event number that counter 3 counts";
+  };
+
+  // 8.2.3.4.4
+  regarray gscl5_8 rw addr(base, 0x11030) [4] "PCIe Statistic Control Register #5...#8" {
+    lbc_thr     16 "Threshold for the leaky bucket counter n.";
+    lbc_timer   16 "Time period between decrementing value in leaky bucket Counter n.";
+  };
+
+  // 8.2.3.4.5
+  regarray gscn ro addr(base, 0x11020) [4] "PCIe Statistic Counter Registers #0...#3"
+                type(uint32);
+
+  constants power_state "Power State indication" {
+    ps_dr       = 0b00 "DR";
+    ps_d0u      = 0b01 "D0u";
+    ps_d0a      = 0b10 "D0a";
+    ps_d3       = 0b11 "D3";
+  };
+
+  // 8.2.3.4.6
+  register factps ro addr(base, 0x10150) "Function Active and Power State to Manageability" {
+    f0_pstate   2 type(power_state) "Func0 Power State";
+    lan0_valid  1 "LAN0 Valid";
+    f0_auxen    1 "Function 0 Auxiliary (AUX) Power PM Enable ";
+    _           2 rsvd;
+    f1_pstate   2 type(power_state) "Func1 Power State";
+    lan1_valid  1 "LAN1 Valid";
+    f1_auxen    1 "Function 1 Auxiliary (AUX) Power PM Enable ";
+    _           19 rsvd;
+    mngcg       1 "Manageability Clock Gated";
+    lan_fsel    1 "LAN Function Sel";
+    pstate_chg  1 "PM State changed";
+  };
+
+  // 8.2.3.4.7
+  register pciephyadr rw addr(base, 0x11040) "PCIe Analog Configuration Register" {
+    address     12 "The indirect access' address";
+    _           13 rsvd;
+    byte_en     4 "The indirect access' byte enable";
+    read_en     1 "The indirect access is read transaction";
+    write_en    1 "The indirect access is write transaction";
+    done        1 "Acknowledge for the indirect access to the CSR";
+  };
+
+  // 8.2.3.4.8
+  register pciephydat rw addr(base, 0x11044) "PCIe PHY Data Register"
+                type(uint32);
+
+  // 8.2.3.4.9
+  register swsm rw addr(base, 0x10140) "Software Semaphore Register" {
+    smbi        1 rwzc "Semaphore Bit";
+    swesmbi     1 "Software Semaphore bi";
+    _           30 rsvd;
+  };
+
+  constants fw_mode "Firmware Mode" {
+    nomode      = 0x0 "None (manageability off)";
+    ptmode      = 0x2 "PT mode";
+    hien_only   = 0x4 "Host interface enable only";
+  };
+
+  constants ext_err_ind "External Error Indication" {
+    noerr       = 0x00 "No error";
+    inv_eechs   = 0x01 "Invalid EEPROM checksum";
+    unlkd_secee = 0x02 "Unlocked secured EEPROM";
+    clk_offcmd  = 0x03 "Clock off host command";
+    inv_flchs   = 0x04 "Invalid Flash checksum";
+    inv_c0chs   = 0x05 "C0 checksum failed";
+    inv_c1chs   = 0x06 "C1 checksum failed";
+    inv_c2chs   = 0x07 "C2 checksum failed";
+    inv_c3chs   = 0x08 "C3 checksum failed";
+    tt_exeeded  = 0x09 "TLB table exceeded";
+    dmal_failed = 0x0A "DMA load failed";
+    bad_hwver   = 0x0B "Bad hardware version in patch load";
+    fl_notsup   = 0x0C "Flash device not supported in the 82599";
+    unspec      = 0x0D "Unspecified error";
+  };
+
+  // 8.2.3.4.10
+  register fwsm ro addr(base, 0x10148) "Firmware Semaphore Register" {
+    fwsmbi      1 "Firmware Semaphore";
+    fw_mode     3 type(fw_mode) "Firmware Mode";
+    _           2 rsvd;
+    eep_relind  1 "EEPROM Reloaded Indication";
+    _           8 rsvd;
+    fw_valid    1 "Firmware Valid";
+    reset_cnt   3 "Reset Counter";
+    exterr_ind  6 type(ext_err_ind) "External Error Indication";
+    pcie_cfgerr 1 "PCIe Configuration Error Indication";
+    sdes0_err   1 "PHY/SERDES0 Configuration Error Indication";
+    sdes1_err   1 "PHY/SERDES1 Configuration Error Indication";
+    _           4 rsvd;
+  };
+
+  // 8.2.3.4.11
+  register swfw_sync rw addr(base, 0x10160) "Software Firmware Synchronization" {
+    sw_eepsm    1 "EEPROM access is owned by software";
+    sw_physm0   1 "PHY 0 access is owned by software";
+    sw_physm1   1 "PHY 1 access is owned by software";
+    sw_maccsrsm 1 "Software owns access to shared CSRs";
+    sw_flsm     1 "Software Flash semaphore";
+    fw_eepsm    1 ro "EEPROM access is owned by firmware";
+    fw_physm0   1 ro "PHY 0 access is owned by firmware";
+    fw_physm1   1 ro "PHY 1 access is owned by firmware";
+    fw_maccsrsm 1 ro "Firmware owns access to shared CSRs";
+    fw_flsm     1 ro "Firmware Flash semaphore";
+    _           22 rsvd;
+  };
+
+  constants vt_mode "VT mode of operation" {
+    vt_none     = 0b00 "No VT";
+    vt_16       = 0b01 "VT16";
+    vt_32       = 0b10 "VT32";
+    vt_64       = 0b11 "VT64";
+  };
+
+  // 8.2.3.4.12
+  register gcr_ext rw addr(base, 0x11050) "PCIe Control Extended Register" {
+    vtmode      2 type(vt_mode) "VT mode of operation";
+    _           2 rsvd;
+    apbacd      1 "Auto PBA Clear Disable";
+    _           27 rsvd;
+  };
+
+  // 8.2.3.4.13
+  register mrevid ro addr(base, 0x11064) "Mirrored Revision ID" {
+    eeprom_rev  8 "Mirroring of rev ID loaded from EEPROM";
+    default_rev 8 "Mirroring of default rev ID, before EEPROM load";
+    _           16 rsvd;
+  };
+
+  // 8.2.3.4.14
+  register picause rw1c addr(base, 0x110B0) "PCIe Interrupt Cause" {
+    ca          1 "PCI completion abort exception";
+    ua          1 "Unsupported I/O address exception";
+    be          1 "Wrong byte-enable exception in the FUNC unit";
+    to          1 "PCI timeout exception in the FUNC unit";
+    bmef        1 "Bus master enable of the PF or one of the VFs is de-asserted";
+    _           27 rsvd;
+  };
+
+  // 8.2.3.4.15
+  register piena rw addr(base, 0x110B8) "PCIe Interrupt Enable" {
+    ca          1 "Enable PCI completion abort interrupt";
+    ua          1 "Enable unsupported I/O address interrupt";
+    be          1 "Enable wrong byte-enable interrupt";
+    to          1 "Enable PCI timeout interrupt";
+    bmef        1 "Enable bus master enable interrupt";
+    _           27 rsvd;
+  };
+
+  // Undocumented
+  register ciaa rw addr(base, 0x11088) "CIAA" type(uint32);
+  register ciad rw addr(base, 0x1108C) "CIAD" type(uint32);
+
+  /************************************
+   * 8.2.3.5 Interrupt Registers
+   ***********************************/
+
+  // 8.2.3.5.1
+  register eicr rw1c addr(base, 0x00800) "Extended Interrupt Cause Register" {
+    rtxq        16 "Receive/Transmit Queue Interrupts";
+    flow_dir    1 "Flow Director Exception";
+    rx_miss     1 "Rx Miss";
+    pci_ex      1 "PCI Timeout Exception";
+    mailbox     1 "VF to PF MailBox Interrupt";
+    lsc         1 "Link Status Change";
+    linksec     1 "LinkSec";
+    mng         1 "Manageability Event Detected";
+    _           1 rsvd;
+    gpi_spd0    1 "General Purpose Interrupt on SDP0";
+    gpi_spd1    1 "General Purpose Interrupt on SDP1";
+    gpi_spd2    1 "General Purpose Interrupt on SDP2";
+    gpi_spd3    1 "General Purpose Interrupt on SDP3";
+    ecc         1 "Unrecoverable ECC Error";
+    _           1 rsvd;
+    tcp_timer   1 "TCP Timer Expired";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.5.2
+  register eics wo addr(base, 0x00808) "Extended Interrupt Cause Set Register" {
+    cause       31 "Interrupt Cause Set";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.5.3
+  register eims rw addr(base, 0x00880) "Extended Interrupt Mask Set/Read Register" {
+    cause       31 rws "Interrupt Enable";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.5.4
+  register eimc wo addr(base, 0x00888) "Extended Interrupt Mask Clear Register" {
+    cause       31 "Interrupt Mask";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.5.5
+  register eiac rw addr(base, 0x00810) "Extended Interrupt Auto Clear Register" {
+    rtxq        16 "RTxQ Auto Clear";
+    _           14 rsvd;
+    tcp_timer   1 "TCP Timer Auto Clear";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.5.6
+  register eiam rw addr(base, 0x00890) "Extended Interrupt Auto Mask Enable Register" {
+    cause       31 "Auto Mask";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.5.7
+  regarray eicsn wo addr(base, 0x000A90) [2] "Extended Interrupt Cause Set Registers" {
+    cause       32 "Interrupt Cause Set";
+  };
+
+  // 8.2.3.5.8
+  regarray eimsn addr(base, 0x000AA0) [2] "Extended Interrupt Mask Set/Read Registers" {
+    cause       32 rws "Interrupt Enable";
+  };
+
+  // 8.2.3.5.9
+  regarray eimcn wo addr(base, 0x000AB0) [2] "Extended Interrupt Mask Clear Registers" {
+    cause       32 "Interrupt Mask";
+  };
+
+  // 8.2.3.5.10
+  regarray eiamn rw addr(base, 0x000AD0) [2] "Extended Interrupt Auto Mask Enable registers" {
+    cause       32 "Auto Mask";
+  };
+
+  // 8.2.3.5.11
+  register eitrsel rw addr(base, 0x00894) "MSIX to EITR Select" {
+    vfselect    32 "VFSelect";
+  };
+
+  // 8.2.3.5.12
+  /* Since this reg-array is split over 2 different addresses we have to
+   * implement it here as two different registers. */
+  regtype eitrn "Extended Interrupt Throttle Register Type" {
+    _           3 rsvd;
+    itr_int     9 "Minimum inter-interrupt interval";
+    _           3 rsvd;
+    lli_mod     1 "LLI Moderation";
+    lli_credit  5 "LLI Credit";
+    itr_count   7 "ITR Counter";
+    _           3 rsvd;
+    cnt_wdis    1 "CNT_WDIS";
+  };
+
+  regarray eitr_l rw addr(base, 0x00820) [24]
+                "Extended Interrupt Throttle Registers #0-#23"
+                type(eitrn);
+
+  regarray eitr_h rw addr(base, 0x12300) [104]
+                "Extended Interrupt Throttle Registers #24-#128"
+                type(eitrn);
+
+  // 8.2.3.5.13
+  /* A read from this register seems to cause an ECC error, that's why I
+   * replaced rsvd below by mbz, so that the _wr() method don't causes a
+   * read. */
+  regarray l34timir rw addr(base, 0x0E800) [128] "L3 L4 Tuples Immediate Interrupt Rx" {
+    _           12 mbz; /* rsvd */
+    size_bp     1 "Size Bypass";
+    _           6 mbz;
+    _           1 mb1;
+    lli         1 "Low Latency Interrupt";
+    rx_queue    7 "Rx Queue";
+    _           4 mbz; /* rsvd */
+  };
+
+  // 8.2.3.5.14
+  register llithresh rw addr(base, 0x0EC90) "LLI Size Threshol" {
+    sz_thresh   12 "Size Threshold";
+    _           20 rsvd;
+  };
+
+  // 8.2.3.5.15
+  register imirvp rw addr(base, 0x0EC60) "Immediate Interrupt Rx VLAN Priority Register" {
+    vlan_pri    3 "VLAN Priority";
+    vlan_pri_en 1 "VLAN Priority Enable";
+    _           28 rsvd;
+  };
+
+  // 8.2.3.5.16
+  regarray ivar rw addr(base, 0x00900) [64] "Interrupt Vector Allocation Registers" {
+    i_alloc0    6 "The interrupt allocation for Rx queue 2n";
+    _           1 rsvd;
+    i_allocval0 1 "Interrupt allocation 0 valid";
+    i_alloc1    6 "The interrupt allocation for Tx queue 2n";
+    _           1 rsvd;
+    i_allocval1 1 "Interrupt allocation 1 valid";
+    i_alloc2    6 "The interrupt allocation for Rx queue 2n+1";
+    _           1 rsvd;
+    i_allocval2 1 "Interrupt allocation 2 valid";
+    i_alloc3    6 "The interrupt allocation for Tx queue 2n+1";
+    _           1 rsvd;
+    i_allocval3 1 "Interrupt allocation 3 valid";
+  };
+
+  // 8.2.3.5.17
+  register ivar_misc rw addr(base, 0x00A00) "Miscellaneous Interrupt Vector Allocation" {
+    i_alloc0    7 "MSI-X vector assigned to the TCP timer interrupt";
+    i_allocval0 1 "Interrupt allocation 0 valid";
+    i_alloc1    7 "MSI-X vector assigned to the other interrupt cause";
+    i_allocval1 1 "Interrupt allocation 1 valid";
+    _           16 rsvd;
+  };
+
+  // 8.2.3.5.18
+  register gpie rw addr(base, 0x00898) "General Purpose Interrupt Enable" {
+    spd0_gpien  1 "General Purpose Interrupt Detection Enable for SDP0";
+    spd1_gpien  1 "General Purpose Interrupt Detection Enable for SDP1";
+    spd2_gpien  1 "General Purpose Interrupt Detection Enable for SDP2";
+    spd3_gpien  1 "General Purpose Interrupt Detection Enable for SDP3";
+    msix        1 "MSI-X Mode enable";
+    ocd         1 "Other Clear Disable";
+    eimen       1 "EICS Immediate Interrupt Enable";
+    ll_int      4 "Low latency Credits Increment Rate";
+    rsc_delay   3 "RSC Delay";
+    vtmode      2 type(vt_mode) "VT_Mode";
+    _           14 rsvd;
+    eiame       1 "Extended Interrupt Auto Mask Enable";
+    pba_sup     1 "BA Support";
+  };
+
+
+  /************************************
+   * 8.2.3.6 MSI-X Table Registers
+   ***********************************/
+
+  // 8.2.3.6.1
+  regarray pbacl rw addr(base, 0x110C0) [8] "MSI-X PBA Clear" {
+    penbitclr   32 rw1c "MSI-X Pending Bits Clear";
+  };
+
+
+  /************************************
+   * 8.2.3.7 Receive Registers
+   ***********************************/
+
+  // 8.2.3.7.1
+  register fctrl rw addr(base, 0x05080) "Filter Control Register" {
+    _           1 rsvd;
+    sbp         1 "Store Bad Packets";
+    _           6 rsvd;
+    mpe         1 "Multicast Promiscuous Enable";
+    upe         1 "Unicast Promiscuous Enable";
+    bam         1 "Broadcast Accept Mode";
+    _           21 rsvd;
+  };
+
+  // 8.2.3.7.2
+  register vlnctrl rw addr(base, 0x05088) "VLAN Control Register" {
+    vet         16 "VLAN Ether Type";
+    _           12 rsvd;
+    cfi         1 "Canonical Form Indicator Bit Value";
+    cfien       1 "Canonical Form Indicator Enable";
+    vfe         1 "VLAN Filter Enable";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.7.3
+  register mcstctrl rw addr(base, 0x05090) "Multicast Control Register" {
+    mo          2 "Multicast Offset";
+    mfe         1 "Multicast Filter Enable";
+    _           29 rsvd;
+  };
+
+  // 8.2.3.7.4
+  regarray psrtype rw addr(base, 0x0EA00) [64] "Packet Split Receive Type Register" {
+    _           1 mbz;
+    split_nfs   1 "Split received NFS packets after NFS header";
+    _           2 mbz;
+    split_tcp   1 "Split received TCP packets after TCP header";
+    split_udp   1 "Split received UDP packets after UDP header";
+    _           2 mbz;
+    split_ip4   1 "Split received IPv4 packets after IPv4 header";
+    split_ip6   1 "Split received IPv6 packets after IPv6 header";
+    _           2 mbz;
+    split_l2    1 "Split received L2 packets after L2 header";
+    _           16 mbz;
+    rqpl        3 "Number of bits to use for RSS redirection";
+  };
+
+  // 8.2.3.7.5
+  register rxcsum rw addr(base, 0x05000) "Receive Checksum Control" {
+    _           12 rsvd;
+    ippcse      1 "IP Payload Checksum Enable";
+    pscd        1 "RSS/Fragment Checksum Status Selection";
+    _           18;
+  };
+
+  constants nfs_version "NFS Version selection" {
+    nfs2        = 0b00 "NFS version 2";
+    nfs3        = 0b01 "NFS version 3";
+    nfs4        = 0b10 "NFS version 4";
+  };
+
+  // 8.2.3.7.6
+  register rfctl rw addr(base, 0x05008) "Receive Filter Control Register" {
+    _           5 rsvd; /* Caution: The manuals says bits 5:0, probably typo */
+    rsc_dis     1 "RSC Disable";
+    nfsw_dis    1 "Disable filtering of NFS write request headers";
+    nfsr_dis    1 "Disable filtering of NFS read reply headers";
+    nfs_ver     2 type(nfs_version) "NFS version recognized by the hardware";
+    ipv6_dis    1 "Disable IPv6 packet filtering";
+    _           1 mbz;
+    _           2 rsvd;
+    ipfrsp_dis  1 "IP Fragment Split Disable";
+    _           3 rsvd;
+    _           14 mbz;
+  };
+
+  // 8.2.3.7.7
+  regarray mta rw addr(base, 0x05200) [128] "Multicast Table Array" {
+    bit_vec     32 "Bit Vector";
+  };
+
+  // 8.2.3.7.8
+  regarray ral rw addr(base, 0x0A200) [128 ; 8] "Receive Address Low" {
+    ral         32 "Receive Address Low"; /* CAUTION: BIG endian */
+  };
+
+  // 8.2.3.7.9
+  regarray rah rw addr(base, 0x0A204) [128 ; 8] "Receive Address High" {
+    rah         16 "Receive Address High"; /* CAUTION: BIG endian */
+    _           15 rsvd;
+    av          1 "Address Valid";
+  };
+
+  // 8.2.3.7.10
+  regarray mpsar rw addr(base, 0x0A600) [256] "MAC Pool Select Array" {
+    pool_ena    32 "Pool Enable Bit Array";
+  };
+
+  // 8.2.3.7.11
+  regarray vfta rw addr(base, 0x0A000) [128] "VLAN Filter Table Array" {
+    vlan_flt    32 "VLAN Filter";
+  };
+
+  constants mrq_mode "Defines the allocation of the Rx queues per RSS, Virt and DCB" {
+    no_rss      = 0b0000 "RSS disabled";
+    rss_only    = 0b0001 "RSS only -- Single set of RSS 16 queues";
+    dcb8_norss  = 0b0010 "DCB enabled and RSS disabled -- 8 TCs, each allocated 1 queue";
+    dcb4_norss  = 0b0011 "DCB enabled and RSS disabled -- 4 TCs, each allocated 1 queue";
+    dcb8_rss    = 0b0100 "DCB and RSS -- 8 TCs, each allocated 16 RSS queues";
+    dcb4_rss    = 0b0101 "DCB and RSS -- 4 TCs, each allocated 16 RSS queues";
+    vrt_only    = 0b1000 "Virtualization only -- 64 pools, no RSS, each pool allocated 2 queue";
+    vrt32_rss   = 0b1010 "Virtualization and RSS -- 32 pools, each allocated 4 RSS queues";
+    vrt64_rss   = 0b1011 "Virtualization and RSS -- 64 pools, each allocated 2 RSS queues";
+    vrt16_dcb   = 0b1100 "Virtualization and DCB -- 16 pools, each allocated 8 TCs";
+    vrt32_dcb   = 0b1101 "Virtualization and DCB -- 32 pools, each allocated 4 TCs";
+  };
+
+  // 8.2.3.7.12
+  register mrqc rw addr(base, 0x0EC80) "Multiple Receive Queues Command Register" {
+    mrque       4 type(mrq_mode) "Multiple Receive Queues Enable";
+    _           12 rsvd;
+    en_tcpip4   1 "Enable TcpIPv4 hash function";
+    en_ip4      1 "Enable IPv4 hash function";
+    _           2 rsvd;
+    en_ip6      1 "Enable IPv6 hash function";
+    en_tcpip6   1 "Enable TcpIPv6 hash function";
+    en_udp4     1 "Enable UdpIPV4";
+    en_udp6     1 "Enable UdpIPV6";
+    _           8;
+  };
+
+  // 8.2.3.7.13
+  register rqtc rw addr(base, 0x0EC70) "RSS Queues Per Traffic Class Register" {
+    rqtc0       3 "Number of bits to use for RSS redirection TC0";
+    _           1 rsvd;
+    rqtc1       3 "Number of bits to use for RSS redirection TC1";
+    _           1 rsvd;
+    rqtc2       3 "Number of bits to use for RSS redirection TC2";
+    _           1 rsvd;
+    rqtc3       3 "Number of bits to use for RSS redirection TC3";
+    _           1 rsvd;
+    rqtc4       3 "Number of bits to use for RSS redirection TC4";
+    _           1 rsvd;
+    rqtc5       3 "Number of bits to use for RSS redirection TC5";
+    _           1 rsvd;
+    rqtc6       3 "Number of bits to use for RSS redirection TC6";
+    _           1 rsvd;
+    rqtc7       3 "Number of bits to use for RSS redirection TC7";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.7.14
+  regarray rssrk rw addr(base, 0x0EB80) [10] "RSS Random Key Register" {
+    key         32 "RSS Key Word n (bytes 4*n to 4*n+3) of the RSS random key";
+  };
+
+  // 8.2.3.7.15
+  regarray reta rw addr(base, 0x0EB00) [32] "Redirection Table" {
+    entry0      4 "RSS output index for hash value 4n+0";
+    _           4 rsvd;
+    entry1      4 "RSS output index for hash value 4n+1";
+    _           4 rsvd;
+    entry2      4 "RSS output index for hash value 4n+2";
+    _           4 rsvd;
+    entry3      4 "RSS output index for hash value 4n+3";
+    _           4 rsvd;
+  };
+
+  // 8.2.3.7.16
+  regarray saqf rw addr(base, 0x0E000) [128] "Source Address Queue Filter" {
+    src_addr    32 "IP Source Address";
+  };
+
+  // 8.2.3.7.17
+  regarray daqf rw addr(base, 0x0E200) [128] "Destination Address Queue Filter" {
+    dst_addr    32 "IP Destination Address";
+  };
+
+  // 8.2.3.7.18
+  regarray sdpqf rw addr(base, 0x0E400) [128] "Source Destination Port Queue Filter" {
+    src_port    16 "TCP/UDP Source Port";
+    dst_port    16 "TCP/UDP Destination Port";
+  };
+
+  constants l4_proto "IP L4 protocol" {
+    l4tcp       = 0b00;
+    l4udp       = 0b01;
+    l4sctp      = 0b10;
+    l4other     = 0b11;
+  };
+
+  // 8.2.3.7.19
+  /* see l34timir */
+  regarray ftqf rw addr(base, 0x0E600) [128] "Five tuple Queue Filter" {
+    protocol    2 type(l4_proto) "IP L4 protocol";
+    priority    3 "Priority value in case more than one 5-tuple filter matches";
+    _           3 mbz;  /* rsvd */
+    pool        6 "The pool Index of the pool associated with this filter";
+    _           11 mbz; /* rsvd */
+    m_srcaddr   1 "Mask source address comparison";
+    m_dstaddr   1 "Mask destination address comparison";
+    m_srcport   1 "Mask source port comparison";
+    m_dstport   1 "Mask destination port comparison";
+    m_protocol  1 "Mask protocol comparison";
+    pool_mask   1 "Mask bit for the Pool field";
+    queue_en    1 "Queue Enable";
+  };
+
+  // 8.2.3.7.20
+  register synqf rw addr(base, 0x0EC30) "SYN Packet Queue Filter" {
+    queue_en    1 "Queue Enable";
+    rx_queue    7 "Identifies an Rx queue associated with SYN packets";
+    _           23 rsvd;
+    synqfp      1 "Defines the priority between SYNQF and 5-tuples filter";
+  };
+
+  // 8.2.3.7.21
+  regarray etqf rw addr(base, 0x05128) [8] "EType Queue Filter" {
+    etype       16 "Identifies the protocol running on top of IEEE 802";
+    uprio       3 "User Priority";
+    uprio_en    1 "User Priority Enable";
+    pool        6 "Determines the target pool for the packet";
+    pool_en     1 "Pool Enable";
+    fcoe        1 "FCoE";
+    _           2 rsvd;
+    timestamp   1 "IEEE 1588 time stamp";
+    filter_en   1 "Filter Enable";
+  };
+
+  // 8.2.3.7.22
+  regarray etqs rw addr(base, 0x0EC00) [8] "EType Queue Select" {
+    _           16 rsvd;
+    rx_queue    7 "Identifies the Rx queue associated with this EType";
+    _           6 rsvd;
+    lli         1 "When set, packets that match this filter generate a LLI";
+    _           1 rsvd;
+    queue_en    1 "Queue Enable";
+  };
+
+  // 8.2.3.7.23
+  register rxfeccerr0 addr(base, 0x051B8) "Rx Filter ECC Err Insertion 0" {
+    _           9 rsvd;
+    eccflt_en   1 "Filter ECC Error indication Enablement";
+    _           22 rsvd;
+  };
+
+
+  /************************************
+   * 8.2.3.8 Receive DMA Registers
+   ***********************************/
+  // Some of the following register arrays are split in two since they are
+  // allocated in two non-continuous memory regions.
+
+  // 8.2.3.8.1
+  regarray rdbal_1 rw addr(base, 0x01000) [64; 0x40]
+                "Receive Descriptor Base Address Low (#0-#63)"
+                type(uint32);
+
+  regarray rdbal_2 rw addr(base, 0x0d000) [64; 0x40]
+                "Receive Descriptor Base Address Low (#64-#127)"
+                type(uint32);
+
+  // 8.2.3.8.2
+  regarray rdbah_1 rw addr(base, 0x01004) [64; 0x40]
+                "Receive Descriptor Base Address High (#0-#63)"
+                type(uint32);
+
+  regarray rdbah_2 rw addr(base, 0x0d004) [64; 0x40]
+                "Receive Descriptor Base Address High (#64-#127)"
+                type(uint32);
+
+  // 8.2.3.8.3
+  regarray rdlen_1 rw addr(base, 0x01008) [64; 0x40]
+                "Receive Descriptor Length (#0-#63)"
+                type(uint32);
+
+  regarray rdlen_2 rw addr(base, 0x0d008) [64; 0x40]
+                "Receive Descriptor Length (#64-#127)"
+                type(uint32);
+
+  // 8.2.3.8.4
+  regarray rdh_1 rw addr(base, 0x01010) [64; 0x40]
+                "Receive Descriptor Head (#0-#63)"
+                type(uint32);
+
+  regarray rdh_2 rw addr(base, 0x0d010) [64; 0x40]
+                "Receive Descriptor Head (#64-#127)"
+                type(uint32);
+
+  // 8.2.3.8.5
+  regarray rdt_1 rw addr(base, 0x01018) [64; 0x40]
+                "Receive Descriptor Tail (#0-#63)"
+                type(uint32);
+
+  regarray rdt_2 rw addr(base, 0x0d018) [64; 0x40]
+                "Receive Descriptor Tail (#64-#127)"
+                type(uint32);
+
+  // 8.2.3.8.6
+  regtype rxdctl "Receive Descriptor Control" {
+    _           25 rsvd;
+    enable      1 "Receive Queue Enable";
+    _           4 rsvd;
+    vme         1 "VLAN Mode Enable";
+    _           1 rsvd;
+  };
+
+  regarray rxdctl_1 rw addr(base, 0x01028) [64; 0x40]
+                "Receive Descriptor Tail (#0-#63)"
+                type(rxdctl);
+
+  regarray rxdctl_2 rw addr(base, 0x0d028) [64; 0x40]
+                "Receive Descriptor Tail (#64-#127)"
+                type(rxdctl);
+
+  // 8.2.3.8.7
+  constants rx_desctype "RX Descriptor Type" {
+    legacy      = 0b000 "Legacy";
+    adv_1buf    = 0b001 "Advanced descriptor one buffer";
+    adv_hdrsp   = 0b010 "Advanced descriptor header splitting";
+    adv_usehb   = 0b101 "Advanced descriptor header splitting always use header buffer";
+  };
+
+  regtype srrctl "Split Receive Control Registers" {
+    bsz_pkt     5 "Receive Buffer Size for Packet Buffer";
+    _           3 mbz;
+    bsz_hdr     6 "Receive Buffer Size for Header Buffer";
+    _           8 rsvd;
+    rdmts       3 "Receive Descriptor Minimum Threshold Size";
+    desctype    3 type(rx_desctype) "Define the descriptor type";
+    drop_en     1 "Drop Enabled";
+    _           3 rsvd;
+  };
+
+  regarray srrctl_1 rw addr(base, 0x01014) [64; 0x40]
+                "Split Receive Control Registers (#0-#63)"
+                type(srrctl);
+
+  regarray srrctl_2 rw addr(base, 0x0d014) [64; 0x40]
+                "Split Receive Control Registers (#64-#127)"
+                type(srrctl);
+
+  // 8.2.3.8.8
+  register rdrxctl rw addr(base, 0x02f00) "Receive DMA Control Register" {
+    _           1 rsvd;
+    crcstrip    1 "Rx CRC Strip indication to the Rx DMA unit";
+    _           1 rsvd;
+    dma_initok  1 ro "DMA Init Done";
+    _           13 rsvd;
+    rscfrstsz   5 mbz "Defines a minimum packet size for a RSC packet";
+    _           3 rsvd;
+    rscackc     1 mb1 "RSC Coalescing on ACK Change";
+    fcoe_wrfix  1 mb1 "FCoE Write Exchange Fix";
+    _           5 rsvd;
+  };
+
+  // 8.2.3.8.9
+  regarray rxpbsize rw addr(base, 0x03C00) [8] "Receive Packet Buffer Size" {
+    _           10 rsvd;
+    size        10 "Receive Packet Buffer Size for traffic class n";
+    _           12 rsvd;
+  };
+
+  // 8.2.3.8.10
+  register rxctrl rw addr(base, 0x03000) "Receive Control Register" {
+    rxen        1 "Receive Enable";
+    _           31 rsvd;
+  };
+
+  // 8.2.3.8.11
+  register rxmemwrap ro addr(base, 0x03190) "Rx Packet Buffer Flush Detect" {
+    tc0_wrap    3 "Packet Buffer 0 Wrap Around Counter";
+    tc0_empty   1 "Packet Buffer 0 Empty";
+    tc1_wrap    3 "Packet Buffer 1 Wrap Around Counter";
+    tc1_empty   1 "Packet Buffer 1 Empty";
+    tc2_wrap    3 "Packet Buffer 2 Wrap Around Counter";
+    tc2_empty   1 "Packet Buffer 2 Empty";
+    tc3_wrap    3 "Packet Buffer 3 Wrap Around Counter";
+    tc3_empty   1 "Packet Buffer 3 Empty";
+    tc4_wrap    3 "Packet Buffer 4 Wrap Around Counter";
+    tc4_empty   1 "Packet Buffer 4 Empty";
+    tc5_wrap    3 "Packet Buffer 5 Wrap Around Counter";
+    tc5_empty   1 "Packet Buffer 5 Empty";
+    tc6_wrap    3 "Packet Buffer 6 Wrap Around Counter";
+    tc6_empty   1 "Packet Buffer 6 Empty";
+    tc7_wrap    3 "Packet Buffer 7 Wrap Around Counter";
+    tc7_empty   1 "Packet Buffer 7 Empty";
+  };
+
+  // 8.2.3.8.12 (Content not documented in spec, info here from FreeBSD driver)
+  register rscdbu rw addr(base, 0x03028) "RSC Data Buffer Control Register" {
+    _           7 rsvd;
+    rscackdis   1 "Disable RSC for ACK packets";
+    _           24 rsvd;
+  };
+
+  // 8.2.3.8.13
+  constants rsc_maxdesc "Maximum descriptors per Large receive" {
+    max_1desc   = 0b00 "Maximum of 1 descriptor per large receive";
+    max_4desc   = 0b01 "Maximum of 4 descriptors per large receive";
+    max_8desc   = 0b10 "Maximum of 8 descriptors per large receive";
+    max_16desc  = 0b11 "Maximum of 16 descriptors per large receive";
+  };
+
+  regtype rscctl "RSC Control" {
+    rsc_en      1 "RSC Enable";
+    _           1 rsvd;
+    maxdesc     2 type(rsc_maxdesc) "Maximum descriptors per Large receive";
+    _           28 rsvd;
+  };
+
+  regarray rscctl_1 rw addr(base, 0x0102c) [64; 0x40]
+                "RSC Control (#0-#63)"
+                type(rscctl);
+
+  regarray rscctl_2 rw addr(base, 0x0d02c) [64; 0x40]
+                "RSC Control (#64-#127)"
+                type(rscctl);
+
+
+  /************************************
+   * 8.2.3.9 Transmit Registers
+   ***********************************/
+
+  // 8.2.3.9.1
+  register dtxmxszrq rw addr(base, 0x08100) "DMA Tx TCP Max Allow Size Requests" {
+    max_bytes   12 "Max allowed number of bytes requests";
+    _           20 rsvd;
+  };
+
+  // 8.2.3.9.2
+  register dmatxctl rw addr(base, 0x04a80) "DMA Tx Control" {
+    txen        1 "Transmit Enable";
+    _           2 rsvd;
+    gdv         1 "Global Double VLAN Mode";
+    _           12 rsvd;
+    vlet        16 "VLAN Ether-Type";
+  };
+
+  // 8.2.3.9.3
+  register dtxtcpflgl rw addr(base, 0x04a88) "DMA Tx TCP Flags Control Low" {
+    tcp_flgfsts 12 "TCP Flags First Segment";
+    _           4 rsvd;
+    tcp_flgmdls 12 "TCP Flags Middle Segments";
+    _           4 rsvd;
+  };
+
+  // 8.2.3.9.4
+  register dtxtcpflgh rw addr(base, 0x04a8c) "DMA Tx TCP Flags Control High" {
+    tcp_flglsts 12 "TCP Flags Last Segment";
+    _           20 rsvd;
+  };
+
+  // 8.2.3.9.5
+  regarray tdbal rw addr(base, 0x06000) [128; 0x40]
+                "Transmit Descriptor Base Address Low"
+                type(uint32);
+
+  // 8.2.3.9.6
+  regarray tdbah rw addr(base, 0x06004) [128; 0x40]
+                "Transmit Descriptor Base Address Low"
+                type(uint32);
+
+  // 8.2.3.9.7
+  regarray tdlen rw addr(base, 0x06008) [128; 0x40]
+                "Transmit Descriptor Length"
+                type(uint32);
+
+  // 8.2.3.9.8
+  // rw is only partially accurate here. This register must only be written
+  // directly after reset.
+  regarray tdh rw addr(base, 0x06010) [128; 0x40]
+                "Transmit Descriptor Head"
+                type(uint32);
+
+  // 8.2.3.9.9
+  regarray tdt rw addr(base, 0x06018) [128; 0x40]
+                "Transmit Descriptor Tail"
+                type(uint32);
+
+  // 8.2.3.9.10
+  regarray txdctl rw addr(base, 0x06028) [128; 0x40] "Transmit Descriptor Control" {
+    pthresh     7 "Pre-Fetch Threshold";
+    _           1 rsvd;
+    hthresh     7 "Host Threshold";
+    _           1 rsvd;
+    wthresh     7 "Write-Back Threshold";
+    _           2 rsvd;
+    enable      1 "Transmit Queue Enable";
+    swflsh      1 "Transmit Software Flush";
+    _           5 rsvd;
+  };
+
+  // 8.2.3.9.11
+  regarray tdwbal rw addr(base, 0x06038) [128; 0x40] "Tx Descriptor Completion Write Back Address Low" {
+    headwb_en   1 "Head Write-Back Enable";
+    _           1 rsvd;
+    headwb_low  30 "Lowest 32 bits of the head write-back memory location";
+  };
+
+  // 8.2.3.9.12
+  regarray tdwbah rw addr(base, 0x0603c) [128; 0x40] "Tx Descriptor Completion Write Back Address High" {
+    headwb_high 32 "Highest 32 bits of the head write-back memory location";
+  };
+
+  // 8.2.3.9.13
+  regarray txpbsize rw addr(base, 0x0cc00) [8] "Transmit Packet Buffer Size" {
+    _           10 rsvd;
+    size        10 "Transmit packet buffer size of TCn";
+    _           12 rsvd;
+  };
+
+  // 8.2.3.9.14
+  register mngtxmap rw addr(base, 0x0CD10) "Manageability Transmit TC Mapping" {
+    map         3 "Map value indicates the TC that the transmit manageability traffic is routed to";
+    _           29 rsvd;
+  };
+
+  // 8.2.3.9.15
+  register mtqc rw addr(base, 0x08120) "Multiple Transmit Queues Command Register" {
+    rt_en       1 "DCB Enabled Mode";
+    vt_en       1 "Virtualization Enabled Mode";
+    num_tc      2 "Number of TCs or Number of Tx Queues per Pools";
+    _           28 rsvd;
+  };
+
+  // 8.2.3.9.16
+  regarray txpbthresh rw addr(base, 0x04950) [8] "Tx Packet Buffer Threshold" {
+    thresh      10 "Threshold used for checking room place in Tx packet buffer of TCn";
+    _           22 rsvd;
+  };
+
+
+  /************************************
+   * 8.2.3.10 DCB Registers
+   ***********************************/
+
+  // 8.2.3.10.1
+  register rtrpcs rw addr(base, 0x02430) "DCB Receive Packet Plane Control and Status" {
+    _           1 rsvd;
+    rrm         1 "Receive Recycle Mode";
+    rac         1 "Receive Arbitration Control";
+    _           13 rsvd;
+    lrpb        3 "Last Received Packet Buffer Status Indication";
+    _           13 rsvd;
+  };
+
+  // 8.2.3.10.2
+  register rttdcs rw addr(base, 0x04900) "DCP Transmit Descriptor Plane Control and Status" {
+    tdpac       1 "TC Transmit Descriptor Plane Arbitration Control";
+    vmpac       1 "VM Transmit Descriptor Plane Arbitration Control";
+    _           2 rsvd;
+    tdrm        1 "TC Transmit descriptor plane recycle mode";
+    _           1 rsvd;
+    arbdis      1 "DCB Arbiters Disable";
+    _           10 rsvd;
+    lttdesc     3 ro "Last Transmitted TC";
+    _           2 rsvd;
+    bdpm        1 "Bypass data pipe Monitor";
+    bpbfsm      1 "Bypass Packet Buffer Free Space Monitor";
+    _           7 rsvd;
+    speed_chg   1 "Link speed has changed";
+  };
+
+  // 8.2.3.10.3
+  register rttpcs rw addr(base, 0x0CD00) "DCB Transmit Packet Plane Control and Status" {
+    _           5 rsvd;
+    tppac       1 "Transmit Packet Plane Arbitration Control";
+    _           2 rsvd;
+    tprm        1 "Transmit packet plane recycle mode";
+    _           13 rsvd;
+    arbd        10 "ARB_delay";
+  };
+
+  // 8.2.3.10.4
+  register rtrup2tc rw addr(base, 0x03020) "DCB Receive User Priority to Traffic Class" {
+    up0map      3 "Receive UP 0 to TC Mapping";
+    up1map      3 "Receive UP 1 to TC Mapping";
+    up2map      3 "Receive UP 2 to TC Mapping";
+    up3map      3 "Receive UP 3 to TC Mapping";
+    up4map      3 "Receive UP 4 to TC Mapping";
+    up5map      3 "Receive UP 5 to TC Mapping";
+    up6map      3 "Receive UP 6 to TC Mapping";
+    up7map      3 "Receive UP 7 to TC Mapping";
+    _           8 rsvd;
+  };
+
+  // 8.2.3.10.5
+  register rttup2tc rw addr(base, 0x0C800) "DCB Transmit User Priority to Traffic Class" {
+    up0map      3 "Receive UP 0 to TC Mapping";
+    up1map      3 "Receive UP 1 to TC Mapping";
+    up2map      3 "Receive UP 2 to TC Mapping";
+    up3map      3 "Receive UP 3 to TC Mapping";
+    up4map      3 "Receive UP 4 to TC Mapping";
+    up5map      3 "Receive UP 5 to TC Mapping";
+    up6map      3 "Receive UP 6 to TC Mapping";
+    up7map      3 "Receive UP 7 to TC Mapping";
+    _           8 rsvd;
+  };
+
+  // 8.2.3.10.6
+  regarray rtrpt4c rw addr(base, 0x02140) [8] "DCB Receive Packet Plane T4 Config" {
+    crq         9 "Credit refill quantum";
+    bwg         3 "Bandwidth group index";
+    mcl         12 "Max credit limit";
+    _           6 rsvd;
+    gsp         1 "Group strict priority";
+    lsp         1 "Link strict priority";
+  };
+
+  // 8.2.3.10.9
+  regarray rttdt2c rw addr(base, 0x04910) [8] "DCB Transmit Descriptor Plane T2 Config" {
+    crq         9 "Credit refill quantum";
+    bwg         3 "Bandwidth group index";
+    mcl         12 "Max credit limit";
+    _           6 rsvd;
+    gsp         1 "Group strict priority";
+    lsp         1 "Link strict priority";
+  };
+
+  // 8.2.3.10.10
+  regarray rttpt2c rw addr(base, 0x0CD20) [8] "DCB Transmit Packet Plane T2 Config" {
+    crq         9 "Credit refill quantum";
+    bwg         3 "Bandwidth group index";
+    mcl         12 "Max credit limit";
+    _           6 rsvd;
+    gsp         1 "Group strict priority";
+    lsp         1 "Link strict priority";
+  };
+
+  // 8.2.3.10.13
+  register rttdqsel rw addr(base, 0x04904) "DCB Transmit Descriptor Plane Queue Select" {
+    txdq_idx    7 "Tx Descriptor Queue Index";
+    _           25 rsvd;
+  };
+
+  // 8.2.3.10.14
+  register rttdt1c rw addr(base, 0x04908) "DCB Transmit Descriptor Plane T1 Config" {
+    crq         14 "Credit refill quantum";
+    _           18 rsvd;
+  };
+
+  // 8.2.3.10.15
+  // All reserved field register not supported by Mackerel
+//  register rttdt1s ro addr(base, 0x0490C) "DCB Transmit Descriptor Plane T1 Status" {
+//    _	   	32 rsvd;
+//  };
+
+  // 8.2.3.10.16
+  register rttbcnrc rw addr(base, 0x04984) "DCB Transmit Rate-Scheduler Config" {
+    rf_dec      14 "Tx rate-scheduler rate factor hexadecimal part";
+    rf_int      10 "Tx rate-scheduler rate factor integral part";
+    _           7 rsvd;
+    rs_ena      1 "Tx rate-scheduler enable";
+  };
+
+
+  /************************************
+   * 8.2.3.11 DCA Registers
+   ***********************************/
+
+  // 8.2.3.11.1
+  regtype dca_rxctrl "Rx DCA Control Register" {
+    _           5 rsvd;
+    rxdca_desc  1 "Descriptor DCA EN";
+    rxdca_hdr   1 "Rx Header DCA EN";
+    rxdca_payl  1 "Payload DCA EN";
+    _           1 rsvd;
+    rxdesc_rdro 1 "Rx Descriptor Read Relax Order Enable";
+    _           1 rsvd;
+    rxdesc_wbro 1 mbz "Rx Descriptor Write Back Relax Order Enable";
+    _           1 rsvd;
+    rxdata_wrro 1 "Rx data Write Relax Order Enable";
+    _           1 rsvd;
+    rxhdr_ro    1 "Rx Split Header Relax Order Enable";
+    _           8 rsvd;
+    cpuid       8 "Physical ID";
+  };
+
+  regarray dca_rxctrl_1 rw addr(base, 0x0100c) [64; 0x40]
+                "Rx DCA Control Register (#0-#63)"
+                type(dca_rxctrl);
+
+  regarray dca_rxctrl_2 rw addr(base, 0x0d00c) [64; 0x40]
+                "Rx DCA Control Register  (#64-#127)"
+                type(dca_rxctrl);
+
+  // 8.2.3.11.2
+  regarray dca_txctrl rw addr(base, 0x0600c) [128; 0x40] "Tx DCA Control Registers" {
+    _           5 rsvd;
+    txdesc_dca  1 "Descriptor DCA Enable";
+    _           3 rsvd;
+    txdesc_rdro 1 "Tx Descriptor Read Relax Order Enable";
+    _           1 rsvd;
+    txdesc_wbro 1 "Relax Order Enable of Tx Descriptor well as head pointer write back";
+    _           1 rsvd;
+    txdata_rdro 1 "Tx Data Read Relax Order Enable";
+    _           10 rsvd;
+    cpuid       8 "Physical ID";
+  };
+
+  // 8.2.3.11.3
+  register dca_id ro addr(base, 0x11070) "DCA Requester ID Information Register" {
+    fun_no      3 "Function Number";
+    dev_no      5 "Device Number";
+    bus_no      8 "Bus Number";
+    _           16 rsvd;
+  };
+
+  constants dca_mode "DCA Mode" {
+    legacy_dca  = 0b0000 "Legacy DCA is supported";
+    dca10       = 0b0001 "DCA 1.0 is supported";
+  };
+
+  // 8.2.3.11.4
+  register dca_ctrl rw addr(base, 0x11074) "DCA Control Register" {
+    dca_dis     1 "DCA Disable";
+    dca_mode    4 type(dca_mode) "DCA Mode";
+    _           27 rsvd;
+  };
+
+
+  /************************************
+   * 8.2.3.12 - 8.2.3.18 TODO
+   ***********************************/
+
+  // 8.2.3.12.4
+  register sectxminifg rw addr(base, 0x08810) "Security Tx Buffer Minimum IFG" {
+    minsecifg   4      	"Minimum IFG between packets";
+    _		4;
+    sectxdcb	5	"If PFC enabled, set to 0x1f, else set to 0x10";
+    _		19;
+  };
+
+  // 8.2.3.12.5
+  register secrxctrl rw addr(base, 0x08d00) "Security Rx Control" {
+    secrx_dis   1 "Rx Security Offload Disable Bit";
+    rx_dis      1 "Disable Sec Rx Path";
+    _           30 rsvd;
+  };
+
+  // 8.2.3.12.6
+  register secrxstat ro addr(base, 0x08d04) "Security Rx Status" {
+    sr_rdy      1 "Rx security block ready for mode change";
+    sr_off_dis  1 "Security offload is disabled by fuse or strapping pin";
+    eec_rxerr   1 "Unrecoverable ECC error in an Rx SA table occurred";
+    _           29 rsvd;
+  };
+
+  /************************************
+   * 8.2.3.19 Timers Registers
+   ***********************************/
+
+  // 8.2.3.19.1
+  register tcptimer rw addr(base, 0x0004c) "TCP Timer" {
+    duration    8 "Duration of the TCP interrupt interval, in ms";
+    kickstart   1 "Counter kick-start";
+    tcpcnt_en   1 "TCP Count Enable";
+    tcpcnt_fin  1 "TCP Count Finish";
+    loop        1 "TCP Loop";
+    _           20 rsvd;
+  };
+
+
+  /************************************
+   * 8.2.3.20 FCoE Registers
+   ***********************************/
+  // TODO
+
+
+  /************************************
+   * 8.2.3.21 Flow Director Registers
+   ***********************************/
+
+  constants pballoc "Memory allocation for the flow director filters" {
+    mem_none    = 0b00;
+    mem_64k     = 0b01;
+    mem_128k    = 0b10;
+    mem_256k    = 0b11;
+  };
+
+  // 8.2.3.21.1
+  register fdirctrl rw addr(base, 0x0EE00) "Flow Director Filters Control Register" {
+    pballoc     2 type(pballoc) "Memory allocation for the flow director filters";
+    _           1 rsvd;
+    init_done   1 "Flow director initialization completion indication";
+    perf_match  1 "Flow director filters mode of operation";
+    rep_stat    1 "Report flow director filter's status on matching packets";
+    _           1 rsvd;
+    rep_statalw 1 "Report flow director filter's status always";
+    drop_queue  7 "Absolute Rx queue index used for the dropped packets";
+    _           1 rsvd;
+    flex_off    5 "Offset of a flexible 2-byte tuple in packet";
+    _           3 rsvd;
+    max_len     4 "Maximum linked list length";
+    full_thresh 4 "Recommended minimum number of flows that should remain unused";
+  };
+
+  // 8.2.3.21.2
+  register fdirhkey rw addr(base, 0x0EE68) "Flow Director Filters Lookup Table HASH Key" {
+    key         32 "Programmable hash lookup table key";
+  };
+
+  // 8.2.3.21.3
+  register fdirskey rw addr(base, 0x0EE6C) "Flow Director Filters Signature Hash Key " {
+    key         32 "rogrammable Signature Key";
+  };
+
+  // 8.2.3.21.4
+  register fdirdip4m rw addr(base, 0x0EE3C) "Flow Director Filters DIPv4 Mask" {
+    ipm         32 "Mask Destination IPv4 Address";
+  };
+
+  // 8.2.3.21.5
+  register fdirsip4m rw addr(base, 0x0EE40) "Flow Director Filters Source IPv4 Mask" {
+    ipm         32 "Mask Source IPv4 Address";
+  };
+
+  // 8.2.3.21.6
+  register fdirtcpm rw addr(base, 0x0EE44) "Flow Director Filters TCP Mask" {
+    sportm      16 "Mask TCP Source Port";
+    dportm      16 "Mask TCP Destination Port";
+  };
+
+  // 8.2.3.21.7
+  register fdirudpm rw addr(base, 0x0EE48) "Flow Director Filters UDP Mask" {
+    sportm      16 "Mask UDP Source Port";
+    dportm      16 "Mask UDP Destination Port";
+  };
+
+  // 8.2.3.21.8
+  register fdirip6m rw addr(base, 0x0EE74) "Flow Director Filters IPv6 Mask" {
+    sipm        16 "Mask Source IPv6 address";
+    dipm        16 "Mask Destination IPv6 address";
+  };
+
+  // 8.2.3.21.9
+  register fdirm rw addr(base, 0x0EE70) "Flow Director Filters Other Mask" {
+    vlanid      1 "Mask VLAN ID tag";
+    vlanp       1 "Mask VLAN Priority tag";
+    pool        1 "Mask Pool";
+    l4p         1 "Mask L4 Protocol";
+    flex        1 "Mask Flexible Tuple";
+    dipv6       1 "Mask Destination IPv6";
+    _           26 rsvd;
+  };
+
+  // 8.2.3.21.10
+  register fdirfree rw addr(base, 0x0EE38) "Flow Director Filters Free" {
+    free        16 "Number of free filters in the flow director Filters logic";
+    coll        15 "Number of filters with collision indication";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.21.11
+  register fdirlen rc addr(base, 0x0EE4C) "Flow Director Filters Length" {
+    maxlen      6 "Longest linked list of filters in the table";
+    _           2 rsvd;
+    bucket_len  6 "The length of the linked list indicated by a query command";
+    _           2 rsvd;
+    maxhash     15 "Hash value of the filter that updated the value of the MAXLEN";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.21.12
+  register fdirustat rc addr(base, 0x0EE50) "Flow Director Filters Usage Statistics" {
+    add         16 "Number of added filters";
+    remove      16 "Number of removed filters";
+  };
+
+  // 8.2.3.21.13
+  register fdirfstat rc addr(base, 0x0EE54) "Flow Director Filters Failed Usage Statistics" {
+    fadd        8 "Number of failed added filters";
+    fremove     8 "Number of failed removed filters";
+    _           16 rsvd;
+  };
+
+  // 8.2.3.21.14
+  register fdirmatch rc addr(base, 0x0EE58) "Flow Director Filters Match Statistics" {
+    pcnt        32 "Number of packets that matched any flow director filter";
+  };
+
+  // 8.2.3.21.15
+  register fdirmiss rc addr(base, 0x0EE5C) "Flow Director Filters Miss Match Statistics" {
+    pcnt        32 "Number of packets that missed matched any flow director filter";
+  };
+
+  // 8.2.3.21.16
+  regarray fdirsipv6 rw addr(base, 0x0EE0C) [3] "Flow Director Filters Source IPv6" {
+    ip6sa       32 "Three MS DWords of the source IPv6 address";
+  };
+
+  // 8.2.3.21.17
+  register fdiripsa rw addr(base, 0x0EE18) "Flow Director Filters IP SA" {
+    ip4sa       32 "Source IPv4 address or LS Dword of the Source IPv6 address";
+  };
+
+  // 8.2.3.21.18
+  register fdiripda rw addr(base, 0x0EE1C) "Flow Director Filters IP DA" {
+    ip4da       32 "Destination IPv4 address";
+  };
+
+  // 8.2.3.21.19
+  register fdirport rw addr(base, 0x0EE20) "Flow Director Filters Port" {
+    source      16 "Source Port number";
+    dest        16 "Destination Port number";
+  };
+
+  // 8.2.3.21.20
+  register fdirvlan rw addr(base, 0x0EE24) "Flow Director Filters VLAN and FLEX Bytes" {
+    vlan        16 "Vlan Tag";
+    flex        16 "Flexible tuple data";
+  };
+
+  // 8.2.3.21.21
+  register fdirhash rw addr(base, 0x0EE28) "Flow Director Filters Hash Signature" {
+    hash        15 "Bucket hash value that identifies a filter's linked list";
+    buck_valid  1 "Bucket Valid (at least 1 filter in bucket)";
+    sig_swidx   15 "Signature / SW Index";
+    _           1 rsvd;
+  };
+
+  constants fdir_cmd "Flow Director Filter Programming Command" {
+    no_action   = 0b00 "No Action";
+    add_flow    = 0b01 "Add Flow";
+    rem_flow    = 0b10 "Remove Flow";
+    qry_cmd     = 0b11 "Query Command";
+  };
+
+  constants l4_ptype "L4 Packet Type" {
+    l4p_ud      = 0b01 "UDP";
+    l4p_tcp     = 0b10 "TCP";
+    l4p_sctp    = 0b11 "SCTP";
+  };
+
+  // 8.2.3.21.22
+  register fdircmd rw addr(base, 0x0EE2C) "Flow Director Filters Command Register" {
+    cmd         2 type(fdir_cmd) "Flow Director Filter Programming Command";
+    flt_valid   1 "Valid filter is found by the query command";
+    flt_update  1 "Filter Update Command";
+    ipv6_dmatch 1 "IP Destination match to IP6AT filter";
+    l4type      2 type(l4_ptype);
+    ipv6        1 "IPv6 packet type";
+    clearht     1 "Clear Internal Flow Director Head and Tail Registers";
+    drop        1 "Packet Drop Action";
+    int         1 "Matched packet generates a LLI";
+    last        1 "Last filter indication in the linked list";
+    collision   1 "Collision Indication";
+    _           2 rsvd;
+    queue_en    1 "Enable routing matched packet to Rx-Queue";
+    rx_queue    7 "Rx Queue Index";
+    _           1 rsvd;
+    pool        6 "Pool (only for VT)";
+    _           2 rsvd;
+  };
+
+
+  /************************************
+   * 8.2.3.22 MAC Registers
+   ***********************************/
+
+  // 8.2.3.22.1
+  register pcs1gcfig rw addr(base, 0x04200) "PCS_1G Global Config Register 1" {
+    _           30 rsvd;
+    pcs_isolate 1 "Isolates the 1 GbE PCS logic from the MAC's data path";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.22.2
+  register pcs1glctl rw addr(base, 0x04208) "PCG_1G link Control Register" {
+    flv         1 "Forced Link 1 GbE Value";
+    _           4 rsvd;
+    force1glnk  1 "Force 1 GbE Link";
+    lnk_latchl  1 "Link Latch Low Enable";
+    _           11 rsvd;
+    an_1gto     1 "Auto Negotiation 1 GbE Timeout Enable";
+    _           6 rsvd;
+    lnk_okfixen 1 "Link OK Fix En";
+    _           6 rsvd;
+  };
+
+  // 8.2.3.22.3
+  register pcs1glsta ro addr(base, 0x0420C) "PCS_1G Link Status Register" {
+    _           4 rsvd;
+    syncok_1g   1 "Sync OK 1 GbE";
+    _           11 rsvd;
+    an_1gcompl  1 "Auto Negotiation1 GbE Complete";
+    an_pagercv  1 "Auto-Negotiation Page Received";
+    an_1gto     1 "Auto Negotiation1 GbE Timed Out";
+    an_remflt   1 "Auto Negotiation Remote Fault";
+    an_error    1 rw "Auto Negotiation Error";
+    _           11 rsvd;
+  };
+
+  constants pause_cap "PAUSE Capabilities" {
+    no_pause    = 0b00 "No PAUSE";
+    sym_pause   = 0b01 "Symmetric PAUSE";
+    asym_pause  = 0b10 "Asymmetric PAUSE toward link partner";
+    both_pause  = 0b11 "Both symmetric and asymmetric PAUSE toward local device";
+  };
+
+  constants remote_fault "Remote Fault Condition" {
+    no_error    = 0b00 "No error, link good";
+    lnk_fail    = 0b01 "Link failure";
+    offline     = 0b10 "Offline";
+    an_err      = 0b11 "Auto-negotiation error";
+  };
+
+  // 8.2.3.22.4
+  register pcs1gana rw addr(base, 0x04218) "PCS_1 Gb/s Auto Negotiation Advanced Register" {
+    _           5 rsvd;
+    fdc         1 "FD: Full-Duplex";
+    _           1 rsvd;
+    asm         2 type(pause_cap) "Local PAUSE Capabilities";
+    _           3 rsvd;
+    rflt        2 type(remote_fault) "Remote Fault";
+    _           1 rsvd;
+    nextp       1 "NEXTP: Next Page Capable";
+    _           16 rsvd;
+  };
+
+  // 8.2.3.22.5
+  register pcs1ganlp ro addr(base, 0x0421C) "PCS_1GAN LP Ability Register" {
+    _           5 rsvd;
+    lpfd        1 "LP Full-Duplex (SerDes)";
+    lphd        1 "LP Half-Duplex (SerDes)";
+    lpasm       2 type(pause_cap) "LP PAUSE capability";
+    _           3 rsvd;
+    prf         2 type(remote_fault) "LP Remote Fault";
+    ack         1 "LP acknowledged page reception";
+    lpnextp     1 "LP Next Page Capable";
+    _           16 rsvd;
+  };
+
+  // 8.2.3.22.6
+  register pcs1gannp rw addr(base, 0x04220) "PCS_1G Auto Negotiation Next Page Transmit Register" {
+    code        11 "Message/Unformatted Code Field";
+    toggle      1 "Toggle";
+    ack2        1 "Acknowledge2";
+    pgtype      1 "Message/ Unformatted Page";
+    _           1 rsvd;
+    nxtpg       1 "Next Page";
+    _           16 rsvd;
+  };
+
+  // 8.2.3.22.7
+  register pcs1ganlpnp ro addr(base, 0x04224) "PCS_1G Auto Negotiation LP's Next Page Register" {
+    code        11 "Message/Unformatted Code Field";
+    toggle      1 "Toggle";
+    ack2        1 "Acknowledge2";
+    msgpg       1 "Message Page";
+    ack         1 "LP has acknowledge next page reception";
+    nxtpg       1 "Next Page";
+    _           16 rsvd;
+  };
+
+  // 8.2.3.22.8
+  register hlreg0 rw addr(base, 0x04240) "MAC Core Control 0 Register" {
+    txcrcen     1 "Tx CRC Enable";
+    rxcrcstrp   1 "Rx CRC Strip";
+    jumboen     1 "Jumbo Frame Enable";
+    _           7 mbz;
+    txpaden     1 "Tx Pad Frame Enable";
+    _           4 rsvd;
+    lpbk        1 "Loopback enabled";
+    mdcspd      1 "MDC SPEED";
+    contmdc     1 "Continuous MDC";
+    _           2 rsvd;
+    prepend     4 "Prepend Value";
+    _           3 rsvd;
+    rxlenerrr   1 "Rx Length Error Reporting";
+    rxpadstrp   1 "Rx Padding Strip Enable";
+    _           3 rsvd;
+  };
+
+  // 8.2.3.22.9
+  register hlreg1 ro addr(base, 0x04244) "MAC Core Status 1 Register" {
+    _           5 rsvd;
+    rxerrsym    1 rc "Error symbol received";
+    rxillsym    1 rc "Illegal symbol received";
+    rxidleerr   1 rc "Idle error received";
+    rxlclflt    1 rc "Local fault is or was active";
+    rxrmtflt    1 rc "Remote fault is or was active";
+    _           22 rsvd;
+  };
+
+  constants pace "Pace" {
+    p_10gbe     = 0b0000"10 GbE (LAN)";
+    p_1gbe      = 0b0001"1 GbE";
+    p_2gbe      = 0b0010 "2 GbE";
+    p_3gbe      = 0b0011 "3 GbE";
+    p_4gbe      = 0b0100 "4 GbE";
+    p_5gbe      = 0b0101 "5 GbE";
+    p_6gbe      = 0b0110 "6 GbE";
+    p_7gbe      = 0b0111 "7 GbE";
+    p_8gbe      = 0b1000 "8 GbE";
+    p_9gbe      = 0b1001 "9 GbE";
+    p_9gbe_wan  = 0b1111 "9.294196 GbE (WAN)";
+  };
+
+  // 8.2.3.22.10
+  register pap rw addr(base, 0x04248) "Pause and Pace Register" {
+    _           16 rsvd;
+    pace        4 type(pace) "Pace";
+    _           12 rsvd;
+  };
+
+  constants mdi_opcode "OP Code" {
+    addr_cycle  = 0b00 "Address cycle (new protocol only)";
+    write_op    = 0b01 "Write operation";
+    read_incad  = 0b10 "Read increment address(new) /Read operation (old)";
+    read_op     = 0b11 "Read operation (new protocol only)";
+  };
+
+  constants mdi_stcode "ST Code" {
+    new_proto   = 0b00 "New protocol";
+    old_proto   = 0b01 "Old protocol";
+  };
+
+  // 8.2.3.22.11
+  register msca rw addr(base, 0x0425C) "MDI Single Command and Address" {
+    mdiadd      16 "MDI Address";
+    devadd      5 "DeviceType/Register Address";
+    phyadd      5 "PHY Address";
+    opcode      2 type(mdi_opcode) "OP Code";
+    stcode      2 type(mdi_stcode) "ST Code";
+    mdicmd      1 "MDI Command";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.22.12
+  register msrwd rw addr(base, 0x04260) "MDI Single Read and Write Data" {
+    mdiwrdata   16 "MDI Write Data";
+    mdirddata   16 "MDI Read Data";
+  };
+
+  // 8.2.3.22.13
+  register maxfrs rw addr(base, 0x04268) "Max Frame Size" {
+    _           16 rsvd;
+    mfs         16 "Maximum frame size in bytes units";
+  };
+
+  // 8.2.3.22.14
+  register pcss1 ro addr(base, 0x04288) "XGXS Status 1" {
+    _           2 rsvd;
+    pcsrcvlnkup 1 "PCS receive link up";
+    _           4 rsvd;
+    local_fault 1 "LF detected on transmit or receive path";
+    _           24 rsvd;
+  };
+
+  constants dev_present "Device present" {
+    dev_present = 0b10 "Device responding at this address";
+  };
+
+  // 8.2.3.22.15
+  register pcss2 ro addr(base, 0x0428C) "XGXS Status 2" {
+    c10gbase_r  1 "PCS is able to support 10GBASE-R port type";
+    c10gbase_x  1 "PCS is able to support 10GBASE-X port type";
+    c10gbase_w  1 "PCS is able to support 10GBASE-W port type";
+    _           7 rsvd;
+    rx_lfault   1 "Local fault condition on the receive path";
+    tx_lfault   1 "Local fault condition on the transmit path";
+    _           2 rsvd;
+    dev_present 2 type(dev_present) "Device present";
+    _           16 rsvd;
+  };
+
+  // 8.2.3.22.16
+  register xpcss ro addr(base, 0x04290) "10GBASE-X PCS Status" {
+    lane0_sync  1 "Lane 0 is synchronized";
+    lane1_sync  1 "Lane 1 is synchronized";
+    lane2_sync  1 "Lane 2 is synchronized";
+    lane3_sync  1 "Lane 3 is synchronized";
+    _           8 rsvd;
+    align_stat  1 "10GBASE-X PCS receive lanes aligned";
+    _           3 rsvd;
+    deskew_err  1 "De-skew error was detected";
+    algcolcnt4  1 "Align column count has reached four";
+    lane0_invc  1 "Invalid code was detected for that lane";
+    lane1_invc  1 "Invalid code was detected for that lane";
+    lane2_invc  1 "Invalid code was detected for that lane";
+    lane3_invc  1 "Invalid code was detected for that lane";
+    lane0_ccnt4 1 "Comma count for that lane has reached four";
+    lane1_ccnt4 1 "Comma count for that lane has reached four";
+    lane2_ccnt4 1 "Comma count for that lane has reached four";
+    lane3_ccnt4 1 "Comma count for that lane has reached four";
+    lane0_sigd  1 "Signal is detected";
+    lane1_sigd  1 "Signal is detected";
+    lane2_sigd  1 "Signal is detected";
+    lane3_sigd  1 "Signal is detected";
+    _           2 rsvd;
+  };
+
+  // 8.2.3.22.17
+  register serdesc rw addr(base, 0x04298) "SerDes Interface Control Register" {
+    txl0_pol    1 "Changes bits polarity of MAC Tx lane 0";
+    txl1_pol    1 "Changes bits polarity of MAC Tx lane 1";
+    txl2_pol    1 "Changes bits polarity of MAC Tx lane 2";
+    txl3_pol    1 "Changes bits polarity of MAC Tx lane 3";
+    rxl0_pol    1 "Changes bits polarity of MAC Rx lane 0";
+    rxl1_pol    1 "Changes bits polarity of MAC Rx lane 1";
+    rxl2_pol    1 "Changes bits polarity of MAC Rx lane 2";
+    rxl3_pol    1 "Changes bits polarity of MAC Rx lane 3";
+    txl0_swiz   1 "Swizzles bits of MAC Tx lane 0";
+    txl1_swiz   1 "Swizzles bits of MAC Tx lane 1";
+    txl2_swiz   1 "Swizzles bits of MAC Tx lane 2";
+    txl3_swiz   1 "Swizzles bits of MAC Tx lane 3";
+    rxl0_swiz   1 "Swizzles bits of MAC Rx lane 0";
+    rxl1_swiz   1 "Swizzles bits of MAC Rx lane 1";
+    rxl2_swiz   1 "Swizzles bits of MAC Rx lane 2";
+    rxl3_swiz   1 "Swizzles bits of MAC Rx lane 3";
+    txl3_swap   2 "Determines Core destination Tx lane for MAC Tx lane 3";
+    txl2_swap   2 "Determines Core destination Tx lane for MAC Tx lane 2";
+    txl1_swap   2 "Determines Core destination Tx lane for MAC Tx lane 1";
+    txl0_swap   2 "Determines Core destination Tx lane for MAC Tx lane 0";
+    rxl3_swap   2 "Determines which Core lane is mapped to MAC Rx lane 3";
+    rxl2_swap   2 "Determines which Core lane is mapped to MAC Rx lane 2";
+    rxl1_swap   2 "Determines which Core lane is mapped to MAC Rx lane 1";
+    rxl0_swap   2 "Determines which Core lane is mapped to MAC Rx lane 0";
+  };
+
+  // 8.2.3.22.18
+  register macs rw addr(base, 0x0429C) "FIFO Status/CNTL Report Register" {
+    xgssf_dis   1 "Use shift-fsm control, disable fix";
+    xgtxe_dis   1 "Disable tx_end on link-down";
+    xgsdsf_dis  1 "Disable align on invalid fix";
+    noncem_dis  1 "Disable nonce match";
+    _           12 rsvd;
+    cfgflt_len  8 "Config fault length";
+    cfgfifothr  4 "Config FIFO threshold";
+    txfifo_ur   1 "FIFO under run in xgmii_mux_tx_fifo";
+    txfifo_or   1 "FIFO overrun in xgmii_mux_tx_fifo";
+    rxfifo_ur   1 "FIFO under run in xgmii_mux_rx_fifo";
+    rxfifo_or   1 "FIFO overrun in xgmii_mux_rx_fifo";
+  };
+
+
+  constants pmad_10gbe "10 GbE PMA/PMD" {
+    pmad_xaui   = 0b00 "XAUI PMA/PMD";
+    pmad_kx4    = 0b01 "KX4 PMA/PMD";
+    pmad_cx4    = 0b10 "CX4 PMA/PMD";
+  };
+
+  constants pmad_1gbe "PMA/PMD used for 1 Gb" {
+    pmad_sfi    = 0b0 "SFI PMA/PMD";
+    pmad_kxbx   = 0b1 "KX or BX PMA/PMD";
+  };
+
+  constants link_mode "Link Mode Select" {
+    l1g         = 0b000 "1 GbE link (no bp aneg)";
+    l10g_kx4    = 0b001 "10 GbE parallel link (KX4 no bp aneg)";
+    l1g_bx      = 0b010 "1 GbE link with clause 37 aneg enable";
+    l10g_sfi    = 0b011 "10 GbE serial link (SFI no bp aneg)";
+    l1g_kxr     = 0b100 "KX/KX4/KR bp aneg; 1 GbE (Clause 37) aneg disabled";
+    l100m_sgmii = 0b101 "SGMII 100M/1 GbE link";
+    l1g_kxr_an  = 0b110 "KX/KX4/KR bp aneg; 1 GbE (Clause 37) aneg enabled";
+    l1g_sgmii   = 0b111 "KX/KX4/KR aneg enable. SGMII 100 Mb/s and 1GbE enable";
+  };
+
+  constants aneg_pdt "Auto-Negotiation Parallel Detect Timer" {
+    t1ms        = 0b00 "1 ms";
+    t2ms        = 0b01 "2 ms";
+    t5ms        = 0b10 "5 ms";
+    t8ms        = 0b11 "8 ms";
+  };
+
+  // 8.2.3.22.19
+  register autoc rw addr(base, 0x042A0) "Auto Negotiation Control Register" {
+    flu         1 "Force Link Up";
+    anack2      1 "Auto-Negotiation Ack2 field";
+    ansf        5 "Auto-Negotiation Selector Field";
+    pmad_10gbe  2 type(pmad_10gbe) "10 GbE PMA/PMD over four differential pairs";
+    pmad_1gbe   1 type(pmad_1gbe) "PMA/PMD used for 1 GbE";
+    d10gmp      1 "Disables 10 GbE (KX4) on Dx (Dr/D3) without main-power";
+    ratd        1 "Restarts auto-negotiation on transition to Dx";
+    restart_an  1 "Applies new link settings and restarts relative auto-negotiation";
+    lms         3 type(link_mode) "Link Mode Select";
+    kr_sup      1 "KR supported";
+    fecr        1 "FEC requested from link partner";
+    feca        1 "FEC supported";
+    anrxat      4 "Backplane Auto-Negotiation Rx Align Threshold";
+    anrxdm      1 "Auto-Negotiation Rx Drift Mode";
+    anrxlm      1 "Auto-Negotiation Rx Loose Mode";
+    anpdt       2 type(aneg_pdt) "Auto-Negotiation Parallel Detect Timer";
+    rf          1 "Loaded to the RF of the auto-negotiation word";
+    pb          2 "Loaded to bits D11-D10 of the Link code word";
+    kx_sup      1 "KX supported";
+    kx4sup      1 "KX4 supported";
+  };
+
+
+  constants mac_lnkmode "MAC link mode status" {
+    lms_1g      = 0b00 "1 GbE";
+    lms_10g_par = 0b01 "10 GbE parallel";
+    lms_10g_ser = 0b10 "10 GbE serial";
+    lms_aneg    = 0b11 "auto-negotiation";
+  };
+
+  constants link_speed "MAC link speed status" {
+    ls_100m     = 0b01 "100 Mb/s";
+    ls_1g       = 0b10 "1 GbE";
+    ls_10g      = 0b11 "10 GbE";
+  };
+
+  // 8.2.3.22.20
+  register links ro addr(base, 0x042A4) "Link Status Register" {
+    kxsig_det   1 "A signal is present";
+    fecsig_det  1 "FEC reports signal detected";
+    fecblk_lck  1 "FEC reached block lock";
+    krhberr     1 "10GbE serial KR_PCS high error rate";
+    krpcsbl     1 "10 GbE serial PCS block lock";
+    kxr_annprcv 1 "KX/KX4/KR AN Next Page Received";
+    kxr_anprcv  1 "KX/KX4/KR Backplane Auto Negotiation Page Received";
+    lnk_stat    1 "Link Up and there was no link down from last time read";
+    kx4sig_det  4 "Signal Detect of 10 GbE Parallel (KX4, CX4 or XAUI) (1bit per lane)";
+    krsig_det   1 "Signal Detect of 10 GbE serial (KR or SFI)";
+    l10g_syncst 4 "10G Parallel lane sync status (1bit per lane)";
+    l10g_algst  1 "10 GbE align_status";
+    l1g_syncst  1 "1G sync_status";
+    kxr_anrxid  1 "KX/KX4/KR Backplane Auto Negotiation Rx Idle";
+    l1g_anen    1 "PCS_1 GbE auto-negotiation is enabled";
+    l1g_lnken   1 "1 GbE PCS enabled for 1 GbE and SGMII operation";
+    l10g_lnken  1 "XGXS Enabled for 10 GbE operation";
+    fec_en      1 "Status of forwarderrorcorrection in 10 GbE serial link";
+    l10g_seren  1 "Status of 10 GbE serial PCS (KR PCS) for KR or SFI operation";
+    sgmii_en    1 "Status of SGMII operation";
+    mlink_mode  2 type (mac_lnkmode) "MAC link mode status";
+    lnk_speed   2 type (link_speed) "MAC link speed status";
+    lnk_up      1 "Link is up";
+    kxr_ancomp  1 "KX/KX4/KR backplane auto-negotiation has completed successfully";
+  };
+
+
+  constants mac_rxtxlm "MAC link mode in the Core Rx/Tx path" {
+    rxlm_1g     = 0b00 "1 GbE";
+    rxlm_10g_p  = 0b01 "10 GbE parallel";
+    rxlm_10g_s  = 0b10 "10GbE serial";
+    rxlm_aneg   = 0b11 "auto-negotiation";
+  };
+
+  // 8.2.3.22.21
+  register links2 ro addr(base, 0x04324) "Link Status Register 2" {
+    mac_rxlm    2 type(mac_rxtxlm) "MAC link mode in the Core Rx path";
+    _           1 rsvd;
+    mac_txlm    2 type(mac_rxtxlm) "MAC link mode in the Core Tx path";
+    _           1 rsvd;
+    lnkp_an     1 "Link partner is KX/KX4/KR backplane auto-negotiation capable";
+    _           25 rsvd;
+  };
+
+  constants pmapd_10gbes "PMAPMD used for 10 GbE serial link operation" {
+    pmapd_kr    = 0b00 "KR";
+    pmapd_sfi   = 0b10 "SFI";
+  };
+
+  // 8.2.3.22.22
+  register autoc2 rw addr(base, 0x042A8) "Auto Negotiation Control 2 Register" {
+    _           16 rsvd;
+    pmad_10ser  2 type(pmapd_10gbes) "PMAPMD used for 10 GbE serial link operation";
+    ddpt        1 "Disable DME Pages Transmit";
+    _           11 rsvd;
+    pdd         1 "Disable the parallel detect part in the KX/KX4/KR bp aneg";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.22.23
+  register anlp1 ro addr(base, 0x042B0) "Auto Negotiation Link Partner Link Control Word 1 Register" {
+    lpan_sel    5 "LP AN adv Selector field";
+    lpan_echn   5 "LP AN adv Echoed Nonce field";
+    lpan_pause  2 "LP AN adv Pause";
+    _           1 rsvd;
+    lpan_rf     1 "LP AN adv RF";
+    lpan_ack    1 "LP AN adv Acknowledge";
+    lpan_np     1 "LP AN adv NP";
+    anas        4 "KX/KX4/KR Backplane Auto-Negotiation Arbitration State";
+    _           12 rsvd;
+  };
+
+  // 8.2.3.22.24
+  register anlp2 ro addr(base, 0x042B4) "Auto Negotiation Link Partner Link Control Word 2 Register" {
+    lpan_nf     5 "LP AN adv page fields T[4:0]";
+    lpan_afl    11 "LP AN adv page fields A[10:0]";
+    lpan_afh    16 "LP AN adv page fields A[26:11]";
+  };
+
+  // 8.2.3.22.25
+  register mmngc ro addr(base, 0x042D0) "MAC Manageability Control Register" {
+    mng_veto    1 "MNG_VETO";
+    _           31 rsvd;
+  };
+
+  // 8.2.3.22.26
+  register anlpnp1 ro addr(base, 0x042D4) "Auto Negotiation Link Partner Next Page 1 Register" {
+    msg         11 "LP AN adv np Message/Unformatted Code";
+    toggle      1 "LP AN adv np Toggle";
+    ack2        1 "LP AN adv np Acknowledge2";
+    mp          1 "LP AN adv np MP";
+    ack         1 "LP AN adv np Acknowledge";
+    np          1 "LP AN adv np NP";
+    ufmtc       16 "LP AN adv np Unformatted Code";
+  };
+
+  // 8.2.3.22.27
+  register anlpnp2 ro addr(base, 0x042D8) "Auto Negotiation Link Partner Next Page 2 Register" {
+    lpan_nph    16 "LP AN Next Page Fields D[47:32]. [15:0] = Unformatted Code";
+    _           16 rsvd;
+  };
+
+
+  constants fec_ncnt "Good Parity Block Count" {
+    gbl_4       = 0b00 "4 good blocks";
+    gbl_2       = 0b01 "2 good blocks";
+    gbl_5       = 0b10 "5 good blocks";
+    gbl_7       = 0b11 "7 good blocks";
+  };
+
+  constants fec_mcnt "Bad Parity Block Count" {
+    err_8       = 0b00 "8 errors";
+    err_4       = 0b01 "4 errors";
+    err_12      = 0b10 "12 errors";
+    err_15      = 0b11 "15 errors";
+  };
+
+  // 8.2.3.22.28
+  register krpcsfc rw addr(base, 0x042E0) "KR PCS and FEC Control Register" {
+    _           11 mbz;
+    _           5 rsvd;
+    fec_enerr   1 "FEC Enable Error Indication to KR-PCS";
+    _           1 rsvd;
+    fec_ncnt    2 type(fec_ncnt) "Good Parity Block Count";
+    fec_mcnt    2 type(fec_mcnt) "Bad Parity Block Count";
+    fec_lmode   1 "Enables FEC Loose Mode";
+    fec_rxswp   1 "FEC Rx Bit Order Swap";
+    fec_txswp   1 "FEC Tx Bit Order Swap";
+    _           1 rsvd;
+    slipass     1 "Loss of Sync (frame_align) Idle Pass-Through Select";
+    ssync       1 "Rx Block Lock Override";
+    _           4 rsvd;
+  };
+
+  // 8.2.3.22.29
+  register krpcss ro addr(base, 0x042E4) "KR PCS Status Register" {
+    _           3 rsvd;
+    errcnt_blk  8 rc "Rx Decoder Error Counter";
+    berbad_cnt  6 rc "BER Bad Counter";
+    rxfifo_elh  1 rc "Elastic Buffer Error";
+    rxlf_det    1 rc "RX_LF Detect";
+    rxfrm_alerr 1 rc "Frame Align Error";
+    blklck      1 "Rx Block Lock Status bit";
+    hber_sts    1 rc "Rx High Bit Error Rate Status bit";
+    rxfl_det2   1 rc "RX_LF Detect";
+    lnk_sts     1 "Rx Link Status";
+    rx_ufl      1 rc "Rx Underflow Status";
+    rx_ofl      1 rc "Rx Overflow Status";
+    rx_fifoerr  1 "Rx Elastic Buffer Error";
+    rx_dataval  1 "Data Valid Status";
+    tx_ufl      1 rc "Tx Underflow Status";
+    tx_ofl      1 rc "Tx Overflow Status";
+    tx_fifoerr  1 "Unlatched FIFO Error Status";
+    tx_dataval  1 "Data Valid Status";
+  };
+
+  // 8.2.3.22.30
+  register fecs1 rc addr(base, 0x042E8) "FEC Status 1 Register" {
+    fec_cr      32 "FEC Correctable Error Counter";
+  };
+
+  // 8.2.3.22.31
+  register fecs2 rc addr(base, 0x042EC) "FEC Status 2 Register" {
+    fec_uncr    32 "FEC Uncorrectable Error Counter";
+  };
+
+  // 8.2.3.22.32
+  register corectl rw addr(base, 0x14F00) "Core Analog Configuration Register" {
+    data        8 "Data to Core Analog Registers";
+    address     8 "Address to Core Analog Registers";
+    latch_addr  1 "Latch address";
+    _           15 rsvd;
+  };
+
+  // 8.2.3.22.33
+  register smadarctl rw addr(base, 0x14F10) "Core Common Configuration Register" {
+    data        8 "Data to Core Analog Registers";
+    address     8 "Address to Core Analog Registers";
+    latch_addr  1 "Latch address";
+    _           15 rsvd;
+  };
+
+  // 8.2.3.22.34
+  register mflcn rw addr(base, 0x04294) "MAC Flow Control Register" {
+    pmcf        1 "Pass MAC Control Frames";
+    dpf         1 "Discard Pause Frame";
+    rpfce       1 "Receive Priority Flow Control Enable";
+    rfce        1 "Receive Flow Control Enable";
+    _           28 rsvd;
+  };
+
+  // 8.2.3.22.35
+  register sgmiic rw addr(base, 0x04314) "SGMII Control Register" {
+    srxrassmp   4 "Shift Rx Rate-Adapt Single Data Sampling";
+    srxrarsmp   4 "Shift Rx Rate-Adapt Replicated Data Sampling";
+    stxrasmp    4 "Shift Tx Rate-Adapt Sampling";
+    ansflu100   1 "AN SGMII Force Link Up 100 Mb/s";
+    ansbyp      1 "AN SGMII Bypass";
+    anstrig     1 "AN SGMII Trigger";
+    anslnktmr   1 "AN SGMII Link-Timer";
+    _           1 rsvd;
+    anignrrxrf  1 "Auto-Negotiation Ignore Received RF Field";
+    _           14 rsvd;
+  };
+
+
+  /************************************
+   * 8.2.3.23 Statistics
+   ***********************************/
+
+  // 8.2.3.23.1
+  register crcerrs rc addr(base, 0x04000) "CRC Error Count"
+    type(uint32);
+
+  // 8.2.3.23.2
+  register illerrc rc addr(base, 0x04004) "Illegal Byte Error Count"
+    type(uint32);
+
+  // 8.2.3.23.3
+  register errbc rc addr(base, 0x04008) "Error Byte Count"
+    type(uint32);
+
+  // 8.2.3.23.4
+  regarray rxmpc rc addr(base, 0x03FA0) [8] "Rx Missed Packets Count"
+    type(uint32);
+
+  // 8.2.3.23.5
+  register mlfc rc addr(base, 0x04034) "MAC Local fault count"
+    type(uint32);
+
+  // 8.2.3.23.6
+  register mrfc rc addr(base, 0x04038) "MAC Remote fault count"
+    type(uint32);
+
+  // 8.2.3.23.7
+  register rlec rc addr(base, 0x04040) "Receive Length Error Count"
+    type(uint32);
+
+  // 8.2.3.23.8
+  register ssvpc rc addr(base, 0x08780) "Switch Security Violation Packet Count"
+    type(uint32);
+
+  // 8.2.3.23.26
+  register gprc ro addr(base, 0x04074) "Good packets recieved count"
+    type(uint32);
+
+  // 8.2.3.23.27
+  register gorcl rc addr(base, 0x04088) "Good Octets Received Count Low"
+    type(uint32);
+
+  // 8.2.3.23.28
+  register gorch rc addr(base, 0x0408c) "Good Octets Received Count High"
+    type(uint32);
+
+  // 8.2.3.23.29
+  register rxnfgpc rc addr(base, 0x041B0) "Good Rx Non-Filtered Packet Counter"
+    type(uint32);
+
+  // 8.2.3.23.32
+  register rxdgpc rc addr(base, 0x02F50) "DMA Good Rx Packet Counter"
+    type(uint32);
+
+  // 8.2.3.23.44
+  register gptc rc addr(base, 0x04080) "Good packets trasmitted count"
+    type(uint32);
+
+  // 8.2.3.23.45
+  register gotcl rc addr(base, 0x04090) "Good octets transmitted count low"
+    type(uint32);
+
+  // 8.2.3.23.46
+  register gotch rc addr(base, 0x04094) "Good octets transmitted count high"
+    type(uint32);
+
+  // 8.2.3.23.47
+  register txdgpc rc addr(base, 0x087A0) "DMA Good Tx Packet Counter"
+    type(uint32);
+
+  // 8.2.3.23.50
+  register ruc rc addr(base, 0x040A4) "Receive Undersize Count"
+    type(uint32);
+
+  // 8.2.3.23.51
+  register rfc rc addr(base, 0x040A8) "Receive Fragment Count"
+    type(uint32);
+
+  // 8.2.3.23.52
+  register roc rc addr(base, 0x040AC) "Receive Oversize Count"
+    type(uint32);
+
+  // 8.2.3.23.53
+  register rjc rc addr(base, 0x040B0) "Receive Jabber Count"
+    type(uint32);
+
+  // 8.2.3.23.54
+  register mngprc rc addr(base, 0x040B4) "Management Packets Received Count"
+    type(uint32);
+
+  // 8.2.3.23.55
+  register mngpdc rc addr(base, 0x040B8) "Management Packets Dropped Count"
+    type(uint32);
+
+  // 8.2.3.23.57
+  register torl rc addr(base, 0x040c0) "Total octets received low"
+    type(uint32);
+
+  // 8.2.3.23.58
+  register torh rc addr(base, 0x040c4) "Total octets received high"
+    type(uint32);
+
+  // 8.2.3.23.59
+  register tpr rc addr(base, 0x040D0) "Total Packets Recieved"
+    type(uint32);
+
+  // 8.2.3.23.60
+  register tpt rc addr(base, 0x040D4) "Total Packets Transmitted"
+    type(uint32);
+
+  // 8.2.3.23.69
+  register mspdc rc addr(base, 0x04010) "MAC Short Packet Discard Count"
+    type(uint32);
+
+  // 8.2.3.23.71
+  regarray rqsmr rw addr(base, 0x02300) [32; 0x4] "Receive Queue Statistics Mapping" {
+    q_map0 	 4  "Map to queue 4*n+0";
+    _		 4;
+    q_map1 	 4  "Map to queue 4*n+1";
+    _		 4;
+    q_map2 	 4  "Map to queue 4*n+2";
+    _		 4;
+    q_map3 	 4  "Map to queue 4*n+3";
+    _		 4;
+  };
+
+  // 8.2.3.23.73
+  regarray tqsm rw addr(base, 0x08600) [32; 0x4] "Transmit Queue Statistics Mapping" {
+    q_map0 	 4  "Map to queue 4*n+0";
+    _		 4;
+    q_map1 	 4  "Map to queue 4*n+1";
+    _		 4;
+    q_map2 	 4  "Map to queue 4*n+2";
+    _		 4;
+    q_map3 	 4  "Map to queue 4*n+3";
+    _		 4;
+  };
+
+  // 8.2.3.23.74
+  regarray qprc rc addr(base, 0x01030) [16; 0x40] "Queue Packets Received Count"
+    type(uint32);
+
+  // 8.2.3.23.75
+  regarray qprdc rc addr(base, 0x01430) [16; 0x40] "Queue Packets Received Drop Count"
+    type(uint32);
+
+
+  /************************************
+   * 8.2.3.24 Wake up control
+   ***********************************/
+
+  // 8.2.3.24.9
+  regarray fhft_1 rw addr(base, 0x09000) [128] "Flexible Host Filter Table Registers 0-3"
+    type(uint32);
+
+  regarray fhft_2 rw addr(base, 0x09800) [64] "Flexible Host Filter Table Registers 4-5"
+    type(uint32);
+
+
+  /************************************
+   * 8.2.3.25 Management filters
+   ***********************************/
+
+  // 8.2.3.25.1
+  regarray mavtv rw addr(base, 0x05010) [8] "Management VLAN TAG Value" {
+    vid         12 "VLAN ID that should be compared with incoming packet";
+    _           20 rsvd;
+  };
+
+  // 8.2.3.25.2
+  regarray mfutp rw addr(base, 0x05030) [8] "Management Flex UDP/TP Ports" {
+    mfutp_1     16 "VLAN ID that should be compared with incoming packet";
+    mfutp_2     16 "VLAN ID that should be compared with incoming packet";
+  };
+
+  // 8.2.3.25.3
+  regarray metf rw addr(base, 0x05190) [4] "Management Ethernet Type Filter" {
+    etype       16 "EtherType value to be compared with incoming packet";
+    _           14 rsvd;
+    polarity    1 "Negative filter";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.25.4
+  register manc rw addr(base, 0x05820) "Management Control Register" {
+    _           17 rsvd;
+    rcv_tco_en  1 "Receive TCO Packets Enabled";
+    _           1 rsvd;
+    rcv_all     1 "Receive All Enable";
+    mcst_pl2    1 "Receive All Multicast";
+    en_m2h      1 "Enable manageability packets to host memory";
+    bp_vlan     1 "VLAN filtering is bypassed for MNG packets";
+    en_xsum_flt 1 "When set, this bit enables Xsum filtering to manageability";
+    en_ipv4_flt 1 "Enable IPv4 address Filters";
+    fixed_net_t 1 "Fixed next type";
+    net_type    1 "Pass only VLAN tagged packets";
+    _           5 rsvd;
+  };
+
+  // 8.2.3.25.5
+  register mfval rw addr(base, 0x05824) "Manageability Filters Valid" {
+    mac         4 "Indicates if the MAC unicast filters contain valid MAC addresses";
+    _           4 rsvd;
+    vlan        8 "VLAN filter registers contain valid VLAN tags";
+    ipv4        4 "IPv4 address filters contain valid addresses";
+    _           4 rsvd;
+    ipv6        4 "IPv6 address filters contain valid addresses";
+    _           4 rsvd;
+  };
+
+  // 8.2.3.25.6
+  register manc2h rw addr(base, 0x05860) "Management Control To Host Register" {
+    host_en     8 "Host Enable";
+    _           24 rsvd;
+  };
+
+  // 8.2.3.25.7 (TODO: Correct type)
+  regarray mdef rw addr(base, 0x05890) [8] "Manageability Decision Filters"
+    type(uint32);
+
+  // 8.2.3.25.7 (TODO: Correct type)
+  regarray mdef_ext rw addr(base, 0x05160) [8] "Manageability Decision Filters"
+    type(uint32);
+
+  /************************************
+   * 8.2.3.27 Virtualization
+   ***********************************/
+
+  // 8.2.3.27.1
+  register pfvtctl rw addr(base, 0x051B0) "VT Control Register" {
+    vt_en       1 "Virtualization Enabled Mode";
+    _           6 rsvd;
+    def_pl      6 "Default pool";
+    _           16 rsvd;
+    dis_def_pl  1 "Disable default pool";
+    rpl_en      1 "Replication enable";
+    _           1 rsvd;
+  };
+
+  // 8.2.3.27.5
+  regarray pfvflre ro addr(base, 0x00600) [2] "PF VFLR Events Indication" type(uint32);
+
+  // 8.2.3.27.6
+  regarray pfvflrec rw1c addr(base, 0x00700) [2] "PF VFLR Events Clear" type(uint32);
+
+  // 8.2.3.27.7
+  regarray pfvfre rw addr(base, 0x051e0) [2] "PF VF Receive Enable" type(uint32);
+
+  // 8.2.3.27.8
+  regarray pfvfte rw addr(base, 0x08110) [2] "PF VF Transmit Enable" type(uint32);
+
+  // 8.2.3.27.9
+  register pfqde rw addr(base, 0x02F04) "PF PF Queue Drop Enable Register" {
+    qde         1 "Enable drop of packets from Rx Queue queue_idx";
+    _           7 rsvd;
+    queue_idx   7 "Queue index referenced";
+    _           1 rsvd;
+    we          1 "Write Enable";
+    re          1 "Read Enable";
+    _           14 rsvd;
+  };
+
+  // 8.2.3.27.11
+  regarray pfvfspoof rw addr(base, 0x08200) [8] "PF VF Anti Spoof Control" {
+    macas  8	     "MAC Address Anti-spoofing filter";
+    vlanas 8	     "VLAN tag anti-spoofing filter";
+    _	   16;
+  };
+
+  // 8.2.3.27.12
+  register pfdtxgswc rw addr(base, 0x08220) "PFDMA Tx General Switch Control" {
+    lbe	   1	     "Enables VMDQ loopback";
+    _	   31;
+  };
+
+  // 8.2.3.27.14
+  regarray pfvml2flt rw addr(base, 0x0f000) [64] "PF VM L2 Control" {
+    _	   24;
+    aupe   1	"Accept Untagged Packets Enable";
+    rompe  1	"Receive Overflow Multicast Packets";
+    rope   1	"Receive MAC Filters Overflow";
+    bam	   1	"Broadcast accept";
+    mpe	   1	"Multicast Promiscuous";
+    _	   3;
+  };
+
+  // 8.2.3.27.15
+  regarray pfvlvf rw addr(base, 0x0F100) [64] "PF VM VLAN Pool Filter" {
+    vlan_id     12 "VLAN tag for pool VLAN filter n";
+    _           19 rsvd;
+    vi_en       1 "VLAN Id Enable";
+  };
+
+  // 8.2.3.27.16
+  regarray pfvlvfb rw addr(base, 0x0F200) [128] "PF VM VLAN Pool Filter Bitmap" {
+    pool_ena    32 "Pool Enable Bit Array";
+  };
+
+  // 8.2.3.27.17
+  regarray pfuta rw addr(base, 0x0F400) [128] "PF Unicast Table Array" {
+    bitvec      32 "Bit Vector";
+  };
+
+
+/*
+  register addr(base, 0x00000) "" {
+  };
+
+*/
+};

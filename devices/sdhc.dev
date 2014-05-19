@@ -1,0 +1,419 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * sdhc.dev
+ *
+ * DESCRIPTION: SD Host Controller
+ *
+ * See:
+ *   SD Specifications Part A2: SD Host Controller Simplified Specification
+ *   Version 3.00, February 25, 2011. 
+ *   Technical Committee, SD Association
+ *
+ * Note that the specification specifies 16-bit registers.  Here we
+ * merge adjacent registers into 32-bit ones, so they are accessed
+ * two-at-a-time as 32-bit words.  This is how they are implemented on
+ * the TI OMAP SoCs, for example.
+ */
+ 
+ device sdhc msbfirst (addr base) "SD Host Controller" {
+
+     //
+     // Command formats (the non-trival ones)
+     //
+     // The following section numbers refer to: 
+     //   SD Specifications Part 1: Physical Layer Simplified Specification
+     //    Version 3.01, May 18, 2010.
+     //    Technical Committee, SD Card Association     
+     //
+
+     // 4.7.4
+     datatype cmd4 msbfirst(32) "SET_DSR command" {
+	 dsr	16	"DSR value";
+	 _	16;
+     };
+     
+     datatype rcacmd msbfirst(32) "Commands 7,9,10,13,15,55" {
+	 rca	16	"RCA value";
+	 _	16;
+     };
+     
+     datatype cmd8 msbfirst(32) "SEND_IF_COND command" {
+         _	20 mbz;
+         vhs	4	 "Voltage supplied (VHS)";
+         pattern 8       "Check pattern";
+     };
+
+
+
+     //
+     // Host controller registers
+     //
+     // The following section numbers refer to: 
+     //   SD Specifications Part A2: SD Host Controller Simplified Specification
+     //   Version 3.00, February 25, 2011. 
+     //   Technical Committee, SD Association
+     //
+
+     // 2.2.1
+     register sdmasa rw addr(base, 0x00) "SDMA system address" 
+         type(uint32);
+
+     register arg2 rw also addr(base, 0x00) "Argument 2"
+         type(uint32);
+         
+     // 2.2.2/3
+     register blckcnt rw addr(base, 0x04) "Block count" {
+         nblk           16      "Block count";
+         _              1 mbz;
+         hsbb           3       "Host SDMA buffer boundary (4k . 2^x)";
+         blen           12      "Transfer block size (bytes)";
+     };
+     
+     // 2.2.4
+     register arg1 rw addr(base, 0x08) "Argument 1" 
+         type(uint32);
+
+     // 2.2.5/6
+     constants auto_en "Auto command enable values" {
+	 auto_en_dis = 0b00	"Auto Command Disabled";
+	 auto_en_12  = 0b01	"Auto CMD12 Enable";
+	 auto_en_23  = 0b10	"Auto CMD23 Enable";
+     };
+     constants cmd_tp "Command type" {
+	 cmd_tp_abrt = 0b11	"Abort CMD12, CMD52 for writing I/O Abort";
+	 cmd_tp_rsme = 0b10	"Resume CMD52 for writing Function Select";
+	 cmd_tp_susp = 0b01	"Suspend CMD52 for writing Bus Suspend";
+	 cmd_tp_norm = 0b00	"Normal; other commands";
+     };
+     constants rsp_tp "Response type" {
+	 rsp_tp_none = 0b00	"No response";
+	 rsp_tp_136  = 0b01	"Response length 136";
+	 rsp_tp_48   = 0b10	"Response length 48";
+	 rsp_tp_48cb = 0b11	"Response length 48 check busy after response";
+     };
+     register ctm rw addr(base, 0x0C) "Command and transfer mode" {
+         _              2 mbz;
+         index          6       "Command index";
+         cmd_type       2 type(cmd_tp) "Command type";
+         dp             1       "Data present select";
+         cice           1       "Command index check enable";
+         ccce           1       "Command CRC check enable";
+         _              1 mbz;
+         rsp_type       2       "Response type select";
+         _              10 mbz;
+         msbs           1       "Multi/single block select (1=multi)";
+         ddir           1       "Data transfer direction select (1=read)";
+         acen           2 type(auto_en) "Auto command enable";
+         bce            1       "Block count enable";
+         de             1       "DMA enable";
+     };
+     
+     // 2.2.7
+     regarray resp rw addr(base, 0x10)[4] "Response"
+         type(uint32);
+     
+     // 2.2.8
+     register bdp rw addr(base, 0x20) "Buffer data port"
+         type(uint32);
+     
+     // 2.2.9
+     register ps ro addr(base, 0x24) "Present state" {
+         _              7 mbz;
+         clsl           1       "CMD line signal level";
+         dlsl           4       "DAT[3:0] line signal level";
+         wp             1       "Write protect switch pin level (0=ro)";
+         cdpl           1       "Card detect pin level (1=present)";
+         css            1       "Card state stable";
+         cins           1       "Card inserted";
+         _              4 mbz;
+         bre            1       "Buffer read enable";
+         bwe            1       "Buffer write enable";
+         rta            1       "Read transfer active";
+         wta            1       "Write transfer active";
+         _              4 mbz;
+         rtr            1       "Re-tuning request";
+         dla            1       "DAT line active";
+         dati           1       "Command inhibit (DAT)";
+         cmdi           1       "Command inhibit (CMD)";
+     };
+     
+     // 2.2.10-13
+     constants voltage "Bus voltage select" {
+	 voltage_33 = 0b111	"3.3V (typ.)";
+	 voltage_30 = 0b110	"3.0V (typ.)";
+	 voltage_18 = 0b101	"1.8V (typ.)";
+     };
+     register hctl rw addr(base, 0x28) "Host control" {
+         _              5 mbz;
+         rem            1       "Wakeup event enable on SD card removal";
+         ins            1       "Wakeup event enable on SD card insertion";
+         iwe            1       "Wakeup event enable on card interrupt";
+         _              4 mbz;
+         ibg            1       "Interrupt at block gap";
+         rwc            1       "Read wait control";
+         cr             1       "Continue request";
+         sbgr           1       "Stop at block gap request";
+         _              4 mbz;
+         sdvs           3 type(voltage) "SD bus voltage select";
+         sdbp           1       "SD bus power";
+         cdss           1       "Card detect signal selection";
+         cdtl           1       "Card detect test level";
+         edtw           1       "Extended data transfer width";
+         dmas           2       "DMA select";
+         hspe           1       "High speed enable";
+         dtw            1       "Data transfer width";
+         lc             1       "LED control";
+     };
+
+     // 2.2.14-16
+     register sysctl rw addr(base, 0x2C) "System control" {
+         _              5 mbz;
+         srd            1       "Software reset for DAT line";
+         src            1       "Software reset for CMD line";
+         sra            1       "Software reset for all";
+         _              4 mbz;
+         dto            4       "Data timeout counter value";
+         clkd           10      "SDCLK frequency select";
+         cgs            1       "Clock generator select";
+         _              2 mbz;
+         cen            1       "SD clock enable";
+         ics            1 ro    "Internal clock stable";
+         ice            1       "Internal clock enable";
+     };
+     
+     // 2.2.17/18
+     register stat addr(base, 0x30) "Interrupt status" {
+	 // 4 bits in the spec, but we have two bits in the OMAP 44xx
+	 // adaptor which we also specify here.  Might need to change
+	 // this if we encounter another SDHC reader with different
+	 // use of these bits. 
+	 vses           2 rw    "Vendor specific error status";
+	 bada		1 rw1c	"Bad access to data space";
+	 cerr		1 rw1c	"Card error";
+         _              1 mbz;
+         te             1 rw1c  "Tuning error";
+         admae          1 rw1c  "ADMA error";
+         ace            1 rw1c  "Auto CMD error";
+         cle            1 rw1c  "Current limit error";
+         deb            1 rw1c  "Data end bit error";
+         dcrc           1 rw1c  "Data CRC error";
+         dto            1 rw1c  "Data timeout error";
+         cie            1 rw1c  "Command index error";
+         ceb            1 rw1c  "Command end bit error";
+         ccrc           1 rw1c  "Command CRC error";
+         cto            1 rw1c  "Command timeout error";
+         erri           1 ro    "Error interrupt";
+         _              2 mbz;
+         rte            1 ro    "Re-tuning event";
+         intc           1 ro    "INT_C";
+         intb           1 ro    "INT_B";
+         inta           1 ro    "INT_A";
+         cirq           1 ro    "Card interrupt";
+         crem           1 rw1c  "Card removal";
+         cins           1 rw1c  "Card insertion";
+         brr            1 rw1c  "Buffer read ready";
+         bwr            1 rw1c  "Buffer write ready";
+         dma            1 rw1c  "DMA interrupt";
+         bge            1 rw1c  "Block gap event";
+         tc             1 rw1c  "Transfer complete";
+         cc             1 rw1c  "Command complete";
+     };
+
+     
+
+     // 2.2.19-22
+     regtype ir "Interrupt register" {
+	 // 4 bits in the spec, but we have two bits in the OMAP 44xx
+	 // adaptor which we also specify here.  Might need to change
+	 // this if we encounter another SDHC reader with different
+	 // use of these bits. 
+	 vses           2 rw    "Vendor specific error status";
+	 bada		1 rw	"Bad access to data space";
+	 cerr		1 rw	"Card error";
+         _              1 mbz;
+         te             1 rw    "Tuning error";
+         admae          1 rw    "ADMA error";
+         ace            1 rw    "Auto CMD error";
+         cle            1 rw    "Current limit error";
+         deb            1 rw    "Data end bit error";
+         dcrc           1 rw    "Data CRC error";
+         dto            1 rw    "Data timeout error";
+         cie            1 rw    "Command index error";
+         ceb            1 rw    "Command end bit error";
+         ccrc           1 rw    "Command CRC error";
+         cto            1 rw    "Command timeout error";
+         _              3 mbz;
+         rte            1 rw    "Re-tuning event";
+         intc           1 rw    "INT_C";
+         intb           1 rw    "INT_B";
+         inta           1 rw    "INT_A";
+         cirq           1 rw    "Card interrupt";
+         crem           1 rw    "Card removal";
+         cins           1 rw    "Card insertion";
+         brr            1 rw    "Buffer read ready";
+         bwr            1 rw    "Buffer write ready";
+         dma            1 rw    "DMA interrupt";
+         bge            1 rw    "Block gap event";
+         tc             1 rw    "Transfer complete";
+         cc             1 rw    "Command complete";
+     };
+
+     register ie addr(base, 0x34) "Interrupt enable" 
+         type(ir);
+     register ise addr(base, 0x38) "Interrupt signal enable" 
+         type(ir);
+
+     // 2.2.23-24
+     constants uhs_mode "UHS mode" {
+	 uhs_sdr12	= 0b000		"SDR12";
+	 uhs_sdr25	= 0b001		"SDR25";
+	 uhs_sdr50	= 0b010		"SDR50";
+	 uhs_sdr104	= 0b011		"SDR104";
+	 uhs_ddr50	= 0b100		"DDR50";
+     };
+     register aces addr(base, 0x3c) "Auto CMD error status / Host control 2" {
+         pve            1 rw    "Preset value enable";
+         aie            1 rw    "Asynchronous interrupt enable";
+         _              6 mbz;
+         scs            1 rw    "Sampling clock select";
+         et             1 rw    "Execute tuning";
+         dss            2 rw    "Driver strength select";
+         lvse           1 rw    "1.8V signaling enable";
+         ums            3 rw type(uhs_mode) "UHS mode select";
+         _              8 mbz;
+         cni            1 ro    "Command not issued by Auto CMD12 error";
+         _              2 mbz;
+         acie           1 ro    "Auto CMD index error";
+         acebe          1 ro    "Auto CMD end bit error";
+         acce           1 ro    "Auto CMD CRC error";
+         acte           1 ro    "Auto CMD timeout error";
+         acne           1 ro    "Auto CMD12 not executed";
+     };
+
+     // 2.2.25
+     // This register is, bizarrely, writeable on the OMAP44xx, and
+     // needs to be written to configure the controller. 
+     constants slot_tp "Slot type" { 
+	 slot_rem = 0b00	"Removable card slot";
+	 slot_emb = 0b01	"Embedded slot for one device";
+	 slot_shr = 0b10        "Shared bus slot";
+     };
+     register capa rw addr(base, 0x40) "Capability register A" {
+         slottp         2 type(slot_tp) "Slot type";
+         ais            1       "Asynchronous interrupt support";
+         bit64          1       "64-bit system bus support";
+         _              1 mbz;
+         vs18           1       "Voltage support 1.8V";
+         vs30           1       "Voltage support 3.0V";
+         vs33           1       "Voltage support 3.3V";
+         srs            1       "Suspend/resume support";
+         ds             1       "SDMA support";
+         hss            1       "High speed support";
+         _              1 mbz;
+         ad2s           1       "ADMA2 support";
+         bit8           1       "8-bit support for embedded device";
+         mbl            2       "Max block length";
+         bcf            8       "Base clock frequency for SD clock";
+         tcu            1       "Timeout clock unit";
+         _              1 mbz;
+         tcf            6       "Tileout clock frequency";
+     };
+
+     register capb ro addr(base, 0x44) "Capability register B" {
+         _              8 mbz;
+         cm             8       "Clock multiplier";
+         rtm            2       "Re-tuning modes";
+         utsdr50        1       "Use tuning for SDR50";
+         _              1 mbz;
+         tcrt           4       "Timer count for re-tuning";
+         _              1 mbz;
+         dtd            1       "Driver type D support";
+         dtc            1       "Driver type C support";
+         dta            1       "Driver type A support";
+         _              1 mbz;
+         ddr50          1       "DDR50 support";
+         sdr104         1       "SDR104 support";
+         sdr50          1       "SDR50 support";
+     };
+
+     // 2.2.26
+     register mcc ro addr(base, 0x48) "Maximum current capabilities" {
+         _              8 mbz;
+         mc18           8       "Maximum current for 1.8V";
+         mc30           8       "Maximum current for 3.0V";
+         mc33           8       "Maximum current for 3.3V";
+     };
+
+     // 2.2.27
+     register fer wo addr(base, 0x50) "Force event register" {
+         vses           4 wo    "Vendor specific error status";
+         _              2 mbz;
+         ae             1 wo    "ADMA error";
+         ace            1 wo    "Auto CMD error";
+         cle            1 wo    "Current limit error";
+         debe           1 wo    "Data end bit error";
+         dce            1 wo    "Data CRC error";
+         dte            1 wo    "Data timeout error";
+         cie            1 wo    "Command index error";
+         cebe           1 wo    "Command end bit error";
+         cce            1 wo    "Command CRC error";
+         cte            1 wo    "Command timeout error";
+         _              8 mbz;
+         cni            1 wo    "Command not issued by Auto CMD12 error";
+         _              2 mbz;
+         acie           1 wo    "Auto CMD index error";
+         acebe          1 wo    "Auto CMD end bit error";
+         acce           1 wo    "Auto CMD CRC error";
+         acte           1 wo    "Auto CMD timeout error";
+         acne           1 wo    "Auto CMD12 not executed";
+     };
+         
+     // 2.2.29
+     register admaes ro addr(base, 0x54) "ADMA error status" {
+         _              29 mbz;
+         lme            1       "ADMA length mismatch error";
+         aes            2       "ADMA error state";
+     };
+
+     // 2.2.30
+     register admasl rw addr(base, 0x58) "ADMA system address low"
+         type(uint32);
+     register admash rw addr(base, 0x5C) "ADMA system address high"
+         type(uint32);
+
+     // 
+     // We do not, at present, implement the Preset Value registers.
+     //
+     
+     // 2.2.32
+     register sbc rw addr(base, 0xE0) "Shared bus control" {
+         _              1 mbz;
+         bepc           7 rw    "Back-end power control";
+         _              1 mbz;
+         ips            3 rw    "Interrupt pin select";
+         _              1 mbz;
+         cps            3 rw    "Clock pin select";
+         _              1 mbz;
+         bwp            7 ro    "Bus width preset";
+         _              2 mbz;
+         niip           2 ro    "Number of interrupt input pins";
+         _              1 mbz;
+         ncp            3 ro    "Number of clock pins";
+     };
+
+     // 2.2.33/34
+     register rev rw addr(base, 0xFC) "Version / Slot int. status" {
+         vrev           8 ro    "Vendor version number";
+         srev           8 ro    "Specification version number";
+         _              8 mbz;
+         slots          8       "Interrupt status per slot";
+     };
+
+ };

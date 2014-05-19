@@ -1,0 +1,9 @@
+Barrelfish OpenMP Support Library
+=================================
+
+libbomp is the Barrelfish OpenMP support library.
+
+Linux
+=====
+
+A Makefile is provided to cross-compile the library for Linux.

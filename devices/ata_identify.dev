@@ -1,0 +1,177 @@
+/*
+ * Copyright (c) 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ata_identify.dev
+ *
+ * DESCRIPTION: ATA IDENTIFY command's result.
+ *
+ */
+
+device ata_identify msbfirst (addr b) "ATA IDENTIFY results" {
+
+    register gcbsi ro addr(b, 0x00) "General configuration bit-significant information" {
+        ad     1 "0 = ATA device";
+        _      7 "Retired";
+        _      2 "Obsolete";
+        _      3 "Retired";
+        ri     1 "Response incomplete";
+        _      1 "Retired";
+        _      1 "Reserved";
+    };
+    //register word1 ro addr(b, 0x02) "Obsolete" type(uint16);
+    register sc ro addr(b, 0x04) "Specific configuration" type(uint16);
+    //register word3 ro addr(b, 0x06) "Obsolete" type(uint16);
+    //register word4 ro addr(b, 0x08) "Retired" type(uint16);
+    //register word5 ro addr(b, 0x0A) "Retired" type(uint16);
+    //register word6 ro addr(b, 0x0C) "Obsolete" type(uint16);
+    register cfrsvd0 ro addr(b, 0x0E) "Reserved for assignment by the CompactFlash(TM) Association" type(uint16);
+    register cfrsvd1 ro addr(b, 0x10) "Reserved for assignment by the CompactFlash(TM) Association" type(uint16);
+    //register word9 ro addr(b, 0x12) "Retired" type(uint16);
+    regarray sn ro addr(b, 0x14) [20] "Serial number" type(uint8);
+    //register word20 ro addr(b, 0x28) "Retired" type(uint16);
+    //register word21 ro addr(b, 0x2A) "Retired" type(uint16);
+    //register word22 ro addr(b, 0x2C) "Obsolete" type(uint16);
+    regarray fwrev ro addr(b, 0x2E) [8] "Firmware revision" type(uint8);
+    regarray mn ro addr(b, 0x36) [40] "Model number" type(uint8);
+    register word47 ro addr(b, 0x5E) "Stuff" {
+        unk    8 "Must be 80h";
+        maxls  8 "00h = Reserved, 01h-FFh = Maximum number of logical sectors that shall be transferred per DRQ data block on READ/WRITE MULTIPLE commands";
+    };
+    register tcfso ro addr(b, 0x60) "Trusted Computing feature set options" {
+        _    1 "Must be 0";
+        _    1 "Must be 0";
+        rsvd 13 "Reserved for the Trusted Computing Group";
+        tc   1 "Trusted Computing feature set is supported";
+    };
+    register caps0 ro addr(b, 0x62) "Capabilities part 1" {
+        _    2 "Reserved for the IDENTIFY PACKET DEVICE command";
+        sby  1 "Standby tiemr values (0 = managed by device, 1 = as in standard)";
+        _    1 "Reserved for the IDENTIFY PACKET DEVICE command";
+        iors 1 "IORDY supported";
+        iord 1 "IORDY may be disabled";
+        lbas 1 "LBA supported";
+        dmas 1 "DMA supported";
+        _    8 "Retired";
+    };
+    register caps1 ro addr(b, 0x64) "Capabilities part 2" {
+        _    1 "Shall be cleared to zero";
+        _    1 "Shall be set to one";
+        _    12 "Reserved";
+        _    1 "Obsolete";
+        dstm 1 "Shall be set to one to indicate a device specific Standby timer value minimum.";
+    };
+    //register word51 ro addr(b, 0x66) "Obsolete" type(uint16);
+    //register word52 ro addr(b, 0x68) "Obsolete" type(uint16);
+
+    register tnuas ro addr(b, 0x78) "Total number of user addressable sectors" type(uint32);
+
+    register mwdma ro addr(b, 0x7E) "Supported DMA Modes" {
+        _     5 "Reserved";
+        m2sel 1 "Multiword DMA mode 2 selected";
+        m1sel 1 "Multiword DMA mode 1 selected";
+        m0sel 1 "Multiword DMA mode 0 selected";
+        _     5 "Reserved";
+        m2sup 1 "Multiword DMA mode 2 and below are supported";
+        m1sup 1 "Multiword DMA mode 1 and below are supported";
+        m0sup 1 "Multiword DMA mode 0 is supported";
+    };
+
+    register pio ro addr(b, 0x80) "Supported PIO modes" {
+        _    8 "Reserved";
+        msup 8 "PIO modes supported";
+    };
+
+    register majrn ro addr(b, 0xA0) "Major revision number" {
+        _    7 "Reserved";
+        a8   1 "Supports ATA8-ACS";
+        a7   1 "Supports ATA/ATAPI-7";
+        a6   1 "Supports ATA/ATAPI-6";
+        a5   1 "Supports ATA/ATAPI-5";
+        a4   1 "Supports ATA/ATAPI-4";
+        _    3 "Obsolete";
+        _    1 "Reserved";
+    };
+    register minrn ro addr(b, 0xA2) "Minor revision number" type(uint16);
+    register css0 ro addr(b, 0xA4) "Command set supported part 1" {
+        _     1 "Obsolete";
+        nop   1 "NOP command supported";
+        reab  1 "READ BUFFER command supported";
+        wrtb  1 "WRITE BUFFER command supported";
+        _     1 "Obsolete";
+        hpa   1 "Host Protected Area feature set supported";
+        drst  1 "DEVICE RESET command supported";
+        svci  1 "SERVICE interrupt supported";
+        reli  1 "Release interrupt supported";
+        loka  1 "Look-ahead supported";
+        wrtc  1 "Write cache supported";
+        pack  1 "Cleared to indicate PACKET feature set not supported";
+        pwrm  1 "Mandatory Power Management feature set supported";
+        _     1 "Obsolete";
+        secm  1 "Security Mode feature set supported";
+        smrt  1 "SMART feature set supported";
+    };
+    register css1 ro addr(b, 0xA6) "Command sets supported part 2" {
+        _     1 "Shall be cleared to zero";
+        _     1 "Shall be set to one";
+        flcx  1 "FLUSH CACHE EXT command supported";
+        flc   1 "Mandatory FLUSH CACHE command supported";
+        dco   1 "Mandatory Device Configuration Overlay feature set supported";
+        lba48 1 "48-bit Address feature set supported";
+        aam   1 "Automatic Acoustic Management feature set supported";
+        smsec 1 "SET MAX security extension supported";
+        orab  1 "See Address Offset Reserved Area Boot, INCITS TR27:2001";
+        sfspn 1 "SET FEATUREs subcommand required to spin-up after power-up";
+        puis  1 "Power-Up In Standby feature set supported";
+        _     1 "Obsolete";
+        apm   1 "Advanced Power Management feature set supported";
+        cfa   1 "CFA feature set supported";
+        dmaq  1 "READ/WRITE DMA QUEUED supported";
+        dlmc  1 "DOWNLOAD MICROCODE command supported";
+    };
+    register css2 ro addr(b, 0xA8) "Command set/feature supported part 3" {
+        _     1 "Shall be cleared to zero";
+        _     1 "Shall be set to one";
+        iiwuf 1 "IDLE IMMEDIATE with UNLOAD FEATURE supported";
+        _     2 "Reserved for technical report INCITS TR-37-2004 (TLC)";
+        _     2 "Obsolete";
+        wwn64 1 "64-bit World wide name supported";
+        wdmaqfuax 1 "WRITE DMA QUEUED FUA EXT command supported";
+        wdmafuax 1 "WRITE DMA FUA EXT and WRITE MULTIPLE FUA EXT commands supported";
+        gpl   1 "General Purpose Logging feature set supported";
+        strm  1 "Streaming feature set supported";
+        mcptc 1 "Media Card Pass Through Command feature set supported";
+        msn   1 "Media serial number supported";
+        smtst 1 "SMART self-test supported";
+        smtel 1 "SMART error logging supported";
+    };
+
+    register tnuas48 ro addr(b, 0xC8) "Total Number of User Addressable Sectors for the 48-bit Address feature set" type(uint64);
+
+    register plss ro addr(b, 0xD4) "Physical Sector Size / Logical Sector Size" {
+        _     1 "Shall be cleared to zero";
+        _     1 "Shall be set to one";
+        mlpp  1 "Device has multiple logical sectors per phyiscal sector";
+        lls   1 "Device Logical Sector Longer than 256 Words";
+        _     8 "Reserved";
+        lpp   4 "2^X logical sectors per physical sector";
+    };
+
+    register wpls ro addr(b, 0xEA) "Words per Logical Sector" type(uint32);
+
+    register tmajrn ro addr(b, 0x1BC) "Transport Major revision number" {
+        tt    4 "Transport Type - 0 = Parallel, 1 = Serial, 2-15 = Reserved";
+        _     8 "Reserved";
+        v3    1 "Type Serial: SATA Rev 2.5";
+        v2    1 "Type Serial: SATA II: Extensions";
+        v1    1 "Type Serial: SATA 1.0a";
+        v0    1 "Type Parallel: ATA8-APT. Type Serial: ATA8-AST";
+    };
+    register tminrn ro addr(b, 0x1BE) "Transport Minor revision number" type(uint16);
+
+};

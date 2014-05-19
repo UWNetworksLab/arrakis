@@ -1,0 +1,128 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_mpu_cm1.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_mpu_cm1 msbfirst ( addr base ) "" {
+    
+
+    constants clkactivity_mpu_dpll_clk_status width(1) "" {
+        CLKACTIVITY_MPU_DPLL_CLK_0_r = 0 "Corresponding clock is definitely gated";
+        CLKACTIVITY_MPU_DPLL_CLK_1_r = 1 "Corresponding clock is running or gating/ungating transition is ongoing";
+    };
+
+    constants clktrctrl_status width(2) "" {
+        CLKTRCTRL_0 = 0 "NO_SLEEP: Sleep transition cannot be initiated. Wakeup transition may however occur.";
+        CLKTRCTRL_1_r = 1 "Reserved";
+        CLKTRCTRL_2 = 2 "SW_WKUP: Start a software forced wake-up transition on the domain.";
+        CLKTRCTRL_3 = 3 "HW_AUTO: Automatic transition is enabled. Sleep and wakeup transition are based upon hardware conditions.";
+    };
+    
+    register cm_mpu_clkstctrl addr(base, 0x0) "This register enables the MPU domain power state transition. It controls the hardware supervised domain power state transition between ON-ACTIVE and ON-INACTIVE states. It also holds 1 status bit per clock input of the domain." {
+        _ 23 mbz;
+        clkactivity_mpu_dpll_clk 1 ro type(clkactivity_mpu_dpll_clk_status) "This field indicates the state of the MPU_DPLL_CLK clock in the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the clock state transition of the MPU clock domain.";
+    };
+
+    constants c2c_statdep_status width(1) "" {
+        C2C_STATDEP_0_r = 0 "Dependency is disabled";
+    };
+
+    constants l4wkup_statdep_status width(1) "" {
+        L4WKUP_STATDEP_0 = 0 "Dependency is disabled";
+        L4WKUP_STATDEP_1 = 1 "Dependency is enabled";
+    };
+    
+    register cm_mpu_staticdep addr(base, 0x4) "This register controls the static domain dependencies from MPU domain towards 'target' domains. It is relevant only for domain having system initiator(s)." {
+        _ 13 mbz;
+        c2c_statdep 1 ro type(c2c_statdep_status) "Static dependency towards C2C clock domain";
+        _ 1 mbz;
+        alwoncore_statdep 1 ro type(c2c_statdep_status) "Static dependency towards ALWONCORE clock domain";
+        l4wkup_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards L4WKUP clock domain";
+        l4sec_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards L4SEC clock domain";
+        l4per_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards L4PER clock domain";
+        l4cfg_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards L4CFG clock domain";
+        sdma_statdep 1 ro type(c2c_statdep_status) "Static dependency towards SDMA clock domain";
+        sgx_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards SGX clock domain";
+        iss_statdep 1 ro type(c2c_statdep_status) "Static dependency towards ISS clock domain";
+        dss_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards DSS clock domain";
+        l3init_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards L3INIT clock domain";
+        l3_2_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards L3_2 clock domain";
+        l3_1_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards L3_1 clock domain";
+        memif_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards MEMIF clock domain";
+        abe_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards ABE clock domain";
+        ivahd_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards IVAHD clock domain";
+        dsp_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards DSP clock domain";
+        mpu_m3_statdep 1 rw type(l4wkup_statdep_status) "Static dependency towards MPU_A3 clock domain";
+    };
+    
+    register cm_mpu_dynamicdep addr(base, 0x8) "This register controls the dynamic domain depedencies from MPU domain towards 'target' domains. It is relevant only for domain having INTRCONN master port(s)." {
+        _ 4 mbz;
+        windowsize 4 rw "Size of sliding window used to monitor INTRCONN interface activity for determination of auto-sleep feature. Time unit defined byCM_DYN_DEP_PRESCAL register.";
+        _ 18 mbz;
+        l3_1_dyndep 1 ro type(l4wkup_statdep_status) "Dynamic dependency towards L3_1 clock domain";
+        memif_dyndep 1 ro type(l4wkup_statdep_status) "Dynamic dependency towards MEMIF clock domain";
+        abe_dyndep 1 ro type(l4wkup_statdep_status) "Dynamic dependency towards ABE clock domain";
+        _ 3 mbz;
+    };
+
+    constants clksel_abe_div_mode_status width(1) "" {
+        CLKSEL_ABE_DIV_MODE_0 = 0 "MPU DPLL clock divided by 4";
+        CLKSEL_ABE_DIV_MODE_1 = 1 "MPU DPLL clock divided by 8";
+    };
+
+    constants clksel_emif_div_mode_status width(1) "" {
+        CLKSEL_EMIF_DIV_MODE_0 = 0 "MPU DPLL clock divided by 2";
+        CLKSEL_EMIF_DIV_MODE_1 = 1 "MPU DPLL clock divided by 4";
+    };
+
+    constants stbyst_status width(1) "" {
+        STBYST_0_r = 0 "Module is functional (not in standby)";
+        STBYST_1_r = 1 "Module is in standby";
+    };
+
+    constants idlest_status width(2) "" {
+        IDLEST_0_r = 0 "Module is fully functional, including INTRCONN";
+        IDLEST_1_r = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_2_r = 2 "Module is in Idle mode (only INTRCONN part). It is functional if using separate functional clock";
+        IDLEST_3_r = 3 "Module is disabled and cannot be accessed";
+    };
+
+    constants modulemode_status width(2) "" {
+        MODULEMODE_1_r = 1 "Module is managed automatically by hardware according to clock domain transition. A clock domain sleep transition put module into idle. A wakeup domain transition put it back into function. Module clocks may be gated according to the clock domain state.";
+    };
+    
+    register cm_mpu_mpu_clkctrl addr(base, 0x20) "This register manages the MPU clocks." {
+        _ 6 mbz;
+        clksel_abe_div_mode 1 rw type(clksel_abe_div_mode_status) "Selects the ratio for MPU-ABE async bridge versus MPU DPLL clock.";
+        clksel_emif_div_mode 1 rw type(clksel_emif_div_mode_status) "Selects the ratio for memory adapter clock (MA_EOCP_ICLK) versus MPU DPLL clock.";
+        _ 5 mbz;
+        stbyst 1 ro type(stbyst_status) "Module standby status. [warm reset insensitive]";
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 ro type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+};

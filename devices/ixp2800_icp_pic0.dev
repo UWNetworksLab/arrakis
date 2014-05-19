@@ -1,0 +1,85 @@
+/*
+ * Copyright (c) 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ixp2800_icp_pic.dev
+ *
+ * DESCRIPTION: Primary interrupt controller for integrator/cp
+ *
+ * This is derived from:
+ *
+ * This is derived from the Intel IXP2400/IXP2800 Network Processor 
+ * Programmer's Reference Manual (November 2003), p. 541ff
+ *
+ */
+
+device ixp2800_icp_pic0 msbfirst ( addr base ) "IXP2800 Integrator Primary PIC"
+{
+   regtype source "Interrupt controller sources" {
+    _            4  "Reserved";
+    THD96_127_B  1  "THD_RAW_STATUS_B_3";
+    THD64_95_B	 1  "THD_RAW_STATUS_B_2";
+    THD32_63_B	 1  "THD_RAW_STATUS_B_1";
+    TH0_31_B 	 1  "THD_RAW_STATUS_B_0";
+    _		 4 "Reserved";
+    THD96_127_A  1  "THD_RAW_STATUS_A_3";
+    THD64_95_A	 1  "THD_RAW_STATUS_A_2";
+    THD32_63_A	 1  "THD_RAW_STATUS_A_1";
+    THD0_31_A 	 1  "THD_RAW_STATUS_A_0";
+    PCI_INT 	 1  "External PCI interrupt A & B";
+    ME_ATTN 	 1  "Microengine attention register";
+    PCI_DOORBELL 1  "A PCI device has set the doorbell interrupt";
+    DMA2_DONE 	 1  "Completion status from the DMA2 engine";
+    _		 1  "Reserved";
+    DMA0_DONE	 1  "Completion status from the DMA0 engine";
+    SP_FINT 	 1  "Slow Port interrupt";
+    PMU_INT 	 1  "PMU interrupt";
+    TIMER_UFLW	 4  "Timer underflow indicator";
+    GPIO_INT 	 1  "interrupt request from the GPIO unit";
+    UART_INT 	 1  "UART interrupt request";
+    ERROR_SUM 	 1  "OR of all interrupt bits in the ErrorStatus register";
+    SOFTINT 	 1  "Software Interrupt";
+   };
+
+   register IRQ_STATUS ro addr (base, 0x08) "IRQ masked interrupt status"
+       type(source);
+
+   register IRQ_RAW_STATUS ro addr (base, 0x00) "IRQ un-masked interrupt status"
+       type(source);
+
+   register IRQ_ENABLE ro addr (base, 0x10) "Return enabled IRQs"
+       type(source);
+
+   register IRQ_ENABLE_SET wo also addr (base, 0x10) "IRQ enable set"
+       type(source);
+
+   register IRQ_ENABLE_CLR wo addr (base, 0x18) "IRQ enable clear"
+       type(source);
+
+   register SOFT_INT addr (base, 0x54) "Software interrupt set" {
+     _	    	     31 ro "Reserved";
+     set	     1	rw "Set or read software interrupt";
+   };
+
+
+   register FIQ_STATUS ro addr (base, 0x04) "FIQ masked interrupt status"
+       type(source);
+
+   register FIQ_RAW_STATUS ro also addr (base, 0x00) "FIQ un-masked interrupt status"
+       type(source);
+
+   register FIQ_ENABLE ro also addr (base, 0x0c) "Return enabled FIQs"
+       type(source);
+
+   register FIQ_ENABLE_SET wo also addr (base, 0x0c) "FIQ enable set"
+       type(source);
+
+   register FIQ_ENABLE_CLR wo addr (base, 0x14) "FIQ enable clear"
+       type(source);
+
+};

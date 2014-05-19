@@ -1,0 +1,140 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_gpio2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_gpio2 msbfirst ( addr base ) "" {
+    
+    
+    register gpio_revision ro addr(base, 0x0) "IP revision identifier (X.Y.R)" type(uint32);
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_1 = 1 "No-idle: An idle request is never acknowledged.";
+        IDLEMODE_2 = 2 "Smart-idle: The acknowledgment to an idle request is given based on the internal activity (see 4.1.2).";
+        IDLEMODE_3 = 3 "Smart-idle wakeup";
+    };
+
+    constants enawakeup_status width(1) "" {
+        ENAWAKEUP_0 = 0 "Wake-up generation is disabled.";
+        ENAWAKEUP_1 = 1 "Wake-up capability is enabled upon expected transition on input GPIO pin.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "Normal mode";
+        SOFTRESET_1 = 1 "The module is reset.";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "Internal Interface OCP clock is free-running.";
+        AUTOIDLE_1 = 1 "Automatic internal OCP clock gating, based on the OCP interface activity";
+    };
+    
+    register gpio_sysconfig addr(base, 0x10) "System configuration register" {
+        _ 27 mbz;
+        idlemode 2 rw type(idlemode_status) "0x0: Force-idle: An idle request is acknowledged unconditionally.";
+        enawakeup 1 rw type(enawakeup_status) "Wake-up control";
+        softreset 1 rw type(softreset_status) "Software reset. Set this bit to 1 to trigger a module reset. The bit is automatically reset by the hardware. During reads, it always returns 0.";
+        autoidle 1 rw type(autoidle_status) "OCP clock gating control.";
+    };
+    
+    register gpio_irqstatus_raw_0 rw addr(base, 0x24) "Per-event raw interrupt status vector (corresponding to first line of interrupt)" type(uint32);
+    
+    register gpio_irqstatus_raw_1 rw addr(base, 0x28) "Per-event raw interrupt status vector (corresponding to second line of interrupt)" type(uint32);
+    
+    register gpio_irqstatus_0 rw addr(base, 0x2C) "Per-event interrupt status vector (enabled) (corresponding to first line of interrupt)" type(uint32);
+    
+    register gpio_irqstatus_1 rw addr(base, 0x30) "Per-event enabled interrupt status vector (corresponding to second line of interrupt)" type(uint32);
+    
+    register gpio_irqstatus_set_0 rw addr(base, 0x34) "Per-event interrupt enable set vector (corresponding to first line of interrupt)" type(uint32);
+    
+    register gpio_irqstatus_set_1 rw addr(base, 0x38) "Per-event enable set interrupt vector (corresponding to second line of interrupt)" type(uint32);
+    
+    register gpio_irqstatus_clr_0 rw addr(base, 0x3C) "Per-event interrupt enable clear vector (corresponding to first line of interrupt)" type(uint32);
+    
+    register gpio_irqstatus_clr_1 rw addr(base, 0x40) "Per-event enable clear interrupt vector (corresponding to second line of interrupt)" type(uint32);
+    
+    register gpio_irqwaken_0 rw addr(base, 0x44) "Per-event wake-up enable set vector (corresponding to first line of interrupt)" type(uint32);
+    
+    register gpio_irqwaken_1 rw addr(base, 0x48) "Per-event wake-up enable set vector (corresponding to second line of interrupt)" type(uint32);
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Internal reset is on-going.";
+        RESETDONE_1_r = 1 "Reset completed";
+    };
+    
+    register gpio_sysstatus addr(base, 0x114) "System status register" {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "";
+    };
+    
+    register gpio_wakeupenable rw addr(base, 0x120) "Wake-up enable register (legacy) for first line of interrupt" type(uint32);
+
+    constants gatingratio_status width(2) "" {
+        GATINGRATIO_0 = 0 "N = 1";
+        GATINGRATIO_1 = 1 "N = 2";
+        GATINGRATIO_2 = 2 "N = 4";
+        GATINGRATIO_3 = 3 "N = 8";
+    };
+
+    constants disablemodule_status width(1) "" {
+        DISABLEMODULE_0 = 0 "Module is enabled, clocks are not gated.";
+        DISABLEMODULE_1 = 1 "Module is disabled, internal clocks are gated";
+    };
+    
+    register gpio_ctrl addr(base, 0x130) "GPIO control register" {
+        _ 29 mbz;
+        gatingratio 2 rw type(gatingratio_status) "Clock gating ratio for event detection";
+        disablemodule 1 rw type(disablemodule_status) "";
+    };
+    
+    register gpio_oe rw addr(base, 0x134) "Output enable register. 0: Output enabled ; 1: Output disabled" type(uint32);
+    
+    register gpio_datain ro addr(base, 0x138) "Data input register (with sampled input data)" type(uint32);
+    
+    register gpio_dataout rw addr(base, 0x13C) "Data output register (data to set on output pins)." type(uint32);
+    
+    register gpio_leveldetect0 rw addr(base, 0x140) "Detect low-level register. 0: Low-level detection disabled; 1: Low-level detection enabled" type(uint32);
+    
+    register gpio_leveldetect1 rw addr(base, 0x144) "Detect high-level register" type(uint32);
+    
+    register gpio_risingdetect rw addr(base, 0x148) "Detect rising edge register" type(uint32);
+    
+    register gpio_fallingdetect rw addr(base, 0x14C) "Detect falling edge register" type(uint32);
+    
+    register gpio_debouncenable rw addr(base, 0x150) "Debouncing enable register" type(uint32);
+    
+    register gpio_debouncingtime addr(base, 0x154) "Debouncing value register" {
+        _ 24 mbz;
+        debouncetime 8 rw "8-bit values specifying the debouncing time in 31 us steps";
+    };
+    
+    register gpio_clearwkupena rw addr(base, 0x180) "Clear wake-up-enable register - legacy register" type(uint32);
+    
+    register gpio_setwkuena rw addr(base, 0x184) "Set wake-up-enable register - legacy register" type(uint32);
+    
+    register gpio_cleardataout rw addr(base, 0x190) "Clear data output register" type(uint32);
+    
+    register gpio_setdataout rw addr(base, 0x194) "Set data output register" type(uint32);
+};

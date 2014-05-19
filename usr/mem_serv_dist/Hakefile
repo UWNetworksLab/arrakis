@@ -1,0 +1,70 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2011, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/mem_serv_dist
+--
+--------------------------------------------------------------------------
+
+[
+-- no stealing
+  build application { target = "mem_serv_dist_ns",
+                      cFiles = [ "mem_serv.c", "no_steal.c", "hybrid_support.c", "skb.c", "args.c", "memtest_trace.c" ],
+                      flounderDefs = [ "monitor", "monitor_blocking", "mem", "spawn" ],
+                      flounderExtraDefs = [ ("mem", ["rpcclient"]), 
+                                                ("spawn", ["rpcclient"]),
+                                                ("monitor_blocking", ["rpcclient"])],
+                      addLibraries = [ "mm", "trace", "skb", "dist" ]
+                    },
+-- hybrid thc
+  build application { target = "mem_serv_dist",
+		      cFiles = [ "mem_serv.c", "steal.c", "hybrid_support.c", "skb.c", "args.c", "memtest_trace.c" ],
+                      flounderDefs = [ "monitor", "monitor_blocking", "mem", "spawn" ],
+                      flounderTHCStubs = [ "mem" ],
+                      flounderExtraDefs = [ ("mem", ["rpcclient"]),
+                                                ("spawn", ["rpcclient"]), 
+                                                ("monitor_blocking", ["rpcclient"])],
+                      addLibraries = [ "mm", "trace", "skb", "dist", "thc" ],
+		      architectures = [ "x86_64", "x86_32", "scc" ]
+                    },
+
+-- fully thc
+  build application { target = "mem_serv_dist_thc",
+		      cFiles = [ "mem_serv.c", "steal.c", "thc_support.c", "skb.c", "args.c", "memtest_trace.c" ],
+                      flounderDefs = [ "monitor", "monitor_blocking", "mem", "spawn" ],
+                      flounderTHCStubs = [ "mem" ],
+                      flounderExtraDefs = [ ("mem", ["rpcclient"]),
+                                                ("spawn", ["rpcclient"]),
+                                                ("monitor_blocking", ["rpcclient"])],
+                      addLibraries = [ "mm", "trace", "skb", "dist", "thc" ],
+                      architectures = [ "x86_64", "x86_32", "scc" ]
+                    },
+  build application { target = "mem_bench",
+  		      cFiles = [ "mem_bench.c", "memtest_trace.c" ],
+    		      addLibraries = [ "trace" ]
+		    },		
+  build application { target = "mem_bench_2",
+  		      cFiles = [ "mem_bench_2.c", "memtest_trace.c" ],
+    		      addLibraries = [ "trace" ]
+		    },		
+  build application { target = "mem_bench_3",
+  		      cFiles = [ "mem_bench_3.c", "sleep.c", "memtest_trace.c" ],
+    		      addLibraries = [ "trace", "bench" ]
+		    },
+  build application { target = "mem_bench_4",
+  		      cFiles = [ "mem_bench_4.c", "sleep.c", "memtest_trace.c" ],
+    		      addLibraries = [ "trace", "bench" ]
+		    },
+  build application { target = "mem_bench_5",
+  		      cFiles = [ "mem_bench_5.c", "sleep.c", "memtest_trace.c" ],
+    		      addLibraries = [ "trace", "bench" ]
+		    },
+  build application { target = "mem_bench_6",
+  		      cFiles = [ "mem_bench_6.c", "sleep.c", "memtest_trace.c" ],
+    		      addLibraries = [ "trace", "bench" ]
+		    }
+]

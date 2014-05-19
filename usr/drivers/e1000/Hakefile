@@ -1,0 +1,29 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/drivers/e1000_dev
+--
+--------------------------------------------------------------------------
+
+[ build application { target = "e1000n",
+                      cFiles = [ "e1000n.c", "e1000n_hwinit.c", "e1000n_helpers.c" ],
+                      flounderBindings = [ "net_queue_manager",
+                                            "net_soft_filters", "octopus" ],
+                      flounderDefs = [ "octopus" ],
+                      mackerelDevices = [ "e1000" ],
+                      addLibraries = libDeps [ "pci", "netQmng", "trace", "octopus" ],
+                      architectures = [ "x86_64", "x86_32" ]
+                    },
+  build library { target = "e1000n",
+                      cFiles = [ "e1000n.c", "e1000n_hwinit.c", "e1000n_helpers.c" ],
+                      mackerelDevices = [ "e1000" ],
+                      addLibraries = libDeps [ "pci", "trace", "octopus" ],
+                      architectures = [ "x86_64" ],
+                      addCFlags = [ "-DLIBRARY" ]
+                    }
+]

@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2013, University of Washington.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface e10k_vf "e10k VF/PF interface" {
+	  rpc get_mac_address(in uint8 vfn, out uint64 mac);
+	  rpc init_done(in uint8 vfn);
+};

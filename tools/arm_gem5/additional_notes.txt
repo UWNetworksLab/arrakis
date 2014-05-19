@@ -1,0 +1,59 @@
+ADDITIONAL NOTES:
+
+These notes are intended to give some hints on how to work with Gem5 and where to start,
+when you want to add a new board to Gem5 and support it in Barrelfish.
+
+
+1. Adding a new (ARM) development board to Gem5
+
+The place to add a new development board is in gem5/src/dev/arch/arm/Realview.py. There are
+already a bunch of boards there which should get you started. If your intended board has devices
+which are not yet implemented in Gem5 you can either try to use an existing one (eg another UART
+device) or you have to implement it yourself. You can look at the other files in this directory
+to get an idea on how to do it.
+
+You also need to change barrelfish/tools/arm_gem5/gem5script.py to select your new device.
+Watch for the 'machine type configuration' and change it to
+
+system.realview = Your_Board_Class()
+
+In the Barrelfish code itself you probably have to adjust the hardcoded device addresses in
+'kernel/arch/arm_gem5/integrator.c'. If you added new devices you'd also need to write a device
+driver and make according changes to the code.
+
+This should get you started. If you have any problems which are beyond the scope of these notes,
+then ask on the Gem5 and/or the Barrelfish mailing list for help.
+
+
+2. Working with Gem5
+
+2.1 Debugging Barrelfish on Gem5
+
+Gem5 has nice remote debugging support but needs some configuration in order to work. There is
+already a GDB script in tools/arm_gem5/debug.gem5.gdb which does the work for you. In order to
+attach the remote debugger to Gem5 just change to your Barrelfish build directory and run
+
+'arm-none-linux-gnueabi-gdb -x ../tools/arm_gem5/debug.gem5.gdb'
+
+and Gem5 will break in whatever code currently executing in the simulator.
+If you want to start debugging from the first line of code on you have to modify 
+'gem5/src/sim/system.cc'. Look for this line
+
+int rgdb_wait = -1;
+
+change it to
+
+int rgdb_wait = 0;
+
+and recompile Gem5. That way Gem5 will wait for a remote debugger to attach before executing any
+simulated code.
+
+
+2.2 Debugging Gem5
+
+In order to debug Gem5 you want to build the debug binary 'gem5.debug'. Then just open this binary
+in GDB and you can step the Gem5 code. 
+
+For more information about Gem5's debugging functionality visit http://www.gem5.org/Debugging.
+
+TO BE EXPANDED...

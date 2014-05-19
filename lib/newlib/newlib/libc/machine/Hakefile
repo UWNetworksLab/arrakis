@@ -1,0 +1,23 @@
+if Config.libc == "newlib" then
+let
+    arch_srcs "x86_64"  = [ "x86_64/" ++ x | x <- ["setjmp.S", "memcpy.S", "memset.S"]]
+    arch_srcs "x86_32"  = [ "i386/" ++ x   | x <- ["setjmp.S", "memcpy.S", "memset.S"]]
+    arch_srcs "scc"     = [ "i386/" ++ x   | x <- ["setjmp.S", "memcpy.S", "memset.S"]]
+    arch_srcs "armv5"   = [ "arm/setjmp.S" ]
+    arch_srcs "arm11mp" = [ "arm/setjmp.S" ]
+    arch_srcs "xscale"  = [ "arm/setjmp.S" ]
+    arch_srcs "armv7"   = [ "arm/setjmp.S" ]
+    arch_srcs "armv7-m" = [ "arm/setjmp.S" ]
+    arch_srcs  x        = error ("Unknown architecture for newlib: " ++ x)
+in
+[ build library {
+  target = "machine",
+  addCFlags  = Config.newlibAddCFlags,
+  omitCFlags = [ "-Wmissing-prototypes",
+                 "-Wmissing-declarations",
+                 "-Wimplicit-function-declaration",
+                 "-Werror"],
+  assemblyFiles = arch_srcs arch,
+  architectures = [arch]
+} | arch <- allArchitectures ]
+else []

@@ -1,0 +1,96 @@
+/*
+ * Copyright (c) 2010, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+
+interface usb_manager "USB Manager Interface" {
+    
+    /* transfer setup parameters, keep in sync with struct usb_transfer_setup */
+    typedef struct {
+ uint32 max_bytes;             ///< maximum bytes to to transfer
+    uint32 max_frames;            ///< the maximum bumber of frames
+    uint32 interval;              ///< the interval for interrupt / isochr
+    uint32 timeout;               ///< period till the transfer timeouts
+    uint16 flags;    ///< some specific transfer flags
+    uint8 type;                   ///< the type of the usb pipe
+    uint8 direction;              ///< the direction of the data transfer
+    uint8 endpoint;               ///< the associated endpoint of the transfer
+    uint8 iface;              ///< the itnerface to use
+    } setup_param;
+    
+    /* 
+     * ----------------------------------------------------------------------
+     * connecting to the USB manager
+     * ---------------------------------------------------------------------- 
+     */
+    
+    rpc connect(in iref driver_iref, in uint16 init_config, out uint32 ret_error, out uint8 ret_desc[length]);
+
+    rpc device_disconnect_notify();
+    
+
+    /* 
+     * ----------------------------------------------------------------------
+     * Request handling
+     * ---------------------------------------------------------------------- 
+     */
+     
+    rpc request_read(in uint8 request[req_length], 
+                            out uint8 data[data_length], 
+                            out uint32 ret_status);
+                            
+    rpc request_write(in uint8 request[req_length], 
+                            in uint8 data[data_length],
+                            out uint32 ret_status);
+                            
+    rpc request(in uint8 request[req_length], out uint32 ret_status);
+    
+    
+    /* 
+     * ----------------------------------------------------------------------
+     * transfer management
+     * ---------------------------------------------------------------------- 
+     */
+        
+    rpc transfer_setup(in uint8 type, in setup_param params, 
+                       out uint32 ret_error, out uint32 ret_tid);  
+    
+    rpc transfer_unsetup(in uint32 tid, out uint32 ret_error);
+    
+    rpc transfer_start(in uint32 tid, out uint32 ret_error);
+    
+    rpc transfer_stop(in uint32 tid, out uint32 ret_error);
+      
+    rpc transfer_status(in uint32 tid, out uint32 ret_error, 
+                        out uint32 ret_actlen, out uint32 ret_length, 
+                        out uint32 ret_actframes, out uint32 ret_numframes);
+    
+    rpc transfer_state(in uint32 tid, out uint32 ret_error, out uint32 ret_state);
+    
+    rpc transfer_clear_stall(in uint32 tid, out uint32 ret_error);
+    
+    rpc transfer_done_notify(out uint32 tid, out uint32 error, out uint8 data[length]);
+    
+    /* 
+     * ----------------------------------------------------------------------
+     * device management
+     * ---------------------------------------------------------------------- 
+     */
+     
+     rpc device_get_speed(out uint8 ret_speed);
+     
+     rpc device_get_state(out uint8 ret_state);
+     
+     rpc device_suspend(out uint32 ret_error);
+     
+     rpc device_resume(out uint32 ret_error);
+     
+     rpc device_powersave(in uint8 powerstate, out uint32 ret_error);
+     
+     
+};

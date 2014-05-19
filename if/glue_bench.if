@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface glue_bench "The bench Interface" {
+
+        /* Messages for flounder_stub_bench */
+        message fsb_init_msg(uint8 coreid);
+
+	message fsb_payload_request(int word0, int word1, int word2, int word3);
+	message fsb_payload_reply(int word0, int word1, int word2, int word3);
+
+	message fsb_payload1_request(int word0);
+	message fsb_payload1_reply(int word0);
+
+	message fsb_payload2_request(int word0, int word1);
+	message fsb_payload2_reply(int word0, int word1);
+
+	message fsb_payload8_request(int word0, int word1, int word2, int word3,
+			 	     int word4, int word5, int word6, int word7);
+	message fsb_payload8_reply(int word0, int word1, int word2, int word3,
+			 	   int word4, int word5, int word6, int word7);
+
+	message fsb_payload16_request(int word0, int word1, int word2, int word3,
+			 	      int word4, int word5, int word6, int word7,
+				      int word8, int word9, int word10, int word11,
+			 	      int word12, int word13, int word14, int word15);
+	message fsb_payload16_reply(int word0, int word1, int word2, int word3,
+			 	    int word4, int word5, int word6, int word7,
+				    int word8, int word9, int word10, int word11,
+			 	    int word12, int word13, int word14, int word15);
+
+	message fsb_empty_request();
+	message fsb_empty_reply();
+};

@@ -1,0 +1,43 @@
+# process with: dot -Tpdf mydep2.dot -O -Gratio=0.5
+digraph dep {
+	colorscheme=x11;
+debugging_1  ->  binding_2  [color=" #FF0000 "][style="bold"];
+debugging_1  ->  naming_2  [color=" #FF0000 "][style="bold"];
+naming_1  ->  binding_2  [color=" #411BEA "][style="bold"];
+device_man_1  ->  binding_2  [color=" #BFBF00 "][style="bold"];
+device_man_1  ->  naming_2  [color=" #BFBF00 "][style="bold"];
+terminal_1  ->  binding_2  [color=" #FF0000 "][style="bold"];
+terminal_1  ->  naming_2  [color=" #FF0000 "][style="bold"];
+VMem_1  ->  binding_2  [color=" #8080FF "][style="bold"];
+VMem_1  ->  naming_2  [color=" #8080FF "][style="bold"];
+routing_1  ->  naming_2  [color=" #362698 "][style="dashed"];
+skb_1  ->  binding_2  [color=" #808080 "][style="bold"];
+skb_1  ->  naming_2  [color=" #808080 "][style="bold"];
+principals_1  ->  binding_2  [color=" #B430E5 "][style="dashed"];
+principals_1  ->  naming_2  [color=" #B430E5 "][style="dashed"];
+process_mgmt_1  ->  binding_2  [color=" #ED7651 "][style="bold"];
+process_mgmt_1  ->  naming_2  [color=" #ED7651 "][style="bold"];
+shell_1  ->  binding_2  [color=" #7E7EB8 "][style="bold"];
+shell_1  ->  naming_2  [color=" #7E7EB8 "][style="bold"];
+power_mgmt_1  ->  binding_2  [color=" #F0C80E "][style="bold"];
+power_mgmt_1  ->  naming_2  [color=" #F0C80E "][style="bold"];
+driver_1  ->  binding_2  [color=" #008000 "][style="bold"];
+driver_1  ->  naming_2  [color=" #008000 "][style="bold"];
+mem_alloc_1  ->  binding_2  [color=" #A0A424 "][style="bold"];
+capability_mgmt_1  ->  binding_2  [color=" #000000 "][style="bold"];
+capability_mgmt_1  ->  naming_2  [color=" #000000 "][style="bold"];
+resource_acct_mgmt_1  ->  binding_2  [color=" #19CB97 "][style="dashed"];
+resource_acct_mgmt_1  ->  naming_2  [color=" #19CB97 "][style="bold"];
+tracing_1  ->  binding_2  [color=" #008000 "][style="bold"];
+tracing_1  ->  naming_2  [color=" #008000 "][style="bold"];
+VMachine_1  ->  binding_2  [color=" #80FFFF "][style="bold"];
+VMachine_1  ->  naming_2  [color=" #80FFFF "][style="bold"];
+threading_1  ->  binding_2  [color=" #BFBF00 "][style="dashed"];
+threading_1  ->  naming_2  [color=" #BFBF00 "][style="dashed"];
+network_stack_1  ->  binding_2  [color=" #1EAC41 "][style="bold"];
+network_stack_1  ->  naming_2  [color=" #1EAC41 "][style="bold"];
+lock_service_1  ->  binding_2  [color=" #BF40BF "][style="bold"];
+lock_service_1  ->  naming_2  [color=" #BF40BF "][style="bold"];
+storage_mgmt_1  ->  binding_2  [color=" #000000 "][style="bold"];
+storage_mgmt_1  ->  naming_2  [color=" #000000 "][style="bold"];
+}

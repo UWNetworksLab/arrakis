@@ -1,0 +1,42 @@
+./include/arch/x86_32
+221     top_dir         ansic=221
+195     barrelfish_kpi  ansic=195
+188     barrelfish      ansic=188
+4       bench           ansic=4
+
+./include/target/x86_32
+SLOC	Directory	SLOC-by-Language (Sorted)
+151     barrelfish_kpi  ansic=151
+54      barrelfish      ansic=54
+
+./kernel/include/arch/x86_32
+SLOC	Directory	SLOC-by-Language (Sorted)
+503     x86_32          ansic=503
+
+./kernel/include/target/x86_32
+SLOC	Directory	SLOC-by-Language (Sorted)
+282     x86_32          ansic=282
+
+./kernel/arch/x86_32
+SLOC	Directory	SLOC-by-Language (Sorted)
+3547    x86_32          ansic=3491,asm=56
+
+./usr/monitor/include/arch/x86_32
+SLOC	Directory	SLOC-by-Language (Sorted)
+172     x86_32          ansic=172
+
+./lib/barrelfish/include/arch/x86_32
+SLOC	Directory	SLOC-by-Language (Sorted)
+218     x86_32          ansic=218
+
+./lib/barrelfish/vspace/arch/x86_32
+SLOC	Directory	SLOC-by-Language (Sorted)
+15      x86_32          ansic=15
+
+./lib/barrelfish/arch/x86_32
+SLOC	Directory	SLOC-by-Language (Sorted)
+352     x86_32          ansic=278,asm=74
+
+./lib/barrelfish/target/x86_32
+SLOC	Directory	SLOC-by-Language (Sorted)
+336     x86_32          ansic=336

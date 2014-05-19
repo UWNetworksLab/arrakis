@@ -1,0 +1,27 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2009, 2011, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/replay
+--
+--------------------------------------------------------------------------
+
+[ build application { target = "replay",
+  		      cFiles = [ "master.c", "hash.c" ],
+		      flounderDefs = [ "replay" ],
+		      flounderBindings = [ "replay" ],
+		      addLibraries = [ "vfs", "nfs", "lwip", "contmng",
+                      "net_if_raw", "hashtable" ]
+                    },
+build application { target = "replay-slave",
+  		      cFiles = [ "slave.c" ],
+		      flounderDefs = [ "replay" ],
+		      flounderBindings = [ "replay" ],
+		      addLibraries = [ "posixcompat", "vfs", "nfs", "lwip",
+                      "contmng", "net_if_raw", "hashtable" ]
+                    }
+]

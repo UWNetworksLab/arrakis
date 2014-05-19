@@ -1,0 +1,32 @@
+Current status of services
+- n: does not exists
+- p: exists as a prototype
+- e: exists full featured
+- d: exists as a fully distributed service
+
+
+binding: e
+naming: e
+mem_alloc: e
+skb: e
+capability_mgmt: e
+tracing: e
+
+threading: p
+shell: p
+storage_mgmt: p
+network_stack: p
+VMachine: p
+lock_service: p (or e??)
+
+process_mgmt: n
+principals: n
+environment: n
+terminal: n
+devices: n
+VMem: n
+resource_acct_mgmt: n
+routing: n
+power_mgmt: n
+debugging: n
+group_comm: n

@@ -1,0 +1,207 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_dmic_dsp.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_dmic_dsp msbfirst ( addr base ) "" {
+    
+    
+    register dmic_revision ro addr(base, 0x0) "IP Revision Identifier (X.Y.R) used by software to track features, bugs, and compatibility" type(uint32);
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0 = 0 "Force-idle. IDLE request is acknowledged unconditionally and immediately.";
+        SIDLEMODE_1 = 1 "No-idle. IDLE request is never acknowledged.";
+        SIDLEMODE_2 = 2 "Smart-idle. The acknowledgment to an IDLE request is given based on the internal activity.";
+        SIDLEMODE_3 = 3 "Smart-idle wakeup capable mode";
+    };
+
+    constants freemu_status width(1) "" {
+        FREEMU_0 = 0 "IP module is sensitive to emulation suspend.";
+        FREEMU_1 = 1 "IP module is not sensitive to emulation suspend.";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_w = 0 "No action";
+        SOFTRESET_0_r = 0 "Reset done, no pending action";
+        SOFTRESET_1_r = 1 "Reset (software or other) ongoing";
+        SOFTRESET_1_w = 1 "Initiate software reset.";
+    };
+    
+    register dmic_sysconfig addr(base, 0x10) "This register allows controlling various parameters of the DMIC interface." {
+        _ 28 mbz;
+        sidlemode 2 rw type(sidlemode_status) "Configuration of the local target state management (idlereq/idleack control)";
+        freemu 1 rw type(freemu_status) "Sensitivity to emulation (debug) suspend input signal";
+        softreset 1 rw type(softreset_status) "Module software reset. The bit is automatically reset by the hardware. It has same effect as the main hardware reset.";
+    };
+
+    constants dmic_irq_empty_status width(1) "" {
+        DMIC_IRQ_EMPTY_0_r = 0 "No event pending";
+        DMIC_IRQ_EMPTY_0_w = 0 "No action";
+        DMIC_IRQ_EMPTY_1_w = 1 "Set";
+        DMIC_IRQ_EMPTY_1_r = 1 "IRQ event pending";
+    };
+    
+    register dmic_irqstatus_raw addr(base, 0x24) "Component (that is, main) interrupt request status. Check the corresponding secondary status register. Raw status is set even if event is not enabled. Write 1 to set the (raw) status, mostly for debug." {
+        _ 28 mbz;
+        dmic_irq_empty 1 rw type(dmic_irq_empty_status) "";
+        dmic_irq_alst_full 1 rw type(dmic_irq_empty_status) "";
+        dmic_irq_full 1 rw type(dmic_irq_empty_status) "";
+        dmic_irq 1 rw type(dmic_irq_empty_status) "";
+    };
+
+    constants dmic_irq_empty_status1 width(1) "" {
+        DMIC_IRQ_EMPTY_0_r_1 = 0 "No event pending";
+        DMIC_IRQ_EMPTY_0_w_1 = 0 "No action";
+        DMIC_IRQ_EMPTY_1_w_1 = 1 "Clear pending event, if any";
+        DMIC_IRQ_EMPTY_1_r_1 = 1 "IRQ event pending";
+    };
+
+    constants dmic_irq_full_status width(1) "" {
+        DMIC_IRQ_FULL_0_r_1 = 0 "No event pending";
+        DMIC_IRQ_FULL_0_w_1 = 0 "No action";
+        DMIC_IRQ_FULL_1_w_1 = 1 "Clear pending event, if any.";
+        DMIC_IRQ_FULL_1_r_1 = 1 "IRQ event pending";
+    };
+    
+    register dmic_irqstatus addr(base, 0x28) "Component (that is, main) interrupt request status. Check the corresponding secondary status register. Enabled status is not set unless event is enabled. Write 1 to clear the status after interrupt has been serviced (raw status gets cleared, that is, even if not enabled)." {
+        _ 28 mbz;
+        dmic_irq_empty 1 rw type(dmic_irq_empty_status1) "";
+        dmic_irq_alst_full 1 rw1c type(dmic_irq_empty_status1) "This interrupt status is set when only one FIFO space is still available.";
+        dmic_irq_full 1 rw1c type(dmic_irq_full_status) "This interrupt status is set when FIFO is full and a new write access has been performed by filter.";
+        dmic_irq 1 rw1c type(dmic_irq_full_status) "This interrupt status is set when FIFO threshold value defined inDMIC_FIFO_CTRL is reached.";
+    };
+
+    constants dmic_irq_empty_mask_status width(1) "" {
+        DMIC_IRQ_EMPTY_MASK_0_r = 0 "Interrupt disabled";
+        DMIC_IRQ_EMPTY_MASK_0_w = 0 "No action";
+        DMIC_IRQ_EMPTY_MASK_1_w = 1 "Enable interrupt";
+        DMIC_IRQ_EMPTY_MASK_1_r = 1 "";
+    };
+
+    constants dmic_irq_alst_full_mask_status width(1) "" {
+        DMIC_IRQ_ALST_FULL_MASK_0_r = 0 "Interrupt disabled";
+        DMIC_IRQ_ALST_FULL_MASK_0_w = 0 "No action";
+        DMIC_IRQ_ALST_FULL_MASK_1_w = 1 "Enable interrupt";
+        DMIC_IRQ_ALST_FULL_MASK_1_r = 1 "Interrupt enabled";
+    };
+    
+    register dmic_irqenable_set addr(base, 0x2C) "Component (that is, main) interrupt request enable. Write 1 to set (enable interrupt). Readout equal to corresponding _SET register. _SET register is cleared when writing 1 to _CLR register." {
+        _ 28 mbz;
+        dmic_irq_empty_mask 1 rw type(dmic_irq_empty_mask_status) "";
+        dmic_irq_alst_full_mask 1 rw type(dmic_irq_alst_full_mask_status) "";
+        dmic_irq_full_mask 1 rw type(dmic_irq_alst_full_mask_status) "";
+        dmic_irq_mask 1 rw type(dmic_irq_alst_full_mask_status) "";
+    };
+
+    constants dmic_irq_empty_mask_status1 width(1) "" {
+        DMIC_IRQ_EMPTY_MASK_0_r_1 = 0 "Interrupt disabled";
+        DMIC_IRQ_EMPTY_MASK_0_w_1 = 0 "No action";
+        DMIC_IRQ_EMPTY_MASK_1_w_1 = 1 "Disable interrupt";
+        DMIC_IRQ_EMPTY_MASK_1_r_1 = 1 "Interrupt enabled";
+    };
+    
+    register dmic_irqenable_clr addr(base, 0x30) "Component (that is, main) interrupt request enable Write 1 to clear (disable interrupt). Readout equal to corresponding _SET register. _SET register is cleared when writing 1 to _CLR register." {
+        _ 28 mbz;
+        dmic_irq_empty_mask 1 rw1c type(dmic_irq_empty_mask_status1) "";
+        dmic_irq_alst_full_mask 1 rw1c type(dmic_irq_empty_mask_status1) "";
+        dmic_irq_full_mask 1 rw1c type(dmic_irq_empty_mask_status1) "";
+        dmic_irq_mask 1 rw1c type(dmic_irq_empty_mask_status1) "";
+    };
+    
+    register dmic_irqwakeen addr(base, 0x34) "This register allows to enable the wake-up capability on interrupt event." {
+        _ 31 mbz;
+        irq_wakeup_en 1 rw "Write 1 to allow wake-up by IRQ source (register threshold value reached).";
+    };
+    
+    register dmic_dmaenable_set addr(base, 0x38) "Component DMA enable (1 bit per DMA-capable channel)/Write 1 to set (enable DMA). Readout equal to corresponding _SET register. _SET register is cleared when writing 1 to _CLR register." {
+        _ 31 mbz;
+        dma_enable 1 rw type(dmic_irq_alst_full_mask_status) "Write 1 to set (enable DMA request)";
+    };
+    
+    register dmic_dmaenable_clr addr(base, 0x3C) "Component DMA enable (1 bit per DMA-capable channel)/Write 1 to clear (disable DMA). Readout equal to corresponding _SET register. _SET register is cleared when writing 1 to _CLR register." {
+        _ 31 mbz;
+        dma_enable 1 rw1c type(dmic_irq_empty_mask_status1) "Write 1 to clear (disable DMA request)";
+    };
+    
+    register dmic_dmawakeen addr(base, 0x40) "This register allows to enable the wake-up capability on DMA request event." {
+        _ 31 mbz;
+        dma_wakeup_en 1 rw "Write 1 to allow wakeup by DMA source (register threshold value reached).";
+    };
+
+    constants dmic_polar3_status width(1) "" {
+        DMIC_POLAR3_0 = 0 "When 0, the left data is generated in the external microphone 3 on abe_dmic_clk3 low level.";
+        DMIC_POLAR3_1 = 1 "When 1, the left data is generated in the external microphone 3 on abe_dmic_clk3 high level.";
+    };
+    
+    register dmic_ctrl addr(base, 0x44) "This register configures the various parameters of the DMIC module." {
+        _ 21 mbz;
+        sw_dmic_rst 1 rw "Software reset of the DMIC path. When 1, the DMIC path is reset. Clearing the reset is done by writing 0 to the register.";
+        dmic_clk_div 3 rw "Select the DMIC output clock frequency. See for details.";
+        dmic_polar3 1 rw type(dmic_polar3_status) "";
+        dmic_polar2 1 rw type(dmic_polar3_status) "";
+        dmic_polar1 1 rw type(dmic_polar3_status) "";
+        dmicoutformat 1 rw "When 0, the data going out from the FIFO are left shifted from 8 bits. When 1, the data going are signed extended on 32 bits";
+        dmic_up3_en 1 rw "When 1, uplink path 3 is powered up.";
+        dmic_up2_en 1 rw "When 1, uplink path 2 is powered up.";
+        dmic_up1_en 1 rw "When 1, uplink path 1 is powered up.";
+    };
+    
+    register dmic_data_reg ro addr(base, 0x48) "DMIC FIFO data" type(uint32);
+    
+    register dmic_fifo_ctrl addr(base, 0x4C) "This register sets the FIFO threshold for the data-ready event." {
+        _ 28 mbz;
+        dmic_tresh 4 rw "Uplink FIFO threshold";
+    };
+    
+    register dmic_fifo_dmic1r_data addr(base, 0x50) "Data of the first FIFO DMIC right channel" {
+        _ 8 mbz;
+        fifo_dmic1r_dat 24 ro "Data of the right FIFO DMIC path 1";
+    };
+    
+    register dmic_fifo_dmic1l_data addr(base, 0x54) "Data of the first FIFO DMIC left channel" {
+        _ 8 mbz;
+        fifo_dmic1r_dat 24 ro "Data of the left FIFO DMIC path 1";
+    };
+    
+    register dmic_fifo_dmic2r_data addr(base, 0x58) "Data of the second FIFO DMIC right channel" {
+        _ 8 mbz;
+        fifo_dmic2r_dat 24 ro "Data of the right FIFO DMIC path 2";
+    };
+    
+    register dmic_fifo_dmic2l_data addr(base, 0x5C) "Data of the second FIFO DMIC left channel" {
+        _ 8 mbz;
+        fifo_dmic2l_dat 24 ro "Data of the left FIFO DMIC path 2";
+    };
+    
+    register dmic_fifo_dmic3r_data addr(base, 0x60) "Data of the third FIFO DMIC right channel" {
+        _ 8 mbz;
+        fifo_dmic3r_dat 24 ro "Data of the right FIFO DMIC path 3";
+    };
+    
+    register dmic_fifo_dmic3l_data addr(base, 0x64) "Data of the third FIFO DMIC left channel" {
+        _ 8 mbz;
+        fifo_dmic3r_dat 24 ro "Data of the left FIFO DMIC path 3";
+    };
+};

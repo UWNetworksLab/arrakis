@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_iss_camerarx_core1.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_iss_camerarx_core1 msbfirst ( addr base ) "" {
+    
+    
+    register register0 addr(base, 0x0) "First register" {
+        _ 7 mbz;
+        hsclockconfig 1 rw "Disable clock missing detector";
+        _ 8 mbz;
+        ths_term 8 rw "THS_TERM timing parameter in multiples of DDR clock Effective time for enabling of termination = synchronizer delay + timer delay + LPRX delay + combinational routing delay ~ (1-2)* DDRCLK + THS-TERM + ~ (1 -15) ns Programmed value = ceil(12.5 / DDR clock period) -1";
+        ths_settle 8 rw "THS_SETTLE timing parameter in multiples of DDR clock frequency Effective THS_SETTLE seen on line (starting to look for sync pattern) = synchronizer delay + timer delay + LPRX delay + combinational routing delay - pipeline delay in HS data path. ~ (1-2)* DDRCLK + THS-SETTLE + ~ (1-15) ns -1*DDRCLK Programmed value = ceil(90 ns / DDR clock period) + 3";
+    };
+
+    constants reset_done_status_status width(2) "" {
+        RESET_DONE_STATUS_28 = 28 "RESETDONERXBYTECLK Note: BYTECLK is provided to the ISS CSI2-A, CSI2-B, and CCP2 interfaces";
+        RESET_DONE_STATUS_29 = 29 "RESETDONECTRLCLK Note: This is the CAM_PHY_CTRL_FCLK provided to the PHY from the PRCM module.";
+    };
+
+    constants clock_miss_detector_status_status width(1) "" {
+        CLOCK_MISS_DETECTOR_STATUS_0 = 0 "Clock missing detector successful";
+    };
+    
+    register register1 addr(base, 0x4) "Second register" {
+        resvd_read_bit 2 rsvd "Reserved bit";
+        reset_done_status 2 ro type(reset_done_status_status) "Reset done read bits.";
+        _ 2 mbz;
+        clock_miss_detector_status 1 ro type(clock_miss_detector_status_status) "1: Error in clock missing detector.";
+        tclk_term 7 rw "TCLK_TERM timing parameter in multiples of CTRLCLK Effective time for enabling of termination = synchronizer delay + timer delay + LPRX delay + combinational routing delay ~ (1-2)* CTRLCLK + TCLK_TERM + ~ (1-15) ns Programmed value = ceil(9.5 / CTRLCLK period) - 1";
+        dphy_hs_sync_pattern 8 rw "DPHY mode HS sync pattern in byte order (reverse of received order) See,";
+        ctrlclk_div_factor 2 rw "Divide factor for CTRLCLK for CLKMISS detector";
+        tclk_settle 8 rw "TCLK_SETTLE timing parameter in multiples of CTRLCLK Clock Effective TCLK_SETTLE = synchronizer delay + timer delay + LPRX delay + combinational routing delay ~ (1-2)* CTRLCLK + Tclk-settle + ~ (1 -15) ns Programmed value = max[3, ceil(155 ns/CTRLCLK period) -1]";
+    };
+    
+    register register2 addr(base, 0x8) "Third register" {
+        trigger_cmd_rxtrigesc0 2 rw "Mapping of Trigger escape entry command to PPI output RXTRIGGERESC0";
+        trigger_cmd_rxtrigesc1 2 rw "Mapping of Trigger escape entry command to PPI output RXTRIGGERESC1";
+        trigger_cmd_rxtrigesc2 2 rw "Mapping of Trigger escape entry command to PPI output RXTRIGGERESC2";
+        trigger_cmd_rxtrigesc3 2 rw "Mapping of Trigger escape entry command to PPI output RXTRIGGERESC3";
+        ccp2_sync_pattern 24 ro "CCP2 mode sync pattern in byte order See ,";
+    };
+};

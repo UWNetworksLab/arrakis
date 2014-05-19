@@ -1,0 +1,658 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_gpmc_firewall.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_gpmc_firewall msbfirst ( addr base ) "" {
+    
+    
+    register error_log_k addr(base, 0x0) "Error log register for port k" {
+        _ 8 mbz;
+        blk_burst_violation 1 rw "Read 0x1: 2D burst not allowed or exceeding allowed size Write to clear ERROR_LOG_k and LOGICAL_ADDR_ERRLOG_k registers";
+        _ 1 mbz;
+        region_start_errlog 5 rw "Read: Wrong access hit this region number Write to clear ERROR_LOG_k and LOGICAL_ADDR_ERRLOG_k registers";
+        region_end_errlog 5 rw "Read: Wrong access hit this region number Write to clear ERROR_LOG_k and LOGICAL_ADDR_ERRLOG_k registers";
+        reqinfo_errlog 12 rw "Read: Error in reqinfo vector mapped as follows: [11: 8] ConnID [3:0] [7] MCMD [0] [6:4] Reserved [3] MReqDebug [2] Reserved [1] MReqSupervisor [0] MReqType Write to clear ERROR_LOG_k and LOGICAL_ADDR_ERRLOG_k registers";
+    };
+    
+    register logical_addr_errlog_k ro addr(base, 0x4) "Logical Physical Address Error log register for port k" type(uint32);
+    
+    register regupdate_control addr(base, 0x40) "Register update control register" {
+        _ 30 mbz;
+        fw_load_req 1 ro "Hadrdware set/Software clear";
+        busy_req 1 rw "Busy request";
+    };
+    
+    register start_region_i_1 addr(base, 0x90) "Start physical address of region i" {
+        start_region 20 rw "Physical target start address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 12 mbz;
+    };
+    
+    register start_region_i_2 addr(base, 0xA0) "Start physical address of region i" {
+        start_region 20 rw "Physical target start address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 12 mbz;
+    };
+    
+    register start_region_i_3 addr(base, 0xB0) "Start physical address of region i" {
+        start_region 20 rw "Physical target start address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 12 mbz;
+    };
+    
+    register start_region_i_4 addr(base, 0xC0) "Start physical address of region i" {
+        start_region 20 rw "Physical target start address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 12 mbz;
+    };
+    
+    register start_region_i_5 addr(base, 0xD0) "Start physical address of region i" {
+        start_region 20 rw "Physical target start address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 12 mbz;
+    };
+    
+    register start_region_i_6 addr(base, 0xE0) "Start physical address of region i" {
+        start_region 20 rw "Physical target start address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 12 mbz;
+    };
+    
+    register start_region_i_7 addr(base, 0xF0) "Start physical address of region i" {
+        start_region 20 rw "Physical target start address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 12 mbz;
+    };
+    
+    register end_region_i_1 addr(base, 0x94) "End physical address of region i" {
+        end_region 20 rw "Physical target end address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 9 mbz;
+        region_enable_port2 1 rw "Enable this region for port 2.";
+        region_enable_port1 1 rw "Enable this region for port 1.";
+        region_enable_port0 1 rw "Enable this region for port 0.";
+    };
+    
+    register end_region_i_2 addr(base, 0xA4) "End physical address of region i" {
+        end_region 20 rw "Physical target end address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 9 mbz;
+        region_enable_port2 1 rw "Enable this region for port 2.";
+        region_enable_port1 1 rw "Enable this region for port 1.";
+        region_enable_port0 1 rw "Enable this region for port 0.";
+    };
+    
+    register end_region_i_3 addr(base, 0xB4) "End physical address of region i" {
+        end_region 20 rw "Physical target end address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 9 mbz;
+        region_enable_port2 1 rw "Enable this region for port 2.";
+        region_enable_port1 1 rw "Enable this region for port 1.";
+        region_enable_port0 1 rw "Enable this region for port 0.";
+    };
+    
+    register end_region_i_4 addr(base, 0xC4) "End physical address of region i" {
+        end_region 20 rw "Physical target end address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 9 mbz;
+        region_enable_port2 1 rw "Enable this region for port 2.";
+        region_enable_port1 1 rw "Enable this region for port 1.";
+        region_enable_port0 1 rw "Enable this region for port 0.";
+    };
+    
+    register end_region_i_5 addr(base, 0xD4) "End physical address of region i" {
+        end_region 20 rw "Physical target end address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 9 mbz;
+        region_enable_port2 1 rw "Enable this region for port 2.";
+        region_enable_port1 1 rw "Enable this region for port 1.";
+        region_enable_port0 1 rw "Enable this region for port 0.";
+    };
+    
+    register end_region_i_6 addr(base, 0xE4) "End physical address of region i" {
+        end_region 20 rw "Physical target end address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 9 mbz;
+        region_enable_port2 1 rw "Enable this region for port 2.";
+        region_enable_port1 1 rw "Enable this region for port 1.";
+        region_enable_port0 1 rw "Enable this region for port 0.";
+    };
+    
+    register end_region_i_7 addr(base, 0xF4) "End physical address of region i" {
+        end_region 20 rw "Physical target end address of firewall region i. The size of this bit field depends on target addressable space, the maximum is [31:12]. See.";
+        _ 9 mbz;
+        region_enable_port2 1 rw "Enable this region for port 2.";
+        region_enable_port1 1 rw "Enable this region for port 1.";
+        region_enable_port0 1 rw "Enable this region for port 0.";
+    };
+    
+    register mrm_permission_region_low_j_0 addr(base, 0x88) "Region j Permission Low" {
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_debug 1 rw "Public Privilege Debug Allowed";
+        pub_usr_debug 1 rw "Public User Debug Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_write 1 rw "Public Privilege Write Allowed";
+        pub_prv_read 1 rw "Public Privilege Read Allowed";
+        pub_prv_exe 1 rw "Public Privilege Exe Allowed";
+        pub_usr_write 1 rw "Public User Write Access Allowed";
+        pub_usr_read 1 rw "Public User Read Access Allowed";
+        pub_usr_exe 1 rw "Public User Exe Access Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+    };
+    
+    register mrm_permission_region_low_j_1 addr(base, 0x98) "Region j Permission Low" {
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_debug 1 rw "Public Privilege Debug Allowed";
+        pub_usr_debug 1 rw "Public User Debug Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_write 1 rw "Public Privilege Write Allowed";
+        pub_prv_read 1 rw "Public Privilege Read Allowed";
+        pub_prv_exe 1 rw "Public Privilege Exe Allowed";
+        pub_usr_write 1 rw "Public User Write Access Allowed";
+        pub_usr_read 1 rw "Public User Read Access Allowed";
+        pub_usr_exe 1 rw "Public User Exe Access Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+    };
+    
+    register mrm_permission_region_low_j_2 addr(base, 0xA8) "Region j Permission Low" {
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_debug 1 rw "Public Privilege Debug Allowed";
+        pub_usr_debug 1 rw "Public User Debug Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_write 1 rw "Public Privilege Write Allowed";
+        pub_prv_read 1 rw "Public Privilege Read Allowed";
+        pub_prv_exe 1 rw "Public Privilege Exe Allowed";
+        pub_usr_write 1 rw "Public User Write Access Allowed";
+        pub_usr_read 1 rw "Public User Read Access Allowed";
+        pub_usr_exe 1 rw "Public User Exe Access Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+    };
+    
+    register mrm_permission_region_low_j_3 addr(base, 0xB8) "Region j Permission Low" {
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_debug 1 rw "Public Privilege Debug Allowed";
+        pub_usr_debug 1 rw "Public User Debug Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_write 1 rw "Public Privilege Write Allowed";
+        pub_prv_read 1 rw "Public Privilege Read Allowed";
+        pub_prv_exe 1 rw "Public Privilege Exe Allowed";
+        pub_usr_write 1 rw "Public User Write Access Allowed";
+        pub_usr_read 1 rw "Public User Read Access Allowed";
+        pub_usr_exe 1 rw "Public User Exe Access Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+    };
+    
+    register mrm_permission_region_low_j_4 addr(base, 0xC8) "Region j Permission Low" {
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_debug 1 rw "Public Privilege Debug Allowed";
+        pub_usr_debug 1 rw "Public User Debug Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_write 1 rw "Public Privilege Write Allowed";
+        pub_prv_read 1 rw "Public Privilege Read Allowed";
+        pub_prv_exe 1 rw "Public Privilege Exe Allowed";
+        pub_usr_write 1 rw "Public User Write Access Allowed";
+        pub_usr_read 1 rw "Public User Read Access Allowed";
+        pub_usr_exe 1 rw "Public User Exe Access Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+    };
+    
+    register mrm_permission_region_low_j_5 addr(base, 0xD8) "Region j Permission Low" {
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_debug 1 rw "Public Privilege Debug Allowed";
+        pub_usr_debug 1 rw "Public User Debug Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_write 1 rw "Public Privilege Write Allowed";
+        pub_prv_read 1 rw "Public Privilege Read Allowed";
+        pub_prv_exe 1 rw "Public Privilege Exe Allowed";
+        pub_usr_write 1 rw "Public User Write Access Allowed";
+        pub_usr_read 1 rw "Public User Read Access Allowed";
+        pub_usr_exe 1 rw "Public User Exe Access Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+    };
+    
+    register mrm_permission_region_low_j_6 addr(base, 0xE8) "Region j Permission Low" {
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_debug 1 rw "Public Privilege Debug Allowed";
+        pub_usr_debug 1 rw "Public User Debug Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_write 1 rw "Public Privilege Write Allowed";
+        pub_prv_read 1 rw "Public Privilege Read Allowed";
+        pub_prv_exe 1 rw "Public Privilege Exe Allowed";
+        pub_usr_write 1 rw "Public User Write Access Allowed";
+        pub_usr_read 1 rw "Public User Read Access Allowed";
+        pub_usr_exe 1 rw "Public User Exe Access Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+    };
+    
+    register mrm_permission_region_low_j_7 addr(base, 0xF8) "Region j Permission Low" {
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_debug 1 rw "Public Privilege Debug Allowed";
+        pub_usr_debug 1 rw "Public User Debug Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        pub_prv_write 1 rw "Public Privilege Write Allowed";
+        pub_prv_read 1 rw "Public Privilege Read Allowed";
+        pub_prv_exe 1 rw "Public Privilege Exe Allowed";
+        pub_usr_write 1 rw "Public User Write Access Allowed";
+        pub_usr_read 1 rw "Public User Read Access Allowed";
+        pub_usr_exe 1 rw "Public User Exe Access Allowed";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+        _ 1 rsvd;
+    };
+    
+    register mrm_permission_region_high_j_0 addr(base, 0x8C) "Region j Permission High" {
+        _ 6 rsvd;
+        w12 1 rw "Master NIU ConnID = 12 write permission";
+        r12 1 rw "Master NIU ConnID = 12 read permission";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        w10 1 rw "Master NIU ConnID = 10 write permission";
+        r10 1 rw "Master NIU ConnID = 10 read permission";
+        w9 1 rw "Master NIU ConnID = 9 write permission";
+        r9 1 rw "Master NIU ConnID = 9 read permission";
+        w8 1 rw "Master NIU ConnID = 8 write permission";
+        r8 1 rw "Master NIU ConnID = 8 read permission";
+        w7 1 rw "Master NIU ConnID = 7 write permission";
+        r7 1 rw "Master NIU ConnID = 7 read permission";
+        w6 1 rw "Master NIU ConnID = 6 write permission";
+        r6 1 rw "Master NIU ConnID = 6 read permission";
+        w5 1 rw "Master NIU ConnID = 5 write permission";
+        r5 1 rw "Master NIU ConnID = 5 read permission";
+        w4 1 rw "Master NIU ConnID = 4 write permission";
+        r4 1 rw "Master NIU ConnID = 4 read permission";
+        w3 1 rw "Master NIU ConnID = 3 write permission";
+        r3 1 rw "Master NIU ConnID = 3 read permission";
+        w2 1 rw "Master NIU ConnID = 2 write permission";
+        r2 1 rw "Master NIU ConnID = 2 read permission";
+        w1 1 rw "Master NIU ConnID = 1 write permission";
+        r1 1 rw "Master NIU ConnID = 1 read permission";
+        w0 1 rw "Master NIU ConnID = 0 write permission";
+        r0 1 rw "Master NIU ConnID = 0 read permission";
+    };
+    
+    register mrm_permission_region_high_j_1 addr(base, 0x9C) "Region j Permission High" {
+        _ 6 rsvd;
+        w12 1 rw "Master NIU ConnID = 12 write permission";
+        r12 1 rw "Master NIU ConnID = 12 read permission";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        w10 1 rw "Master NIU ConnID = 10 write permission";
+        r10 1 rw "Master NIU ConnID = 10 read permission";
+        w9 1 rw "Master NIU ConnID = 9 write permission";
+        r9 1 rw "Master NIU ConnID = 9 read permission";
+        w8 1 rw "Master NIU ConnID = 8 write permission";
+        r8 1 rw "Master NIU ConnID = 8 read permission";
+        w7 1 rw "Master NIU ConnID = 7 write permission";
+        r7 1 rw "Master NIU ConnID = 7 read permission";
+        w6 1 rw "Master NIU ConnID = 6 write permission";
+        r6 1 rw "Master NIU ConnID = 6 read permission";
+        w5 1 rw "Master NIU ConnID = 5 write permission";
+        r5 1 rw "Master NIU ConnID = 5 read permission";
+        w4 1 rw "Master NIU ConnID = 4 write permission";
+        r4 1 rw "Master NIU ConnID = 4 read permission";
+        w3 1 rw "Master NIU ConnID = 3 write permission";
+        r3 1 rw "Master NIU ConnID = 3 read permission";
+        w2 1 rw "Master NIU ConnID = 2 write permission";
+        r2 1 rw "Master NIU ConnID = 2 read permission";
+        w1 1 rw "Master NIU ConnID = 1 write permission";
+        r1 1 rw "Master NIU ConnID = 1 read permission";
+        w0 1 rw "Master NIU ConnID = 0 write permission";
+        r0 1 rw "Master NIU ConnID = 0 read permission";
+    };
+    
+    register mrm_permission_region_high_j_2 addr(base, 0xAC) "Region j Permission High" {
+        _ 6 rsvd;
+        w12 1 rw "Master NIU ConnID = 12 write permission";
+        r12 1 rw "Master NIU ConnID = 12 read permission";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        w10 1 rw "Master NIU ConnID = 10 write permission";
+        r10 1 rw "Master NIU ConnID = 10 read permission";
+        w9 1 rw "Master NIU ConnID = 9 write permission";
+        r9 1 rw "Master NIU ConnID = 9 read permission";
+        w8 1 rw "Master NIU ConnID = 8 write permission";
+        r8 1 rw "Master NIU ConnID = 8 read permission";
+        w7 1 rw "Master NIU ConnID = 7 write permission";
+        r7 1 rw "Master NIU ConnID = 7 read permission";
+        w6 1 rw "Master NIU ConnID = 6 write permission";
+        r6 1 rw "Master NIU ConnID = 6 read permission";
+        w5 1 rw "Master NIU ConnID = 5 write permission";
+        r5 1 rw "Master NIU ConnID = 5 read permission";
+        w4 1 rw "Master NIU ConnID = 4 write permission";
+        r4 1 rw "Master NIU ConnID = 4 read permission";
+        w3 1 rw "Master NIU ConnID = 3 write permission";
+        r3 1 rw "Master NIU ConnID = 3 read permission";
+        w2 1 rw "Master NIU ConnID = 2 write permission";
+        r2 1 rw "Master NIU ConnID = 2 read permission";
+        w1 1 rw "Master NIU ConnID = 1 write permission";
+        r1 1 rw "Master NIU ConnID = 1 read permission";
+        w0 1 rw "Master NIU ConnID = 0 write permission";
+        r0 1 rw "Master NIU ConnID = 0 read permission";
+    };
+    
+    register mrm_permission_region_high_j_3 addr(base, 0xBC) "Region j Permission High" {
+        _ 6 rsvd;
+        w12 1 rw "Master NIU ConnID = 12 write permission";
+        r12 1 rw "Master NIU ConnID = 12 read permission";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        w10 1 rw "Master NIU ConnID = 10 write permission";
+        r10 1 rw "Master NIU ConnID = 10 read permission";
+        w9 1 rw "Master NIU ConnID = 9 write permission";
+        r9 1 rw "Master NIU ConnID = 9 read permission";
+        w8 1 rw "Master NIU ConnID = 8 write permission";
+        r8 1 rw "Master NIU ConnID = 8 read permission";
+        w7 1 rw "Master NIU ConnID = 7 write permission";
+        r7 1 rw "Master NIU ConnID = 7 read permission";
+        w6 1 rw "Master NIU ConnID = 6 write permission";
+        r6 1 rw "Master NIU ConnID = 6 read permission";
+        w5 1 rw "Master NIU ConnID = 5 write permission";
+        r5 1 rw "Master NIU ConnID = 5 read permission";
+        w4 1 rw "Master NIU ConnID = 4 write permission";
+        r4 1 rw "Master NIU ConnID = 4 read permission";
+        w3 1 rw "Master NIU ConnID = 3 write permission";
+        r3 1 rw "Master NIU ConnID = 3 read permission";
+        w2 1 rw "Master NIU ConnID = 2 write permission";
+        r2 1 rw "Master NIU ConnID = 2 read permission";
+        w1 1 rw "Master NIU ConnID = 1 write permission";
+        r1 1 rw "Master NIU ConnID = 1 read permission";
+        w0 1 rw "Master NIU ConnID = 0 write permission";
+        r0 1 rw "Master NIU ConnID = 0 read permission";
+    };
+    
+    register mrm_permission_region_high_j_4 addr(base, 0xCC) "Region j Permission High" {
+        _ 6 rsvd;
+        w12 1 rw "Master NIU ConnID = 12 write permission";
+        r12 1 rw "Master NIU ConnID = 12 read permission";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        w10 1 rw "Master NIU ConnID = 10 write permission";
+        r10 1 rw "Master NIU ConnID = 10 read permission";
+        w9 1 rw "Master NIU ConnID = 9 write permission";
+        r9 1 rw "Master NIU ConnID = 9 read permission";
+        w8 1 rw "Master NIU ConnID = 8 write permission";
+        r8 1 rw "Master NIU ConnID = 8 read permission";
+        w7 1 rw "Master NIU ConnID = 7 write permission";
+        r7 1 rw "Master NIU ConnID = 7 read permission";
+        w6 1 rw "Master NIU ConnID = 6 write permission";
+        r6 1 rw "Master NIU ConnID = 6 read permission";
+        w5 1 rw "Master NIU ConnID = 5 write permission";
+        r5 1 rw "Master NIU ConnID = 5 read permission";
+        w4 1 rw "Master NIU ConnID = 4 write permission";
+        r4 1 rw "Master NIU ConnID = 4 read permission";
+        w3 1 rw "Master NIU ConnID = 3 write permission";
+        r3 1 rw "Master NIU ConnID = 3 read permission";
+        w2 1 rw "Master NIU ConnID = 2 write permission";
+        r2 1 rw "Master NIU ConnID = 2 read permission";
+        w1 1 rw "Master NIU ConnID = 1 write permission";
+        r1 1 rw "Master NIU ConnID = 1 read permission";
+        w0 1 rw "Master NIU ConnID = 0 write permission";
+        r0 1 rw "Master NIU ConnID = 0 read permission";
+    };
+    
+    register mrm_permission_region_high_j_5 addr(base, 0xDC) "Region j Permission High" {
+        _ 6 rsvd;
+        w12 1 rw "Master NIU ConnID = 12 write permission";
+        r12 1 rw "Master NIU ConnID = 12 read permission";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        w10 1 rw "Master NIU ConnID = 10 write permission";
+        r10 1 rw "Master NIU ConnID = 10 read permission";
+        w9 1 rw "Master NIU ConnID = 9 write permission";
+        r9 1 rw "Master NIU ConnID = 9 read permission";
+        w8 1 rw "Master NIU ConnID = 8 write permission";
+        r8 1 rw "Master NIU ConnID = 8 read permission";
+        w7 1 rw "Master NIU ConnID = 7 write permission";
+        r7 1 rw "Master NIU ConnID = 7 read permission";
+        w6 1 rw "Master NIU ConnID = 6 write permission";
+        r6 1 rw "Master NIU ConnID = 6 read permission";
+        w5 1 rw "Master NIU ConnID = 5 write permission";
+        r5 1 rw "Master NIU ConnID = 5 read permission";
+        w4 1 rw "Master NIU ConnID = 4 write permission";
+        r4 1 rw "Master NIU ConnID = 4 read permission";
+        w3 1 rw "Master NIU ConnID = 3 write permission";
+        r3 1 rw "Master NIU ConnID = 3 read permission";
+        w2 1 rw "Master NIU ConnID = 2 write permission";
+        r2 1 rw "Master NIU ConnID = 2 read permission";
+        w1 1 rw "Master NIU ConnID = 1 write permission";
+        r1 1 rw "Master NIU ConnID = 1 read permission";
+        w0 1 rw "Master NIU ConnID = 0 write permission";
+        r0 1 rw "Master NIU ConnID = 0 read permission";
+    };
+    
+    register mrm_permission_region_high_j_6 addr(base, 0xEC) "Region j Permission High" {
+        _ 6 rsvd;
+        w12 1 rw "Master NIU ConnID = 12 write permission";
+        r12 1 rw "Master NIU ConnID = 12 read permission";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        w10 1 rw "Master NIU ConnID = 10 write permission";
+        r10 1 rw "Master NIU ConnID = 10 read permission";
+        w9 1 rw "Master NIU ConnID = 9 write permission";
+        r9 1 rw "Master NIU ConnID = 9 read permission";
+        w8 1 rw "Master NIU ConnID = 8 write permission";
+        r8 1 rw "Master NIU ConnID = 8 read permission";
+        w7 1 rw "Master NIU ConnID = 7 write permission";
+        r7 1 rw "Master NIU ConnID = 7 read permission";
+        w6 1 rw "Master NIU ConnID = 6 write permission";
+        r6 1 rw "Master NIU ConnID = 6 read permission";
+        w5 1 rw "Master NIU ConnID = 5 write permission";
+        r5 1 rw "Master NIU ConnID = 5 read permission";
+        w4 1 rw "Master NIU ConnID = 4 write permission";
+        r4 1 rw "Master NIU ConnID = 4 read permission";
+        w3 1 rw "Master NIU ConnID = 3 write permission";
+        r3 1 rw "Master NIU ConnID = 3 read permission";
+        w2 1 rw "Master NIU ConnID = 2 write permission";
+        r2 1 rw "Master NIU ConnID = 2 read permission";
+        w1 1 rw "Master NIU ConnID = 1 write permission";
+        r1 1 rw "Master NIU ConnID = 1 read permission";
+        w0 1 rw "Master NIU ConnID = 0 write permission";
+        r0 1 rw "Master NIU ConnID = 0 read permission";
+    };
+    
+    register mrm_permission_region_high_j_7 addr(base, 0xFC) "Region j Permission High" {
+        _ 6 rsvd;
+        w12 1 rw "Master NIU ConnID = 12 write permission";
+        r12 1 rw "Master NIU ConnID = 12 read permission";
+        _ 1 rsvd;
+        _ 1 rsvd;
+        w10 1 rw "Master NIU ConnID = 10 write permission";
+        r10 1 rw "Master NIU ConnID = 10 read permission";
+        w9 1 rw "Master NIU ConnID = 9 write permission";
+        r9 1 rw "Master NIU ConnID = 9 read permission";
+        w8 1 rw "Master NIU ConnID = 8 write permission";
+        r8 1 rw "Master NIU ConnID = 8 read permission";
+        w7 1 rw "Master NIU ConnID = 7 write permission";
+        r7 1 rw "Master NIU ConnID = 7 read permission";
+        w6 1 rw "Master NIU ConnID = 6 write permission";
+        r6 1 rw "Master NIU ConnID = 6 read permission";
+        w5 1 rw "Master NIU ConnID = 5 write permission";
+        r5 1 rw "Master NIU ConnID = 5 read permission";
+        w4 1 rw "Master NIU ConnID = 4 write permission";
+        r4 1 rw "Master NIU ConnID = 4 read permission";
+        w3 1 rw "Master NIU ConnID = 3 write permission";
+        r3 1 rw "Master NIU ConnID = 3 read permission";
+        w2 1 rw "Master NIU ConnID = 2 write permission";
+        r2 1 rw "Master NIU ConnID = 2 read permission";
+        w1 1 rw "Master NIU ConnID = 1 write permission";
+        r1 1 rw "Master NIU ConnID = 1 read permission";
+        w0 1 rw "Master NIU ConnID = 0 write permission";
+        r0 1 rw "Master NIU ConnID = 0 read permission";
+    };
+};

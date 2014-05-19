@@ -1,0 +1,202 @@
+
+\section{Introduction}
+
+\subsection{Purpose}
+
+The goal of the \acs{ahci} Flounder backend is twofold: first, it should allow
+specifying \ac{ata} messages declaratively, making adding messages easier and
+reducing the amount of code potentially containing bugs. Second, sending such
+\ac{ata} messages to a disk should behave just like general-purpose
+inter-dispatch messaging, enabling transparent proxying of messages should no
+direct connection be available between a dispatcher and a suitable I/O
+controller.
+
+\subsection{Design}
+
+However, our use of Flounder also represents a major extension to its purpose.
+So far, Flounder transports have simply been responsible for transferring data,
+i.e. marshalling, packaging and transmission. Our backend differs in that it
+must understand the purpose of each data item: depending on that purpose, it
+must be formatted in a particular way, other actions may be necessary, and
+certain restrictions (in particular on the size and type of the data) may
+apply.
+
+What this means for our project is that we must extend Flounder's syntax with
+message meta-data, i.e. parameters providing additional information about a
+message definition but not contributing to the runtime message payload. An
+example of our current syntax can be seen in figure~\ref{fig:flounder-example}.
+
+\begin{figure}[htb]
+\begin{center}
+\begin{lstlisting}
+interface ata_rw28 "ATA read & write with 28-bit LBA" {
+
+    @ata(command=0xC8, dma_arg=buffer, dma_size=read_size,
+         lba=start_lba)
+    rpc read_dma(in uint32 read_size, in uint32 start_lba,
+                 out uint8 buffer[buffer_size]);
+
+    @ata(command=0xC8, dma_arg=buffer, dma_size=512, lba=lba)
+    rpc read_dma_block(in uint32 lba, out uint8 buffer[buffer_size]);
+
+    @ata(command=0xCA, dma_arg=buffer, is_write=1, lba=lba)
+    rpc write_dma(in uint8 buffer[buffer_size], in uint32 lba,
+                  out errval status);
+
+    @ata(command=0xEC, dma_arg=buffer, dma_size=512)
+    rpc identify_device(out uint8 buffer[buffer_size]);
+
+    @ata(command=0xE7)
+    rpc flush_cache(out errval status);
+};
+\end{lstlisting}
+\caption{Example \acs{ata} message definitions}
+\label{fig:flounder-example}
+\end{center}
+\end{figure}
+
+\section{Discussion}
+
+\subsection{Targeting: Compiler vs. Topic}
+
+As seen in the syntax example, a set of meta-parameters is targeted using the
+``@'' notation. Two possibilities exist for the interpretation of the target
+specifier:
+
+\begin{itemize}
+
+	\item The target may specify a compiler name (e.g. \verb+@AHCI_Stubs+),
+		with each compiler receiving only the meta-parameters targeted to it.
+		Among other things, this requires an additional step between parsing
+		and compiling, thus a compiler no longer receives the interface
+		definition's full AST.
+
+		Also, compilers are unable to share such parameters, e.g. if backends
+		exist for different \ac{ata} command transports, parameters related to
+		formatting of \ac{ata} commands must be repeated for each backend's
+		compiler.
+
+	\item The target may specify a generic ``topic''.  This does not require
+		the extra preprocessing step and allows sharing of meta-parameters, but
+		requires compilers to match their interpretation of shared parameters.
+		Nonetheless, the sharing of parameters (also between header and stub
+		compilers of the same backend) may make this solution preferable.
+
+\end{itemize}
+
+While the initial implementation used the former solution, this was replaced
+and we now use the second option.
+
+\subsection{Parameter Analysis}
+
+Extracting information from parameters and meta-parameters can be done in
+various ways. Their presence, absence, type and (for meta-parameters) value can
+all be used as sources of information. The question is therefore how best to
+handle this information, as demonstrated in the following examples:
+
+\begin{itemize}
+
+	\item The presence of an output parameter \lstinline+status+ of type
+		\lstinline+errval_t+ may imply that it should be used for a status
+		result. But what if the type is different, or there is a
+		\lstinline+errval_t+-typed parameter with a different name?
+
+	\item The size of a buffer may be extracted from its type if that is an
+		array typedef. If it is a dynamic array, the may be the dynamic length
+		parameter. In either case, the size might also be specified as a
+		meta-parameter. Which of these information sources should be accepted?
+
+\end{itemize}
+
+\section{Generated Interface}
+\newcommand{\flifname}{\textit{if\_name}}
+\newcommand{\flahcib}{\flifname\lstinline+_ahci_binding+\xspace}
+
+\subsection{Initialization}
+
+Initialization is done with \flifname\lstinline+_ahci_init+. The client must
+first initialize libahci, at which point the target device is specified with
+the \lstinline+port+ parameter of \lstinline+ahci_init+. Also, the client must
+allocate a suitable \flahcib.
+
+\subsection{Binding Type}
+
+The \flahcib\ type extends the generic binding type, allowing the generated
+\acs{ahci} bindings to be used anywhere the generic binding type is used. In
+particular, the RPCClient can be wrapped around \acs{ahci} bindings, greatly
+simplifying their usage.
+
+Additionally, an \acs{ahci} binding contains a libahci binding, used internally
+for communication with the library.
+
+\subsection{Interface methods}
+
+Because \acs{ahci} Flounder bindings use the generic binding as a base, the
+generic messaging methods can be used, with the \flahcib cast to the generic
+\flifname\lstinline+_binding+.
+
+\section{Implementation}
+
+\subsection{Command Completion}
+
+To generate Flounder responses, the \ac{ahci} backend must associate command
+completion callbacks from libahci with information from the original command.
+This is done using libahci's command tags; before issuing a command, a
+\lstinline+completed_rx_st+ ``command completion'' struct is allocated and
+filled. The address of this struct is sent as the command tag for
+\lstinline+issue_command+. Upon command completion, the tag is cast to a
+\lstinline+completed_rx_st+, and the \lstinline+completed_fn+ callback function
+pointer is called.
+
+The \lstinline+completed_rx_st+ contains information for the message-specific
+completion handler. Currently, this consists of the \flahcib and the region
+used for \acs{dma}. If the message is supposed to perform a \acs{dma} read, the
+data must be copied out of the \acs{dma} region into an allocated buffer to be
+passed to the client. If \acs{dma} is used at all, the region must also be
+freed.
+
+Finally, the \lstinline+completed_rx_st+ is used by the
+\lstinline+issue_command_cb+ for freeing the allocated \ac{fis} and calling the
+message send user continuation.
+
+\subsection{DMA Handling}
+
+When parameter analysis indicates a \acs{dma} transfer is expected, the
+\ac{ahci} backend must generate code to setup \acs{dma} regions, copying in TX
+data before issuing the command, and copying out RX data after the command
+completes.
+
+To perform \acs{dma}, a \lstinline+dma_arg+ must be specified in the
+\lstinline+ata+-targeted message meta-arguments. When the \ac{ahci} backend
+detects this argument, it expects the value to be an identifier that
+corresponds to one of the formal message arguments. The \acs{dma} direction is
+then the direction of that message argument; \lstinline+in+ is a transmit,
+\lstinline+out+ is a receive.
+
+Because the \acs{dma} region must be allocated before the command is issued, if
+a \acs{dma} argument is present, the size of the \acs{dma} must either be
+specified in the interface file, or must be determinable upon receiving the rpc
+call from the client. The size of the \acs{dma} may therefore be specified with
+any of the following means:
+
+\begin{itemize}
+	\item If \lstinline+dma_arg+ is a dynamic array, its size argument is used.
+		(transmit only)
+	\item If \lstinline+dma_arg+'s type is an array of fixed size, that is
+		used.
+	\item If a meta-argument \lstinline+dma_size+ is present and is an integer,
+		that is used.
+	\item If a meta-argument \lstinline+dma_size+ is present and is an
+		identifier, the \acs{rpc} must have an \lstinline+in+ argument with
+		that name, the value of which is used.
+\end{itemize}
+
+Finally, the \acs{dma} data must be copied in and out of suitably mapped
+regions, managed using libahci's \lstinline+ahci_dma_region+ API. This is
+necessary because flounder semantics require that the client owns buffer
+memory.
+
+\subsection{FIS Setup}
+
+To issue a command over \ac{ahci}, the \acs{ahci} backend must first set up a
+suitable \ac{fis}.  This is done using the \lstinline+sata_fis+ API in libahci.

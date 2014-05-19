@@ -1,0 +1,13 @@
+- does group communication use skb? (I'm assuming it does)
+- does routing use skb? (I'm assuming it does)
+- does process management use skb?
+- does communication need synchronisation?
+- does process management need synchronisation?
+- is synchronisation inherently related to processes (eg for blocking, waiting or notifying) or is it independent of the concepts of processes and threads and can it all be done through communication
+- communication and process management use each other (eg for blocking, getting notified of messages arriving, etc.)
+- does skb use process management?
+- does skb use communication?
+- does the base functionality use communication
+- where does tracing/debugging fit in in a level diagram?
+- do device management and device drivers use protection (prinipals)
+- do device management and device drivers use resource management and accounting?

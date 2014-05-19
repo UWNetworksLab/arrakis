@@ -1,0 +1,430 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_restore_cm2.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_restore_cm2 msbfirst ( addr base ) "" {
+    
+
+    constants clkactivity_l3_1_iclk_status width(1) "" {
+        CLKACTIVITY_L3_1_ICLK_0_r = 0 "Corresponding clock is definitely gated";
+        CLKACTIVITY_L3_1_ICLK_1_r = 1 "Corresponding clock is running or gating/ungating transition is ongoing";
+    };
+
+    constants clktrctrl_status width(2) "" {
+        CLKTRCTRL_0 = 0 "NO_SLEEP: Sleep transition cannot be initiated. Wakeup transition may however occur.";
+        CLKTRCTRL_1_r = 1 "Reserved";
+        CLKTRCTRL_2_r = 2 "Reserved";
+        CLKTRCTRL_3 = 3 "HW_AUTO: Automatic transition is enabled. Sleep and wakeup transition are based upon hardware conditions.";
+    };
+    
+    register cm_l3_1_clkstctrl_restore addr(base, 0x0) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 23 mbz;
+        clkactivity_l3_1_iclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the L3_1_GICLK clock in the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the clock state transition of the L3_1 clock domain.";
+    };
+    
+    register cm_l3_2_clkstctrl_restore addr(base, 0x4) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 23 mbz;
+        clkactivity_l3_2_iclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the L3_2_GICLK clock in the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the clock state transition of the L3_2 clock domain.";
+    };
+    
+    register cm_l4cfg_clkstctrl_restore addr(base, 0x8) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 23 mbz;
+        clkactivity_cfg_l4_iclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the L4_CFG_GICLK clock in the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the clock state transition of the L4CFG clock domain.";
+    };
+
+    constants clktrctrl_status1 width(2) "" {
+        CLKTRCTRL_0_3 = 0 "NO_SLEEP: Sleep transition cannot be initiated. Wakeup transition may however occur.";
+        CLKTRCTRL_1_r_3 = 1 "Reserved";
+        CLKTRCTRL_2 = 2 "SW_WKUP: Start a software forced wake-up transition on the domain.";
+        CLKTRCTRL_3_3 = 3 "HW_AUTO: Automatic transition is enabled. Sleep and wakeup transition are based upon hardware conditions.";
+    };
+    
+    register cm_memif_clkstctrl_restore addr(base, 0xC) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 18 mbz;
+        clkactivity_async_phy2_clk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the ASYNC_PHY2_CLK clock in the domain. [warm reset insensitive]";
+        clkactivity_async_phy1_clk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the ASYNC_PHY1_CLK clock in the domain. [warm reset insensitive]";
+        clkactivity_async_dll_clk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the ASYNC_DLL_CLK clock in the domain. [warm reset insensitive]";
+        clkactivity_phy_root_clk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the PHY_ROOT_CLK clock in the domain. [warm reset insensitive]";
+        clkactivity_dll_clk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the DLL_CLK clock in the domain. [warm reset insensitive]";
+        clkactivity_l3_emif_iclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the L3_EMIF_GICLK clock in the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status1) "Controls the clock state transition of the MEMIF clock domain.";
+    };
+
+    constants clktrctrl_status2 width(2) "" {
+        CLKTRCTRL_0_4 = 0 "NO_SLEEP: Sleep transition cannot be initiated. Wakeup transition may however occur.";
+        CLKTRCTRL_1 = 1 "SW_SLEEP: Start a software forced sleep transition on the domain.";
+        CLKTRCTRL_2_1 = 2 "SW_WKUP: Start a software forced wake-up transition on the domain.";
+        CLKTRCTRL_3_4 = 3 "HW_AUTO: Automatic transition is enabled. Sleep and wakeup transition are based upon hardware conditions.";
+    };
+    
+    register cm_l4per_clkstctrl_restore addr(base, 0x10) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 6 mbz;
+        clkactivity_per_abe_24m_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the PER_ABE_24M_FCLK clock in the domain. [warm reset insensitive]";
+        _ 1 mbz;
+        _ 1 mbz;
+        clkactivity_per_mcbsp4_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the PER_MCBSP4_FCLK clock in the domain. [warm reset insensitive]";
+        _ 2 mbz;
+        clkactivity_per_96m_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the PER_96M_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_per_48m_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the PER_48M_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_per_32k_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the PER_32K_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_per_24mc_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the PER_24MC_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_12m_fclk_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the FUNC_12M_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt9_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the DMT9_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt4_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the DMT4_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt3_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the DMT3_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt2_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the DMT2_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt11_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the DMT11_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_gpt10_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the DMT10_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_l4_per_iclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the L4_PER_GICLK clock in the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status2) "Controls the clock state transition of the L4PER clock domain.";
+    };
+    
+    register cm_l3init_clkstctrl_restore addr(base, 0x14) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 2 mbz;
+        clkactivity_init_60m_p2_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the INIT_60M_P2_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_init_60m_p1_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the INIT_60M_P1_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_hsic_p2_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the HSIC_P2_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_hsic_p1_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the HSIC_P1_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_utmi_root_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the UTMI_ROOT_FCLK clock in the domain. [warm reset insensitive]";
+        _ 1 mbz;
+        clkactivity_tll_ch1_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the TLL_CH1_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_tll_ch0_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the TLL_CH0_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_hsic_p2_480m_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the HSIC_P2_480M_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_hsic_p1_480m_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the HSIC_P1_480M_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_init_hsmmc6_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the INIT_HSMMC6_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_init_hsmmc2_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the INIT_HSMMC2_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_init_hsmmc1_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the INIT_HSMMC1_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_init_hsi_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the INIT_HSI_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_usb_dpll_hs_clk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the USB_DPLL_HS_CLK clock in the domain. [warm reset insensitive]";
+        clkactivity_usb_dpll_clk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the USB_DPLL_CLK clock in the domain. [warm reset insensitive]";
+        clkactivity_init_48mc_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the INIT_48MC_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_init_48m_fclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the INIT_48M_FCLK clock in the domain. [warm reset insensitive]";
+        _ 2 mbz;
+        clkactivity_init_l4_iclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the L4_INIT_GICLK clock in the domain. [warm reset insensitive]";
+        clkactivity_init_l3_iclk 1 ro type(clkactivity_l3_1_iclk_status) "This field indicates the state of the L3_INIT_GICLK clock in the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status2) "Controls the clock state transition of the L3INIT clock domain.";
+    };
+
+    constants idlest_status width(2) "" {
+        IDLEST_0_r = 0 "Module is fully functional, including INTRCONN";
+        IDLEST_1_r = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_2_r = 2 "Module is in idle mode (only INTRCONN part). It is functional if using separate functional clock";
+        IDLEST_3_r = 3 "Module is disabled and cannot be accessed";
+    };
+
+    constants modulemode_status width(2) "" {
+        MODULEMODE_0 = 0 "Module is disable by software. Any INTRCONN access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1 = 1 "Module is managed automatically by hardware according to clock domain transition. A clock domain sleep transition put module into idle. A wakeup domain transition put it back into function. If CLKTRCTRL=3, any INTRCONN access to module is always granted. Module clocks may be gated according to the clock domain state.";
+        MODULEMODE_2_r = 2 "Reserved";
+        MODULEMODE_3_r = 3 "Reserved";
+    };
+    
+    register cm_l3instr_l3_3_clkctrl_restore addr(base, 0x18) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l3instr_l3_instr_clkctrl_restore addr(base, 0x1C) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+
+    constants idlest_status1 width(2) "" {
+        IDLEST_3_r_2 = 3 "Module is disabled and cannot be accessed";
+        IDLEST_2_r_2 = 2 "Module is in idle mode (only Interconnect part). It is functional if using separate functional clock";
+        IDLEST_1_r_2 = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_0_r_2 = 0 "Module is fully functional, including Interconnect";
+    };
+
+    constants modulemode_status1 width(2) "" {
+        MODULEMODE_0_2 = 0 "Module is disable by software. Any Interconnect access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1_2 = 1 "Module is managed automatically by hardware according to clock domain transition. A clock domain sleep transition put module into idle. A wakeup domain transition put it back into function. If CLKTRCTRL=3, any Interconnect access to module is always granted. Module clocks may be gated according to the clock domain state.";
+        MODULEMODE_2_r_2 = 2 "Reserved";
+        MODULEMODE_3_r_2 = 3 "Reserved";
+    };
+    
+    register cm_l3instr_ocp_wp1_clkctrl_restore addr(base, 0x20) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status1) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status1) "Control the way mandatory clocks are managed.";
+    };
+
+    constants idlest_status2 width(2) "" {
+        IDLEST_3_r_3 = 3 "Module is disabled";
+        IDLEST_2_r_3 = 2 "Module is in Idle";
+        IDLEST_1_r_3 = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_0_r_3 = 0 "Module is fully functional";
+    };
+
+    constants modulemode_status2 width(2) "" {
+        MODULEMODE_0_3 = 0 "Module is disabled by software. OCP configuration port is not accessible.";
+        MODULEMODE_1_3 = 1 "Module is managed automatically by hardware along with L3INSTR domain.";
+        MODULEMODE_2_r_3 = 2 "Reserved";
+        MODULEMODE_3_r_3 = 3 "Reserved";
+    };
+    
+    register cm_cm2_profiling_clkctrl_restore addr(base, 0x24) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode. [warm reset insensitive]" {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status2) "Module idle status";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status2) "Control the way mandatory clocks are managed.";
+    };
+
+    constants l4per_statdep_status width(1) "" {
+        L4PER_STATDEP_0 = 0 "Dependency is disabled";
+        L4PER_STATDEP_1 = 1 "Dependency is enabled";
+    };
+    
+    register cm_c2c_staticdep_restore addr(base, 0x28) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 18 mbz;
+        l4per_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L4PER clock domain";
+        l4cfg_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L4CFG clock domain";
+        _ 4 mbz;
+        l3init_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L3INIT clock domain";
+        l3_2_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L3_2 clock domain";
+        l3_1_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L3_1 clock domain";
+        memif_statdep 1 rw type(l4per_statdep_status) "Static dependency towards MEMIF clock domain";
+        abe_statdep 1 rw type(l4per_statdep_status) "Static dependency towards ABE clock domain";
+        ivahd_statdep 1 rw type(l4per_statdep_status) "Static dependency towards IVAHD clock domain";
+        _ 2 mbz;
+    };
+    
+    register cm_l3_1_dynamicdep_restore addr(base, 0x2C) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 4 mbz;
+        windowsize 4 rw "Size of sliding window used to monitor OCP interface activity for determination of auto-sleep feature. Time unit defined byCM_DYN_DEP_PRESCAL register.";
+        _ 11 mbz;
+        l4cfg_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L4CFG clock domain";
+        _ 5 mbz;
+        l3_2_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L3_2 clock domain";
+        _ 1 mbz;
+        memif_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards MEMIF clock domain";
+        abe_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards ABE clock domain";
+        _ 3 mbz;
+    };
+    
+    register cm_l3_2_dynamicdep_restore addr(base, 0x30) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 4 mbz;
+        windowsize 4 rw "Size of sliding window used to monitor OCP interface activity for determination of auto-sleep feature. Time unit defined byCM_DYN_DEP_PRESCAL register.";
+        _ 5 mbz;
+        c2c_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards D2D clock domain";
+        _ 3 mbz;
+        l4sec_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L4SEC clock domain";
+        l4per_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L4PER clock domain";
+        _ 2 mbz;
+        gfx_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards GFX clock domain";
+        iss_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards ISS clock domain";
+        dss_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards DSS clock domain";
+        l3init_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L3INIT clock domain";
+        _ 1 mbz;
+        l3_1_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L3_1 clock domain";
+        _ 2 mbz;
+        ivahd_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards IVAHD clock domain";
+        _ 1 mbz;
+        mpu_m3_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards CORTEXM3 clock domain";
+    };
+    
+    register cm_c2c_dynamicdep_restore addr(base, 0x34) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 4 mbz;
+        windowsize 4 rw "Size of sliding window used to monitor OCP interface activity for determination of auto-sleep feature. Time unit defined byCM_DYN_DEP_PRESCAL register.";
+        _ 17 mbz;
+        l3_2_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L3_2 clock domain";
+        _ 1 mbz;
+        memif_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards MEMIF clock domain";
+        _ 4 mbz;
+    };
+    
+    register cm_l4cfg_dynamicdep_restore addr(base, 0x38) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 4 mbz;
+        windowsize 4 rw "Size of sliding window used to monitor OCP interface activity for determination of auto-sleep feature. Time unit defined byCM_DYN_DEP_PRESCAL register.";
+        _ 4 mbz;
+        mpu_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards MPU clock domain";
+        c2c_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards D2D clock domain";
+        _ 1 rsvd;
+        alwoncore_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards ALWONCORE clock domain";
+        l4wkup_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L4WKUP clock domain";
+        _ 3 mbz;
+        sdma_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards SDMA clock domain";
+        _ 1 mbz;
+        iss_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards ISS clock domain";
+        dss_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards DSS clock domain";
+        l3init_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L3INIT clock domain";
+        l3_2_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L3_2 clock domain";
+        l3_1_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L3_1 clock domain";
+        memif_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards MEMIF clock domain";
+        _ 2 mbz;
+        dsp_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards DSP clock domain";
+        _ 1 mbz;
+    };
+    
+    register cm_l4per_dynamicdep_restore addr(base, 0x3C) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 4 mbz;
+        windowsize 4 rw "Size of sliding window used to monitor OCP interface activity for determination of auto-sleep feature. Time unit defined byCM_DYN_DEP_PRESCAL register.";
+        _ 9 mbz;
+        l4sec_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L4SEC clock domain";
+        _ 5 mbz;
+        dss_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards DSS clock domain";
+        l3init_dyndep 1 ro type(l4per_statdep_status) "Dynamic dependency towards L3INIT clock domain";
+        _ 7 mbz;
+    };
+
+    constants optfclken_dbclk_status width(1) "" {
+        OPTFCLKEN_DBCLK_0 = 0 "Optional functional clock is disabled";
+        OPTFCLKEN_DBCLK_1 = 1 "Optional functional clock is enabled";
+    };
+    
+    register cm_l4per_gpio2_clkctrl_restore addr(base, 0x40) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gpio3_clkctrl_restore addr(base, 0x44) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gpio4_clkctrl_restore addr(base, 0x48) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gpio5_clkctrl_restore addr(base, 0x4C) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l4per_gpio6_clkctrl_restore addr(base, 0x50) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+
+    constants clksel_utmi_p2_status width(1) "" {
+        CLKSEL_UTMI_P2_0 = 0 "The functional clock is provided by the internal clock source";
+        CLKSEL_UTMI_P2_1 = 1 "The functional clock is provided by an external PHY through an I/O pad.";
+    };
+
+    constants stbyst_status width(1) "" {
+        STBYST_0_r = 0 "Module is functional (not in standby)";
+        STBYST_1_r = 1 "Module is in standby";
+    };
+
+    constants sar_mode_status width(1) "" {
+        SAR_MODE_0 = 0 "SAR mode is disabled";
+        SAR_MODE_1 = 1 "SAR mode is enabled";
+    };
+
+    constants modulemode_status3 width(2) "" {
+        MODULEMODE_0_9 = 0 "Module is disable by software. Any INTRCONN access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1_r = 1 "Reserved";
+        MODULEMODE_2 = 2 "Module is explicitly enabled. Interface clock (if not used for functions) may be gated according to the clock domain state. Functional clocks are guarantied to stay present. As long as in this configuration, power domain sleep transition cannot happen.";
+        MODULEMODE_3_r_9 = 3 "Reserved";
+    };
+    
+    register cm_l3init_hsusbhost_clkctrl_restore addr(base, 0x54) "Second address map for register CM_L3INIT_USB_HOST_CLKCTRL. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 6 mbz;
+        clksel_utmi_p2 1 rw type(clksel_utmi_p2_status) "Selects the source of the functional clock for UTMI Port2 on USB Host";
+        clksel_utmi_p1 1 rw type(clksel_utmi_p2_status) "Selects the source of the functional clock for UTMI Por1 on USB Host";
+        _ 5 mbz;
+        stbyst 1 ro type(stbyst_status) "Module standby status. [warm reset insensitive]";
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        optfclken_func48mclk 1 rw type(optfclken_dbclk_status) "USB-HOST optional clock control: FUNC48MCLK";
+        optfclken_hsic480m_p2_clk 1 rw type(optfclken_dbclk_status) "USB-HOST optional clock control: HSIC480M_P2_CLK";
+        optfclken_hsic480m_p1_clk 1 rw type(optfclken_dbclk_status) "USB-HOST optional clock control: HSIC480M_P1_CLK";
+        optfclken_hsic60m_p2_clk 1 rw type(optfclken_dbclk_status) "USB-HOST optional clock control: HSIC60M_P2_CLK";
+        optfclken_hsic60m_p1_clk 1 rw type(optfclken_dbclk_status) "USB-HOST optional clock control: HSIC60M_P1_CLK";
+        optfclken_utmi_p3_clk 1 rw type(optfclken_dbclk_status) "USB-HOST optional clock control: UTMI_P3_CLK";
+        optfclken_utmi_p2_clk 1 rw type(optfclken_dbclk_status) "USB-HOST optional clock control: UTMI_P2_CLK when CLKSEL_UTMI_P2 is 0";
+        optfclken_utmi_p1_clk 1 rw type(optfclken_dbclk_status) "USB-HOST optional clock control: UTMI_P1_CLK when CLKSEL_UTMI_P1 is 0";
+        _ 3 mbz;
+        sar_mode 1 rw type(sar_mode_status) "SAR mode control for the module. Shall not be modify except if module is disabled.";
+        _ 2 mbz;
+        modulemode 2 rw type(modulemode_status3) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_l3init_hsusbtll_clkctrl_restore addr(base, 0x58) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 6 mbz;
+        optfclken_usb_ch1_clk 1 rw type(optfclken_dbclk_status) "USB-HOST optional clock control: USB_CH1_CLK";
+        optfclken_usb_ch0_clk 1 rw type(optfclken_dbclk_status) "USB-HOST optional clock control: USB_CH0_CLK";
+        _ 3 mbz;
+        sar_mode 1 rw type(sar_mode_status) "SAR mode control for the module. Shall not be modify except if module is disabled.";
+        _ 2 mbz;
+        modulemode 2 rw type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_sdma_staticdep_restore addr(base, 0x5C) "Second address map for register. Used only by automatic restore upon wakeup from device OFF mode." {
+        _ 16 mbz;
+        l4wkup_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L4WKUP clock domain";
+        l4sec_statdep 1 rw "Static dependency towards L4SEC clock domain";
+        l4per_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L4PER clock domain";
+        l4cfg_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L4CFG clock domain";
+        _ 2 mbz;
+        iss_statdep 1 ro type(l4per_statdep_status) "Static dependency towards ISS clock domain";
+        dss_statdep 1 rw type(l4per_statdep_status) "Static dependency towards DSS clock domain";
+        l3init_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L3INIT clock domain";
+        l3_2_statdep 1 ro type(l4per_statdep_status) "Static dependency towards L3_2 clock domain";
+        l3_1_statdep 1 rw type(l4per_statdep_status) "Static dependency towards L3_1 clock domain";
+        memif_statdep 1 rw type(l4per_statdep_status) "Static dependency towards MEMIF clock domain";
+        abe_statdep 1 rw type(l4per_statdep_status) "Static dependency towards ABE clock domain";
+        ivahd_statdep 1 rw type(l4per_statdep_status) "Static dependency towards IVAHD clock domain";
+        _ 1 mbz;
+        mpu_m3_statdep 1 rw type(l4per_statdep_status) "Static dependency towards MPU_A3 clock domain";
+    };
+};

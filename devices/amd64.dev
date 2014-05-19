@@ -1,0 +1,113 @@
+/*
+ * Copyright (c) 2007, 2008, 2011 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * amd64.dev
+ *
+ * DESCRIPTION: amd64 and Intel64 architecture definitions.
+ * 
+ * This is derived from the "Intel 64 and IA-32 Architectures Software
+ * Developer's Manual", volumes 3A and 3B, "System Programming Guide,
+ * Parts 1 and 2"
+ */
+
+device amd64 msbfirst ( ) "Intel64 and AMD 64-bit architecture definitions" {
+
+    //
+    // Section 2.5: Control registers
+    //
+    register cr0 noaddr "Control register 0" {
+	pg	1 "Paging";
+	cd	1 "Cache disable";
+	nw	1 "Not write-through";
+	_	10;
+	am	1 "Alignment mask";
+	_	1;
+	wp	1 "Write protect";
+	_	10;
+	ne	1 "Numeric error";
+	et	1 "Extension type";
+	ts	1 "Task switched";
+	em	1 "Emulation";
+	mp	1 "Monitor coprocessor";
+	pe	1 "Protection enable";
+    };
+
+    // Control register 1 is reserved.
+    
+    register cr2 noaddr "Page-fault linear address" type(uint64);
+	
+    register cr3 noaddr "Control register 3 (PDBR)" {
+	pdb	52 "Page-directory base";
+	_	7;
+	pcd	1 "Page-level cache disable";
+	pwt	1 "Page-level writes transparent";
+	_	3;
+    };
+
+    register cr4 noaddr "Control register 4" {
+	_		49 mbz;
+	smxe		1 "SMX enable";
+	vmxe		1 "VMX enable";
+	_		2 mbz;
+	osxmmexcpt	1 "OS support for unmasked SIMD FP exceptions";
+	osfxsr		1 "OS support for FXSAVE and FXRSTOR instructions";
+	pce		1 "Performance-monitoring counter enable";
+	pge		1 "Page global enable";
+	mce		1 "Machine-check enable";
+	pae		1 "Physical address extensions";
+	pse		1 "Page size extensions";
+	de		1 "Debugging extensions";
+	tsd		1 "Time stamp disable";
+	pvi		1 "Protected-mode virtual interrupts";
+	vme		1 "Virtual 8086 mode extensions";
+    };
+
+    regtype cr8 "Control register 8" {
+	_	60;
+	tpl	4 "Task priority level";
+    };
+
+    //
+    // Section 3.10: PAE-Enabled Paging in IA-32e Mode
+    //
+
+    regtype pdir_entry "Page-Directory Entry" {
+	exb	1  "Execute-Disable";
+	avail	11 "Available";
+	_	12 mbz;
+	base	28 "Base address";
+	avail2	3  "Available";
+	_	2  mbz;
+	avail3	1  "Available";
+	accessed 1  "Accessed";
+	pcd	1  "Cache disabled";
+	pwt	1  "Write-through";
+	us	1  "User/Supervisor";
+	rw	1  "Read/Write";
+	present	1  "Present";
+    };
+    
+    regtype ptable_entry "Page-Table Entry" {
+	exb	1  "Execute-Disable";
+	avail	11 "Available";
+	_	12 mbz;
+	base	28 "Base address";
+	avail2	3  "Available";
+	global	1  "Global";
+	pat	1  "Page-Attribute index";
+	dirty	1  "Dirty";
+	accessed 1  "Accessed";
+	pcd	1  "Cache disabled";
+	pwt	1  "Write-through";
+	us	1  "User/Supervisor";
+	rw	1  "Read/Write";
+	present	1  "Present";
+    };
+
+};

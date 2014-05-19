@@ -1,0 +1,24 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2013, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Universitaetstr. 6, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for omap44xx fdif driver
+-- 
+--------------------------------------------------------------------------
+
+[
+    build application { target = "fdif",
+                    cFiles = (find withSuffices [".c"]),
+                    mackerelDevices = [
+                        "omap/omap44xx_cam_prm",
+                        "omap/omap44xx_cam_cm2",
+                        "omap/omap44xx_fdif",
+                        "omap/omap44xx_device_prm" ],
+                    addLibraries = ["driverkit"],
+                    architectures = ["armv7", "armv7-m"]
+                  }
+]

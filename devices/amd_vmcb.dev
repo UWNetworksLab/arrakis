@@ -1,0 +1,378 @@
+/*
+ * Copyright (c) 2009, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+device amd_vmcb lsbfirst ( addr base ) "AMD Virtual Machine Control Block"
+{
+    register cr_access addr(base, 0x000) "Intercept reads/writes to CR0-15" {
+        rdcr0       1   "Intercept reads of CR0";
+        rdcr1       1   "Intercept reads of CR1";
+        rdcr2       1   "Intercept reads of CR2";
+        rdcr3       1   "Intercept reads of CR3";
+        rdcr4       1   "Intercept reads of CR4";
+        rdcr5       1   "Intercept reads of CR5";
+        rdcr6       1   "Intercept reads of CR6";
+        rdcr7       1   "Intercept reads of CR7";
+        rdcr8       1   "Intercept reads of CR8";
+        rdcr9       1   "Intercept reads of CR9";
+        rdcr10      1   "Intercept reads of CR10";
+        rdcr11      1   "Intercept reads of CR11";
+        rdcr12      1   "Intercept reads of CR12";
+        rdcr13      1   "Intercept reads of CR13";
+        rdcr14      1   "Intercept reads of CR14";
+        rdcr15      1   "Intercept reads of CR15";
+        wrcr0       1   "Intercept writes of CR0";
+        wrcr1       1   "Intercept writes of CR1";
+        wrcr2       1   "Intercept writes of CR2";
+        wrcr3       1   "Intercept writes of CR3";
+        wrcr4       1   "Intercept writes of CR4";
+        wrcr5       1   "Intercept writes of CR5";
+        wrcr6       1   "Intercept writes of CR6";
+        wrcr7       1   "Intercept writes of CR7";
+        wrcr8       1   "Intercept writes of CR8";
+        wrcr9       1   "Intercept writes of CR9";
+        wrcr10      1   "Intercept writes of CR10";
+        wrcr11      1   "Intercept writes of CR11";
+        wrcr12      1   "Intercept writes of CR12";
+        wrcr13      1   "Intercept writes of CR13";
+        wrcr14      1   "Intercept writes of CR14";
+        wrcr15      1   "Intercept writes of CR15";
+    };
+
+    register dr_access addr(base, 0x004) "Intercept reads/writes to DR0-15" {
+        rddr0       1   "Intercept reads of DR0";
+        rddr1       1   "Intercept reads of DR1";
+        rddr2       1   "Intercept reads of DR2";
+        rddr3       1   "Intercept reads of DR3";
+        rddr4       1   "Intercept reads of DR4";
+        rddr5       1   "Intercept reads of DR5";
+        rddr6       1   "Intercept reads of DR6";
+        rddr7       1   "Intercept reads of DR7";
+        rddr8       1   "Intercept reads of DR8";
+        rddr9       1   "Intercept reads of DR9";
+        rddr10      1   "Intercept reads of DR10";
+        rddr11      1   "Intercept reads of DR11";
+        rddr12      1   "Intercept reads of DR12";
+        rddr13      1   "Intercept reads of DR13";
+        rddr14      1   "Intercept reads of DR14";
+        rddr15      1   "Intercept reads of DR15";
+        wrdr0       1   "Intercept writes of DR0";
+        wrdr1       1   "Intercept writes of DR1";
+        wrdr2       1   "Intercept writes of DR2";
+        wrdr3       1   "Intercept writes of DR3";
+        wrdr4       1   "Intercept writes of DR4";
+        wrdr5       1   "Intercept writes of DR5";
+        wrdr6       1   "Intercept writes of DR6";
+        wrdr7       1   "Intercept writes of DR7";
+        wrdr8       1   "Intercept writes of DR8";
+        wrdr9       1   "Intercept writes of DR9";
+        wrdr10      1   "Intercept writes of DR10";
+        wrdr11      1   "Intercept writes of DR11";
+        wrdr12      1   "Intercept writes of DR12";
+        wrdr13      1   "Intercept writes of DR13";
+        wrdr14      1   "Intercept writes of DR14";
+        wrdr15      1   "Intercept writes of DR15";
+    };
+
+    register exceptions addr(base, 0x008) "Intercept exception vectors 0-31" {
+        vector0     1   "Intercept exception vector 0";
+        vector1     1   "Intercept exception vector 1";
+        vector2     1   "Intercept exception vector 2";
+        vector3     1   "Intercept exception vector 3";
+        vector4     1   "Intercept exception vector 4";
+        vector5     1   "Intercept exception vector 5";
+        vector6     1   "Intercept exception vector 6";
+        vector7     1   "Intercept exception vector 7";
+        vector8     1   "Intercept exception vector 8";
+        vector9     1   "Intercept exception vector 9";
+        vector10    1   "Intercept exception vector 10";
+        vector11    1   "Intercept exception vector 11";
+        vector12    1   "Intercept exception vector 12";
+        vector13    1   "Intercept exception vector 13";
+        vector14    1   "Intercept exception vector 14";
+        vector15    1   "Intercept exception vector 15";
+        vector16    1   "Intercept exception vector 16";
+        vector17    1   "Intercept exception vector 17";
+        vector18    1   "Intercept exception vector 18";
+        vector19    1   "Intercept exception vector 19";
+        vector20    1   "Intercept exception vector 20";
+        vector21    1   "Intercept exception vector 21";
+        vector22    1   "Intercept exception vector 22";
+        vector23    1   "Intercept exception vector 23";
+        vector24    1   "Intercept exception vector 24";
+        vector25    1   "Intercept exception vector 25";
+        vector26    1   "Intercept exception vector 26";
+        vector27    1   "Intercept exception vector 27";
+        vector28    1   "Intercept exception vector 28";
+        vector29    1   "Intercept exception vector 29";
+        vector30    1   "Intercept exception vector 30";
+        vector31    1   "Intercept exception vector 31";
+    };
+
+    register intercepts addr(base, 0x00c) "Various intercepts" {
+        intr        1   "Intercept INTR instruction";
+        nmi         1   "Intercept NMI instruction";
+        smi         1   "Intercept SMI instruction";
+        init        1   "Intercept INIT instruction";
+        vintr       1   "Intercept VINTR instruction";
+        wrcr0       1   "Intercept CR0 writes that change bits other than TS or MP";
+        rdidtr      1   "Intercept reads of IDTR";
+        rdgdtr      1   "Intercept reads of GDTR";
+        rdldtr      1   "Intercept reads of LDTR";
+        rdtr        1   "Intercept reads of TR";
+        wridtr      1   "Intercept writes of IDRT";
+        wrgdtr      1   "Intercept writes of GDTR";
+        wrldtr      1   "Intercept writes of LDTR";
+        wrtr        1   "Intercept writes of TR";
+        rdtsc       1   "Intercept RDTSC instruction";
+        rdpmc       1   "Intercept RDPMC instruction";
+        pushf       1   "Intercept PUSHF instruction";
+        popf        1   "Intercept POPF instruction";
+        cpuid       1   "Intercept CPUID instruction";
+        rsm         1   "Intercept RSM instruction";
+        iret        1   "Intercept IRET instruction";
+        intn        1   "Intercept INTn instruction";
+        invd        1   "Intercept INVD instruction";
+        pause       1   "Intercept PAUSE instruction";
+        hlt         1   "Intercept HLT instruction";
+        invlpg      1   "Intercept INVLPG instruction";
+        invlpga     1   "Intercept INVLPGA instruction";
+        ioio_prot   1   "Intercept IN/OUT accesses to selected ports";
+        msr_prot    1   "Intercept RDMSR or WRMSR accesses to selected MSRs";
+        task_switch 1   "Intercept task switches";
+        ferr_freeze 1   "Intercept processor freezing durich legacy FERR handling";
+        shutdown    1   "Intercept shutdown events";
+        vmrun       1   "Intercept VMRUN instruction";
+        vmmcall     1   "Intercept VMMCALL instruction";
+        vmload      1   "Intercept VMLOAD instruction";
+        vmsave      1   "Intercept VMSAVE instruction";
+        stgi        1   "Intercept STGI instruction";
+        clgi        1   "Intercept CLGI instruction";
+        skinit      1   "Intercept SKINIT instruction";
+        rdtscp      1   "Intercept RDTSCP instruction";
+        icebp       1   "Intercept ICEBP instruction";
+        wbinvd      1   "Intercept WBINVD instruction";
+        monitor     1   "Intercept MONITOR instruction";
+        mwait0      1   "Intercept MWAIT instruction unconditionally";
+        mwait1      1   "Intercept MWAIT instruction if monitor hardware is armed";
+        _           19  rsvd;
+    };
+
+    register iopm_base_pa addr(base, 0x040) "Physical base address of IOPM (bits 11:0 are ignored)" type(uint64);
+
+    register msrpm_base_pa addr(base, 0x048) "Physical base address of MSRPM (bits 11:0 are ignored)" type(uint64);
+
+    register tsc_offset addr(base, 0x050) "To be added in RDTSC and RDTSCP" type(uint64);
+
+    register tlb addr(base, 0x058) "Guest TLB settings" {
+        guest_asid  32  "Guest ASID";
+        control     8   "TLB control values";
+        _           24  rsvd;
+    };
+
+    register vintr addr(base, 0x060) "Virtual interrupt settings" {
+        vtpr        8   "Virtual TPR for the guest";
+        virq        1   "Virtual interrupt pernding";
+        _           7   "Reserved, SBZ";
+        vintr_prio  4   "Priority for virtual interrupt";
+        v_ign_tpr   1   "Virtual interrupt ignores the virtual TPR";
+        _           3   "Reserved, SBZ";
+        vintr_masking 1 "Virtualize masking of INTR interrupt";
+        _           7   "Reserved, SBZ";
+        vintr_vector 8 "Vector to use for this interrupt";
+        _           24  rsvd;
+    };
+
+    register intr addr(base, 0x068) "Guest interrupt settings" {
+        interrupt_shadow 1 "Guest is in an interrupt shadow";
+        _           63  rsvd;
+    };
+
+    register exitcode addr(base, 0x070) "Guest EXITCODE" type(uint64);
+
+    register exitinfo1 addr(base, 0x078) "Guest EXITINFO1" type(uint64);
+
+    register exitinfo2 addr(base, 0x080) "Guest EXITINFO2" type(uint64);
+
+    register exitintinfo addr(base, 0x088) "Guest EXITINTINFO" type(uint64);
+
+    register np addr(base, 0x090) "Nested paging settings" {
+        enable      1   "Enable nested paging";
+        _           63  rsvd;
+    };
+
+    register eventinj addr(base, 0x0a8) "Event injection" type(uint64);
+
+    register ncr3 addr(base, 0x0b0) "Nested page table CR3 to use for nested paging" type(uint64);
+
+    register lbr addr(base, 0x0b8) "Guest LBR settings" {
+        lbr_virtualization_enable 1 "Enable LBR virtualization";
+        _           63  rsvd;
+    };
+
+    /* Guest State */
+
+    regtype seg_attrib "Segment attributes" {
+        segtype     4   "Segment type";
+        s           1   "Segment descriptor type";
+        dpl         2   "Descriptor privilege level";
+        p           1   "Segment present";
+        avl         1   "Available for use by system software";
+        l           1   "64-bit code segment";
+        db          1   "Default operation size (0: 16-bit, 1: 32-bit segment)";
+        g           1   "Granularity";
+        _           4   rsvd;
+    };
+
+    register es_selector addr(base, 0x400) "Guest ES selector"  type(uint16);
+    register es_attrib   addr(base, 0x402) "Guest ES attrib"    type(seg_attrib);
+    register es_limit    addr(base, 0x404) "Guest ES limit"     type(uint32);
+    register es_base     addr(base, 0x408) "Guest ES base"      type(uint64);
+
+    register cs_selector addr(base, 0x410) "Guest CS selector"  type(uint16);
+    register cs_attrib   addr(base, 0x412) "Guest CS attrib"    type(seg_attrib);
+    register cs_limit    addr(base, 0x414) "Guest CS limit"     type(uint32);
+    register cs_base     addr(base, 0x418) "Guest CS base"      type(uint64);
+
+    register ss_selector addr(base, 0x420) "Guest SS selector"  type(uint16);
+    register ss_attrib   addr(base, 0x422) "Guest SS attrib"    type(seg_attrib);
+    register ss_limit    addr(base, 0x424) "Guest SS limit"     type(uint32);
+    register ss_base     addr(base, 0x428) "Guest SS base"      type(uint64);
+
+    register ds_selector addr(base, 0x430) "Guest DS selector"  type(uint16);
+    register ds_attrib   addr(base, 0x432) "Guest DS attrib"    type(seg_attrib);
+    register ds_limit    addr(base, 0x434) "Guest DS limit"     type(uint32);
+    register ds_base     addr(base, 0x438) "Guest DS base"      type(uint64);
+
+    register fs_selector addr(base, 0x440) "Guest FS selector"  type(uint16);
+    register fs_attrib   addr(base, 0x442) "Guest FS attrib"    type(seg_attrib);
+    register fs_limit    addr(base, 0x444) "Guest FS limit"     type(uint32);
+    register fs_base     addr(base, 0x448) "Guest FS base"      type(uint64);
+
+    register gs_selector addr(base, 0x450) "Guest GS selector"  type(uint16);
+    register gs_attrib   addr(base, 0x452) "Guest GS attrib"    type(seg_attrib);
+    register gs_limit    addr(base, 0x454) "Guest GS limit"     type(uint32);
+    register gs_base     addr(base, 0x458) "Guest GS base"      type(uint64);
+
+    register gdtr_selector addr(base, 0x460) "Guest GTDR selector" type(uint16);
+    register gdtr_attrib   addr(base, 0x462) "Guest GTDR attrib"   type(seg_attrib);
+    register gdtr_limit    addr(base, 0x464) "Guest GTDR limit"    type(uint32);
+    register gdtr_base     addr(base, 0x468) "Guest GTDR base"     type(uint64);
+
+    register ldtr_selector addr(base, 0x470) "Guest LTDR selector" type(uint16);
+    register ldtr_attrib   addr(base, 0x472) "Guest LTDR attrib"   type(seg_attrib);
+    register ldtr_limit    addr(base, 0x474) "Guest LTDR limit"    type(uint32);
+    register ldtr_base     addr(base, 0x478) "Guest LTDR base"     type(uint64);
+
+    register idtr_selector addr(base, 0x480) "Guest ITDR selector" type(uint16);
+    register idtr_attrib   addr(base, 0x482) "Guest ITDR attrib"   type(seg_attrib);
+    register idtr_limit    addr(base, 0x484) "Guest ITDR limit"    type(uint32);
+    register idtr_base     addr(base, 0x488) "Guest ITDR base"     type(uint64);
+
+    register tr_selector addr(base, 0x490) "Guest TR selector"  type(uint16);
+    register tr_attrib   addr(base, 0x492) "Guest TR attrib"    type(seg_attrib);
+    register tr_limit    addr(base, 0x494) "Guest TR limit"     type(uint32);
+    register tr_base     addr(base, 0x498) "Guest TR base"      type(uint64);
+
+    register cpl addr(base, 0x4cb) "Guest current protection level" type(uint8);
+
+    register efer   addr(base, 0x4d0) "Guest EFER" {
+        sce         1   "System Call Extensions";
+        _           7   mbz;
+        lme         1   "Long Mode Enable";
+        _           1   mbz;
+        lma         1   "Long Mode Active";
+        nxe         1   "No-Execute Enable";
+        svme        1   "Secure Virtual Machine Enable";
+        _           1   mbz;
+        ffxsr       1   "Fast FXSAVE/FXRSTOR";
+        _           49  mbz;
+    };
+
+    register cr4    addr(base, 0x548) "Guest CR4" {
+        vme         1   "Virtual-8086 Mode Extensions";
+        pvi         1   "Protected-Mode Virtual Interrupts";
+        tsd         1   "Time Stamp Disable";
+        de          1   "Debugging Extensions";
+        pse         1   "Page Size Extensions";
+        pae         1   "Physical-Address Extension";
+        mce         1   "Machine Check Enable";
+        pge         1   "Page-Global Enable";
+        pce         1   "Performance-Monitoring Counter Enable";
+        osfxsr      1   "Operating System FXSAVE/FXRSTOR Support";
+        osxmmecept  1   "Operating System Unmasked Exception Support";
+        _           53  mbz;
+    };
+
+    register cr3    addr(base, 0x550) "Guest CR3"       type(uint64);
+
+    register cr0    addr(base, 0x558) "Guest CR0" {
+        pe          1   "Protection Enabled";
+        mp          1   "Monitor Coprocessor";
+        em          1   "Emulation";
+        ts          1   "Task Switched";
+        et          1   ro "Extension Type";
+        ne          1   "Numeric Error";
+        _           10  rsvd;
+        wp          1   "Write Protect";
+        _           1   rsvd;
+        am          1   "Alignment Mask";
+        _           10  rsvd;
+        nw          1   "Not Writethrough";
+        cd          1   "Cache Disable";
+        pg          1   "Paging";
+        _           32  mbz;
+    };
+
+    register dr7    addr(base, 0x560) "Guest DR7"       type(uint64);
+    register dr6    addr(base, 0x568) "Guest DR6"       type(uint64);
+
+    register rflags addr(base, 0x570) "Guest RFLAGS" {
+        cf          1   "Carry Flag";
+        _           1   rsvd;
+        pf          1   "Parity Flag";
+        _           1   rsvd;
+        af          1   "Auxiliary Flag";
+        _           1   rsvd;
+        zf          1   "Zero Flag";
+        sf          1   "Sign Flag";
+        tf          1   "Trap Flag";
+        intrf       1   "Interrupt Flag";
+        df          1   "Direction Flag";
+        of          1   "Overflow Flag";
+        iopl        2   "I/O Privilege Level";
+        nt          1   "Nested Task";
+        _           1   rsvd;
+        rf          1   "Resume Flag";
+        vm          1   "Virtual-8086 Mode";
+        ac          1   "Alignment Check";
+        vif         1   "Virtual Interrupt Flag";
+        vip         1   "Virtual Interrupt Pending";
+        id          1   "ID Flag";
+        _           42  rsvd;
+    };
+
+    register rip    addr(base, 0x578) "Guest RIP"       type(uint64);
+    register rsp    addr(base, 0x5d8) "Guest RSP"       type(uint64);
+    register rax    addr(base, 0x5F8) "Guest RAX"       type(uint64);
+    register star   addr(base, 0x600) "Guest STAR"      type(uint64);
+    register lstar  addr(base, 0x608) "Guest LSTAR"     type(uint64);
+    register cstar  addr(base, 0x610) "Guest CSTAR"     type(uint64);
+    register sfmask addr(base, 0x618) "Guest SFMASK"    type(uint64);
+    register kernel_gs_base addr(base, 0x620) "Guest KernelGsBase" type(uint64);
+    register sysenter_cs addr(base, 0x628) "Guest SYSENTER_CS" type(uint64);
+    register sysenter_esp addr(base, 0x630) "Guest SYSENTER_ESP" type(uint64);
+    register sysenter_eip addr(base, 0x638) "Guest SYSENTER_EIP" type(uint64);
+    register cr2    addr(base, 0x640) "Guest CR2"       type(uint64);
+    register gpat   addr(base, 0x668) "Guest PAT"       type(uint64);
+    register dbgctl addr(base, 0x670) "Guest DBGCTL MSR" type(uint64);
+    register br_from addr(base, 0x678) "Guest LastBranchFromIP MSR" type(uint64);
+    register br_to addr(base, 0x680) "Guest LastBranchToIP MSR" type(uint64);
+    register lastexcpfrom addr(base, 0x688) "Guest LastExceptionFromIP MSR" type(uint64);
+    register lastexcpto addr(base, 0x690) "Guest LastExceptionToIP MSR" type(uint64);
+};

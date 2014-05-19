@@ -1,0 +1,47 @@
+#!/bin/bash
+
+##########################################################################
+# Copyright (c) 2010, ETH Zurich.
+# All rights reserved.
+#
+# This file is distributed under the terms in the attached LICENSE file.
+# If you do not find this file, copies can be found by writing to:
+# ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+##########################################################################
+
+# exit immediately on error
+set -e
+
+# grab arguments
+SRCDIR=$1
+ARCHIVE=$2
+shift 2
+
+TMPDIR=$(mktemp -d)
+
+for src in $*; do
+    # construct destination file name relative to archive dir
+    # $SRCDIR/foo/bar/baz.txt -> skb/bar/baz.txt
+    dst=skb/${src#$SRCDIR/*/}
+
+    # ensure target directory exists
+    mkdir -p $TMPDIR/$(dirname $dst)
+
+    # copy to target and add to list
+    cp $src $TMPDIR/$dst
+    echo $dst >> $TMPDIR/files
+done
+
+# run cpio in the temp dir
+cd $TMPDIR
+cpio -o -H crc -O ramfs.cpio < files
+cd $OLDPWD
+
+# compress it
+gzip $TMPDIR/ramfs.cpio
+
+# move it to the right place
+mv $TMPDIR/ramfs.cpio.gz $ARCHIVE
+
+# clean up
+rm -rf $TMPDIR

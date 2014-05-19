@@ -1,0 +1,69 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/monitor
+--
+--------------------------------------------------------------------------
+
+[(let
+     arch_dir = "arch" ./. archFamily arch
+
+     arch_dirs "x86_32" = [ arch_dir, "arch/x86" ]
+     arch_dirs "x86_64" = [ arch_dir, "arch/x86" ]
+     arch_dirs "scc"    = [ arch_dir, "arch/x86" ]
+     arch_dirs _        = [ arch_dir ]
+
+     rcap_db = case Config.rcap_db of
+                        Config.RCAP_DB_NULL   -> "rcap_db_null.c"
+                        Config.RCAP_DB_CENTRAL-> "rcap_db_central.c"
+                        Config.RCAP_DB_TWOPC  -> "rcap_db_twopc.c"
+     rcap_db_libs = case Config.rcap_db of
+                        Config.RCAP_DB_NULL   -> []
+                        Config.RCAP_DB_CENTRAL-> [ "collections" ]
+                        Config.RCAP_DB_TWOPC  -> [ "collections", "cap_predicates" ]
+     common_srcs = [ "trace_support.c", "bfscope_support.c", "ram_alloc.c", "inter.c", "spawn.c", "invocations.c", "iref.c",
+                     "main.c", "monitor_server.c", "monitor_rpc_server.c",
+		     "boot.c", "queue.c", "domain.c", "intermon_bindings.c",
+		     "rcap_db_common.c", "resource_ctrl.c", "timing.c", rcap_db ]
+
+     arch_srcs "x86_32"  = [ "arch/x86/boot.c", "arch/x86/inter.c", "arch/x86/monitor_server.c", "arch/x86/notify_ipi.c" ]
+     arch_srcs "x86_64"  = [ "arch/x86/boot.c", "arch/x86/inter.c", "arch/x86/monitor_server.c", "arch/x86/notify_ipi.c" ]
+     arch_srcs "scc"     = [ "arch/scc/boot.c", "arch/scc/inter.c", "arch/x86/monitor_server.c", "arch/x86/notify_ipi.c" ]
+     arch_srcs "armv5"   = [ "arch/arm/boot.c", "arch/arm/inter.c", "arch/arm/monitor_server.c" ]
+     arch_srcs "xscale"  = [ "arch/arm/boot.c", "arch/arm/inter.c", "arch/arm/monitor_server.c" ]
+     arch_srcs "armv7"   = [ "arch/armv7/boot.c", "arch/armv7/inter.c", "arch/armv7/monitor_server.c", "arch/armv7/notify_ipi.c" ]
+     arch_srcs "armv7-m"   = [ "arch/armv7/boot.c", "arch/armv7/inter.c", "arch/armv7/monitor_server.c", "arch/armv7/notify_ipi.c" ]
+     arch_srcs _         = []
+
+     idc_srcs = concat $ map getsrcs $ optInterconnectDrivers $ options arch
+          where
+            getsrcs "ump" = [ "ump_support.c" ]
+            getsrcs "multihop" = [ "multihop_support.c" ]
+            getsrcs _     = []
+            
+     idc_libraries = concat $ map getsrcs $ optInterconnectDrivers $ options arch
+          where
+            getsrcs "multihop" = [ "collections" ]
+            getsrcs _     = []
+                     
+  in
+    build application { target = "monitor",
+                        architectures = [arch],
+                        cFiles = common_srcs ++ arch_srcs arch ++ idc_srcs,
+                        flounderDefs = [ "mem", "monitor", "monitor_blocking" ],
+                        flounderBindings = [ "monitor_mem", "intermon" ],
+                        flounderExtraBindings = [ ("monitor", ["loopback"]),
+                                                  ("monitor_mem", ["rpcclient"]),
+                                                  ("mem", ["rpcclient"]) ],
+                        addLinkFlags = [ "-e _start_init" ],
+                        addIncludes = [ "include" ./. a | a <- arch_dirs arch ],
+                        addLibraries = (
+ 			    [ "spawndomain", "bench", "trace", "elf" ]
+                            ++ rcap_db_libs ++ idc_libraries)
+                      }
+ ) | arch <- allArchitectures ]

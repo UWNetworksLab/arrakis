@@ -1,0 +1,51 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2013, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Universitaetstr. 6, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for lib/octopus
+-- 
+--------------------------------------------------------------------------
+
+[
+    build library { target = "octopus_parser",
+                    addCFlags = [ "-O3",
+                                  "-Wno-unused-value", 
+                                  "-Wno-redundant-decls", 
+                                  "-Wno-missing-declarations",
+                                  "-Wno-missing-prototypes",
+                                  "-Wno-implicit-function-declaration" ],
+                    cFiles = [ "parser/ast.c", "parser/parse.c", 
+                               "parser/scan.c", "parser/read.c" ] },
+     -- no-missing-declarations & no-missing-prototypes Bug: 
+     -- https://bugzilla.redhat.com/show_bug.cgi?id=612465
+     -- no-implicit-function-declaration:
+     -- warning: implicit declaration of function 'yylex'
+
+     build library { target = "octopus",
+                     addCFlags = [ "-O2" ],
+                    cFiles = [ "client/octopus.c", "client/getset.c", 
+                               "client/pubsub.c",
+                               "client/barriers.c", "client/trigger.c",
+                               "client/locking.c", "client/semaphores.c", 
+                               "client/capability_storage.c", 
+                               "client/strnatcmp.c" ],
+                    flounderDefs = [ "octopus", "monitor" ],
+                    flounderBindings = [ "octopus" ],
+                    flounderExtraBindings = [ ("octopus", ["rpcclient"]) ],
+                    flounderTHCStubs = [ "octopus" ],
+                    addLibraries = ["octopus_parser", "thc"]
+                  },
+                  
+    build library { target = "octopus_server",
+                    addCFlags = [ "-O2" ],
+                    cFiles = [ "server/service.c", "server/init.c", 
+                               "server/queue.c", "server/capstorage.c" ],
+                    flounderDefs = [ "octopus", "monitor" ],
+                    flounderBindings = [ "octopus" ],
+                    addLibraries = [ "skb", "hashtable" ] 
+                   }
+]

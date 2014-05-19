@@ -1,0 +1,157 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_wkup_cm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_wkup_cm msbfirst ( addr base ) "" {
+    
+
+    constants clkactivity_wkup_ts_fclk_status width(1) "" {
+        CLKACTIVITY_WKUP_TS_FCLK_1_r = 1 "Corresponding clock is running or gating/ungating transition is on-going";
+        CLKACTIVITY_WKUP_TS_FCLK_0_r = 0 "Corresponding clock is definitely gated";
+    };
+
+    constants clktrctrl_status width(2) "" {
+        CLKTRCTRL_0 = 0 "NO_SLEEP: Sleep transition cannot be initiated. Wakeup transition may however occur.";
+        CLKTRCTRL_1_r = 1 "Reserved";
+        CLKTRCTRL_2_r = 2 "Reserved";
+        CLKTRCTRL_3 = 3 "HW_AUTO: Automatic transition is enabled. Sleep and wakeup transition are based upon hardware conditions.";
+    };
+    
+    register cm_wkup_clkstctrl addr(base, 0x0) "This register enables the domain power state transition. It controls the hardware supervised domain power state transition between ON-ACTIVE and ON-INACTIVE states. It also holds 1 status bit per clock input of the domain." {
+        _ 18 mbz;
+        clkactivity_wkup_ts_fclk 1 ro type(clkactivity_wkup_ts_fclk_status) "This field indicates the state of the WKUP_TS_FCLK clock in the domain. [warm reset insensitive]";
+        clkactivity_l4_wkup_iclk 1 ro type(clkactivity_wkup_ts_fclk_status) "This field indicates the state of the clock in the domain. [warm reset insensitive]";
+        clkactivity_wkup_32k_fclk 1 ro type(clkactivity_wkup_ts_fclk_status) "This field indicates the state of the clock in the domain. [warm reset insensitive]";
+        _ 1 mbz;
+        clkactivity_abe_lp_clk 1 ro type(clkactivity_wkup_ts_fclk_status) "This field indicates the state of the clock in the domain. [warm reset insensitive]";
+        clkactivity_sys_clk 1 ro type(clkactivity_wkup_ts_fclk_status) "This field indicates the state of the SYS_CLK clock in the domain. [warm reset insensitive]";
+        _ 6 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the clock state transition of the WKUP clock domain.";
+    };
+
+    constants idlest_status width(2) "" {
+        IDLEST_0_r = 0 "Module is fully functional, including INTRCONN";
+        IDLEST_1_r = 1 "Module is performing transition: wakeup, or sleep, or sleep abortion";
+        IDLEST_2_r = 2 "Module is in idle mode (only INTRCONN part). It is functional if using separate functional clock";
+        IDLEST_3_r = 3 "Module is disabled and cannot be accessed";
+    };
+
+    constants modulemode_status width(2) "" {
+        MODULEMODE_1_r = 1 "Module is managed automatically by hardware according to clock domain transition. A clock domain sleep transition put module into idle. A wakeup domain transition put it back into function. If CLKTRCTRL=3, any INTRCONN access to module is always granted. Module clocks may be gated according to the clock domain state.";
+    };
+    
+    register cm_wkup_l4wkup_clkctrl addr(base, 0x20) "This register manages the L4WKUP clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 ro type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+
+    constants modulemode_status1 width(2) "" {
+        MODULEMODE_0 = 0 "Module is disable by software. Any INTRCONN access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1_r_1 = 1 "Reserved";
+        MODULEMODE_2 = 2 "Module is explicitly enabled. Interface clock (if not used for functions) may be gated according to the clock domain state. Functional clocks are guarantied to stay present. As long as in this configuration, power domain sleep transition cannot happen.";
+        MODULEMODE_3_r = 3 "Reserved";
+    };
+    
+    register cm_wkup_wdtimer2_clkctrl addr(base, 0x30) "This register manages the WDT2 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status1) "Control the way mandatory clocks are managed.";
+    };
+
+    constants optfclken_dbclk_status width(1) "" {
+        OPTFCLKEN_DBCLK_0 = 0 "Optional functional clock is disabled";
+        OPTFCLKEN_DBCLK_1 = 1 "Optional functional clock is enabled";
+    };
+
+    constants modulemode_status2 width(2) "" {
+        MODULEMODE_0_1 = 0 "Module is disable by software. Any INTRCONN access to module results in an error, except if resulting from a module wakeup (asynchronous wakeup).";
+        MODULEMODE_1 = 1 "Module is managed automatically by hardware according to clock domain transition. A clock domain sleep transition put module into idle. A wakeup domain transition put it back into function. If CLKTRCTRL=3, any INTRCONN access to module is always granted. Module clocks may be gated according to the clock domain state.";
+        MODULEMODE_2_r = 2 "Reserved";
+        MODULEMODE_3_r_1 = 3 "Reserved";
+    };
+    
+    register cm_wkup_gpio1_clkctrl addr(base, 0x38) "This register manages the GPIO1 clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 7 mbz;
+        optfclken_dbclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 6 mbz;
+        modulemode 2 rw type(modulemode_status2) "Control the way mandatory clocks are managed.";
+    };
+
+    constants clksel_status width(1) "" {
+        CLKSEL_0 = 0 "Selects the SYS_CLK as the source";
+        CLKSEL_1 = 1 "Selects the 32KHz as the source";
+    };
+    
+    register cm_wkup_gptimer1_clkctrl addr(base, 0x40) "This register manages the TIMER1 clocks." {
+        _ 7 mbz;
+        clksel 1 rw type(clksel_status) "Select the source of the functional clock";
+        _ 6 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status1) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_wkup_32ktimer_clkctrl addr(base, 0x50) "This register manages the SYNCTIMER clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 ro type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_wkup_sarram_clkctrl addr(base, 0x60) "This register manages the SARRAM clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 ro type(modulemode_status) "Control the way mandatory clocks are managed.";
+    };
+    
+    register cm_wkup_keyboard_clkctrl addr(base, 0x78) "This register manages the KEYBOARD clocks." {
+        _ 14 mbz;
+        idlest 2 ro type(idlest_status) "Module idle status. [warm reset insensitive]";
+        _ 14 mbz;
+        modulemode 2 rw type(modulemode_status1) "Control the way mandatory clocks are managed.";
+    };
+
+    constants clksel_status1 width(2) "" {
+        CLKSEL_0_1 = 0 "Divide by 8";
+        CLKSEL_1_1 = 1 "Divide by 16";
+        CLKSEL_2 = 2 "Divide by 32";
+        CLKSEL_3 = 3 "Reserved";
+    };
+    
+    register cm_wkup_bandgap_clkctrl addr(base, 0x88) "This register manages the clock delivered to the Bandgap and SYSCTRL_GENERAL_CORE modules for the Thermal Sensor feature. [warm reset insensitive]" {
+        _ 6 mbz;
+        clksel 2 rw type(clksel_status1) "Selects the divider value for generating the Thermal Sensor clock from L4WKUP_ICLK source. The divider has to be selected so as to guarantee a frequency between 1MHz and 2MHz.";
+        _ 15 mbz;
+        optfclken_ts_fclk 1 rw type(optfclken_dbclk_status) "Optional functional clock control.";
+        _ 8 mbz;
+    };
+};

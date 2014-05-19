@@ -1,0 +1,62 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2007-2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /usr/skb/eclipse_kernel/src
+--
+--------------------------------------------------------------------------
+
+let includes = ["../../include" ]
+
+    unflags= [ "-Werror", "-Wshadow", "-Wstrict-prototypes",
+               "-Wold-style-definition", "-Wmissing-prototypes",
+               "-Wmissing-declarations",
+               "-Wmissing-field-initializers", "-Wredundant-decls",
+               "-std=c99" ]
+
+in
+  [ build library { target = "eclipse", 
+                    -- force optimisations on, without them we blow the stack
+                    addCFlags = [ "-O2", "-DPRINTAM" ] ++
+                                if Config.libc == "newlib"
+                                then ["-DHAVE_FINITE"]
+                                else [],
+                    cFiles = [ "dict.c", "read.c", "lex.c", "emu.c",
+  	                       "proc_desc.c", "bip_tconv.c",
+  	                       "io_barrelfish.c", "write.c",
+  	                       "bip_comp.c", "mem.c", "operator.c",
+  	                       "bip_record.c", "bip_bag.c",
+  	                       "bip_heapevents.c", "bip_shelf.c",
+  	                       "bip_store.c", "bip_array.c",
+  	                       "bip_strings.c", "bip_db.c",
+  	                       "property.c", "bip_io.c",
+  	                       "procedure.c", "handle.c", "bigrat.c",
+  	                       "bip_module.c", "bip_control.c",
+  	                       "bip_delay.c", "bip_domain.c",
+  	                       "elipsys_fd.c", "code.c", "init.c",
+  	                       "emu_c_env.c", "emu_util.c", "error.c",
+  	                       "external.c", "gc_stacks.c",
+  	                       "printam.c", "addrmap.c",
+  	                       "eclipsedir.c", "embed.c",
+  	                       "os_support.c", "intervals.c",
+  	                       "bip_arith.c", "bip_misc.c",
+  	                       "bip_load.c", "handlers.c"],
+                  addIncludes = includes,
+                  omitCFlags = unflags,
+                  architectures = [ "x86_64", "x86_32", "scc" ]
+                },
+    build library { target = "dummies",
+                    cFiles = [ "lib1.c", "lib2.c", "lib3.c", "lib4.c",
+                               "lib5.c", "lib6.c", "lib7.c",
+                               "dummy_mps.c", "dummy_par.c",
+                               "dummy_upcalls.c", "dummy_wm.c",
+                               "whereami_default.c", "dummy_bigrat.c" ],
+                  addIncludes = includes,
+                  omitCFlags = unflags,
+                  architectures = [ "x86_64", "x86_32", "scc" ]
+                  }
+  ]

@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, 2011, 2012, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface spawn "Interface to spawn domains" {
+    typedef struct {
+    uint8 status;
+    } ps_entry;
+
+    rpc spawn_domain(in string path, in char argvbuf[argvbytes], in char envbuf[envbytes],
+                     out errval err, out domainid domain_id);
+
+    rpc spawn_domain_with_caps(in string path, in char argvbuf[argvbytes],
+                               in char envbuf[envbytes], in cap inheritcn_cap,
+                               in cap argcn_cap, out errval err,
+                               out domainid domain_id);
+
+    rpc use_local_memserv();
+    rpc kill(in domainid domain_id, out errval err);
+
+    /*
+     * XXX: domain_id shouldn't be here. Instead, spawnd should figure
+     * out from the binding what domain it is sending the request.
+     */
+    rpc exit(in domainid domain_id, in uint8 exitcode);
+
+    rpc wait(in domainid domain_id, in bool nohang, out uint8 exitcode, out errval err);
+
+    // XXX: Should be domainid instead of uint8, but it's not yet supported
+    rpc get_domainlist(out uint8 domains[len]);
+
+    rpc status(in domainid domain_id, out ps_entry ps_entry, out char argv[len],
+    	       out errval err);
+};

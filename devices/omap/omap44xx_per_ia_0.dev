@@ -1,0 +1,87 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_per_ia_0.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_per_ia_0 msbfirst ( addr base ) "" {
+    
+    
+    register l4_ia_component_l addr(base, 0x0) "COMPONENT register identifies the component to which this register block belongs. The register contains a component code and revision, which are used to identify the hardware of the component. The COMPONENT register is read-only." {
+        code 16 ro "Interconnect code";
+        rev 16 ro "Component revision code";
+    };
+    
+    register l4_ia_component_h ro addr(base, 0x4) "COMPONENT register identifies the component to which this register block belongs. The register contains a component code and revision, which are used to identify the hardware of the component. The COMPONENT register is read-only." type(uint32);
+    
+    register l4_ia_core_l addr(base, 0x18) "Provide information about the core initiator" {
+        core_code 16 ro "Interconnect core code";
+        core_rev 16 ro "Component revision code code";
+    };
+    
+    register l4_ia_core_h addr(base, 0x1C) "Provide information about the core initiator" {
+        _ 16 mbz;
+        vendor_code 16 ro "Vendor revision core code";
+    };
+    
+    register l4_ia_agent_control_l addr(base, 0x20) "Enable error reporting on an initiator interface.The error reporting mechanism is enabled when the INBAND_ERROR_REP bit field is set to 1. The out-of-band OCP MError reporting mechanism is enabled when the MERROR_REP bit field is set to 1." {
+        prot_error_secondary_rep 1 rw "Out-of-band reporting of protection mechanism secondary errors";
+        prot_error_primary_rep 1 rw "Out-of-band reporting of protection mechanism primary errors";
+        _ 2 mbz;
+        inband_error_rep 1 rw "Setting this field to 1 reports on in-band errors using the INBAND_ERROR log bit of IA.AGENT_STATUS register.";
+        _ 27 mbz;
+    };
+    
+    register l4_ia_agent_control_h ro addr(base, 0x24) "Enable error reporting on an initiator interface." type(uint32);
+    
+    register l4_ia_agent_status_l addr(base, 0x28) "Stores status information for an initiator. The INBAND_ERROR and MERROR fields are read/write and are implemented as log bits." {
+        prot_error_secondary 1 rw1c "0x0: Secondary Protection error not present.0x1: Secondary Protection error present";
+        prot_error_primary 1 rw1c "0x0: Primary Protection error not present.0x1: Primary Protection error present";
+        _ 2 mbz;
+        inband_error 1 rw1c "0x0 No In-Band error present.0x1 In-Band error present.";
+        _ 27 mbz;
+    };
+    
+    register l4_ia_agent_status_h ro addr(base, 0x2C) "Stores status information for an initiator." type(uint32);
+    
+    register l4_ia_error_log_l addr(base, 0x58) "Log information about error conditions. The CODE field logs any protection violation or address hole errors detected by the initiator subsystem while decoding a request." {
+        multi 1 rw1c "Multiple errors detected";
+        secondary 1 rw1c "Indicates whether protection violation was a primary or secondary error";
+        _ 4 mbz;
+        code 2 rw1c "The error code of an initiator request.0x00: No errors0x01: Reserved0x10: Address hole0x11: Protection violation";
+        _ 10 mbz;
+        connid 6 ro "ConnID of request causing the error, refer to";
+        _ 5 mbz;
+        cmd 3 ro "Command that caused error";
+    };
+    
+    register l4_ia_error_log_h addr(base, 0x5C) "Log information about error conditions." {
+        _ 16 mbz;
+        req_info 16 ro "MReqInfo bits of request that caused the errorREQ_INFO[0] = supervisor,REQ_INFO[1] = Debug";
+    };
+    
+    register l4_ia_error_log_addr_l ro addr(base, 0x60) "Extended error log (address information)" type(uint32);
+    
+    register l4_ia_error_log_addr_h ro addr(base, 0x64) "Extended error log (address information)" type(uint32);
+};

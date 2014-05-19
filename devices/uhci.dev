@@ -1,0 +1,151 @@
+/*
+ * Copyright (c) 2011, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Universitaestr. 6, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * uhci.dev
+ *
+ * DESCRIPTION: Universal Host Controller Interface (UHCI) description
+ * 
+ * Rather old hardware - provided primarily for compatibility with qemu.
+ * Numbers in comments refer to the Intel Universal Host Controller
+ * Interface (UHCI) Design Guide Revision 1.1., March 1996. 
+ */
+
+
+device uhci msbfirst ( io base ) "UHCI USB controller" {
+
+    // 2.1.1
+    // Default value: 0x0000
+    register usbcmd rw io(base, 0x0000) "USB command" { 
+	_	8; 
+	maxp	1 "Max packet (1=64 bytes, 0=32 bytes)";
+	cf	1 "Configure flag";
+	swdbg	1 "Software debug";
+	fgr	1 "Force global resume";
+	egsm	1 "Enter global suspend mode";
+	greset	1 "Global reset";
+	hcreset 1 "Host controller reset";
+	rs	1 "Run/stop";
+    };
+    
+    // 2.1.2
+    // Default value: 0x0000
+    register usbsts rwc io(base, 0x0002) "USB status" {
+	_	10;
+	hch	1 "Host controller halted";
+	hcpe	1 "Host controller process error";
+	hse	1 "Host system error";
+	rd	1 "Resume detect";
+	uei	1 "USB error interrupt";
+	usbint	1 "USB interrupt";
+    };
+    
+    // 2.1.3
+    // Default value: 0x0000
+    register usbintr rw io(base, 0x0004) "USB interrupt enable" {
+	_	12;
+	sp	1 "Short packet interrupt enable";
+	ioc	1 "Interrupt on complete enable";
+	ri	1 "Resume interrupt enable";
+	tc	1 "Timeout/CRC interrupt enable";
+    };
+    
+    // 2.1.4
+    // Default value: 0x0000
+    register frnum rw io(base, 0x0006) "Frame number" {
+	_	5;
+	flcifn	11 "Frame list current index / frame number";
+    };
+    
+    // 2.1.5
+    // Default value: undefined
+    // Bottom 12 bits must be zero
+    register flbaseadd rw io(base, 0x0008) "Frame list base address" 
+	type(uint32);
+    
+    // 2.1.6
+    // Default value: 0x40
+    // SOF cycle time = 11936 + softv; default gives 12k, which at
+    //  12MHz gives 1ms frame period. 
+    register sof rw io(base, 0x000c) "Start of frame modify" {
+	_	1;
+	softv	7 "SOF timing value";
+    };
+    
+    // 2.1.7
+    // Default values: 0x80
+    regarray portsc io(base, 0x10)[ 2 ] "Port status and control" {
+	_	3;
+	susp	1 rw	"suspend";
+	_	2;
+	pr	1 rw	"port reset";
+	lsda	1 ro	"low-speed device attached";
+	_	1;	// Always read as 1
+	rd	1 rw	"resume detect";
+	ls	2 ro	"line status";
+	pedc	1 rw1c	"port enable/disable change";
+	ped	1 rw	"port enabled/disabled";
+	csc	1 rw1c	"connect status change";
+	ccs	1 ro	"current connect status";
+    };
+
+    // 3.1
+    datatype flp "Frame list pointer" {
+	flp	28	"bits 31:4 of frame list pointer";
+	_	2 mbz;
+	q	1	"QH/TD select";
+	t	1	"terminate (frame list pointer not valid)";
+    };
+    
+    // 3.2
+    datatype td msbfirst(32) "Transfer descriptor" {
+	// link (dword 0)
+	lp	28	"bits 31:4 of link pointer";
+	_	1 mbz;
+	vf	1	"Depth/breadth select";
+	q	1	"QH/TD select";
+	t	1	"terminate (link pointer is not valid)";
+	// control and status (dword 1)
+	_	2;
+	spd	1	"short packet detect";
+	ec	2	"error count";
+	ls	1	"low speed device";
+	ios	1	"isochronous select";
+	ioc	1	"interrupt on complete";
+	// Bits 23:16 of second word are status, viz:
+	active	1	"active";
+	stalled 1	"stalled";
+	dbe	1	"data buffer error";
+	babble	1	"babble detected";
+	nakr	1	"NAK received";
+	cte	1	"CRC/Timeout error";
+	bse	1	"bitstuff error";
+	_	1;
+	_	5;
+	actlen	11	"actual length";
+	// token (dword 2)
+	maxlen	11	"maximum length";
+	_	1;
+	d	1	"data toggle";
+	endpt	4	"endpoint";
+	devaddr 7	"device address";
+	pid	8	"packet indentification";
+	// buffer ptr (dword 3)
+	buffer	32	"buffer pointer";
+    };
+
+    // 3.3 
+    datatype qhe msbfirst(32) "Queue head and element" {
+	qelp	28	"bits 31:4 of queue head or element link pointer";
+	_	2 mbz;
+	q	1	"QH/TD select";
+	t	1	"terminate (qelp not valid)";
+    };
+
+};
+

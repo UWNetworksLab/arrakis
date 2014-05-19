@@ -1,0 +1,36 @@
+timeout 0
+
+# spawnd is used to control which cpus are booted
+#
+# "spawnd boot" will use the skb and pci to figure out and
+#  boot all cores in the machine
+#
+# "spawnd boot bootapic-x86_64=1-5" will not use the skb and
+# boot the list of cores passed as argument.
+# The APIC id of the cores to boot should be specified.
+# This list may not include the bsp core id.
+
+title	Barrelfish
+root	(nd)
+kernel	/kuzi/x86_64/sbin/cpu loglevel=4
+module	/kuzi/x86_64/sbin/cpu loglevel=4
+module	/kuzi/x86_64/sbin/init
+
+# Domains spawned by init
+module	/kuzi/x86_64/sbin/mem_serv
+module	/kuzi/x86_64/sbin/monitor
+
+# Special boot time domains spawned by monitor
+module	/kuzi/x86_64/sbin/chips boot
+module  /kuzi/x86_64/sbin/ramfsd boot
+module  /kuzi/x86_64/sbin/skb boot
+modulenounzip /kuzi/skb_ramfs.cpio.gz nospawn
+module  /kuzi/x86_64/sbin/pci boot
+module  /kuzi/x86_64/sbin/spawnd boot
+#bootapic-x86_64=1-15
+
+# General user domains
+module  /kuzi/x86_64/sbin/mem_serv_dist core=0 -ma -x 1,3 -r 536870912
+module  /kuzi/x86_64/sbin/mem_bench_3 core=1 15
+
+

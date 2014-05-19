@@ -1,0 +1,892 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_device_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_device_prm msbfirst ( addr base ) "" {
+    
+
+    constants rst_global_cold_software_status width(1) "" {
+        RST_GLOBAL_COLD_software_0 = 0 "Global COLD software reset is cleared.";
+        RST_GLOBAL_COLD_software_1 = 1 "Triggers a global COLD software reset. The software must ensure the SDRAM is properly put in sef-refresh mode before applying this reset.";
+    };
+
+    constants rst_global_warm_software_status width(1) "" {
+        RST_GLOBAL_WARM_software_0 = 0 "Global warm software reset is cleared.";
+        RST_GLOBAL_WARM_software_1 = 1 "Triggers a global warm software reset.";
+    };
+    
+    register prm_rstctrl addr(base, 0x0) "Global software cold and warm reset control. This register is auto-cleared. Only write 1 is possible. A read returns 0 only." {
+        _ 30 mbz;
+        rst_global_cold_software 1 rw type(rst_global_cold_software_status) "Global COLD software reset control. This bit is reset only upon a global cold source of reset.";
+        rst_global_warm_software 1 rw type(rst_global_warm_software_status) "Global WARM software reset control. This bit is reset upon any global source of reset (warm and cold).";
+    };
+
+    constants c2c_rst_status width(1) "" {
+        C2C_RST_0 = 0 "No C2C warm reset.";
+        C2C_RST_1 = 1 "C2C warm reset has occurred.";
+    };
+
+    constants icepick_rst_status width(1) "" {
+        ICEPICK_RST_0 = 0 "No ICEPICK reset.";
+        ICEPICK_RST_1 = 1 "IcePick reset has occurred.";
+    };
+
+    constants vdd_core_volt_mgr_rst_status width(1) "" {
+        VDD_CORE_VOLT_MGR_RST_0 = 0 "No VDD_CORE voltage manager reset.";
+        VDD_CORE_VOLT_MGR_RST_1 = 1 "VDD_CORE voltage manager reset has occurred.";
+    };
+
+    constants vdd_iva_volt_mgr_rst_status width(1) "" {
+        VDD_IVA_VOLT_MGR_RST_0 = 0 "No VDD_IVA voltage manager reset.";
+        VDD_IVA_VOLT_MGR_RST_1 = 1 "VDD_IVA voltage manager reset has occurred.";
+    };
+
+    constants vdd_mpu_volt_mgr_rst_status width(1) "" {
+        VDD_MPU_VOLT_MGR_RST_0 = 0 "No VDD_MPU voltage manager reset.";
+        VDD_MPU_VOLT_MGR_RST_1 = 1 "VDD_MPU voltage manager reset has occurred.";
+    };
+
+    constants external_warm_rst_status width(1) "" {
+        EXTERNAL_WARM_RST_0 = 0 "No global warm reset.";
+        EXTERNAL_WARM_RST_1 = 1 "Global external warm reset has occurred.";
+    };
+
+    constants mpu_wdt_rst_status width(1) "" {
+        MPU_WDT_RST_0 = 0 "No MPU watchdog reset.";
+        MPU_WDT_RST_1 = 1 "MPU wachtdog reset has occurred.";
+    };
+
+    constants global_warm_sw_rst_status width(1) "" {
+        GLOBAL_WARM_SW_RST_0 = 0 "No global warm software reset";
+        GLOBAL_WARM_SW_RST_1 = 1 "Global warm software reset has occurred.";
+    };
+
+    constants global_cold_rst_status width(1) "" {
+        GLOBAL_COLD_RST_0 = 0 "No power-on reset.";
+        GLOBAL_COLD_RST_1 = 1 "Power-on reset has occurred.";
+    };
+    
+    register prm_rstst addr(base, 0x4) "This register logs the global reset sources. Each bit is set upon release of the domain reset signal. Must be cleared by software. [warm reset insensitive]" {
+        _ 21 mbz;
+        c2c_rst 1 rw1c type(c2c_rst_status) "C2C warm reset event. This is a source of global warm reset.";
+        icepick_rst 1 rw1c type(icepick_rst_status) "IcePick reset event. This is a source of global warm reset initiated by the emulation.";
+        vdd_core_volt_mgr_rst 1 rw1c type(vdd_core_volt_mgr_rst_status) "VDD_CORE voltage manager reset event This is a source of global WARM reset.";
+        vdd_iva_volt_mgr_rst 1 rw1c type(vdd_iva_volt_mgr_rst_status) "VDD_IVA voltage manager reset event This is a source of global WARM reset.";
+        vdd_mpu_volt_mgr_rst 1 rw1c type(vdd_mpu_volt_mgr_rst_status) "VDD_MPU voltage manager reset event This is a source of global WARM reset.";
+        external_warm_rst 1 rw1c type(external_warm_rst_status) "External warm reset event";
+        _ 1 mbz;
+        mpu_wdt_rst 1 rw1c type(mpu_wdt_rst_status) "MPU Watchdog timer reset event. This is a source of global WARM reset.";
+        _ 1 mbz;
+        global_warm_sw_rst 1 rw1c type(global_warm_sw_rst_status) "Global warm software reset event";
+        global_cold_rst 1 rw1c type(global_cold_rst_status) "Power-on (cold) reset event";
+    };
+
+    constants rsttime2_status width(5) "" {
+        RSTTIME2_0 = 0 "Reserved";
+    };
+    
+    register prm_rsttime addr(base, 0x8) "Reset duration control. [warm reset insensitive]" {
+        _ 17 mbz;
+        rsttime2 5 rw type(rsttime2_status) "(Power domain) reset duration 2 (number of RM.SYSCLK clock cycles)";
+        rsttime1 10 rw type(rsttime2_status) "(Global) reset duration 1 (number of Func_32k.clk clock cycles)";
+    };
+
+    constants clkreq_cond_status width(3) "" {
+        CLKREQ_COND_0 = 0 "CLKREQ is never de-asserted";
+        CLKREQ_COND_1 = 1 "CLKREQ is de-asserted when system clock is not required by any function in the device and if all voltage domains are in OFF state.";
+        CLKREQ_COND_2 = 2 "CLKREQ is de-asserted when system clock is not required by any function in the device and if all voltage domains are in RET or OFF state.";
+        CLKREQ_COND_3 = 3 "CLKREQ is de-asserted when system clock is not required by any function in the device and if all voltage domains are in SLEEP or RET or OFF state.";
+        CLKREQ_COND_4 = 4 "CLKREQ is de-asserted when system clock is not required by any function in the device. This is designed for low-power use-cases using the DPLL cascading scheme (ex: MP3)";
+        CLKREQ_COND_5_r = 5 "Reserved";
+        CLKREQ_COND_6_r = 6 "Reserved";
+        CLKREQ_COND_7_r = 7 "Reserved";
+    };
+    
+    register prm_clkreqctrl addr(base, 0xC) "This register allows controlling the CLKREQ signal towards SCRM." {
+        _ 29 mbz;
+        clkreq_cond 3 rw type(clkreq_cond_status) "Control upon which condition CLKREQ signal is de-asserted.";
+    };
+
+    constants vdd_iva_i2c_disable_status width(1) "" {
+        VDD_IVA_I2C_DISABLE_0 = 0 "Normal mode: I2C is enabled.";
+        VDD_IVA_I2C_DISABLE_1 = 1 "Debug mode: I2C is disabled.";
+    };
+
+    constants vdd_iva_presence_status width(1) "" {
+        VDD_IVA_PRESENCE_0 = 0 "IVA voltage is not present as an individual voltage: IVA voltage is merged with MPU voltage if VDD_MPU_presence=1. IVA voltage is merged with CORE voltage if VDD_MPU_presence=0.";
+        VDD_IVA_PRESENCE_1 = 1 "IVA voltage is present on the device.";
+    };
+
+    constants vdd_mpu_presence_status width(1) "" {
+        VDD_MPU_PRESENCE_0 = 0 "MPU voltage is not present as an individual voltage: MPU voltage is merged with IVA voltage if VDD_IVA_presence=1. MPU voltage is merged with CORE voltage if VDD_IVA_presence=0.";
+        VDD_MPU_PRESENCE_1 = 1 "MPU voltage is present on the device.";
+    };
+
+    constants auto_ctrl_vdd_iva_l_status width(2) "" {
+        AUTO_CTRL_VDD_IVA_L_0 = 0 "Voltage domain transitions are disabled.";
+        AUTO_CTRL_VDD_IVA_L_1 = 1 "Voltage domain transitions to SLEEP are enabled.";
+        AUTO_CTRL_VDD_IVA_L_2 = 2 "Voltage domain transitions to RET are enabled.";
+        AUTO_CTRL_VDD_IVA_L_3_r = 3 "reserved";
+    };
+    
+    register prm_voltctrl addr(base, 0x10) "This register provides voltage domain management controls." {
+        _ 17 mbz;
+        vdd_iva_i2c_disable 1 rw type(vdd_iva_i2c_disable_status) "This bit allows disabling I2C interface with powerIC for IVA voltage (for debug purpose only). [warm reset insensitive]";
+        vdd_mpu_i2c_disable 1 rw type(vdd_iva_i2c_disable_status) "This bit allows disabling I2C interface with powerIC for MPU voltage (for debug purpose only). [warm reset insensitive]";
+        vdd_core_i2c_disable 1 rw type(vdd_iva_i2c_disable_status) "This bit allows disabling I2C interface with powerIC for CORE voltage (for debug purpose only). [warm reset insensitive]";
+        _ 2 mbz;
+        vdd_iva_presence 1 rw type(vdd_iva_presence_status) "This bit control the presence of IVA voltage in device. [warm reset insensitive]";
+        vdd_mpu_presence 1 rw type(vdd_mpu_presence_status) "This bit control the presence of MPU voltage in device. [warm reset insensitive]";
+        _ 2 mbz;
+        auto_ctrl_vdd_iva_l 2 rw type(auto_ctrl_vdd_iva_l_status) "This bit field specifies the state to which the hardware can automatically transition the VDD_IVA_L voltage domain.";
+        auto_ctrl_vdd_mpu_l 2 rw type(auto_ctrl_vdd_iva_l_status) "This bit field specifies the state to which the hardware can automatically transition the VDD_MPU_L voltage domain.";
+        auto_ctrl_vdd_core_l 2 rw type(auto_ctrl_vdd_iva_l_status) "This bit field specifies the state to which the hardware can automatically transition the VDD_CORE_L voltage domain.";
+    };
+
+    constants pwrreq_cond_status width(2) "" {
+        PWRREQ_COND_0 = 0 "is never de-asserted";
+        PWRREQ_COND_1 = 1 "is de-asserted if all voltage domain are in SLEEP, RET or OFF state. Conversely, is asserted upon any voltage domain entering or staying in ON state.";
+        PWRREQ_COND_2 = 2 "is de-asserted if all voltage domain are in RET or OFF state. Conversely, is asserted upon any voltage domain entering or staying in ON or SLEEP state.";
+        PWRREQ_COND_3 = 3 "is de-asserted if all voltage domain are in OFF state. Conversely, is asserted upon any voltage domain entering or staying in ON or SLEEP or RET state.";
+    };
+    
+    register prm_pwrreqctrl addr(base, 0x14) "This register allows controlling the signal towards power IC." {
+        _ 30 mbz;
+        pwrreq_cond 2 rw type(pwrreq_cond_status) "Control upon which condition from MPU, IVA and CORE voltage domainsPWRREQ is de-asserted.";
+    };
+    
+    register prm_pscon_count addr(base, 0x18) "This register allows controlling 2 parameters for power state controller. [warm reset insensitive]" {
+        _ 16 mbz;
+        ponout_2_pgoodin_time 8 rw "The value 'NbCycles' set in this field determines the duration of the PONOUT to PGOODIN transition for power domain without DPS. The duration is computed as 8 x NbCycles of system clock cycles.";
+        pcharge_time 8 rw "Number of system clock cycles for the SRAM precharge duration.";
+    };
+    
+    register prm_io_count addr(base, 0x1C) "This register allows controlling LPDDR2 I/O isolation removal setup. [warm reset insensitive]" {
+        _ 24 mbz;
+        iso_2_on_time 8 rw "Determines the setup time of the LPDDR2 IOs going out of isolation. Counting on the system clock. Target is 1.5us.";
+    };
+
+    constants global_wuen_status width(1) "" {
+        GLOBAL_WUEN_0 = 0 "All individual I/O WUEN are gated in the Spinner logic (overriden to 0).";
+        GLOBAL_WUEN_1 = 1 "All individual I/O WUEN from control module are going to IOs.";
+    };
+
+    constants wuclk_ctrl_status width(1) "" {
+        WUCLK_CTRL_0 = 0 "WUCLKIN signal is driven to 0. I/O wakeup daisy chain is functional as well as I/O whose wakeup feature is enabled.";
+        WUCLK_CTRL_1 = 1 "WUCLKIN signal is driven to 1. I/O wakeup daisy chain is reset and is latching current pad states and WUEN inputs.";
+    };
+
+    constants ioon_status_status width(1) "" {
+        IOON_STATUS_0_r = 0 "Part or all of the IOs are not in the ON state, that is are in isolation state";
+        IOON_STATUS_1_r = 1 "All IOs are in the ON state";
+    };
+
+    constants isoovr_extend_status width(1) "" {
+        ISOOVR_EXTEND_0 = 0 "Non-EMIF I/O isolation is not extended. 'EMIF_ON' I/O transition happens as soon as automatic restore is completed";
+        ISOOVR_EXTEND_1 = 1 "Non-EMIF I/O isolation is extended. 'EMIF_ON' I/O transition is stalled";
+    };
+
+    constants isoclk_override_status width(1) "" {
+        ISOCLK_OVERRIDE_0 = 0 "ISOCLKIN signal is not overriden.";
+        ISOCLK_OVERRIDE_1 = 1 "ISOCLKIN signal is overriden to active value (1).";
+    };
+    
+    register prm_io_pmctrl addr(base, 0x20) "This register allows overriding ISOCLK signal towards I/O pad ring." {
+        _ 15 mbz;
+        global_wuen 1 rw type(global_wuen_status) "Global I/O wakeup enable. This is a gating condition to all individual I/O WUEN coming from control module. Gating is done in the Spinner logic.";
+        _ 6 mbz;
+        wuclk_status 1 ro "Gives value of WUCLKOUT signal coming back from I/O pad ring.";
+        wuclk_ctrl 1 rw type(wuclk_ctrl_status) "Direct control on WUCLKIN signal to I/O pad ring.";
+        _ 2 mbz;
+        ioon_status 1 ro type(ioon_status_status) "Gives the functional status of the I/O ring.";
+        isoovr_extend 1 rw type(isoovr_extend_status) "Control non-EMIF I/O isolation extension upon a device wakeup from OFF mode.";
+        _ 2 mbz;
+        isoclk_status 1 ro "Gives value of ISOCLKOUT signal coming back from I/O pad ring.";
+        isoclk_override 1 rw type(isoclk_override_status) "Override control on ISOCLKIN signal to I/O pad ring. Override should be used at boot time only when it is needed to change the mode of an I/O from 1.8-V default mode to 1.2-V mode. When not overriden, this signal is controlled by hardware only.";
+    };
+
+    constants stable_prescal_status width(2) "" {
+        STABLE_PRESCAL_0 = 0 "Ramp-up counter is incremented every 32 system clock cycles";
+        STABLE_PRESCAL_1 = 1 "Ramp-up counter is incremented every 256 system clock cycles";
+        STABLE_PRESCAL_2 = 2 "Ramp-up counter is incremented every 2048 system clock cycles";
+        STABLE_PRESCAL_3 = 3 "Ramp-up counter is incremented every 16384 system clock cycles";
+    };
+    
+    register prm_voltsetup_warmreset addr(base, 0x24) "This register provides bit fields for specifying voltage ramp-up and ramp-down times for PRM managed external regulators. These values are used for VDD_CORE_L domain transitions with OFF state. [warm reset insensitive]" {
+        _ 22 mbz;
+        stable_prescal 2 rw type(stable_prescal_status) "Determines prescaler for stabilization duration counting.";
+        _ 2 mbz;
+        stable_count 6 rw "Determines the stabilization duration of all VDD_xxx_L regulators upon a global warm reset assertion. The duration is computed according to Stable_Prescal.";
+    };
+    
+    register prm_voltsetup_core_off addr(base, 0x28) "This register provides bit fields for specifying voltage ramp-up and ramp-down times for PRM managed external regulators. These values are used for VDD_CORE_L domain transitions with OFF state. [warm reset insensitive]" {
+        _ 6 mbz;
+        ramp_down_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-down duration counting.";
+        _ 2 mbz;
+        ramp_down_count 6 rw "Determines the ramp-down duration of VDD_CORE_L regulators. The duration is computed according to Ramp_Down_Prescal.";
+        _ 6 mbz;
+        ramp_up_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-up duration counting.";
+        _ 2 mbz;
+        ramp_up_count 6 rw "Determines the ramp-up duration of VDD_CORE_L regulators. The duration is computed according to Ramp_Up_Prescal. At cold reset, PRCM assumes that VDD_CORE_L will be at a valid ON voltage before SYS_NRESPWRON is de-asserted.";
+    };
+    
+    register prm_voltsetup_mpu_off addr(base, 0x2C) "This register provides bit fields for specifying voltage ramp-up and ramp-down times for PRM managed external regulators. These values are used for VDD_MPU_L domain transitions to or from OFF state. [warm reset insensitive]" {
+        _ 6 mbz;
+        ramp_down_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-down duration counting.";
+        _ 2 mbz;
+        ramp_down_count 6 rw "Determines the ramp-down duration of VDD_MPU_L regulators. The duration is computed according to Ramp_Down_Prescal.";
+        _ 6 mbz;
+        ramp_up_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-up duration counting.";
+        _ 2 mbz;
+        ramp_up_count 6 rw "Determines the ramp-up duration of VDD_MPU_L regulators. The duration is computed according to Ramp_Up_Prescal. At cold reset, PRCM assumes that VDD_MPU_L will be at a valid ON voltage before SYS_NRESPWRON is de-asserted.";
+    };
+    
+    register prm_voltsetup_iva_off addr(base, 0x30) "This register provides bit fields for specifying voltage ramp-up and ramp-down times for PRM managed external regulators. These values are used for VDD_IVA_L domain transitions to or from OFF state. [warm reset insensitive]" {
+        _ 6 mbz;
+        ramp_down_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-down duration counting.";
+        _ 2 mbz;
+        ramp_down_count 6 rw "Determines the ramp-down duration of VDD_IVA_L regulators. The duration is computed according to Ramp_Down_Prescal.";
+        _ 6 mbz;
+        ramp_up_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-up duration counting.";
+        _ 2 mbz;
+        ramp_up_count 6 rw "Determines the ramp-up duration of VDD_IVA_L regulators. The duration is computed according to Ramp_Up_Prescal. At cold reset, PRCM assumes that VDD_IVA_L will be at a valid ON voltage before SYS_NRESPWRON is de-asserted.";
+    };
+    
+    register prm_voltsetup_core_ret_sleep addr(base, 0x34) "This register provides bit fields for specifying voltage ramp-up and ramp-down times for PRM managed external regulators. These values are used for VDD_CORE_L domain transitions between ON and RET or SLEEP state. [warm reset insensitive]" {
+        _ 6 mbz;
+        ramp_down_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-down duration counting.";
+        _ 2 mbz;
+        ramp_down_count 6 rw "Determines the ramp-down duration of VDD_CORE_L regulators. The duration is computed according to Ramp_Down_Prescal.";
+        _ 6 mbz;
+        ramp_up_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-up duration counting.";
+        _ 2 mbz;
+        ramp_up_count 6 rw "Determines the ramp-up duration of VDD_CORE_L regulators. The duration is computed according to Ramp_Up_Prescal.";
+    };
+    
+    register prm_voltsetup_mpu_ret_sleep addr(base, 0x38) "This register provides bit fields for specifying voltage ramp-up and ramp-down times for PRM managed external regulators. These values are used for VDD_MPU_L domain transitions between ON and RET or SLEEP state. [warm reset insensitive]" {
+        _ 6 mbz;
+        ramp_down_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-down duration counting.";
+        _ 2 mbz;
+        ramp_down_count 6 rw "Determines the ramp-down duration of VDD_MPU_L regulators. The duration is computed according to Ramp_Down_Prescal.";
+        _ 6 mbz;
+        ramp_up_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-up duration counting.";
+        _ 2 mbz;
+        ramp_up_count 6 rw "Determines the ramp-up duration of VDD_MPU_L regulators. The duration is computed according to Ramp_Up_Prescal.";
+    };
+    
+    register prm_voltsetup_iva_ret_sleep addr(base, 0x3C) "This register provides bit fields for specifying voltage ramp-up and ramp-down times for PRM managed external regulators. These values are used for VDD_IVA_L domain transitions between ON and RET or SLEEP state. [warm reset insensitive]" {
+        _ 6 mbz;
+        ramp_down_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-down duration counting.";
+        _ 2 mbz;
+        ramp_down_count 6 rw "Determines the ramp-down duration of VDD_IVA_L regulators. The duration is computed according to Ramp_Down_Prescal.";
+        _ 6 mbz;
+        ramp_up_prescal 2 rw type(stable_prescal_status) "Determines prescaler for ramp-up duration counting.";
+        _ 2 mbz;
+        ramp_up_count 6 rw "Determines the ramp-up duration of VDD_IVA_L regulators. The duration is computed according to Ramp_Up_Prescal.";
+    };
+
+    constants timeouten_status width(1) "" {
+        TIMEOUTEN_0 = 0 "Timeout is disabled. Loop will wait indefinitely.";
+        TIMEOUTEN_1 = 1 "Timeout will occur when TIMEOUT cycles have elapsed.";
+    };
+
+    constants initvdd_status width(1) "" {
+        INITVDD_0 = 0 "Reset the initialization bit.";
+        INITVDD_1 = 1 "The positive edge of InitVdd triggers a write of the value in the InitVoltage into the Voltage Processor.";
+    };
+
+    constants forceupdate_status width(1) "" {
+        FORCEUPDATE_0 = 0 "Reset the force bit.";
+        FORCEUPDATE_1 = 1 "The positive edge of ForceUpdate triggers an update of the voltage to the SMPS.";
+    };
+
+    constants vpenable_status width(1) "" {
+        VPENABLE_0 = 0 "Disables the Voltage Processor.";
+        VPENABLE_1 = 1 "Enables the Voltage Processor.";
+    };
+    
+    register prm_vp_core_config addr(base, 0x40) "This register allows the configuration of the Voltage Processor dedicated to CORE Voltage Domain (VDD_CORE_L)." {
+        erroroffset 8 rw "Offset value in the Error to Voltage converter (two's complement number).";
+        errorgain 8 rw "Gain value in the Error to Voltage converter (two's complement number).";
+        initvoltage 8 rw "Set the initial voltage level of the SMPS. It must be reconfigured before enable the SmartReflex around a new OPP.";
+        _ 4 mbz;
+        timeouten 1 rw type(timeouten_status) "Enable or disable the timeout capability of the Voltage Controller State Machine.";
+        initvdd 1 rw type(initvdd_status) "Initializes the voltage in the Voltage Processor.";
+        forceupdate 1 rw type(forceupdate_status) "Forces an update of the SMPS.";
+        vpenable 1 rw type(vpenable_status) "Enables or disables the Voltage Processor updates on SR_SInterruptz.";
+    };
+
+    constants vpinidle_status width(1) "" {
+        VPINIDLE_0_r = 0 "The Voltage Processor for CORE is processing. Warm reset sensitive";
+        VPINIDLE_1_r = 1 "The Voltage Processor for CORE is in idle state.";
+    };
+    
+    register prm_vp_core_status addr(base, 0x44) "This register reflects the idle state of the Voltage Processor dedicated to the CORE Voltage Domain (VDD_CORE_L. This register is read only and automatically updated." {
+        _ 31 mbz;
+        vpinidle 1 ro type(vpinidle_status) "CORE Voltage Processor idle status.";
+    };
+    
+    register prm_vp_core_vlimitto addr(base, 0x48) "This register allows the configuration of the voltage limits and timeout values of the Voltage Processor dedicated to the CORE Voltage Domain (VDD_CORE_L)." {
+        vddmax 8 rw "Defines the maximum voltage supply level.";
+        vddmin 8 rw "Defines the minimum voltage supply level.";
+        timeout 16 rw "Defines Voltage Controller maximum wait time for responses, measured in sysclk cycles.";
+    };
+    
+    register prm_vp_core_voltage addr(base, 0x4C) "This register indicates the current value of the SMPS voltage for the Voltage Processor dedicated to the CORE Voltage Domain (VDD_CORE_L)." {
+        forceupdatewait 24 rw "The time voltage processor needs to wait for SMPS to be settled after receiving SMPS acknowledge. This wait only be used during force_update operation.";
+        vpvoltage 8 ro "Indicates the current SMPS programmed voltage.";
+    };
+    
+    register prm_vp_core_vstepmax addr(base, 0x50) "This register allows the programming of the maximum voltage step and waiting time of the Voltage Processor dedicated to CORE Voltage Domain (VDD_CORE_L)." {
+        _ 8 mbz;
+        smpsoftwareaittimemax 16 rw "Slew rate for positive voltage step (in number of cycles per step).";
+        vstepmax 8 rw "Maximum voltage step";
+    };
+    
+    register prm_vp_core_vstepmin addr(base, 0x54) "This register allows the programming of the minimum voltage step and waiting time of the Voltage Processor dedicated to the CORE Voltage Domain (VDD_CORE_L)." {
+        _ 8 mbz;
+        smpsoftwareaittimemin 16 rw "Slew rate for negative voltage step (in number of cycles per step).";
+        vstepmin 8 rw "Minimum voltage step";
+    };
+    
+    register prm_vp_mpu_config addr(base, 0x58) "This register allows the configuration of the Voltage Processor dedicated to MPU Voltage Domain (VDD_MPU_L)." {
+        erroroffset 8 rw "Offset value in the Error to Voltage converter (two's complement number).";
+        errorgain 8 rw "Gain value in the Error to Voltage converter (two's complement number).";
+        initvoltage 8 rw "Set the initial voltage level of the SMPS. It must be reconfigured before enable the SmartReflex around a new OPP.";
+        _ 4 mbz;
+        timeouten 1 rw type(timeouten_status) "Enable or disable the timeout capability of the Voltage Controller State Machine.";
+        initvdd 1 rw type(initvdd_status) "Initializes the voltage in the Voltage Processor.";
+        forceupdate 1 rw type(forceupdate_status) "Forces an update of the SMPS.";
+        vpenable 1 rw type(vpenable_status) "Enables or disables the Voltage Processor updates on SR_SInterruptz.";
+    };
+
+    constants vpinidle_status1 width(1) "" {
+        VPINIDLE_0_r_1 = 0 "The Voltage Processor 1 is processing.";
+        VPINIDLE_1_r_1 = 1 "The Voltage Processor 1 is in idle state.";
+    };
+    
+    register prm_vp_mpu_status addr(base, 0x5C) "This register reflects the idle state of the Voltage Processor dedicated to the MPU Voltage Domain (VDD_MPU_L. This register is read only and automatically updated." {
+        _ 31 mbz;
+        vpinidle 1 ro type(vpinidle_status1) "Voltage Processor 1 idle status.";
+    };
+    
+    register prm_vp_mpu_vlimitto addr(base, 0x60) "This register allows the configuration of the voltage limits and timeout values of the Voltage Processor dedicated to the MPU Voltage Domain (VDD_MPU_L)." {
+        vddmax 8 rw "Defines the maximum voltage supply level.";
+        vddmin 8 rw "Defines the minimum voltage supply level.";
+        timeout 16 rw "Defines Voltage Controller maximum wait time for responses, measured in sysclk cycles.";
+    };
+    
+    register prm_vp_mpu_voltage addr(base, 0x64) "This register indicates the current value of the SMPS voltage for the Voltage Processor dedicated to the MPU Voltage Domain (VDD_MPU_L)." {
+        forceupdatewait 24 rw "The time voltage processor needs to wait for SMPS to be settled after receiving SMPS acknowledge. This wait only be used during force_update operation.";
+        vpvoltage 8 ro "Indicates the current SMPS programmed voltage.";
+    };
+    
+    register prm_vp_mpu_vstepmax addr(base, 0x68) "This register allows the programming of the maximum voltage step and waiting time of the Voltage Processor dedicated to MPU Voltage Domain (VDD_MPU_L)." {
+        _ 8 mbz;
+        smpsoftwareaittimemax 16 rw "Slew rate for positive voltage step (in number of cycles per step).";
+        vstepmax 8 rw "Maximum voltage step";
+    };
+    
+    register prm_vp_mpu_vstepmin addr(base, 0x6C) "This register allows the programming of the minimum voltage step and waiting time of the Voltage Processor dedicated to the MPU Voltage Domain (VDD_MPU_L)." {
+        _ 8 mbz;
+        smpsoftwareaittimemin 16 rw "Slew rate for negative voltage step (in number of cycles per step).";
+        vstepmin 8 rw "Minimum voltage step";
+    };
+    
+    register prm_vp_iva_config addr(base, 0x70) "This register allows the configuration of the Voltage Processor dedicated to IVAVoltage Domain (VDD_IVA_L)." {
+        erroroffset 8 rw "Offset value in the Error to Voltage converter (two's complement number).";
+        errorgain 8 rw "Gain value in the Error to Voltage converter (two's complement number).";
+        initvoltage 8 rw "Set the initial voltage level of the SMPS. It must be reconfigured before enable the SmartReflex around a new OPP.";
+        _ 4 mbz;
+        timeouten 1 rw type(timeouten_status) "Enable or disable the timeout capability of the Voltage Controller State Machine.";
+        initvdd 1 rw type(initvdd_status) "Initializes the voltage in the Voltage Processor.";
+        forceupdate 1 rw type(forceupdate_status) "Forces an update of the SMPS.";
+        vpenable 1 rw type(vpenable_status) "Enables or disables the Voltage Processor updates on SR_SInterruptz.";
+    };
+    
+    register prm_vp_iva_status addr(base, 0x74) "This register reflects the idle state of the Voltage Processor dedicated to the MPU Voltage Domain (VDD_IVA_L. This register is read only and automatically updated." {
+        _ 31 mbz;
+        vpinidle 1 ro type(vpinidle_status1) "Voltage Processor 1 idle status.";
+    };
+    
+    register prm_vp_iva_vlimitto addr(base, 0x78) "This register allows the configuration of the voltage limits and timeout values of the Voltage Processor dedicated to the IVA Voltage Domain (VDD_IVA_L)." {
+        vddmax 8 rw "Defines the maximum voltage supply level.";
+        vddmin 8 rw "Defines the minimum voltage supply level.";
+        timeout 16 rw "Defines Voltage Controller maximum wait time for responses, measured in sysclk cycles.";
+    };
+    
+    register prm_vp_iva_voltage addr(base, 0x7C) "This register indicates the current value of the SMPS voltage for the Voltage Processor dedicated to the IVA Voltage Domain (VDD_IVA_L)." {
+        forceupdatewait 24 rw "The time voltage processor needs to wait for SMPS to be settled after receiving SMPS acknowledge. This wait only be used during force_update operation.";
+        vpvoltage 8 ro "Indicates the current SMPS programmed voltage.";
+    };
+    
+    register prm_vp_iva_vstepmax addr(base, 0x80) "This register allows the programming of the maximum voltage step and waiting time of the Voltage Processor dedicated to IVA Voltage Domain (VDD_IVA_L)." {
+        _ 8 mbz;
+        smpsoftwareaittimemax 16 rw "Slew rate for positive voltage step (in number of cycles per step).";
+        vstepmax 8 rw "Maximum voltage step";
+    };
+    
+    register prm_vp_iva_vstepmin addr(base, 0x84) "This register allows the programming of the minimum voltage step and waiting time of the Voltage Processor dedicated to the IVA Voltage Domain (VDD_IVA_L)." {
+        _ 8 mbz;
+        smpsoftwareaittimemin 16 rw "Slew rate for negative voltage step (in number of cycles per step).";
+        vstepmin 8 rw "Minimum voltage step";
+    };
+    
+    register prm_vc_smps_sa addr(base, 0x88) "This register allows the setting of the I2C slave address of the Power IC device. [warm reset insensitive]" {
+        _ 9 mbz;
+        sa_vdd_mpu_l 7 rw "Set the I2C slave address value for the third (if any) Power IC device.";
+        _ 1 mbz;
+        sa_vdd_iva_l 7 rw "Set the I2C slave address value for the second (if any) Power IC device.";
+        _ 1 mbz;
+        sa_vdd_core_l 7 rw "Set the I2C slave address value for the first Power IC device.";
+    };
+    
+    register prm_vc_val_smps_ra_vol addr(base, 0x8C) "This register allows the setting of the voltage configuration register address for the VDD channels. [warm reset insensitive]" {
+        _ 8 mbz;
+        volra_vdd_mpu_l 8 rw "Voltage configuration register address value for VDD_MPU_L channel";
+        volra_vdd_iva_l 8 rw "Voltage configuration register address value for VDD_IVA_L channel (if VDD_IVA_L source is placed in same chip as VDD_MPU_L source and have different voltage configuration register)";
+        volra_vdd_core_l 8 rw "Voltage configuration register address value for the VDD_CORE_L channel (if VDD_CORE_L source is placed in same chip as VDD_MPU_L source and has different voltage configuration register)";
+    };
+    
+    register prm_vc_val_smps_ra_cmd addr(base, 0x90) "Command (ON/ON-Low-Power/Retention/OFF) configuration register address values for the VDD channels (if used SMPS chips have different command configuration register than voltage configuration register) [warm reset insensitive]" {
+        _ 8 mbz;
+        cmdra_vdd_mpu_l 8 rw "Command (ON/ON-Low-Power /Retention/OFF) configuration register address value for VDD_MPU_L channel";
+        cmdra_vdd_iva_l 8 rw "Command (ON/ON-Low-Power /Retention/OFF) configuration register address value for VDD_IVA_L channel (if VDD_IVA_L source has different command configuration register than voltage VDD_MPU_L)";
+        cmdra_vdd_core_l 8 rw "Command (ON/ON-Low-Power /Retention/OFF) configuration register address value for VDD_CORE_L channel (if VDD_CORE_L source has different command configuration register than voltage VDD_MPU_L)";
+    };
+    
+    register prm_vc_val_cmd_vdd_core_l addr(base, 0x94) "This register allows the setting of the ON/ON-Low-Power/Retention/OFF command values for VDD_CORE_L channel. [warm reset insensitive]" {
+        on 8 rw "Set the ON command value.";
+        onlp 8 rw "Set the ON-Low-Power command value.";
+        ret 8 rw "Set the RET command value.";
+        off 8 rw "Set the OFF command value.";
+    };
+    
+    register prm_vc_val_cmd_vdd_mpu_l addr(base, 0x98) "This register allows the setting of the ON/ON-Low-Power/Retention/OFF command values for VDD_MPU_L channel. [warm reset insensitive]" {
+        on 8 rw "Set the ON command value.";
+        onlp 8 rw "Set the ON-Low-Power command value.";
+        ret 8 rw "Set the RET command value.";
+        off 8 rw "Set the OFF command value.";
+    };
+    
+    register prm_vc_val_cmd_vdd_iva_l addr(base, 0x9C) "This register allows the setting of the ON/ON-Low-Power/Retention/OFF command values for VDD_IVA_L channel. [warm reset insensitive]" {
+        on 8 rw "Set the ON command value.";
+        onlp 8 rw "Set the ON-Low-Power command value.";
+        ret 8 rw "Set the RET command value.";
+        off 8 rw "Set the OFF command value.";
+    };
+
+    constants valid_status width(1) "" {
+        VALID_0_r = 0 "The last command send has been acknowledged";
+        VALID_1 = 1 "Pending command is being process";
+    };
+    
+    register prm_vc_val_bypass addr(base, 0xA0) "Bypass data values register used for bypass command channel to send other configuration information (other then voltage configuration parameters) for SMPS chips which have no other configuration interface then this I2C interface. [warm reset insensitive]" {
+        _ 7 mbz;
+        valid 1 rw type(valid_status) "This bit validates the bypass command. It is automatically cleared by hardware either after getting the acknowledge back from the SMPS or if an error occured.";
+        data 8 rw "Data to send to the Power IC device.";
+        regaddr 8 rw "Set the address of Power IC device register to configure.";
+        _ 1 mbz;
+        slaveaddr 7 rw "Set the I2C slave address value.";
+    };
+
+    constants racen_vdd_mpu_l_status width(1) "" {
+        RACEN_VDD_MPU_L_0 = 0 "VDD_MPU_L channel uses VOLRA values for register address of VFSM-s commands. VFSM-s commands goes also to voltage configuration register.";
+        RACEN_VDD_MPU_L_1 = 1 "VDD_MPU_L channel uses CMDRA values for register address of VFSM-s commands. VFSM-s commands goes to different command configuration register.";
+    };
+
+    constants rac_vdd_mpu_l_status width(1) "" {
+        RAC_VDD_MPU_L_0 = 0 "Select CMDRA_VDD_CORE_L for VDD_MPU_L channel";
+        RAC_VDD_MPU_L_1 = 1 "Select CMDRA_VDD_MPU_L for VDD_MPU_L channel";
+    };
+
+    constants rav_vdd_mpu_l_status width(1) "" {
+        RAV_VDD_MPU_L_0 = 0 "Select VOLRA_VDD_CORE_L for VDD_MPU_L channel";
+        RAV_VDD_MPU_L_1 = 1 "Select VOLRA_VDD_MPU_L for VDD_MPU_L channel";
+    };
+
+    constants cmd_vdd_mpu_l_status width(1) "" {
+        CMD_VDD_MPU_L_0 = 0 "VDD_MPU_L channel use VC_VAL_CMD_VDD_CORE_L set for command values";
+        CMD_VDD_MPU_L_1 = 1 "VDD_MPU_L channel use VC_VAL_CMD_VDD_MPU_L set for command values";
+    };
+
+    constants sa_vdd_mpu_l_status width(1) "" {
+        SA_VDD_MPU_L_0 = 0 "Select SA_VDD_CORE_L for VDD_MPU_L channel";
+        SA_VDD_MPU_L_1 = 1 "Select SA_VDD_MPU_L for VDD_MPU_L channel";
+    };
+
+    constants cmd_vdd_iva_l_status width(1) "" {
+        CMD_VDD_IVA_L_0 = 0 "VDD_IVA_L channel use VC_VAL_CMD_VDD_MPU_L set for command values";
+        CMD_VDD_IVA_L_1 = 1 "VDD_IVA_L channel use VC_VAL_CMD_VDD_IVA_L set for command values";
+    };
+
+    constants racen_vdd_iva_l_status width(1) "" {
+        RACEN_VDD_IVA_L_0 = 0 "VDD_IVA_L channel uses VOLRA values for register address of VFSM-s commands. VFSM-s commands goes also to voltage configuration register.";
+        RACEN_VDD_IVA_L_1 = 1 "VDD_IVA_L channel uses CMDRA values for register address of VFSM-s commands. VFSM-s commands goes to different command configuration register.";
+    };
+
+    constants rac_vdd_iva_l_status width(1) "" {
+        RAC_VDD_IVA_L_0 = 0 "Select CMDRA_VDD_MPU_L for VDD_IVA_L channel";
+        RAC_VDD_IVA_L_1 = 1 "Select CMDRA_VDD_IVA_L for VDD_IVA_L channel";
+    };
+
+    constants rav_vdd_iva_l_status width(1) "" {
+        RAV_VDD_IVA_L_0 = 0 "Select VOLRA_VDD_MPU_L for VDD_IVA_L channel";
+        RAV_VDD_IVA_L_1 = 1 "Select VOLRA_VDD_IVA_L for VDD_IVA_L channel";
+    };
+
+    constants sa_vdd_iva_l_status width(1) "" {
+        SA_VDD_IVA_L_0 = 0 "Select SA_VDD_MPU_L for VDD_IVA_L channel";
+        SA_VDD_IVA_L_1 = 1 "Select SA_VDD_IVA_L for VDD_IVA_L channel";
+    };
+
+    constants racen_vdd_core_l_status width(1) "" {
+        RACEN_VDD_CORE_L_0 = 0 "VDD_CORE_L channel use VOLRA values for register address of VFSM-s commands. VFSM-s commands goes also to voltage configuration register.";
+        RACEN_VDD_CORE_L_1 = 1 "VDD_CORE_L channel use CMDRA values for register address of VFSM-s commands. VFSM-s commands goes to different command configuration register.";
+    };
+
+    constants rac_vdd_core_l_status width(1) "" {
+        RAC_VDD_CORE_L_0 = 0 "Select CMDRA_VDD_MPU_L for the VDD_CORE_L channel.";
+        RAC_VDD_CORE_L_1 = 1 "Select CMDRA_VDD_CORE_L for the VDD_CORE_L channel.";
+    };
+
+    constants rav_vdd_core_l_status width(1) "" {
+        RAV_VDD_CORE_L_0 = 0 "Select VOLRA_VDD_MPU_L for the VDD_CORE_L channel.";
+        RAV_VDD_CORE_L_1 = 1 "Select VOLRA_VDD_CORE_L for the VDD_CORE_L channel.";
+    };
+
+    constants sa_vdd_core_l_status width(1) "" {
+        SA_VDD_CORE_L_0 = 0 "Select SA_VDD_MPU_L for the VDD_CORE_L channel.";
+        SA_VDD_CORE_L_1 = 1 "Select SA_VDD_CORE_L for the VDD_CORE_L channel.";
+    };
+    
+    register prm_vc_cfg_channel addr(base, 0xA4) "This register allows the configuration pointers for both VDD channels. [warm reset insensitive]" {
+        _ 11 mbz;
+        racen_vdd_mpu_l 1 rw type(racen_vdd_mpu_l_status) "Enable bit for usage of RAC_VDD_MPU_L";
+        rac_vdd_mpu_l 1 rw type(rac_vdd_mpu_l_status) "Command (ON/ON-Low-Power/Retention/OFF) configuration register address pointer for VDD_MPU_L channel. (This bit has no influence on the VDD_MPU_L channel.)";
+        rav_vdd_mpu_l 1 rw type(rav_vdd_mpu_l_status) "Voltage configuration register address pointer for VDD_MPU_L channel. (This bit has no influence on the VDD_MPU_L channel.)";
+        cmd_vdd_mpu_l 1 rw type(cmd_vdd_mpu_l_status) "Command values (ON/ON-Low-Power/Retention/OFF voltage values) set selection for VDD_MPU_L channel. (This bit has no influence on the VDD_MPU_L channel.)";
+        sa_vdd_mpu_l 1 rw type(sa_vdd_mpu_l_status) "Slave address pointer for VDD_MPU_L channel. (This bit has no influence on the VDD_MPU_L channel.)";
+        _ 3 mbz;
+        cmd_vdd_iva_l 1 rw type(cmd_vdd_iva_l_status) "Command values (ON/ON-Low-Power/Retention/OFF voltage values) set selection for VDD_IVA_L channel";
+        racen_vdd_iva_l 1 rw type(racen_vdd_iva_l_status) "Enable bit for usage of RAC_VDD_IVA_L";
+        rac_vdd_iva_l 1 rw type(rac_vdd_iva_l_status) "Command (ON/ON-Low-Power/Retention/OFF) configuration register address pointer for VDD_IVA_L channel";
+        rav_vdd_iva_l 1 rw type(rav_vdd_iva_l_status) "Voltage configuration register address pointer for VDD_IVA_L channel.";
+        sa_vdd_iva_l 1 rw type(sa_vdd_iva_l_status) "Slave address pointer for VDD_IVA_L channel.";
+        _ 3 mbz;
+        cmd_vdd_core_l 1 rw "Command values (ON/ON-Low-Power/Retention/OFF voltage values) set selection for VDD_CORE_L channel";
+        racen_vdd_core_l 1 rw type(racen_vdd_core_l_status) "Enable bit for usage of RAC_VDD_CORE_L.";
+        rac_vdd_core_l 1 rw type(rac_vdd_core_l_status) "Command (ON/ON-Low-Power/Retention/OFF) configuration register address pointer for VDD_CORE_L channel.";
+        rav_vdd_core_l 1 rw type(rav_vdd_core_l_status) "Voltage configuration register address pointer for VDD_CORE_L channel.";
+        sa_vdd_core_l 1 rw type(sa_vdd_core_l_status) "Slave address pointer for VDD_CORE_L channel.";
+    };
+
+    constants dfilteren_status width(1) "" {
+        DFILTEREN_0 = 0 "I2C bus digital filter rejects all glitches smaller than 1 sytem clock cycle";
+        DFILTEREN_1 = 1 "I2C bus digital filter rejects all glitches smaller than 2 sytem clock cycles";
+    };
+
+    constants hsmodeen_status width(1) "" {
+        HSMODEEN_0 = 0 "Disables the I2C high-speed mode";
+        HSMODEEN_1 = 1 "Enables the I2C high-speed mode";
+    };
+    
+    register prm_vc_cfg_i2c_mode addr(base, 0xA8) "I2C configuration register. [warm reset insensitive]" {
+        _ 25 mbz;
+        dfilteren 1 rw type(dfilteren_status) "This field enables double filter procedure for IC input lines";
+        _ 1 mbz;
+        srmodeen 1 rw type(stable_prescal_status) "Enables the IC repeated start operation mode.(Effect of holding the SCL and SDA lines low, in effect blocking the I2C bus from losing arbitration between repeated start points). . Use of this feature results from a trade-off between speed and power consumption of I2C interface. .";
+        hsmodeen 1 rw type(hsmodeen_status) "Enables IC bus high-speed mode.";
+        hsmcode 3 rw "Master code value for IC high-speed preamble transmission.";
+    };
+    
+    register prm_vc_cfg_i2c_clk addr(base, 0xAC) "I2C Interface clock configuration parameters. [warm reset insensitive]" {
+        hsscll 8 rw "Number of the system clock cycles, necessary to count the low period of the I2C clock signal, when the I2C interface runs in high-speed mode of operation. The value of the bit field is automatically increased by 7.";
+        hssclh 8 rw "Number of the system clock cycles, necessary to count the high period of the I2C clock signal, when the I2C interface runs in high-speed mode of operation. The value of the bit field is automatically increased by 5.";
+        scll 8 rw "Number of the system clock cycles, necessary to count the low period of the I2C clock signal, when the I2C interface runs in fast mode of operation. The value of the bit field is automatically increased by 7.";
+        sclh 8 rw "Number of the system clock cycles, necessary to count the high period of the I2C clock signal, when the I2C interface runs in fast mode of operation. The value of the bit field is automatically increased by 5.";
+    };
+    
+    register prm_sram_count addr(base, 0xB0) "Common setup for SRAM LDO transition counters. Applies to all voltage domains. [warm reset insensitive]" {
+        startup_count 8 rw "Determines the start-up duration of SRAM and ABB LDO. The duration is computed as 16 x NbCycles of system clock cycles. Target is 50us.";
+        slpcnt_value 8 rw "Delay between retention/off assertion of last SRAM bank and SRAMALLRET signal to LDO is driven high. Counting on system clock. Target is 2us.";
+        vsetupcnt_value 8 rw "SRAM LDO rampup time from retention to active mode. The duration is computed as 8 x NbCycles of system clock cycles. Target is 30us.";
+        _ 2 mbz;
+        pchargecnt_value 6 rw "Delay between de-assertion of standby_rta_ret_on and standby_rta_ret_good. Counting on system clock. Target is 600ns.";
+    };
+
+    constants disable_rta_export_status width(1) "" {
+        DISABLE_RTA_EXPORT_0 = 0 "HD memory RTA feature is enabled";
+        DISABLE_RTA_EXPORT_1 = 1 "HD memory RTA feature is disabled";
+    };
+    
+    register prm_sram_wkup_setup addr(base, 0xB4) "Setup of memory in WKUP voltage domain. [warm reset insensitive]" {
+        _ 31 mbz;
+        disable_rta_export 1 rw type(disable_rta_export_status) "Control for HD memory RTA feature. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+    };
+
+    constants aipoff_status width(1) "" {
+        AIPOFF_0 = 0 "AIPOFF signal is not overriden";
+        AIPOFF_1 = 1 "AIPOFF signal is overriden to 1. Corresponding SRAM LDO is disabled and in HZ mode.";
+    };
+
+    constants enfunc4_status width(1) "" {
+        ENFUNC4_0 = 0 "One external clock is supplied";
+        ENFUNC4_1 = 1 "No external clock is supplied";
+    };
+
+    constants enfunc3_export_status width(1) "" {
+        ENFUNC3_EXPORT_0 = 0 "Sub regulation is disabled";
+        ENFUNC3_EXPORT_1 = 1 "Sub regulation is enabled";
+    };
+
+    constants enfunc2_export_status width(1) "" {
+        ENFUNC2_EXPORT_0 = 0 "External cap is used";
+        ENFUNC2_EXPORT_1 = 1 "External cap is not used";
+    };
+
+    constants enfunc1_export_status width(1) "" {
+        ENFUNC1_EXPORT_0 = 0 "Short circuit protection is disabled";
+        ENFUNC1_EXPORT_1 = 1 "Short circuit protection is enabled";
+    };
+
+    constants abboff_sleep_export_status width(1) "" {
+        ABBOFF_SLEEP_EXPORT_0 = 0 "SRAMNWA supplied with VDDS";
+        ABBOFF_SLEEP_EXPORT_1 = 1 "SRAMNWA supplied with VDDAR";
+    };
+    
+    register prm_ldo_sram_core_setup addr(base, 0xB8) "Setup of the SRAM LDO for CORE voltage domain. [warm reset insensitive]" {
+        _ 23 mbz;
+        aipoff 1 rw type(aipoff_status) "Override on AIPOFF input of SRAM LDO.";
+        enfunc5 1 rw type(stable_prescal_status) "ENFUNC5 input of SRAM LDO.";
+        enfunc4 1 rw type(enfunc4_status) "ENFUNC4 input of SRAM LDO.";
+        enfunc3_export 1 rw type(enfunc3_export_status) "ENFUNC3 input of SRAM LDO. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        enfunc2_export 1 rw type(enfunc2_export_status) "ENFUNC2 input of SRAM LDO. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        enfunc1_export 1 rw type(enfunc1_export_status) "ENFUNC1 input of SRAM LDO. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        abboff_sleep_export 1 rw type(abboff_sleep_export_status) "Determines whether SRAMNWA is supplied by VDDS or VDDAR during deep-sleep. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        abboff_act_export 1 rw type(abboff_sleep_export_status) "Determines whether SRAMNWA is supplied by VDDS or VDDAR during active mode. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        disable_rta_export 1 rw type(disable_rta_export_status) "Control for HD memory RTA feature. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+    };
+
+    constants sram_in_transition_status width(1) "" {
+        SRAM_IN_TRANSITION_0_r = 0 "SRAM LDO state machine is stable";
+        SRAM_IN_TRANSITION_1_r = 1 "SRAM LDO state machine is in transition state";
+    };
+
+    constants sramldo_status_status width(1) "" {
+        SRAMLDO_STATUS_0_r = 0 "SRAMLDO is in ACTIVE mode.";
+        SRAMLDO_STATUS_1_r = 1 "SRAMLDO is on RETENTION mode.";
+    };
+
+    constants retmode_enable_status width(1) "" {
+        RETMODE_ENABLE_0 = 0 "SRAM LDO is not allowed to go to RET mode";
+        RETMODE_ENABLE_1 = 1 "SRAM LDO go to RET mode when all memory of voltage domain are OFF or RET";
+    };
+    
+    register prm_ldo_sram_core_ctrl addr(base, 0xBC) "Control and status of the SRAM LDO for CORE voltage domain. [warm reset insensitive]" {
+        _ 22 mbz;
+        sram_in_transition 1 ro type(sram_in_transition_status) "Status indicating SRAM LDO state machine state.";
+        sramldo_status 1 ro type(sramldo_status_status) "SRAMLDO status";
+        _ 7 mbz;
+        retmode_enable 1 rw type(retmode_enable_status) "Control if the SRAM LDO retention mode is used or not.";
+    };
+    
+    register prm_ldo_sram_mpu_setup addr(base, 0xC0) "Setup of the SRAM LDO for MPU voltage domain. [warm reset insensitive]" {
+        _ 23 mbz;
+        aipoff 1 rw type(aipoff_status) "Override on AIPOFF input of SRAM LDO.";
+        enfunc5 1 rw type(stable_prescal_status) "ENFUNC5 input of SRAM LDO.";
+        enfunc4 1 rw type(enfunc4_status) "ENFUNC4 input of SRAM LDO.";
+        enfunc3_export 1 rw type(enfunc3_export_status) "ENFUNC3 input of SRAM LDO. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        enfunc2_export 1 rw type(enfunc2_export_status) "ENFUNC2 input of SRAM LDO. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        enfunc1_export 1 rw type(enfunc1_export_status) "ENFUNC1 input of SRAM LDO. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        abboff_sleep_export 1 rw type(abboff_sleep_export_status) "Determines whether SRAMNWA is supplied by VDDS or VDDAR during deep-sleep. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        abboff_act_export 1 rw type(abboff_sleep_export_status) "Determines whether SRAMNWA is supplied by VDDS or VDDAR during active mode. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        disable_rta_export 1 rw type(disable_rta_export_status) "Control for HD memory RTA feature. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+    };
+    
+    register prm_ldo_sram_mpu_ctrl addr(base, 0xC4) "Control and status of the SRAM LDO for MPU voltage domain. [warm reset insensitive]" {
+        _ 22 mbz;
+        sram_in_transition 1 ro type(sram_in_transition_status) "Status indicating SRAM LDO state machine state.";
+        sramldo_status 1 ro type(sramldo_status_status) "SRAMLDO status";
+        _ 7 mbz;
+        retmode_enable 1 rw type(retmode_enable_status) "Control if the SRAM LDO retention mode is used or not.";
+    };
+    
+    register prm_ldo_sram_iva_setup addr(base, 0xC8) "Setup of the SRAM LDO for IVA voltage domain. [warm reset insensitive]" {
+        _ 23 mbz;
+        aipoff 1 rw type(aipoff_status) "Override on AIPOFF input of SRAM LDO.";
+        enfunc5 1 rw type(stable_prescal_status) "ENFUNC5 input of SRAM LDO.";
+        enfunc4 1 rw type(enfunc4_status) "ENFUNC4 input of SRAM LDO.";
+        enfunc3_export 1 rw type(enfunc3_export_status) "ENFUNC3 input of SRAM LDO. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        enfunc2_export 1 rw type(enfunc2_export_status) "ENFUNC2 input of SRAM LDO. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        enfunc1_export 1 rw type(enfunc1_export_status) "ENFUNC1 input of SRAM LDO. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        abboff_sleep_export 1 rw type(abboff_sleep_export_status) "Determines whether SRAMNWA is supplied by VDDS or VDDAR during deep-sleep. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        abboff_act_export 1 rw type(abboff_sleep_export_status) "Determines whether SRAMNWA is supplied by VDDS or VDDAR during active mode. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+        disable_rta_export 1 rw type(disable_rta_export_status) "Control for HD memory RTA feature. After PowerOn reset and Efuse sensing, this bit field is automatically loaded with an Efuse value from control module. Bit field remains writable after this.";
+    };
+    
+    register prm_ldo_sram_iva_ctrl addr(base, 0xCC) "Control and status of the SRAM LDO for IVA voltage domain. [warm reset insensitive]" {
+        _ 22 mbz;
+        sram_in_transition 1 ro type(sram_in_transition_status) "Status indicating SRAM LDO state machine state.";
+        sramldo_status 1 ro type(sramldo_status_status) "SRAMLDO status";
+        _ 7 mbz;
+        retmode_enable 1 rw type(retmode_enable_status) "Control if the SRAM LDO retention mode is used or not.";
+    };
+
+    constants active_fbb_sel_status width(1) "" {
+        ACTIVE_FBB_SEL_0 = 0 "ABB LDO is in bypass mode";
+        ACTIVE_FBB_SEL_1 = 1 "ABB LDO is in ABB Set1 mode";
+    };
+
+    constants active_rbb_sel_status width(1) "" {
+        ACTIVE_RBB_SEL_0 = 0 "ABB LDO is in bypass mode";
+        ACTIVE_RBB_SEL_1 = 1 "ABB LDO is in ABB Set2 mode";
+    };
+
+    constants sr2en_status width(1) "" {
+        SR2EN_0 = 0 "ABB LDO is put in bypass mode";
+        SR2EN_1 = 1 "ABB LDO will operate accordingly to settings";
+    };
+    
+    register prm_ldo_abb_mpu_setup addr(base, 0xD0) "Selects the MPU_ABB LDO mode." {
+        _ 16 mbz;
+        sr2_wtcnt_value 8 rw "LDO settling time for active-mode OPP change. Counting at a 16 system clock cycles rate. Target is 50us. [warm reset insensitive]";
+        _ 4 mbz;
+        _ 1 mbz;
+        active_fbb_sel 1 rw type(active_fbb_sel_status) "Defines ABB LDO mode when voltage is in slow fast OPP. [warm reset insensitive]";
+        active_rbb_sel 1 rw type(active_rbb_sel_status) "Defines ABB LDO mode when MPU voltage is in OPP_TURBO. [warm reset insensitive]";
+        sr2en 1 rw type(sr2en_status) "Enable ABB power management";
+    };
+
+    constants sr2_in_transition_status width(1) "" {
+        SR2_IN_TRANSITION_0_r = 0 "";
+        SR2_IN_TRANSITION_1_r = 1 "Indicates that VBBLDO_CON is in transition and SR2_STATUS bits are not stable to read.";
+    };
+
+    constants sr2_status_status width(2) "" {
+        SR2_STATUS_0_r = 0 "ABB LDO is placed in bypass mode.";
+        SR2_STATUS_1_r = 1 "ABB LDO is placed in ABB Set2 active mode";
+        SR2_STATUS_2_r = 2 "ABB LDO is placed in ABB Set1 active mode.";
+        SR2_STATUS_3_r = 3 "Reserved";
+    };
+
+    constants opp_sel_status width(2) "" {
+        OPP_SEL_0 = 0 "default : Nominal";
+        OPP_SEL_1 = 1 "Fast OPP";
+        OPP_SEL_2 = 2 "Nominal";
+        OPP_SEL_3 = 3 "Slow OPP";
+    };
+    
+    register prm_ldo_abb_mpu_ctrl addr(base, 0xD4) "Control and Status of ABB on MPU voltage domain. [warm reset insensitive]" {
+        _ 25 mbz;
+        sr2_in_transition 1 ro type(sr2_in_transition_status) "Indicates VBBLDO_CON is or is not in transition state. This output should be used by programming interface to clear OPP_CHANGE bit as an indication of OPP change completion.";
+        _ 1 mbz;
+        sr2_status 2 ro type(sr2_status_status) "Indicate ABB LDO current operation status";
+        opp_change 1 rw "When OPP_CHANGE is set to 1, VBBLDO_CON samples OPP_SEL and ACTIVE_FBB_SEL/ACTIVE_RBB_SEL upon detecting rising edge. VBBLDO_CON asserts signal SR2_IN_TRANSITION in response to OPP_CHANGE. OPP_CHANGE should be cleared to 0 when SR2_IN_TRANSITION from VBBLDO_CON is de-asserted.";
+        opp_sel 2 rw type(opp_sel_status) "Selects the OPP at which the MPU voltage domain is operating";
+    };
+    
+    register prm_ldo_abb_iva_setup addr(base, 0xD8) "Selects the IVA_ABB LDO mode." {
+        _ 16 mbz;
+        sr2_wtcnt_value 8 rw "LDO settling time for active-mode OPP change. Counting at a 16 system clock cycles rate. Target is 50us. [warm reset insensitive]";
+        _ 4 mbz;
+        _ 1 mbz;
+        active_fbb_sel 1 rw type(active_fbb_sel_status) "Defines ABB LDO mode when voltage is in slow fast OPP. [warm reset insensitive]";
+        active_rbb_sel 1 rw type(active_rbb_sel_status) "Defines ABB LDO mode when IVA voltage is in OPP_TURBO. [warm reset insensitive]";
+        sr2en 1 rw type(sr2en_status) "Enable ABB power management";
+    };
+    
+    register prm_ldo_abb_iva_ctrl addr(base, 0xDC) "Control and Status of ABB on IVA voltage domain. [warm reset insensitive]" {
+        _ 25 mbz;
+        sr2_in_transition 1 ro type(sr2_in_transition_status) "Indicates VBBLDO_CON is or is not in transition state. This output should be used by programming interface to clear OPP_CHANGE bit as an indication of OPP change completion.";
+        _ 1 mbz;
+        sr2_status 2 ro type(sr2_status_status) "Indicate ABB LDO current operation status";
+        opp_change 1 rw "When OPP_CHANGE is set to 1, VBBLDO_CON samples OPP_SEL and ACTIVE_FBB_SEL/ACTIVE_RBB_SEL upon detecting rising edge. VBBLDO_CON asserts signal SR2_IN_TRANSITION in response to OPP_CHANGE. OPP_CHANGE should be cleared to 0 when SR2_IN_TRANSITION from VBBLDO_CON is de-asserted.";
+        opp_sel 2 rw type(opp_sel_status) "Selects the OPP at which the IVA voltage domain is operating (Fast OPP, Nominal OPP or Slow OPP)";
+    };
+    
+    register prm_ldo_bandgap_setup addr(base, 0xE0) "Control of the bandgap. [warm reset insensitive]" {
+        _ 24 mbz;
+        startup_count 8 rw "Determines the start-up duration of BANDGAP. The duration is computed as 32 x NbCycles of system clock cycles. Target is 100us.";
+    };
+
+    constants emif2_offwkup_disable_status width(1) "" {
+        EMIF2_OFFWKUP_DISABLE_0 = 0 "Notifier is activated.";
+        EMIF2_OFFWKUP_DISABLE_1 = 1 "Notifier is not activated - stays low.";
+    };
+
+    constants device_off_enable_status width(1) "" {
+        DEVICE_OFF_ENABLE_0 = 0 "Device is not allowed to perform transition to off mode";
+        DEVICE_OFF_ENABLE_1 = 1 "Device is allowed to perform transition to off mode as soon as all power domains in MPU, IVA and CORE voltage are in OFF or OsoftwareRET state (open switch retention)";
+    };
+    
+    register prm_device_off_ctrl addr(base, 0xE4) "This register is used to control device OFF transition." {
+        _ 22 mbz;
+        emif2_offwkup_disable 1 rw type(emif2_offwkup_disable_status) "Controls the EMIF2_DEVICE_OFFWKUP_CORESRTACTST notifier sent to EMIF2 upon a device wakeup from off mode. (Warm reset insensitive)";
+        emif1_offwkup_disable 1 rw type(emif2_offwkup_disable_status) "Controls the EMIF1_DEVICE_OFFWKUP_CORESRTACTST notifier sent to EMIF1 upon a device wakeup from off mode. (Warm reset insensitive)";
+        _ 7 mbz;
+        device_off_enable 1 rw type(device_off_enable_status) "Controls transition to device OFF mode.";
+    };
+    
+    register prm_phase1_cndp ro addr(base, 0xE8) "This register stores the start descriptor address of automatic restore phase1. [warm reset insensitive]" type(uint32);
+    
+    register prm_phase2a_cndp ro addr(base, 0xEC) "This register stores the start descriptor address of automatic restore phase2A. [warm reset insensitive]" type(uint32);
+    
+    register prm_phase2b_cndp ro addr(base, 0xF0) "This register stores the start descriptor address of automatic restore phase2B. [warm reset insensitive]" type(uint32);
+
+    constants byps_timeout_err_status width(1) "" {
+        BYPS_TIMEOUT_ERR_0 = 0 "No error";
+        BYPS_TIMEOUT_ERR_1 = 1 "An error has been logged";
+    };
+    
+    register prm_vc_errst addr(base, 0xF8) "This debug register logs the error status coming from Voltage Controller. Must be cleared by software." {
+        _ 5 mbz;
+        byps_timeout_err 1 rw1c type(byps_timeout_err_status) "Bypass command frame is finished but is not acknowledged by the slave, or (I2C multimaster) arbitration lost.";
+        byps_ra_err 1 rw1c type(byps_timeout_err_status) "Wrong register address error for bypass command";
+        byps_sa_err 1 rw1c type(byps_timeout_err_status) "Wrong slave address error for bypass command";
+        _ 2 mbz;
+        vfsm_timeout_err_mpu 1 rw1c type(byps_timeout_err_status) "MPU voltage FSM command frame is finished but is not acknowledged by the slave, or (I2C multimaster) arbitration lost.";
+        vfsm_ra_err_mpu 1 rw1c type(byps_timeout_err_status) "Wrong register address error for MPU voltage FSM";
+        vfsm_sa_err_mpu 1 rw1c type(byps_timeout_err_status) "Wrong slave address error for MPU voltage FSM";
+        smps_timeout_err_mpu 1 rw1c type(byps_timeout_err_status) "MPU voltage processor command frame is finished but is not acknowledged by the slave, or (I2C multimaster) arbitration lost.";
+        smps_ra_err_mpu 1 rw1c type(byps_timeout_err_status) "Wrong register address error for MPU voltage processor";
+        smps_sa_err_mpu 1 rw1c type(byps_timeout_err_status) "Wrong slave address error for MPU voltage processor";
+        _ 2 mbz;
+        vfsm_timeout_err_iva 1 rw1c type(byps_timeout_err_status) "IVA voltage FSM command frame is finished but is not acknowledged by the slave, or (I2C multimaster) arbitration lost.";
+        vfsm_ra_err_iva 1 rw1c type(byps_timeout_err_status) "Wrong register address error for IVA voltage FSM";
+        vfsm_sa_err_iva 1 rw1c type(byps_timeout_err_status) "Wrong slave address error for IVA voltage FSM";
+        smps_timeout_err_iva 1 rw1c type(byps_timeout_err_status) "IVA voltage processor command frame is finished but is not acknowledged by the slave, or (I2C multimaster) arbitration lost.";
+        smps_ra_err_iva 1 rw1c type(byps_timeout_err_status) "Wrong register address error for IVA voltage processor";
+        smps_sa_err_iva 1 rw1c type(byps_timeout_err_status) "Wrong slave address error for IVA voltage processor";
+        _ 2 mbz;
+        vfsm_timeout_err_core 1 rw1c type(byps_timeout_err_status) "CORE voltage FSM command frame is finished but is not acknowledged by the slave, or (I2C multimaster) arbitration lost.";
+        vfsm_ra_err_core 1 rw1c type(byps_timeout_err_status) "Wrong register address error for CORE voltage FSM";
+        vfsm_sa_err_core 1 rw1c type(byps_timeout_err_status) "Wrong slave address error for CORE voltage FSM";
+        smps_timeout_err_core 1 rw1c type(byps_timeout_err_status) "CORE voltage processor command frame is finished but is not acknowledged by the slave, or (I2C multimaster) arbitration lost.";
+        smps_ra_err_core 1 rw1c type(byps_timeout_err_status) "Wrong register address error for CORE voltage processor";
+        smps_sa_err_core 1 rw1c type(byps_timeout_err_status) "Wrong slave address error for CORE voltage processor";
+    };
+};

@@ -1,0 +1,260 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr 6, CH-8092 Zurich.
+ * Attn: Systems Group.
+ */
+
+/*
+ * pl130_gic.dev
+ *
+ * DESCRIPTION: PrimeCell PL130 Generic Interrupt Controller
+ *
+ * This is derived from:
+ *
+ * [1] PrimeCell Generic Interrupt Controller PL130
+ *     (DDI0416B_gic_pl390_r0p0_trm.pdf)
+ * [2] ARM Cortex A9 MPCore TRM r2p0
+ * [3] ARM Generic Interrupt Controller v1.0
+ *
+ * Updated to work on PandaBoard according to [2] Table 3-1
+ *
+ * Register map for distributor: [3], chp 4.1.2
+ * Register map for CPU interface: [3], chp 4.1.3
+ */
+
+device pl130_gic msbfirst (addr dist_base, addr cpu_base)
+    "PrimeCell PL130 Generic Interrupt Controller"
+{
+    //
+    // Distributor register map
+    //
+    register ICDDCR addr(dist_base, 0x0) "Distributor Control" {
+        _       31 rsvd;
+        enable  1 rw            "enable forwarding to CPU interface";
+    };
+
+    register ICDICTR ro addr(dist_base, 0x4) "Interrupt Controller Type" {
+        _               16;
+        LSPI            5       "maximum number of lockable SPIs";
+        TZ              1       "GIC implements Security Extensions";
+        _               2;
+        cpu_number      3       "number of implemented CPU interfaces";
+        it_lines_num    5       "max. num. (N) interrupts supported 32(N+1)";
+    };
+
+    register ICDIIDR ro addr(dist_base, 0x8) "Distributor Implementer Ident." {
+        product_id      8       "Product identifier";
+        rev_num         12      "Revision number";
+        implementer     12      "JEP106 code of implementing company";
+    };
+
+    // Do not read 16 Bit values, only 32 bit ones, otherwise the
+    // Mackerel code will crash on the PandaBoard
+    regarray ICDISR addr(dist_base, 0x80) [32] "SPI Interrupt Security"
+        type(uint32);
+    regarray ICDISER addr(dist_base, 0x100) [32] "Interrupt Set-Enable"
+        type(uint32);
+    regarray ICDICER addr(dist_base, 0x180) [32] "Interrupt Clear-Enable"
+        type(uint32);
+    regarray ICDISPR addr(dist_base, 0x200) [32] "Interrupt Set-Pending"
+        type(uint32);
+    regarray ICDICPR addr(dist_base, 0x280) [32] "Interrupt Clear-Pending"
+        type(uint32);
+    regarray ICDABR ro addr(dist_base, 0x300) [32] "Interrupt Active Bit"
+        type(uint32);
+
+    regtype priority_reg "Interrupt priority register" {
+        prio_off3       8 rw    "Priority, byte offset 3";
+        prio_off2       8 rw    "Priority, byte offset 2";
+        prio_off1       8 rw    "Priority, byte offset 1";
+        prio_off0       8 rw    "Priority, byte offset 0";
+    };
+
+    regarray ICDIPR addr(dist_base, 0x400) [31] "Priority Level"
+        type(priority_reg);
+
+    regtype cpu_targets_reg "CPU targets" {
+        targets_off3    8       rw      "CPU targets, byte offset 3";
+        targets_off2    8       rw      "CPU targets, byte offset 2";
+        targets_off1    8       rw      "CPU targets, byte offset 1";
+        targets_off0    8       rw      "CPU targets, byte offset 0";
+    };
+    regarray ICDIPTR rw addr(dist_base, 0x800) [31]  // only partly rw
+        "Interrupt Processor Targets"
+        type(cpu_targets_reg);
+
+    regtype conf_reg "Configuration registers" {
+        conf15           2       "Configuration 15";
+        conf14           2       "Configuration 14";
+        conf13           2       "Configuration 13";
+        conf12           2       "Configuration 12";
+        conf11           2       "Configuration 11";
+        conf10           2       "Configuration 10";
+        conf9            2       "Configuration 9";
+        conf8            2       "Configuration 8";
+        conf7            2       "Configuration 7";
+        conf6            2       "Configuration 6";
+        conf5            2       "Configuration 5";
+        conf4            2       "Configuration 4";
+        conf3            2       "Configuration 3";
+        conf2            2       "Configuration 2";
+        conf1            2       "Configuration 1";
+        conf0            2       "Configuration 0";
+    };
+    regarray ICDICR rw addr(dist_base, 0xC00) [16]
+        "Interrupt Configuration Reigsters"
+        type(conf_reg);
+
+    register PPI_STATUS ro addr(dist_base, 0xd00) "PPI Status" {
+        _               16;
+        ppi_status      16      "Status of PPI0 - PPI15";
+    };
+
+    regarray SPI_STATUS ro addr(dist_base, 0xd04) [30] "SPI Status"
+        type(uint32);
+
+    register ICDSGIR wo addr(dist_base, 0xf00) "Software Generated Interrupt" {
+        _                       6 mbz;
+        target_list_filter      2       "Target List Filter";
+        cpu_target_list         8       "CPU Target List";
+        SATT                    1       "Secure Access Bit";
+        _                       11 mbz;
+        SGIINTID                4       "SGI Interrupt ID";
+        };
+
+    register DIST_PERIPH_ID0 ro addr(dist_base, 0xfec) "Peripheral Ident. 0" {
+        _               24;
+        part_number_0   8       "Part Number 0";
+    };
+
+    register DIST_PERIPH_ID1 ro addr(dist_base, 0xfe8) "Peripheral Ident. 1" {
+        _               24;
+        jep106_id_3_0   4       "JEP106 identity code [3:0]";
+        part_number_1   4       "Part Number 1";
+    };
+
+    register DIST_PERIPH_ID2 ro addr(dist_base, 0xfe4) "Peripheral Ident. 2" {
+        _               24;
+        architecure     4       "Architecture vers. of GIC";
+        jedec_used      1       "is ID allocated by JEDEC";
+        jep106_id_6_4   3       "JEP106 identity code [6:4]";
+    };
+
+    register DIST_PERIPH_ID3 ro addr(dist_base, 0xfe0) "Peripheral Ident. 3" {
+        _               24;
+        rev_and         4       "Revision of AND Gates";
+        mod_number      4       "Modification Number";
+    };
+
+    register DIST_PERIPH_ID4 ro addr(dist_base, 0xfdc) "Peripheral Ident. 4" {
+        _               24;
+        page_count      4       "# of 4KB blocks needed";
+        jep106_c_code   4       "JEP106 continuation code";
+    };
+
+    register DIST_PERIPH_ID5 ro addr(dist_base, 0xfd8) "Peripheral Ident. 5" {
+        _               24;
+        ppi_number_0    4       "LSBs of # of PPIs in FIC";
+        sgi_number      4       "# of SGIs in GIC";
+    };
+
+    register DIST_PERIPH_ID6 ro addr(dist_base, 0xfd4) "Peripheral Ident. 6" {
+        _               24;
+        spi_number_0    4       "LSBs of #SPIs GIC provides";
+        ppi_number_1    4       "MSBs of #PPIs GIC provides";
+    };
+
+    register DIST_PERIPH_ID7 ro addr(dist_base, 0xfd0) "Peripheral Ident. 7" {
+        _               24;
+        tz              1       "# secure states";
+        priority        3       "# priority lvls GIC provides";
+        spi_number_1    4       "MSBs of # SPIs GIC provides";
+    };
+
+    register DIST_PERIPH_ID8 ro addr(dist_base, 0xfc0) "Peripheral Ident. 8" {
+        _               24;
+        identifier      1       "AMBA interface ID";
+        if_type         2       "AMBA protocoll";
+        cpu_if          3       "# of CPU interfaces";
+        fiq_legacy      1       "Legacy FIQ signals supported";
+        irq_legacy      1       "Legacy IRQ signals supported";
+    };
+
+    register DIST_COMPONENT_ID0 ro addr(dist_base, 0xffc) "PrimeCell Ident. 0" {
+        _               24;
+        component_id    8;
+    };
+
+    register DIST_COMPONENT_ID1 ro addr(dist_base, 0xff8) "PrimeCell Ident. 1" {
+        _               24;
+        component_id    8;
+    };
+
+    register DIST_COMPONENT_ID2 ro addr(dist_base, 0xff4) "PrimeCell Ident. 2" {
+        _               24;
+        component_id    8;
+    };
+
+    register DIST_COMPONENT_ID3 ro addr(dist_base, 0xff0) "PrimeCell Ident. 3" {
+        _               24;
+        component_id    8;
+    };
+
+
+    //
+    // CPU interface register map
+    //
+
+    register ICCICR addr(cpu_base, 0x0) "CPU Interface Control" {
+        _               31;
+        enable          1       "en. fwding to connected processors";
+    };
+
+    register ICCPMR addr(cpu_base, 0x4) "Interrupt Priority Mask" {
+        _               24;
+        priority        8       "Priority mask level for CPU Interface";
+    };
+
+    register ICCBPR addr(cpu_base, 0x8) "Binary Point" {
+        _               29;
+        binary_point    3       "Split Group- and subpriority";
+    };
+
+    register ICCIAR ro addr(cpu_base, 0xc) "Interrupt Acknowledge" {
+        _               19;
+        cpu_id          3       "Processor ID of interrupting processor";
+        ack_int_id      10      "Interrupt ID";
+    };
+
+    register ICCEOIR wo addr(cpu_base, 0x10) "End of Interrupt" {
+        _               19 mbz;
+        cpu_id          3       "Proc ID of ICCIAR access";
+        eoi_int_id      10      "ACKINTID of ICCIAR access";
+    };
+
+    register ICCRPR ro addr(cpu_base, 0x14) "Running Priority" {
+        _               24;
+        priority        8       "Highest priority active interrupt";
+    };
+
+    register ICCHPIR ro addr(cpu_base, 0x18) "Highest Pending Interrupt" {
+        _               19;
+        cpu_id          3       "ID of interrupting processor";
+        pend_int_id     10      "ID of highest pri. pending int.";
+    };
+
+    register ICCABPR addr(cpu_base, 0x1c) "Aliased Binary Point" {
+        _               29 rsvd;
+        binary_point    3       "Split Group- and subpriority";
+    };
+
+    register ICCIIDR ro addr(cpu_base, 0xfc) "CPU Interface Identification" {
+        product_id      12      "Product ID";
+        arch_version    4       "Implemented GIC architecture version";
+        revision        4       "Revision number for the CPU Interface";
+        implementer     12      "JEP106 code of the implementer";
+    };
+ };

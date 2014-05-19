@@ -1,0 +1,239 @@
+##########################################################################
+Copyright (c) 2009-2013, ETH Zurich.
+All rights reserved.
+
+This file is distributed under the terms in the attached LICENSE file.
+If you do not find this file, copies can be found by writing to:
+ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+##########################################################################
+
+Barrelfish Overview
+--------------------------------
+
+Barrelfish currently runs on:
+
+ * x86 CPUs in either IA-32 or AMD64 mode. The following are known to work:
+
+   - Intel Xeon Clovertown, Gainestown, Beckton (X5355, E5520, X7560, L5520,
+     L7555)
+   - AMD Opteron Santa Rosa, Barcelona, Shanghai, Istanbul, Magny Cours
+     (2220, 8350, 8374, 8380, 8431, 6174)
+   - QEMU simulator
+
+ * Intel Single-Chip Cloud Computer (SCC), both Copper Ridge and Rocky Lake
+   are known to work.
+
+ * ARM CPUs, specifically ARMv7 and ARMv5. The following platforms are known to work:
+
+   - The Texas Instruments OMAP4460 Pandaboard ES SoC
+     (Barrelfish runs on both the A9 and the M3 cores)
+   - The ARM VExpress EMM board as simulated by GEM5
+   - There is also limited support for the Netronome i8000 card, incorporating
+     a single Intel iXP2800 processor
+
+This README file provides instructions for the x86 architecture. For other
+architectures, please refer to the architecture-specific technical notes (e.g.,
+see TN 06 for the SCC, and TN 17 for ARM).
+
+You can either generate the latest documentation from this source-code
+(instructions at end of this file), or visit the Barrelfish_ website
+to download them.
+
+.. _Barrelfish: http://www.barrelfish.org/
+
+Supported PC hardware
+--------------------------------
+
+Barrelfish supports following PC hardware :
+
+ * x86 CPUs in either IA-32 or AMD64 mode. The following are known to work:
+
+   - Intel Xeon Clovertown, Gainestown, Beckton (X5355, E5520, X7560, L5520,
+     L7555)
+   - AMD Opteron Santa Rosa, Barcelona, Shanghai, Istanbul, Magny Cours
+     (2220, 8350, 8374, 8380, 8431, 6174)
+
+The biggest compatibility problems are likely to be in the PCI/ACPI code. We
+usually discover new quirks (or missing functionality in the ACPI glue code)
+on each new machine we test. The following systems are known to work:
+
+ * Intel x5000XVN
+ * Tyan n6650W and S4985
+ * Supermicro H8QM3-2
+ * Dell PowerEdge R610 and R905
+ * Sun Fire X2270 and X4440
+ * Intel/Quanta QSSC-S4R
+ * Lenovo X200 and X301 laptops
+ * ASUS Eee PC 1015PEM netbooks
+
+The e1000n driver should work with most recent Intel gigabit ethernet
+controllers (see the list in devices/e1000.dev). We've mostly used the
+82572EI (PCI device ID 0x1082).
+
+You should also be able to boot Barrelfish on a recent version of QEMU (0.14);
+note that the e1000 device emulated by QEMU is not supported by our driver.
+
+Required Tools
+--------------------------------
+
+The following are required to build Barrelfish and its tools:
+
+ * GCC 4.x
+
+   - 4.4.5, and 4.5.2 are known to work
+   - cross-compiling between i386 and x86_64 works (requires libc6-dev-i386
+     to build 32 bit on 64 bit machine)
+   - for the ARM port, we recommend the EABI tools available from CodeSourcery_.
+ * GNU binutils (2.19 is known to work)
+ * GNU make
+ * GHC v7.4 and Parsec 3.1
+   - older versions of the tree supported v6.10 or v6.12.2 with Parsec 2.1
+   - GHC v6.12.1 has a known bug and is unable to build our tools
+   - earlier versions of GHC are unsupported
+
+Our build system may not be very portable; if in doubt, try building on a
+recent Debian or Ubuntu system, as these are what we use.
+
+
+.. _CodeSourcery: http://www.codesourcery.com/sgpp/lite/arm
+
+Building
+--------------------------------
+
+1. Assuming you have already unpacked the sources, create a build directory ::
+
+    $ mkdir build && cd build
+
+1. Run ``hake.sh``, giving it the path to the source directory and target
+architecture(s) ::
+
+    $ ../hake/hake.sh -s ../ -a x86_64
+
+This will configure the build directory and use GHC to compile and then run
+hake, a tool used to generate the ``Makefile``.
+
+3. Optionally, edit the configuration parameters in ``hake/Config.hs`` and
+run ``make rehake`` to apply them.
+
+4. Run make, and wait ::
+
+    $ make
+
+5. If everything worked, you should now be able to run Barrelfish inside QEMU ::
+
+    $ make sim
+
+
+Installing and Booting
+--------------------------------
+
+Barrelfish requires a Multiboot-compliant bootloader that is capable of loading
+an ELF64 image. At the time of writing, this doesn't include the default GRUB.
+Your options are either:
+
+ * use the pre-loader "elver" that can be found in the tools directory
+ * patch GRUB to support a 64-bit kernel image, using this patch_.
+
+.. _patch: http://savannah.gnu.org/bugs/?17963
+
+"Installing" Barrelfish currently consists of copying the ELF files for the CPU
+driver and user programs to a location that the target machine can boot from,
+and writing a suitable menu.lst file that instructs the bootloader (GRUB) which
+programs to load and the arguments to pass them.
+
+If you specify an appropriate INSTALL_PREFIX, ``make install`` will copy the
+binaries to the right place for you, eg ::
+
+    $ make install INSTALL_PREFIX=/tftpboot/barrelfish
+
+We usually boot Barrelfish via PXE/TFTP, although loading from a local disk
+also works. Instructions for setting up GRUB to do this are beyond the scope of
+this document. Assuming you have such a setup, here is a sample menu.lst file
+for a basic diskless boot that doesn't do anything useful beyond probing the
+PCI buses and starting a basic shell ::
+
+    title   Barrelfish
+    root    (nd)
+    kernel /barrelfish/x86_64/sbin/elver
+    module /barrelfish/x86_64/sbin/cpu
+    module /barrelfish/x86_64/sbin/init
+    module /barrelfish/x86_64/sbin/mem_serv
+    module /barrelfish/x86_64/sbin/monitor
+    module /barrelfish/x86_64/sbin/ramfsd boot
+    module /barrelfish/x86_64/sbin/skb boot
+    modulenounzip /barrelfish/skb_ramfs.cpio.gz nospawn
+    module /barrelfish/x86_64/sbin/acpi boot
+    module /barrelfish/x86_64/sbin/pci boot
+    module /barrelfish/x86_64/sbin/spawnd boot
+    module /barrelfish/x86_64/sbin/serial
+    module /barrelfish/x86_64/sbin/fish
+
+There are many other programs you can load (take a look around the usr tree for
+examples). To start a program on a core other than the BSP core, pass
+``core=N`` as its first argument.
+
+If things work, you should see output on both the VGA console and COM1.
+
+Generating Documentation
+--------------------------------
+
+Barrelfish documentation can be found on Barrelfish website
+(http://www.barrelfish.org/). And it can be also generated from the code tree.
+For documentation generation, you will need ``latex`` packages installed,
+including support for ``pdflatex``.  Following are the instructions for
+generating the documentation assuming you have already unpacked the sources ::
+
+    $ mkdir build && cd build
+    $ ../hake/hake.sh -s ../
+    $ make docs
+
+You will find all the technotes in ``docs/`` directory.
+
+Known Issues
+--------------------------------
+
+There are many. Those you're likely to encounter include:
+
+ * The documentation is incomplete and out of date.
+ * Some drivers and user programs are known not to build, and are
+   not included in the default set of targets (MODULES) in the Makefile.
+
+Likely FAQs
+--------------------------------
+
+Q: How do I run a program?
+A: Add it to the boot sequence by specifying the module in your menu.lst file.
+   For example, to run the memtest program, add the line:
+       module /PATH/x86_64/sbin/memtest
+   to the end of menu.lst, where PATH is relative either to your TFTP
+   server's root directory (when booting on hardware) or to your build
+   directory (when using a simulator such as QEMU).
+   If memtest runs, you should see it output "memtest passed successfully!".
+
+Q: Where's the CPU driver?
+A: It's in the directory named kernel :) But don't worry, it really does run
+   independently on each core.
+
+Q: Where is the source for the SPLASH2 benchmarks? It seems to be missing.
+A: The license for these prevents redistribution, so we were forced to ship our
+   changes as a patch. See usr/splash2/README for further instructions.
+
+Q: Can I use a debugger?
+A: Maybe. There are two options at the moment:
+    * On a simulator, using whatever debug interfaces it supports.
+      For QEMU, you could try the "debugsim" target.
+    * On hardware, using the kernel-mode remote GDB stubs that operate on the
+      primary serial port and are entered in response to a kernel trap or
+      exception. However, these are not well maintained, and may not be usable
+      beyond reading/writing memory locations and inspecting the stack.
+   When debugging the kernel, beware that it is relocated to an address
+   determined at core boot time. Look for output such as:
+   "Kernel starting at address 0xffffffffc072b000".
+
+Q: Where can I find more information, including papers and new releases?
+A: http://www.barrelfish.org/
+   http://wiki.barrelfish.org/
+
+Q: Can I contribute?
+A: We'd certainly like to hear from you. Please send us mail.
+

@@ -1,0 +1,288 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_usbtllhs_config.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_usbtllhs_config msbfirst ( addr base ) "" {
+    
+    
+    register usbtll_revision ro addr(base, 0x0) "OCP standard revision number, BCD encoded" type(uint32);
+    
+    register usbtll_hwinfo addr(base, 0x4) "Information on hardware configuration of host" {
+        _ 24 mbz;
+        sar_cntx_size 8 ro "Save-and-Restore context size, in 32-bit words, i.e. number of 32-bit registers with significant context information, mapped from offset 0x400 upward.";
+    };
+
+    constants clockactivity_status width(1) "" {
+        CLOCKACTIVITY_0 = 0 "OCP-derived internal clocks OFF during idle";
+        CLOCKACTIVITY_1 = 1 "OCP-derived internal clocks ON during idle";
+    };
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0 = 0 "Force-idle mode. Sidleack[1] asserted after Sidlereq assertion";
+        SIDLEMODE_1 = 1 "No-idle mode. Sidleack[1] never asserted.";
+        SIDLEMODE_2 = 2 "Smart-idle mode. Sidleack[1] asserted after Sidlereq assertion when no more activity on the OCP.";
+    };
+
+    constants enawakeup_status width(1) "" {
+        ENAWAKEUP_0 = 0 "Wake-up generation disabled";
+        ENAWAKEUP_1 = 1 "Wake-up generation enabled";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0_w = 0 "No effect";
+        SOFTRESET_1_w = 1 "Starts softreset sequence.";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "Clock always running";
+        AUTOIDLE_1 = 1 "When no activity on OCP, clock is cut off.";
+    };
+    
+    register usbtll_sysconfig addr(base, 0x10) "OCP standard system configuration register" {
+        _ 23 mbz;
+        clockactivity 1 rw type(clockactivity_status) "Enable autogating of OCP-derived internal clocks while module is idle.";
+        _ 3 mbz;
+        sidlemode 2 rw type(sidlemode_status) "Slave interface power management control. Idle Req/ack control";
+        enawakeup 1 rw type(enawakeup_status) "Asynchronous wake-up generation control (Swakeup)";
+        softreset 1 wo type(softreset_status) "Module software reset";
+        autoidle 1 rw type(autoidle_status) "Internal autogating control";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Reset is ongoing";
+        RESETDONE_1_r = 1 "Reset is done";
+    };
+    
+    register usbtll_sysstatus addr(base, 0x14) "OCP standard system status register" {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Indicates when the module has entirely come out of reset";
+    };
+
+    constants access_error_status width(1) "" {
+        ACCESS_ERROR_0 = 0 "No event pending";
+        ACCESS_ERROR_1 = 1 "Event pending";
+    };
+    
+    register usbtll_irqstatus addr(base, 0x18) "OCP standard IRQ status vector. Write 1 to clear a bit." {
+        _ 29 mbz;
+        access_error 1 rw type(access_error_status) "Access error to ULPI register over OCP: USB clock must run for that type of access to succeed.";
+        fclk_end 1 rw type(access_error_status) "Functional clock is no longer requested for USB clocking";
+        fclk_start 1 rw type(access_error_status) "Functional clock is requested for USB clocking";
+    };
+
+    constants access_error_en_status width(1) "" {
+        ACCESS_ERROR_EN_0 = 0 "IRQ event is masked";
+        ACCESS_ERROR_EN_1 = 1 "IRQ event is enabled";
+    };
+    
+    register usbtll_irqenable addr(base, 0x1C) "OCP standard IRQ enable vector" {
+        _ 29 mbz;
+        access_error_en 1 rw type(access_error_en_status) "Enable IRQ generation upon access error to ULPI register over L3 interconnect";
+        fclk_end_en 1 rw type(access_error_en_status) "IRQ event mask for FCLK_END interrupt (seeUSBTLL_IRQSTATUS[1])";
+        fclk_start_en 1 rw type(access_error_en_status) "IRQ event mask for FCLK_START interrupt (seeUSBTLL_IRQSTATUS[0])";
+    };
+
+    constants fclk_req_status width(1) "" {
+        FCLK_REQ_0 = 0 "Func clock input is not requested by TLL";
+        FCLK_REQ_1 = 1 "Func clock input is requested by TLL";
+    };
+
+    constants fclk_is_on_status width(1) "" {
+        FCLK_IS_ON_0 = 0 "Functional clock input is not guaranteed ON (can actually be ON, OFF, or unstable)";
+        FCLK_IS_ON_1 = 1 "Functional clock input is guaranteed ON and stable";
+    };
+    
+    register tll_shared_conf addr(base, 0x30) "Common control register for all TLL channels" {
+        _ 30 mbz;
+        fclk_req 1 ro type(fclk_req_status) "Functional clock request, ORed from all channels depending on their respective USB bus state. Combined with the Fclk_is_on status to generate fclk_start/end IRQs.";
+        fclk_is_on 1 rw type(fclk_is_on_status) "Status of the functional clock input, provided by the system to the TLL module. The TLL module will only use that clock if the current status indicated that it is ready. Combined with the Fclk_request to generate fclk_start/end IRQs.";
+    };
+
+    constants fslslinestate_status width(2) "" {
+        FSLSLINESTATE_0_r = 0 "Single-ended 0";
+        FSLSLINESTATE_1_r = 1 "Full-Speed J = differential 1";
+        FSLSLINESTATE_2_r = 2 "Full-Speed K = differential 0";
+        FSLSLINESTATE_3_r = 3 "Single-ended 1 (illegal in USB)";
+    };
+
+    constants fslsmode_status width(4) "" {
+        FSLSMODE_0 = 0 "6-pin unidirectional PHY i/f mode. TX encoding is Dat/Se0 (default).";
+        FSLSMODE_1 = 1 "6-pin unidirectional PHY i/f mode. TX encoding is Dp/Dm.";
+        FSLSMODE_2 = 2 "3-pin bidirectional PHY i/f mode";
+        FSLSMODE_3 = 3 "4-pin bidirectional PHY i/f mode";
+        FSLSMODE_4 = 4 "6-pin unidirectional TLL mode. TX encoding is Dat/Se0.";
+        FSLSMODE_5 = 5 "6-pin unidirectional TLL mode. TX encoding is Dp/Dm.";
+        FSLSMODE_6 = 6 "3-pin bidirectional TLL mode";
+        FSLSMODE_7 = 7 "4-pin bidirectional TLL mode";
+        FSLSMODE_10 = 10 "2-pin bidirectional TLL mode. Encoding is Dat/Se0.";
+        FSLSMODE_11 = 11 "2-pin bidirectional TLL mode. Encoding is Dp/Dm.";
+    };
+
+    constants testtxse0_status width(1) "" {
+        TESTTXSE0_0 = 0 "drive differential value on TX according to TestTxDat";
+        TESTTXSE0_1 = 1 "drive SE0 on TX";
+    };
+
+    constants testtxdat_status width(1) "" {
+        TESTTXDAT_0 = 0 "Drive full-speed K = differential 0";
+        TESTTXDAT_1 = 1 "Drive full-speed J = differential 1";
+    };
+
+    constants testtxen_status width(1) "" {
+        TESTTXEN_0 = 0 "Drive Tx according to TestTxDat/Se0";
+        TESTTXEN_1 = 1 "Drive Tx Hiz (no drive: pullups determine line state)";
+    };
+
+    constants testen_status width(1) "" {
+        TESTEN_0 = 0 "No override. Tx is from local link controller";
+        TESTEN_1 = 1 "Override enabled";
+    };
+
+    constants drvvbus_status width(1) "" {
+        DRVVBUS_0 = 0 "VBUS not driven";
+        DRVVBUS_1 = 1 "VBUS driven to 5 V";
+    };
+
+    constants chrgvbus_status width(1) "" {
+        CHRGVBUS_0 = 0 "VBUS not charged, session not valid";
+        CHRGVBUS_1 = 1 "VBUS charged, session valid";
+    };
+
+    constants ulpinobitstuff_status width(1) "" {
+        ULPINOBITSTUFF_0 = 0 "Bitstuff enabled, following USB standard";
+        ULPINOBITSTUFF_1 = 1 "No bitstuff or associated delays (nonstandard)";
+    };
+
+    constants ulpiautoidle_status width(1) "" {
+        ULPIAUTOIDLE_0 = 0 "ULPI output clock always-on";
+        ULPIAUTOIDLE_1 = 1 "ULPI output clock stops during asynchronous ULPI modes";
+    };
+
+    constants utmiautoidle_status width(1) "" {
+        UTMIAUTOIDLE_0 = 0 "UTMI clock output always on";
+        UTMIAUTOIDLE_1 = 1 "UTMI clock output gated upon suspend";
+    };
+
+    constants ulpioutclkmode_status width(1) "" {
+        ULPIOUTCLKMODE_1_r = 1 "ULPI clock provided by PHY side (i.e. TLL, from functional clock). ULPI clock is output";
+    };
+
+    constants tllfullspeed_status width(1) "" {
+        TLLFULLSPEED_0 = 0 "Connect is Low-speed: D- pullup";
+        TLLFULLSPEED_1 = 1 "Connect is Full-Speed: D+ pullup";
+    };
+
+    constants tllconnect_status width(1) "" {
+        TLLCONNECT_0 = 0 "Unconnected";
+        TLLCONNECT_1 = 1 "Connected";
+    };
+
+    constants tllattach_status width(1) "" {
+        TLLATTACH_0 = 0 "Cable detach emulated on serial TLL";
+        TLLATTACH_1 = 1 "Cable attach emulated on serial TLL";
+    };
+
+    constants utmiisadev_status width(1) "" {
+        UTMIISADEV_0 = 0 "UTMI side is peripheral, ULPI side is host";
+        UTMIISADEV_1 = 1 "UTMI side is host, ULPI side is peripheral";
+    };
+
+    constants chanmode_status width(2) "" {
+        CHANMODE_0 = 0 "UTMI-to-ULPI TLL mode (HS capable): to ULPI controller";
+        CHANMODE_1 = 1 "UTMI-to-serial (FS/LS) mode: to serial controller (TLL) or serial PHY";
+        CHANMODE_2 = 2 "Transparent UTMI mode: to UTMI PHY";
+        CHANMODE_3 = 3 "No mode selected";
+    };
+
+    constants chanen_status width(1) "" {
+        CHANEN_0 = 0 "Channel i disabled";
+        CHANEN_1 = 1 "Channel i enabled";
+    };
+    
+    register tll_channel_conf_i_0 addr(base, 0x40) "Control and Status register for channel i." {
+        _ 2 mbz;
+        fslslinestate 2 ro type(fslslinestate_status) "Line state for Full/low speed serial modes Bit 1 = D-/ Bit0 = D+";
+        fslsmode 4 rw type(fslsmode_status) "Multiple-mode serial interface's mode select. Only when main channel mode is serial. No effect in other main modes.";
+        _ 3 mbz;
+        testtxse0 1 rw type(testtxse0_status) "Force-Se0 transmit override value for serial mode test Don't care if TestEn = 0 (functional mode) or = TestTxen = 1 (TX = hiz)";
+        testtxdat 1 rw type(testtxdat_status) "Differential data transmit override value for serial mode test Don't care if TestEn = 0 (functional mode) or = TestTxen = 1 (TX = hiz) or TestSe0 = 1 (TX = se0)";
+        testtxen 1 rw type(testtxen_status) "Differential data transmit override value for serial mode test Don't care if TestEn = 0 (functional mode)";
+        testen 1 rw type(testen_status) "Enable manual test override for serial mode TX path (from local controller UTMI port)";
+        drvvbus 1 rw type(drvvbus_status) "VBUS-drive for ChanMode = serial * In TLL config, write 1 to emulate serial-side VBUS drive * In PHY config, write 1 to report 'VBUS valid' status (of actual VBUS) to UTMI controller";
+        chrgvbus 1 rw type(chrgvbus_status) "VBUS-drive for ChanMode = serial * In TLL config, write 1 to emulate serial-side VBUS charge/pullup (OTG) * In PHY config, write 1 to reports 'session valid' status (of actual VBUS) to UTMI controller";
+        _ 3 mbz;
+        ulpinobitstuff 1 rw type(ulpinobitstuff_status) "Disable bitstuff emulation in ULPI TLL for ULPI ChanMode";
+        ulpiautoidle 1 rw type(ulpiautoidle_status) "For ChanMode = ULPI TLL only. Allow the ULPI output clock to be stopped when ULPI goes into asynchronous mode (low-power, 3-pin serial, 6-pin serial). No effect in ULPI input clock mode.";
+        utmiautoidle 1 rw type(utmiautoidle_status) "For ChanMode = ULPI TLL only. Allow the UTMI clock (output) to be stopped when UTMII goes to suspended mode (suspendm = 0)";
+        _ 1 mbz;
+        ulpioutclkmode 1 ro type(ulpioutclkmode_status) "ULPI clocking mode select for ULPI TLL ChanMode. Hardcoded, for legacy only.";
+        tllfullspeed 1 rw type(tllfullspeed_status) "Sets PHY speed emulation in TLL (full/slow), which determines the line to pull up upon connect. The two connect source controls are: input m(N)_tllpuen, register field TllConnect.";
+        tllconnect 1 rw type(tllconnect_status) "Emulation of Full/Low-Speed connect (that is, D+ resp D- pullup) for serial TLL modes. Speed is determined by field TllSpeed.";
+        tllattach 1 rw type(tllattach_status) "Emulates cable attach/detach for all serial TLL modes: * ChanMode = serial, in TLL mode (FsLsMode) * ChanMode = ULPI, in serial mode (6pin/3pin TLL)";
+        utmiisadev 1 rw type(utmiisadev_status) "Select the cable end 'seen' by UTMI side of TLL, i.e. the emulated USB cable's orientation. The host must always be on A-side, peripheral on B-side. Reset value depends on generic DEFUTMIISHOST.";
+        chanmode 2 rw type(chanmode_status) "Main channel mode selection";
+        chanen 1 rw type(chanen_status) "Active-high channel enable. A disabled channel is unclocked and kept under reset.";
+    };
+    
+    register tll_channel_conf_i_1 addr(base, 0x44) "Control and Status register for channel i." {
+        _ 2 mbz;
+        fslslinestate 2 ro type(fslslinestate_status) "Line state for Full/low speed serial modes Bit 1 = D-/ Bit0 = D+";
+        fslsmode 4 rw type(fslsmode_status) "Multiple-mode serial interface's mode select. Only when main channel mode is serial. No effect in other main modes.";
+        _ 3 mbz;
+        testtxse0 1 rw type(testtxse0_status) "Force-Se0 transmit override value for serial mode test Don't care if TestEn = 0 (functional mode) or = TestTxen = 1 (TX = hiz)";
+        testtxdat 1 rw type(testtxdat_status) "Differential data transmit override value for serial mode test Don't care if TestEn = 0 (functional mode) or = TestTxen = 1 (TX = hiz) or TestSe0 = 1 (TX = se0)";
+        testtxen 1 rw type(testtxen_status) "Differential data transmit override value for serial mode test Don't care if TestEn = 0 (functional mode)";
+        testen 1 rw type(testen_status) "Enable manual test override for serial mode TX path (from local controller UTMI port)";
+        drvvbus 1 rw type(drvvbus_status) "VBUS-drive for ChanMode = serial * In TLL config, write 1 to emulate serial-side VBUS drive * In PHY config, write 1 to report 'VBUS valid' status (of actual VBUS) to UTMI controller";
+        chrgvbus 1 rw type(chrgvbus_status) "VBUS-drive for ChanMode = serial * In TLL config, write 1 to emulate serial-side VBUS charge/pullup (OTG) * In PHY config, write 1 to reports 'session valid' status (of actual VBUS) to UTMI controller";
+        _ 3 mbz;
+        ulpinobitstuff 1 rw type(ulpinobitstuff_status) "Disable bitstuff emulation in ULPI TLL for ULPI ChanMode";
+        ulpiautoidle 1 rw type(ulpiautoidle_status) "For ChanMode = ULPI TLL only. Allow the ULPI output clock to be stopped when ULPI goes into asynchronous mode (low-power, 3-pin serial, 6-pin serial). No effect in ULPI input clock mode.";
+        utmiautoidle 1 rw type(utmiautoidle_status) "For ChanMode = ULPI TLL only. Allow the UTMI clock (output) to be stopped when UTMII goes to suspended mode (suspendm = 0)";
+        _ 1 mbz;
+        ulpioutclkmode 1 ro type(ulpioutclkmode_status) "ULPI clocking mode select for ULPI TLL ChanMode. Hardcoded, for legacy only.";
+        tllfullspeed 1 rw type(tllfullspeed_status) "Sets PHY speed emulation in TLL (full/slow), which determines the line to pull up upon connect. The two connect source controls are: input m(N)_tllpuen, register field TllConnect.";
+        tllconnect 1 rw type(tllconnect_status) "Emulation of Full/Low-Speed connect (that is, D+ resp D- pullup) for serial TLL modes. Speed is determined by field TllSpeed.";
+        tllattach 1 rw type(tllattach_status) "Emulates cable attach/detach for all serial TLL modes: * ChanMode = serial, in TLL mode (FsLsMode) * ChanMode = ULPI, in serial mode (6pin/3pin TLL)";
+        utmiisadev 1 rw type(utmiisadev_status) "Select the cable end 'seen' by UTMI side of TLL, i.e. the emulated USB cable's orientation. The host must always be on A-side, peripheral on B-side. Reset value depends on generic DEFUTMIISHOST.";
+        chanmode 2 rw type(chanmode_status) "Main channel mode selection";
+        chanen 1 rw type(chanen_status) "Active-high channel enable. A disabled channel is unclocked and kept under reset.";
+    };
+    
+    register usbtll_sar_cntx_j_0 rw addr(base, 0x400) "Save and Restore context array. Array size is indicated in. When in SAR mode, read to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register usbtll_sar_cntx_j_1 rw addr(base, 0x404) "Save and Restore context array. Array size is indicated in. When in SAR mode, read to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register usbtll_sar_cntx_j_2 rw addr(base, 0x408) "Save and Restore context array. Array size is indicated in. When in SAR mode, read to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register usbtll_sar_cntx_j_3 rw addr(base, 0x40C) "Save and Restore context array. Array size is indicated in. When in SAR mode, read to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register usbtll_sar_cntx_j_4 rw addr(base, 0x410) "Save and Restore context array. Array size is indicated in. When in SAR mode, read to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register usbtll_sar_cntx_j_5 rw addr(base, 0x414) "Save and Restore context array. Array size is indicated in. When in SAR mode, read to save and write to restore. Do not access when not in SAR mode." type(uint32);
+    
+    register usbtll_sar_cntx_j_6 rw addr(base, 0x418) "Save and Restore context array. Array size is indicated in. When in SAR mode, read to save and write to restore. Do not access when not in SAR mode." type(uint32);
+};

@@ -1,0 +1,275 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_keyboard_controller.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_keyboard_controller msbfirst ( addr base ) "" {
+    
+    
+    register kbd_revision ro addr(base, 0x0) "This register contains the IP revision code." type(uint32);
+
+    constants clockactivity_status width(2) "" {
+        CLOCKACTIVITY_0 = 0 "Functional clock can be switched off; L4 -nterface clock can be switched-off.";
+        CLOCKACTIVITY_1 = 1 "Functional clock can be switched off; L4 interface clock is maintained during wake-up period.";
+        CLOCKACTIVITY_2 = 2 "Functional clock is maintained during wake-up period; L4 interface clock can be switched off.";
+        CLOCKACTIVITY_3 = 3 "Functional clock is maintained during wake-up period; L4 interface clock is maintained during wake-up period.";
+    };
+
+    constants emufree_status width(1) "" {
+        EMUFREE_0 = 0 "The keyboard module is frozen in emulation mode (PINSUSPENDN signal active).";
+        EMUFREE_1 = 1 "The keyboard module runs free, regardless of PINSUSPENDN value.";
+    };
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle. An idle request is acknowledged unconditionally.";
+        IDLEMODE_1 = 1 "No-idle. An idle request is never acknowledged.";
+        IDLEMODE_2 = 2 "Smart-idle. Acknowledgment to an idle request is given based on the internal activity of the module.";
+        IDLEMODE_3 = 3 "Reserved.Do not use.";
+    };
+
+    constants enawakeup_status width(1) "" {
+        ENAWAKEUP_0 = 0 "No wake-up line assertion in idle mode";
+        ENAWAKEUP_1 = 1 "Wake-up line assertion enabled in smart-idle mode";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "Normal mode";
+        SOFTRESET_1 = 1 "The module is reset.";
+    };
+
+    constants autogating_status width(1) "" {
+        AUTOGATING_0 = 0 "L4 interface clock is free-running.";
+        AUTOGATING_1 = 1 "Automatic L4 interface clock gating strategy is applied, based on the L4 interface activity.";
+    };
+    
+    register kbd_sysconfig addr(base, 0x10) "This register controls the various parameters of the L4 interface." {
+        _ 22 mbz;
+        clockactivity 2 rw type(clockactivity_status) "Clock(s) activity during wake-up mode period.";
+        _ 2 mbz;
+        emufree 1 rw type(emufree_status) "Emulation mode";
+        idlemode 2 rw type(idlemode_status) "Power management, req/ack control";
+        enawakeup 1 rw type(enawakeup_status) "Wake-up feature global control";
+        softreset 1 rw type(softreset_status) "Software reset. This bit is automatically reset by the hardware. During reads, it always return 0.";
+        autogating 1 rw type(autogating_status) "Internal L4 interface clock gating strategy";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Internal module reset is ongoing.";
+        RESETDONE_1_r = 1 "Reset completed";
+    };
+    
+    register kbd_sysstatus addr(base, 0x14) "This register controls optional features specific to the timer function." {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal reset monitoring";
+    };
+
+    constants miss_event_status width(1) "" {
+        MISS_EVENT_0 = 0 "No miss event";
+        MISS_EVENT_1 = 1 "A miss event occurs.";
+    };
+
+    constants it_timeout_status width(1) "" {
+        IT_TIMEOUT_0 = 0 "No time-out event";
+        IT_TIMEOUT_1 = 1 "A time-out event occurs.";
+    };
+
+    constants it_long_key_status width(1) "" {
+        IT_LONG_KEY_0 = 0 "No long-key event";
+        IT_LONG_KEY_1 = 1 "A long-key event occurs.";
+    };
+
+    constants it_event_status width(1) "" {
+        IT_EVENT_0 = 0 "No event";
+        IT_EVENT_1 = 1 "An event occurs.";
+    };
+    
+    register kbd_irqstatus addr(base, 0x18) "The keyboard interrupt-status register is used to determine which of the keyboard events requested an interrupt." {
+        _ 28 mbz;
+        miss_event 1 rw type(miss_event_status) "Indicates when a miss event occurs.";
+        it_timeout 1 rw type(it_timeout_status) "Indicates when a time-out event is detected.";
+        it_long_key 1 rw type(it_long_key_status) "Indicates when a long-key event is detected.";
+        it_event 1 rw type(it_event_status) "Indicates when an event is detected.";
+    };
+
+    constants it_timeout_en_status width(1) "" {
+        IT_TIMEOUT_EN_0 = 0 "Time-out interrupt disabled";
+        IT_TIMEOUT_EN_1 = 1 "Time-out interrupt enabled";
+    };
+
+    constants it_long_key_en_status width(1) "" {
+        IT_LONG_KEY_EN_0 = 0 "Long-key interrupt disabled";
+        IT_LONG_KEY_EN_1 = 1 "Long-key interrupt enabled";
+    };
+
+    constants it_event_en_status width(1) "" {
+        IT_EVENT_EN_0 = 0 "Event interrupt disabled";
+        IT_EVENT_EN_1 = 1 "Event interrupt enabled";
+    };
+    
+    register kbd_irqenable addr(base, 0x1C) "The keyboard interrupt-enable register lets the user enable certain keyboard event for generating an interrupt request." {
+        _ 29 mbz;
+        it_timeout_en 1 rw type(it_timeout_en_status) "Time-out interrupt enable";
+        it_long_key_en 1 rw type(it_long_key_en_status) "Long-key interrupt enable";
+        it_event_en 1 rw type(it_event_en_status) "Enable event interrupt";
+    };
+
+    constants wup_timeout_ena_status width(1) "" {
+        WUP_TIMEOUT_ENA_0 = 0 "Time-out wake-up generation disabled";
+        WUP_TIMEOUT_ENA_1 = 1 "Time-out wake-up generation enabled";
+    };
+
+    constants wup_long_key_ena_status width(1) "" {
+        WUP_LONG_KEY_ENA_0 = 0 "Long-key wake-up generation disabled";
+        WUP_LONG_KEY_ENA_1 = 1 "Long-key wake-up generation enabled";
+    };
+
+    constants wup_event_ena_status width(1) "" {
+        WUP_EVENT_ENA_0 = 0 "Event wake-up generation disabled";
+        WUP_EVENT_ENA_1 = 1 "Event wake-up generation enabled";
+    };
+    
+    register kbd_wakeupenable addr(base, 0x20) "The keyboard wake-up enable register lets the user mask the expected source of wake-up event that generates a wake-up request." {
+        _ 29 mbz;
+        wup_timeout_ena 1 rw type(wup_timeout_ena_status) "Time-out wake-up enable";
+        wup_long_key_ena 1 rw type(wup_long_key_ena_status) "Long-key wake-up enable";
+        wup_event_ena 1 rw type(wup_event_ena_status) "Event wake-up enable";
+    };
+
+    constants pend_timeout_status width(1) "" {
+        PEND_TIMEOUT_0_r = 0 "No write pending to the register";
+        PEND_TIMEOUT_1_r = 1 "A write is pending to the register";
+    };
+
+    constants pend_long_key_status width(1) "" {
+        PEND_LONG_KEY_0_r = 0 "No write pending to the register.";
+        PEND_LONG_KEY_1_r = 1 "A write is pending to the register";
+    };
+    
+    register kbd_pending addr(base, 0x24) "Software must read the pending write bits to ensure that following write access is not discarded due to ongoing write synchronization process." {
+        _ 28 mbz;
+        pend_timeout 1 ro type(pend_timeout_status) "Write-pending bit forKBD_TIMEOUT register";
+        pend_long_key 1 ro type(pend_long_key_status) "Write-pending bit forKBD_KEYLONGTIME register";
+        pend_debouncing 1 ro type(pend_timeout_status) "Write-pending bit forKBD_DEBOUNCINGTIME register";
+        pend_ctrl 1 ro type(pend_timeout_status) "Write pending bit forKBD_CTRL register";
+    };
+
+    constants repeat_mode_status width(1) "" {
+        REPEAT_MODE_0 = 0 "Repeat mode detection disabled";
+        REPEAT_MODE_1 = 1 "Repeat mode detection enabled";
+    };
+
+    constants timeout_long_key_status width(1) "" {
+        TIMEOUT_LONG_KEY_0 = 0 "Time-out long key mode disabled";
+        TIMEOUT_LONG_KEY_1 = 1 "Time-out long key mode enabled";
+    };
+
+    constants long_key_status width(1) "" {
+        LONG_KEY_0 = 0 "Long-key mode disabled";
+        LONG_KEY_1 = 1 "Long-key mode enabled";
+    };
+
+    constants nsoftware_mode_status width(1) "" {
+        NSOFTWARE_MODE_0 = 0 "Enable software mode.";
+        NSOFTWARE_MODE_1 = 1 "Enable hardware decoding using internal sequencer.";
+    };
+    
+    register kbd_ctrl addr(base, 0x28) "This register sets the functional configuration of the module." {
+        _ 23 mbz;
+        repeat_mode 1 rw type(repeat_mode_status) "Repeat mode enable";
+        timeout_long_key 1 rw type(timeout_long_key_status) "Time-out long key mode enable";
+        timeout_empty 1 rw type(timeout_long_key_status) "Time-out empty mode enable";
+        long_key 1 rw type(long_key_status) "Long-key mode enable.";
+        ptv 3 rw "Prescale clock timer value";
+        nsoftware_mode 1 rw type(nsoftware_mode_status) "Select hardware or software mode for key decoding.";
+        _ 1 mbz;
+    };
+    
+    register kbd_debouncingtime addr(base, 0x2C) "This register is used to filter glitches on the press key or release key." {
+        _ 26 mbz;
+        debouncing_value 6 rw "This value corresponds to the desired value of debouncing time.";
+    };
+    
+    register kbd_keylongtime addr(base, 0x30) "This register is used to measure duration of a key press to allow shortcut detection." {
+        _ 20 mbz;
+        long_key_value 12 rw "This value corresponds to the desired value of the long-key interrupt or repeat mode value.";
+    };
+    
+    register kbd_timeout addr(base, 0x34) "This register is used to detect a long inactivity on the keyboard." {
+        _ 16 mbz;
+        timeout_value 16 rw "This value corresponds to the desired value of the time-out interrupt.";
+    };
+    
+    register kbd_statemachine addr(base, 0x38) "This register indicates the state of the sequencer." {
+        _ 28 mbz;
+        state_machine 4 ro "The state of internal state machine. See, for details.";
+    };
+    
+    register kbd_rowinputs addr(base, 0x3C) "This register stores the value of the row inputs." {
+        _ 23 mbz;
+        kbr_latch 9 ro "The value of the rows input.";
+    };
+    
+    register kbd_columnoutputs addr(base, 0x40) "This register holds the value of the columns output." {
+        _ 23 mbz;
+        kbc_reg 9 rw "The value of the columns output";
+    };
+    
+    register kbd_fullcode31_0 ro addr(base, 0x44) "The register codes the row 0, row 1, row 2, and row 3." type(uint32);
+    
+    register kbd_fullcode63_32 ro addr(base, 0x48) "The register codes rows 4, 5, 6, and 7." type(uint32);
+    
+    register kbd_fullcode17_0 addr(base, 0x4C) "The register codes row 0 and row 1. Row 0 is coded between bit 0 and 8; row 1 is coded between bit 24 and 16." {
+        _ 7 mbz;
+        row1 9 ro "A bit set to 1 indicates that the corresponding key is pressed.";
+        _ 7 mbz;
+        row0 9 ro "A bit set to 1 indicates that the corresponding key is pressed.";
+    };
+    
+    register kbd_fullcode35_18 addr(base, 0x50) "The register codes row 2 and row 3. Row 2 is coded between bit 0 and 8; row 3 is coded between bit 24 and 16" {
+        _ 7 mbz;
+        row3 9 ro "A bit set to 1 indicates that the corresponding key is pressed.";
+        _ 7 mbz;
+        row2 9 ro "A bit set to 1 indicates that the corresponding key is pressed.";
+    };
+    
+    register kbd_fullcode53_36 addr(base, 0x54) "The register codes row 4 and row 5. Row 4 is coded between bit 0 and 8; row 5 is coded between bit 24 and 16." {
+        _ 7 mbz;
+        row5 9 ro "A bit set to 1 indicates that the corresponding key is pressed.";
+        _ 7 mbz;
+        row4 9 ro "A bit set to 1 indicates that the corresponding key is pressed.";
+    };
+    
+    register kbd_fullcode71_54 addr(base, 0x58) "The register codes row 6 and row 7. Row 6 is coded between bit 0 and 8; row 7 is coded between bit 24 and 16." {
+        _ 7 mbz;
+        row7 9 ro "A bit set to 1 indicates that the corresponding key is pressed.";
+        _ 7 mbz;
+        row6 9 ro "A bit set to 1 indicates that the corresponding key is pressed.";
+    };
+    
+    register kbd_fullcode80_72 addr(base, 0x5C) "The register codes row 8. Row 8 is coded between bit 0 and 8." {
+        _ 23 mbz;
+        row8 9 ro "A bit set to 1 indicates that the corresponding key is pressed.";
+    };
+};

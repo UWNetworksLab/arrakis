@@ -1,0 +1,302 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ti_i2c.dev
+ *
+ * DESCRIPTION: TI I2C controller registers.
+ * 
+ * Section numbers refer to OMAP4460 ES1.x PUBLIC TRM vQ
+ *
+ * (I think the I2C controllers in the OMAP4460 match the standard TI I2C) -SG
+ */
+
+device ti_i2c msbfirst (addr b) "TI I2C controller" {
+    // Tables 23-33 and 23-35
+    register revnb_lo ro addr(b, 0x0) "Revision number (low part)" type(uint16);
+    register revnb_hi ro addr(b, 0x4) "Revision number (high part)" type(uint16);
+
+    constants clkact "clock activity" {
+        clk_off = 0b00 "Both clocks can be off";
+        clk_ocp = 0b01 "Only OCP clock must be kept active";
+        clk_sys = 0b10 "Only system clock must be kept active";
+        clk_act = 0b11 "Both clocks must be active";
+    };
+
+    constants idlemode "idle mode" {
+        idlemode_forceidle = 0b00 "Force Idle";
+        idlemode_noidle    = 0b01 "No Idle";
+        idlemode_smartidle = 0b10 "Smart Idle";
+        idlemode_smartwkup = 0b11 "Smart Idle & Wakeup";
+    };
+
+    // Table 23-37
+    register sysc rw addr(b, 0x10) "System Configuration" {
+        _           6 rsvd;
+        clkactivity 2 type(clkact) "Clock activity selection";
+        _           3 rsvd;
+        idlemode    2 type(idlemode) "Idle mode selection";
+        enawakeup   1 "Enable wakeup control";
+        srst        1 "SoftReset";
+        autoidle    1 "Autoidle";
+    };
+
+    // Tables 23-39 and 23-41
+    regtype irqstatus "interrupt status vector" {
+        _    1 rsvd;
+        xdr  1    "Transmit draining";
+        rdr  1    "Receive draining";
+        bb   1 ro "Bus busy";
+        rovr 1    "Receive overrun";
+        xudf 1    "Transmit underflow";
+        aas  1    "Address recognized as slave IRQ status";
+        bf   1    "Bus free";
+        aerr 1    "Access error";
+        stc  1    "Start condition";
+        gc   1    "General call";
+        xrdy 1    "Transmit data ready";
+        rrdy 1    "Receive data ready";
+        ardy 1    "Register access ready";
+        nack 1    "No acknowledgement";
+        al   1    "Arbitration lost";
+    };
+    register irqstatus_raw rw addr(b, 0x24) "Per-event raw interrupt status vector" 
+        type(irqstatus);
+    register irqstatus rw1c addr(b, 0x28) "Per-event enabled interrupt status vector" 
+        type(irqstatus);
+
+    // Tables 23-43 and 23-45
+    regtype irqenable "interrupt enable vector" {
+        _    1 rsvd;
+        xdr_ie  1    "Transmit draining";
+        rdr_ie  1    "Receive draining";
+        _       1 rsvd;
+        // NOTE: rovr and xudf don't have _ie in OMAP TRM -SG
+        rovr_ie 1    "Receive overrun";
+        xudf_ie 1    "Transmit underflow";
+        aas_ie  1    "Address recognized as slave IRQ status";
+        bf_ie   1    "Bus free";
+        aerr_ie 1    "Access error";
+        stc_ie  1    "Start condition";
+        gc_ie   1    "General call";
+        xrdy_ie 1    "Transmit data ready";
+        rrdy_ie 1    "Receive data ready";
+        ardy_ie 1    "Register access ready";
+        nack_ie 1    "No acknowledgement";
+        al_ie   1    "Arbitration lost";
+    };
+    register irqenable_set rw addr(b, 0x2C) "Per-event interrupt enable bit vector"
+        type(irqenable);
+    register irqenable_clr rw addr(b, 0x30) "Per-event interrupt clear bit vector"
+        type(irqenable);
+
+    regtype wakeupen "per-event wakeup enable" {
+        _    1 rsvd;
+        xdr  1    "Transmit draining";
+        rdr  1    "Receive draining";
+        _    1 rsvd;
+        rovr 1    "Receive overrun";
+        xudf 1    "Transmit underflow";
+        aas  1    "Address recognized as slave IRQ status";
+        bf   1    "Bus free";
+        _    1 rsvd;
+        stc  1    "Start condition";
+        gc   1    "General call";
+        _    1 rsvd;
+        drdy 1    "Receive/Transmit data ready";
+        ardy 1    "Register access ready";
+        nack 1    "No acknowledgement";
+        al   1    "Arbitration lost";
+    };
+
+    // Table 23-47
+    register we rw addr(b, 0x34) "Wakeup enable vector" type(wakeupen);
+
+    // Tables 23-49, 23-51, 23-53, and 23-55
+    // NOTE: nomenclature doesn't match OMAP TRM
+    regtype dmaen "DMA enable" {
+        _  15 rsvd;
+        en 1 "Enable DMA channel";
+    };
+    register dmarxenable_set addr(b, 0x38) "Per-event DMA RX enable"
+        type(dmaen);
+    register dmatxenable_set addr(b, 0x3C) "Per-event DMA TX enable"
+        type(dmaen);
+    register dmarxenable_clr addr(b, 0x40) "Per-event DMA RX enable clear"
+        type(dmaen);
+    register dmatxenable_clr addr(b, 0x44) "Per-event DMA TX enable clear"
+        type(dmaen);
+
+    // Tables 23-57 and 23-59
+    register dmarxwake_en addr(b, 0x48) "Per-event DMA RX wakeup enable"
+        type(wakeupen);
+    register dmatxwake_en addr(b, 0x4C) "Per-event DMA TX wakeup enable"
+        type(wakeupen);
+
+    // Table 23-61 
+    register ie rw addr(b, 0x84) "Interrupt enable vector (legacy)"
+        type(irqenable);
+
+    // dummy constants for polling stat flags
+    constants irqstatus_flags width(16) "irqstatus bitmasks" {
+        irq_flag_xdr  = 0x4000 "Transmit draining";
+        irq_flag_rdr  = 0x2000 "Receive draining";
+        irq_flag_bb   = 0x1000 "Bus busy";
+        irq_flag_rovr = 0x0800 "Receive overrun";
+        irq_flag_xudf = 0x0400 "Transmit underflow";
+        irq_flag_aas  = 0x0200 "Address recognized as slave IRQ status";
+        irq_flag_bf   = 0x0100 "Bus free";
+        irq_flag_aerr = 0x0080 "Access error";
+        irq_flag_stc  = 0x0040 "Start condition";
+        irq_flag_gc   = 0x0020 "General call";
+        irq_flag_xrdy = 0x0010 "Transmit data ready";
+        irq_flag_rrdy = 0x0008 "Receive data ready";
+        irq_flag_ardy = 0x0004 "Register access ready";
+        irq_flag_nack = 0x0002 "No acknowledgement";
+        irq_flag_al   = 0x0001 "Arbitration lost";
+    };
+
+    // Table 23-63
+    register stat rw1c addr(b, 0x88) "Interrupt status vector (legacy)"
+        type(irqstatus);
+
+    // Table 23-65
+    register syss rw addr(b, 0x90) "System status" {
+        _     15 rsvd;
+        rdone 1 rw "Reset done";
+    };
+
+    // Table 23-67
+    register buf rw addr(b, 0x94) "Buffer Configuration" {
+        rdma_en    1 "Receive DMA enable";
+        rxfifo_clr 1 "Receive FIFO clear";
+        rxtrsh     6 "Threshold value for FIFO buffer in RX mode";
+        xdma_en    1 "Transmit DMA enable";
+        txfifo_clr 1 "Transmit FIFO clear";
+        txtrsh     6 "Threshold value for FIFO buffer in TX mode";
+    };
+
+    // Table 23-69
+    // NOTE: writing 0 to cnt equals to a transfer of 65536 bytes; this means
+    // that software has to disallow 0-byte transfers. -SG
+    register cnt rw addr(b, 0x98) "Data counter" type(uint16);
+
+    // Table 23-71
+    register data rw addr(b, 0x9C) "Data access" {
+        _    8 rsvd;
+        data 8 "Transmit/Receive data FIFO endpoint";
+    };
+
+    // Table 23-73
+    constants opmode "Operation Mode" {
+        opmode_fs   = 0b00 "I2C Fast/Standard Mode";
+        opmode_hs   = 0b01 "I2C High Speed Mode";
+        opmode_sccb = 0b10 "SCCB Mode";
+    };
+    register con rw addr(b, 0xA4) "Configuration" {
+        en     1 "module enable";
+        _      1 rsvd;
+        opmode 2 type(opmode) "Operation mode selection";
+        stb    1 "Start byte mode";
+        mst    1 "Master/slave mode";
+        trx    1 "Transmitter/Receiver mode";
+        xsa    1 "Expand Slave Address";
+        xoa0   1 "Expand Own address 0";
+        xoa1   1 "Expand Own address 1";
+        xoa2   1 "Expand Own address 2";
+        xoa3   1 "Expand Own address 3";
+        _ 2 rsvd;
+        stp    1 "Stop condition";
+        stt    1 "Start condition";
+    };
+
+    // Table 23-75
+    register oa rw addr(b, 0xA8) "Own address" {
+        mcode 3 "Master Code";
+        _     3 rsvd;
+        oa    10 "Own addres";
+    };
+
+    // Table 23-77
+    register sa rw addr(b, 0xAC) "Slave address" {
+        _  6 rsvd;
+        sa 10 "Slave address";
+    };
+
+    // Table 23-79
+    register psc rw addr(b, 0xB0) "Clock Prescaler" {
+        _ 8 rsvd;
+        psc 8 "Fast/Standard mode prescale sampling clock divider [/(psc+1)]";
+    };
+
+    // Tables 23-81 and 23-83
+    regtype scltime "SCL time" {
+        hsscl 8 "High Speed mode SCL time";
+        scl   8 "Fast/Standard mode SCL time";
+    };
+    register scll rw addr(b, 0xB4) "SCL Low Time" type(scltime);
+    register sclh rw addr(b, 0xB8) "SCL High Time" type(scltime);
+
+    // Table 23-85
+    constants testmode "Test mode" {
+        test_functional = 0b00 "Functional mode (default)";
+        test_loopback   = 0b11 "Loop back mode select + SDA/SCL IO mode select";
+        test_sclcnttest = 0b10 "Test of SCL counters";
+    };
+    register systest rw addr(b, 0xBC) "System Test" {
+        st_en      1 "System test enable";
+        free       1 "Free running mode (on breakpoint)";
+        tmode      2 type(testmode) "Test mode select";
+        ssb        1 "Set status bits from 0 to 14";
+        _          2 rsvd;
+        scl_i_func 1 ro "SCL line input value";
+        scl_o_func 1 ro "SCL line output value";
+        sda_i_func 1 ro "SDA line input value";
+        sda_o_func 1 ro "SDA line output value";
+        sccb_e_o   1 rw "SCCB_E line sense output value";
+        scl_i      1 ro "SCL line sense input value";
+        scl_o      1 rw "SCL line drive output value";
+        sda_i      1 ro "SDA line sense input value";
+        sda_o      1 rw "SDA line drive output value";
+    };
+
+    // Table 23-87
+    register bufstat ro addr(b, 0xC0) "Buffer Status" {
+        fifodepth 2 "Internal FIFO buffers depth";
+        rxstat    6 "RX buffer status";
+        _         2 rsvd;
+        txstat    6 "TX buffer status";
+    };
+
+    // Tables 23-89, 23-91, and 23-93
+    regtype ownaddr "own address" {
+        _  6 rsvd;
+        oa 10 "Own address";
+    };
+    register oa1 addr(b, 0xC4) "Own Address 1" type(ownaddr);
+    register oa2 addr(b, 0xC8) "Own Address 2" type(ownaddr);
+    register oa3 addr(b, 0xCC) "Own Address 3" type(ownaddr);
+
+    // Table 23-95
+    register actoa ro addr(b, 0xD0) {
+        _       12 rsvd;
+        oa3_act 1 "Own address 3 active";
+        oa2_act 1 "Own address 2 active";
+        oa1_act 1 "Own address 1 active";
+        oa0_act 1 "Own address 0 active";
+    };
+
+    // Table 23-97
+    register sblock rw addr(b, 0xD4) "Clock Blocking Enable" {
+        _ 12 rsvd;
+        oa3_en 1 "Own address 3 clock blocking enable";
+        oa2_en 1 "Own address 2 clock blocking enable";
+        oa1_en 1 "Own address 1 clock blocking enable";
+        oa0_en 1 "Own address 0 clock blocking enable";
+    };
+};

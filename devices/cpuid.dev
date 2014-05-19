@@ -1,0 +1,526 @@
+/*
+ * Copyright (c) 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * cpuid.dev
+ *
+ * DESCRIPTION: ia32 CPU ID instruction results
+ * 
+ * See:
+ *   Intel Architecture Manual, Volume 2A, pp. 3-163 - ff., August 2007  
+ *   AMD CPUID Specification, Rev. 2.28, Pub.#25481, April 2008
+ */
+
+device cpuid lsbfirst () "ia32 / Intel64 CPUID instruction results" {
+    
+    // We define a different address space for each register
+    space eax(i) valuewise "Results in EAX";
+    space ebx(i) valuewise "Results in EBX";
+    space ecx(i) valuewise "Results in ECX";
+    space edx(i) valuewise "Results in EDX";
+
+    //
+    // Basic CPUID information
+    //
+
+    //
+    // EAX=0x00
+    //
+
+    register max_biv ro eax(0x00) "Maximum input val for basic CPUID info"
+	type(uint32);
+    register vendor0 ro ebx(0x00) "Vendor string part 1" type(uint32);
+    register vendor1 ro edx(0x00) "Vendor string part 2" type(uint32);
+    register vendor2 ro ecx(0x00) "Vendor string part 3" type(uint32);
+
+    //
+    // EAX=0x01
+    //
+
+    register ver_info ro eax(0x01) "Version information" {
+	stepping	4 "Stepping ID";
+	model		4 "Model ID";
+	family		4 "Family ID";
+	proc_type	2 "Processor type (Intel only)";
+	_		2 mbz;
+	extmodel	4 "Extended model ID";
+	extfamily	8 "Extended family ID";
+	_		4 mbz;
+    };
+    
+    register brand_ndx ro ebx(0x01) "Brand Index, APIC info" {
+	brand		8 "Brand index";
+	cflush_sz	8 "CFLUSH line size";
+	max_log_proc	8 "Max. # logical processors in this package";
+	init_apic_id	8 "Initial local APIC physical ID";
+    };
+  
+    register feat_info ro edx(0x01) "Feature information" {
+	fpu_x87		1 "FPU on chip";
+	vme		1 "Virtual-8086 mode enhancement";
+	de		1 "Debugging extensions";
+	pse		1 "Page size extensions";
+	tsc		1 "Time stamp counter";
+	msr		1 "RDMSR and WRMSR support";
+	pae		1 "Physical address extensions";
+	mce		1 "Machine check exception";
+	cx8		1 "CMPXCHG8B instruction";
+	apic		1 "APIC on chip";
+	_		1;
+	sep		1 "SYSENTER and SYSEXIT";
+	mtrr		1 "Memory type range registers";
+	pge		1 "PTE global bit";
+	mca		1 "Machine check architecture";
+	cmov		1 "Conditional move/compare instruction";
+	pat		1 "Page attribute table";
+	pse36		1 "Page size extension";
+	psn		1 "Processor serial number";
+	clfsh		1 "CFLUSH instruction";
+	_		1;
+	ds		1 "Debug store";
+	acpi		1 "Thermal monitor and clock control";
+	mmx		1 "MMX technology";
+	fxsr		1 "FXSAVE / FXRSTOR";
+	sse		1 "SSE instructions";
+	sse2		1 "SSE2 instructions";
+	ss		1 "Self-snoop";
+	htt		1 "Multi-threading";
+	tm		1 "Thermal monitor";
+	_		1;
+	pbe		1 "Pending break enable";
+    };
+  
+    register ext_feat_info ro ecx(0x01) "Extended feature information" {
+	sse3		1 "SSE3 extensions";
+	_		2;
+	monitor		1 "MONITOR/MWAIT";
+	ds_cpl		1 "CPL qualified debug store";
+	vmx		1 "Virtual machine extensions";
+	smx		1 "Safer mode extensions";
+	est		1 "Enhanced Intel SpeedStep(tm) technology";
+	tm2		1 "Thermal monitor 2";
+	ssse3		1 "Supplemental SSE3 extensions";
+	cnxt_id		1 "L1 context ID";
+	_		2;
+	cmpxchg16b	1 "CMPXCHG16B available";
+	xtpr_up		1 "xTPR update control";
+	pdcm		1 "Perfmon and debug capability";
+	_		3;
+	sse4_1		1 "SSE4.1";
+	sse4_2		1 "SSE4.2";
+	_		2;
+	popcnt		1 "POPCNT instruction";
+	_		8;
+    };
+
+    //
+    // EAX=0x02 : Cache descriptors (Intel only)
+    //
+
+    // Intel, Table 3.17
+    constants intel_cache_desc "Intel Cache & TLB descriptors" {
+	null_cd		= 0x00 "Null descriptor";
+	itlb_4k_4w_32	= 0x01 "ITLB, 4k pages, 4-way, 32 entries";
+	itlb_4m_4w_2	= 0x02 "ITLB, 4M pages, 4-way, 2 entries";
+	dtlb_4k_4w_64	= 0x03 "DTLB, 4k pages, 4-way, 64 entries";
+	dtlb_4m_4w_8	= 0x04 "DTLB, 4M pages, 4-way, 8 entries";
+	dtlb1_4m_4w_32  = 0x05 "DTLB1, 4M pages, 4-way, 32 entries";
+	l1i_8k_4w_32	= 0x06 "L1 Icache, 8k, 4-way, 32b lines";
+
+	l1i_16k_4w_32	= 0x08 "L1 Icache, 16k, 4-way, 32b lines";
+
+	l1d_8k_2w_32	= 0x0a "L1 Dcache, 8k, 2-way, 32b lines";
+	itlb_4m_4w_4	= 0x0b "ITLB, 4M pages, 4-way, 4 entries";
+	l1d_16k_4w_32	= 0x0c "L1 Dcache, 16k, 4-way, 32b lines";
+
+	l3_512k_4w_64_2 = 0x22 "L3 cache, 512k, 4-way, 64b lines, 2/sector";
+	l3_1m_8w_64_2	= 0x23 "L3 cache, 1M, 8-way, 64b lines, 2/sector";
+	l3_2m_8w_64_2	= 0x25 "L3 cache, 2M, 8-way, 64b lines, 2/sector";
+	l3_4m_8w_64_2	= 0x29 "L3 cache, 4M, 8-way, 64b lines, 2/sector";
+
+	l1d_32k_8w_64	= 0x2c "L1 Dcache, 32k, 8-way, 64b lines";
+	l1i_32k_8w_64	= 0x30 "L1 Icache, 32k, 8-way, 64b lines";
+	
+	no_l2_l3	= 0x40 "No L2 or L3 cache";
+
+	l2_128k_4w_32	= 0x41 "L2 cache, 128k, 4-way, 32b lines";
+	l2_256k_4w_32	= 0x42 "L2 cache, 256k, 4-way, 32b lines";
+	l2_512k_4w_32	= 0x43 "L2 cache, 512k, 4-way, 32b lines";
+	l2_1m_4w_32	= 0x44 "L2 cache, 1M, 4-way, 32b lines";
+	l2_2m_4w_32	= 0x45 "L2 cache, 2M, 4-way, 32b lines";
+
+	l3_4m_4w_64	= 0x46 "L3 cache, 4M, 4-way, 64b lines";
+	l3_8m_8w_64	= 0x47 "L3 cache, 8M, 8-way, 64b lines";
+
+	l2_4m_16w_64	= 0x49 "L2 cache, 4M, 16-way, 64b lines";
+
+	itlb_4k2m4n_64  = 0x50 "ITLB, 4k & 2M or 4M pages, 64 entries";
+	itlb_4k2m4n_128 = 0x51 "ITLB, 4k & 2M or 4M pages, 128 entries";
+	itlb_4k2m4n_256 = 0x52 "ITLB, 4k & 2M or 4M pages, 256 entries";
+
+	dtlb0_4m_4w_16	= 0x56 "DTLB0, 4M pages, 4-way, 16 entries";
+	dtlb0_4k_4w_16	= 0x57 "DTLB0, 4k pages, 4-way, 16 entries";
+
+	dtlb_4k4m_64	= 0x5b "DTLB, 4k & 4M pages, 64 entries";
+	dtlb_4k4m_128	= 0x5c "DTLB, 4k & 4M pages, 128 entries";
+	dtlb_4k4m_256	= 0x5d "DTLB, 4k & 4M pages, 256 entries";
+
+	l1d_16k_8w_64	= 0x60 "L1 Dcache, 16k, 8-way, 64b lines";
+	l1d_8k_4w_64	= 0x66 "L1 Dcache, 8k, 4-way, 64b lines";
+	l1d_16k_4w_64	= 0x67 "L1 Dcache, 16k, 4-way, 64b lines";
+	l1d_32k_4w_64	= 0x68 "L1 Dcache, 32k, 4-way, 64b lines";
+
+	tc_12k_8w	= 0x70 "Trace cache, 12k-uop, 8-way";
+	tc_16k_8w	= 0x71 "Trace cache, 16k-uop, 8-way";
+	tc_32k_8w	= 0x72 "Trace cache, 32k-uop, 8-way";
+
+	l2_1M_4w_64	= 0x78 "L2 cache, 1M, 4-way, 64b lines";
+	l2_128k_8w_64_2 = 0x79 "L2 cache, 128k, 8-way, 64b lines, 2/sector";
+	l2_256k_8w_64_2	= 0x7a "L2 cache, 256k, 8-way, 64b lines, 2/sector";
+	l2_512k_8w_64_2	= 0x7b "L2 cache, 512k, 8-way, 64b lines, 2/sector";
+	l2_1M_8w_64_2	= 0x7c "L2 cache, 1M, 8-way, 64b lines, 2/sector";
+	l2_2M_8w_64	= 0x7d "L2 cache, 2M, 8-way, 64b lines";
+
+	l2_512k_2w_64	= 0x7f "L2 cache, 512k, 2-way, 64b lines";
+
+	l2_256k_8w_32	= 0x82 "L2 cache, 256k, 8-way, 32b lines";
+	l2_512k_8w_32	= 0x83 "L2 cache, 512k, 8-way, 32b lines";
+	l2_1M_8w_32     = 0x84 "L2 cache, 1M, 8-way, 32b lines";
+	l2_2M_8w_32	= 0x85 "L2 cache, 2M, 8-way, 32b lines";
+	l2_512k_4w_64	= 0x86 "L2 cache, 512k, 4-way, 64b lines";
+	l2_1M_8w_64	= 0x87 "L2 cache, 1M, 8-way, 64b lines";
+
+	itlb_4k_4w_128	= 0xb0 "ITLB, 4k pages, 4-way, 128 entries";
+
+	dtlb_4k_4w_128	= 0xb3 "DTLB, 4k pages, 4-way, 128 entries";
+	dtlb1_4k_4w_256	= 0xb4 "DTLB1, 4k pages, 4-way, 256 entries";
+
+	pref_64		= 0xf0 "64-byte prefetching";
+	pref_128	= 0xf1 "128-byte prefetching";
+    };
+
+/*    
+ * Exclude this insane mess for now until we really, really need it.
+ *
+    regtype cache_info "Intel cache/TLB info" {
+	d0		8 type(intel_cache_desc) "Descriptor 0";
+	d1		8 type(intel_cache_desc) "Descriptor 1";
+	d2		8 type(intel_cache_desc) "Descriptor 2";
+	d3		7 type(intel_cache_desc) "Descriptor 3";
+	valid		1 "Contains valid descriptors";
+    };
+    register cache_i_a ro eax(0x02) "Intel cache/TLB info eax" type(cache_info);
+    register cache_i_b ro ebx(0x02) "Intel cache/TLB info ebx" type(cache_info);
+    register cache_i_c ro ecx(0x02) "Intel cache/TLB info ecx" type(cache_info);
+    register cache_i_d ro edx(0x02) "Intel cache/TLB info edx" type(cache_info);
+*/
+
+    //
+    // EAX=0x03 : Processor serial number (Intel only)
+    //
+    
+    register pns0 ro ecx(0x03) "Processor serial no. bits 0-31" type(uint32);
+    register pns1 ro edx(0x03) "Processor serial no. bits 32-63" type(uint32);
+
+    //
+    // EAX=0x04 : Deterministic cache parameters leaf (Intel only)
+    //
+
+    constants intel_cache_type "Intel cache type field" {
+	ct_null		= 0 "Null, no more caches";
+	ct_data		= 1 "Data cache";
+	ct_instruction	= 2 "Instruction cache";
+	ct_unified	= 3 "Unified cache";
+    };
+
+    space dcpa(i) valuewise "Deterministic cache parameters leaf A";
+    regarray cache_type ro dcpa(0x00)[4] "Cache type information" {
+	ctf		5 type(intel_cache_type) "Cache type";
+	level		3 "Cache level (starts at 1)";
+	self_init	1 "Self initializing";
+	fully_assoc	1 "Fully associative";
+	wb_inval	1 "Write-back invalidate/invalidate";
+	inclusiveness	1 "Cache inclusiveness";
+	_		2;
+	max_threads	12 "Max. # threads sharing this cache in package";
+	max_procs	6 "Max. # processor cores in this package";
+    };
+
+    space dcpb(i) valuewise "Deterministic cache parameters leaf B";
+    regarray cache_pars ro dcpb(0x00)[4] "Cache parameters" {
+	l		12 "System coherency line size (-1)";
+	p		10 "Physical line partitions (-1)";
+	w		10 "Ways of associativity (-1)";
+    };
+
+    space dcpc(i) valuewise "Deterministic cache parameters leaf C";
+    regarray num_sets ro dcpc(0x00)[4] "Number of sets" type(uint32);
+
+    //
+    // EAX=0x05 : MONITOR / MWAIT leaf
+    //
+    
+    register min_monitor ro eax(0x05) "Smallest monitor-line size)" {
+	sz		16 "Smallest monitor-line size (bytes)";
+	_		16 mbz;
+    };
+    register max_monitor ro ebx(0x05) "Largest monitor-line size)" {
+	sz		16 "Largest monitor-line size (bytes)";
+	_		16;
+    };
+    register mwait_feat ro ecx(0x05) "MONITOR/MWAIT features" {
+	emx		1 "Supports enum. of Monitor/Mwait extensions";
+	ibe		1 "Supports interrupts as break event";
+	_		30;
+    };
+    register mwait_cstates ro edx(0x05) "sub-C states supported by MWAIT" {
+	c0		4 "# C0 sub-C-states supported";
+	c1		4 "# C1 sub-C-states supported";
+	c2		4 "# C2 sub-C-states supported";
+	c3		4 "# C3 sub-C-states supported";
+	c4		4 "# C4 sub-C-states supported";
+	_		12 mbz;
+    };
+
+    // 
+    // EAX=0x06 : Thermal and Power Management Leaf (Intel only)
+    //
+    
+    register tpm_feat ro eax(0x06) "Thermal features" {
+	dts		1 "Digital temperature sensor supported";
+	ida		1 "Intel dynamic acceleration enabled";
+	_		30 mbz;
+    };
+    register tpm_thresh ro ebx(0x06) "# interrupt thresholds in sensor" {
+	val		4 "# interrupt thresholds in sensor";
+	_		28;
+    };
+    register tpm_hcfc ro ecx(0x06) "Hardware coordination feedback" {
+	en		1 "HCFC present (MCNT/ACNT MSRs)";
+	_		31;
+    };
+    
+    // 
+    // EAX=0x0a : Architectural Performance Monitoring Leaf (Intel
+    // only)
+    
+    register apm_gen ro eax(0x0a) "Gen-purpose perf. counter info" {
+	version		8 "Version ID";
+	num_counters	8 "# GP perf. counters per logical processor";
+	width		8 "Bit width of GP perf. counters";
+	vec_length	8 "EBX bit vector length to enumerate events";
+    };
+    register apm_feat ro ebx(0x0a) "Performance monitoring event availability" {
+	cc		1 "Core cycle event";
+	ir		1 "Instruction retired";
+	rc		1 "Reference cycles";
+	llcr		1 "Last-level cache reference";
+	llcm		1 "Last-level cache miss";
+	bir		1 "Branch instruction retired";
+	bmr		1 "Branch mispredict retired";
+	_		25 mbz;
+    };
+    register apm_fixed ro edx(0x0a) "Fixed-function perf. counter infos" {
+	num		5 "# Fixed-function perf. counters";
+	width		8 "Width of fixed-function perf. counters";
+	_		19;
+    };
+    
+    //
+    // Extended CPU information
+    //
+
+    register ext_biv ro eax(0x80000000) "Max input val for ext. CPUID info"
+	type(uint32);
+    register evendor0 ro ebx(0x80000000) "Ext. Vendor string pt 1" type(uint32);
+    register evendor1 ro edx(0x80000000) "Ext. Vendor string pt 2" type(uint32);
+    register evendor2 ro ecx(0x80000000) "Ext. Vendor string pt 3" type(uint32);
+
+    // Mostly AMD only
+    register brandid ro ebx(0x80000001) "Brand ID identifier" {
+	id		16 "Extended brand ID";
+	_		12;
+	pkgtype		4 "Package type";
+    };
+    register ext_featc ro ecx(0x80000001) "Extend misc. features 1" {
+	lahfsahf	1 "LAHF & SAHF support in 64-bit mode";
+	cmplegacy	1 "Core multiprocessing legacy mode";
+	svm		1 "Secure virtual machine";
+	extapicspace	1 "Extended APIC space";
+	altmovcr8	1 "LOCK MOV CR0 means MOV CR8";
+	abm		1 "Advanced bit manipulation";
+	sse4a		1 "EXTRQ/INSERTQ/MOVNTSS/MOVNTSD support";
+	misalignsse	1 "Misaligned SSE mode";
+	pref3dnow	1 "PREFETCH/PREFETCHW support";
+	osvw		1 "OS visible workaround";
+	ibs		1 "Instruction-based sampling";
+	sse5		1 "SSE 5 instruction support";
+	skinit		1 "SKINIT/STGI supported";
+	wdt		1 "Watchdog timer support";
+	_		18;
+    };
+    register ext_featd ro edx(0x80000001) "Extend misc. features 2" {
+	_		11;
+	syscallsysret	1 "SYSCALL/SYSRET available in 64-bit mode";
+	_		8;
+	nx		1 "No-execute page protection";
+	_		1;
+	mmxext		1 "AMD extensions to MMX instructions";
+	_		2;
+	ffxsr		1 "FFXSR instruction optimizations";
+	page1fb		1 "1-GB large page support";
+	rdtscp		1 "RDTSCP instruction";
+	_		1;
+	longmode	1 "Long mode / Intel64 available";
+	i3dnowext	1 "AMD extensions to 3DNow! instructions";
+	i3dnow		1 "3DNow! instructions";
+    };
+
+    register brand0 ro eax(0x80000002) "Brand string contd." type(uint32);
+    register brand1 ro ebx(0x80000002) "Brand string contd." type(uint32);
+    register brand2 ro ecx(0x80000002) "Brand string contd." type(uint32);
+    register brand3 ro edx(0x80000002) "Brand string contd." type(uint32);
+
+    register brand4 ro eax(0x80000003) "Brand string contd." type(uint32);
+    register brand5 ro ebx(0x80000003) "Brand string contd." type(uint32);
+    register brand6 ro ecx(0x80000003) "Brand string contd." type(uint32);
+    register brand7 ro edx(0x80000003) "Brand string contd." type(uint32);
+
+    register brand8 ro eax(0x80000004) "Brand string contd." type(uint32);
+    register brand9 ro ebx(0x80000004) "Brand string contd." type(uint32);
+    register branda ro ecx(0x80000004) "Brand string contd." type(uint32);
+    register brandb ro edx(0x80000004) "Brand string contd." type(uint32);
+    
+    //
+    // EAX=0x80000005 : L1 cache and TLB identifiers (AMD only)
+    //
+    regtype amd_tlbinfo1 "AMD TLB information" {
+	itlb_sz		8 "Number of instruction TLB entries";
+	itlb_asc	8 "Instruction TLB associativity";
+	dtlb_sz		8 "Number of data DTLB entries";
+	dtlb_asc	8 "Data TLB associativity";
+    };
+    regtype amd_cacheinfo1 "AMD cache information" {
+    linesize    8 "line size";
+    lpt     8 "lines per tag";
+    assoc       8 "associativity";
+	size		8 "size in Kb";
+    };
+    register l1_24m ro eax(0x80000005) "AMD L1 TLB info for 2MB/4MB pages" 
+	type(amd_tlbinfo1);
+    register l1_4k ro ebx(0x80000005) "AMD L1 TLB info for 4k pages" 
+	type(amd_tlbinfo1);
+    register l1_dci ro ecx(0x80000005) "AMD L1 DCache info" 
+	type(amd_cacheinfo1);
+    register l1_ici ro edx(0x80000005) "AMD L1 ICache info" 
+	type(amd_cacheinfo1);
+    
+    //
+    // EAX=0x80000006 : L2 cache and TLB identifiers (mostly AMD only)
+    //
+    regtype amd_tlbinfo23 "AMD TLB information" {
+    itlb_sz    12 "Number of instruction TLB entries";
+    itlb_asc    4 "Instruction TLB associativity";
+    dtlb_sz    12 "Number of data DTLB entries";
+    dtlb_asc    4 "Data TLB associativity";
+    };
+    regtype amd_cacheinfo23 "AMD cache information" {
+    linesize    8 "line size";
+    lpt         4 "lines per tag";
+    assoc       4 "associativity";
+    size       16 "size in Kb";
+    };
+    register l2_24m ro eax(0x80000006) "AMD L2 TLB info for 2MB/4MB pages" 
+	type(amd_tlbinfo23);
+    register l2_4k ro ebx(0x80000006) "AMD L2 TLB info for 4k pages" 
+	type(amd_tlbinfo23);
+    register l2_ci ro ecx(0x80000006) "AMD L2 cache info" 
+	type(amd_cacheinfo23);
+    register l3_ci ro edx(0x80000006) "AMD L3 cache info" 
+	type(amd_cacheinfo23);
+
+    //
+    // EAX=0x80000007 : Advanced Power Management (AMD only)
+    //
+
+    register amd_apm ro edx(0x80000007) "AMD Advanced Power Mgmt" {
+	ts		1 "Temperature sensor";
+	fid		1 "Frequency ID control";
+	vid		1 "Voltage ID control";
+	ttp		1 "THERMTRIP";
+	tm		1 "Hardware thermal control";
+	stc		1 "Software thermal control";
+	Mhz100steps	1 "100MHz multiplier control";
+	hpwstate	1 "Hardware P-State control";
+	tscinvariant	1 "TSC rate invariant";
+	_		23;
+    };
+    
+    // 
+    // EAX=0x80000008 : Address size and physical core count 
+    //
+
+    register addr_size ro eax(0x80000008) "Address size" {
+	phys		8 "Max physical byte address size in bits";
+	linear		8 "Max linear byte address size in bits";
+	guest		8 "Max guest physical byte address size in bits";
+	_		8;
+    };
+    // AMD only
+    register core_count ro ecx(0x80000008) "Core count" {
+	nc		8 "Number of CPU cores -1 ";
+	_		4;
+	apiccoreidsz	4 "APIC core ID size in bits";
+	_		16;
+    };
+    
+    // 
+    // EAX=0x8000000A : SVM revision/feature identification (AMD only)
+    //
+    
+    register svmrev ro eax(0x8000000A) "Secure Virtual Machine rev." {
+	rev		8 "SVM revision number";
+	_		24;
+    };
+    register nasid ro ebx(0x8000000A) "# Addr. space identifiers" type(uint32);
+    register svmfeat ro edx(0x8000000A) "SVM features" {
+	np		1 "Nested paging";
+	lbrvirt		1 "LBR virtualization";
+	svml		1 "SVM lock";
+	nrips		1 "NRIP save";
+	_		5;
+	ssse3sse5dis	1 "SSSE3 and SSE5 opcode set disable";
+	_		22;
+    };
+    
+    // 
+    // EAX=0x80000019 : TLB 1GB page identifiers (AMD only)
+    //
+
+    register l1_1G ro eax(0x80000019) "AMD L1 TLB info for 1GB pages" 
+	type(amd_tlbinfo23);
+    register l2_1G ro ebx(0x80000019) "AMD L2 TLB info for 1GB pages" 
+	type(amd_tlbinfo23);
+
+    // 
+    // EAX=0x8000001A : Performance optimization identifiers (AMD only)
+    //
+    
+    register opt_id ro eax(0x8000001A) "Perf. optimization identifiers" {
+	fp128		1 "128-bit SSE has full-width execution";
+	movu		1 "MOVU SSE instructions faster than MOVL";
+	_		30;
+    };
+};
+
+    
+	    
+
+    
+    
+	

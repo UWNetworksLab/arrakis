@@ -1,0 +1,56 @@
+/*
+ * Copyright (c) 2007, 2008, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+#include <offsets.h>
+
+OUTPUT_FORMAT("elf32-littlearm")
+OUTPUT_ARCH("arm")
+
+ENTRY(start)
+
+SECTIONS {
+        . = START_KERNEL_PHYS + KERNEL_OFFSET;
+        kernel_first_byte = .;
+        .text : { *(.text); }
+        kernel_text_final_byte = .;
+
+        . = ALIGN(4k);
+        .rodata . :
+        {
+                *(.rodata);
+        }
+
+        .got . :
+        {
+                got_base = .;
+                *(.got);
+        }
+
+        .bss . :
+        {
+                *(.bss);
+        }
+
+        kernel_final_byte = .;
+
+        /***** These sections get discarded *****/
+        /DISCARD/ :
+        {
+                /* Discard exception handler frames and headers -- we don't use em */
+                *(.eh_frame);
+                *(.eh_frame_hdr);
+		*(.note.gnu.build-id);
+                *(.interp);
+/*              *(.dynsym); */
+/*              *(.dynstr); */
+/*              *(.hash); */
+/*              *(.gnu.hash); */
+                *(.dynamic);
+        }
+}

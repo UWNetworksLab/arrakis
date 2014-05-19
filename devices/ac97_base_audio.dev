@@ -1,0 +1,215 @@
+/*
+ * Copyright (c) 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ac97_base_audio.dev
+ *
+ * DESCRIPTION: AC'97 Baseline Audio Register Set
+ * 
+ * Numbers in comments refer to the Intel Audio Codec '97 specification, 
+ * revision 2.3 revision 1.0, April, 2002
+ */
+
+device ac97_base_audio msbfirst ( io base ) "AC97 Baseline Audio" {
+
+  // 5.7.1
+  constants s3dsev "3D stereo enhancement vendor ID" {
+    none	= 0  "No 3D stereo enhancement";
+    analogdev	= 1  "Analog Devices";
+    creative	= 2  "Creative Technology";
+    natsemi	= 3  "National Semiconductor";
+    yamaha	= 4  "Yamaha";
+    bbesound	= 5  "BBE Sound";
+    crystal	= 6  "Crystal Semiconductor";
+    qsound	= 7  "Qsound Labs";
+    spatial	= 8  "Spatializer Audio Laboratories";
+    srs		= 9  "SRS Labs";
+    platform	= 10 "Platform Tech";
+    akm		= 11 "AKM Semiconductor";
+    aureal	= 12 "Aureal";
+    aztech	= 13 "Aztech Labs";
+    binaura	= 14 "Binaura";
+    ess		= 15 "ESS Technology";
+    harman	= 16 "Harman International";
+    nvidia	= 17 "Nvidia";
+    philips	= 18 "Philips";
+    ti		= 19 "Texas Instruments";
+    vlsi	= 20 "VLSI Technology";
+    tritech	= 21 "Tritech";
+    realtek	= 22 "Realtek";
+    samsung	= 23 "Samsung";
+    wolfson	= 24 "Wolfson Microelectronics";
+    delta       = 25 "Delta Integration";
+    sigma       = 26 "SigmaTel";
+    kswav	= 27 "KS Waves";
+    rockwell	= 28 "Rockwell";
+  };
+
+  register reset rwc io( base, 0x00) "Reset" {
+    _		1 rsvd;
+    se		5 ro type(s3dsev) "3D stereo enhancement vendor id";
+    id9		1 ro "20-bit ADC resolution";
+    id8		1 ro "18-bit ADC resolution";
+    id7		1 ro "20-bit DAC resolution";
+    id6		1 ro "18-bit DAC resolution";
+    id5		1 ro "Loudness support";
+    id4		1 ro "Headphone out support";
+    id3		1 ro "Simulated stereo";
+    id2		1 ro "Bass & treble control";
+    id1		1 rsvd;
+    id0		1 ro "Dedicated MIC PCM in";
+  };
+
+  // 5.7.2
+  regtype stereo_vol "Stereo volume" {
+    mute	1 "Mute";
+    _		1 rsvd;
+    ml		6 "Left volume";
+    _		2 rsvd;
+    mr		6 "Right volume";
+  };
+  register master_vol io( base, 0x02 ) "Master volume" type(stereo_vol);
+  register auxout_vol io( base, 0x04 ) "Aux out volume" type(stereo_vol);
+  register mono_vol   io( base, 0x06 ) "Mono volume" {
+    mute	1 "Mute";
+    _		9 rsvd;
+    mm		6 "Volume";
+  };
+  
+  // 5.7.3
+  register master_tone io( base, 0x08 ) "Master tone control" {
+    _		4 rsvd;
+    ba		4 "Bass";
+    _		4 rsvd;
+    tr		4 "Treble";
+  };
+
+  // 5.7.4
+  register pcbeep io( base, 0x0a ) "PC beep" {
+    mute	1 "Mute";
+    _		2 rsvd;
+    freq	8 "Frequency";
+    vol		4 "Volume";
+    _		1 rsvd;
+  };
+
+  // 5.7.5
+  regtype analog_gain "Stereo analog mixer gain" {
+    mute	1 "Mute";
+    _		2 rsvd;
+    left	5 "Left gain";
+    _		3 rsvd;
+    right	5 "Right gain";
+  };
+  register phone_vol io( base, 0x0c ) "Phone volume" {
+    mute	1 "Mute";
+    _		10 rsvd;
+    gain	5  "Gain";
+  };
+  register mic_vol io( base, 0x0e ) "Mic volume" {
+    mute	1 "Mute";
+    _		8 rsvd;
+    db20	1 "20 dB";
+    _		1 rsvd;
+    gain	5  "Gain";
+  };
+  register linein_vol io( base, 0x10 ) "Line in volume" type(analog_gain);
+  register cd_vol io( base, 0x12 ) "CD volume" type(analog_gain);
+  register video_vol io( base, 0x14 ) "Video volume" type(analog_gain);
+  register auxin_vol io( base, 0x16 ) "Aux in volume" type(analog_gain);
+  register pcmout_vol io( base, 0x18 ) "PCM out volume" type(analog_gain);
+
+  // 5.7.6
+  constants rec_src "Record source" {
+    mic		= 0 "Mic";
+    cd		= 1 "CD in";
+    video	= 2 "Video in";
+    aux		= 3 "Aux in";
+    line	= 4 "Line in";
+    stereo	= 5 "Stereo mix";
+    mono	= 6 "Mono mix";
+    phone	= 7 "Phone";
+  };
+  register rec_sec io( base, 0x1a ) "Record select" {
+    _		5 rsvd;
+    left	3 type(rec_src) "Left source";
+    _		5 rsvd;
+    right	3 type(rec_src) "Right source";
+  };
+  
+  // 5.7.7
+  register rec_gain io( base, 0x1c ) "Record gain" {
+    mute	1 "Mute";
+    _		3 rsvd;
+    left	4 "Left gain";
+    _		4 rsvd;
+    right	4 "Right gain";
+  };
+  register rec_gain_mic io( base, 0x1e ) "Record gain mic" {
+    mute	1 "Mute";
+    _		11 rsvd;
+    gain	4 "Gain";
+  };
+
+  // 5.7.8
+  register general io( base, 0x20 ) "General purpose" {
+    pop		1 "PCM out path & mute";
+    st		1 "Simulated stereo enhancement";
+    s3d		1 "3D stereo enhancement";
+    ld		1 "Loudness";
+    drss        2 "Double rate slot select";
+    mix		1 "Mono output select";
+    ms		1 "Mic select";
+    lpbk	1 "ADC/DAC loopback mode";
+    _		7 rsvd;
+  };
+
+  // 5.7.9
+  register s3d_ctrl io( base, 0x22 ) "3D control" {
+    _		4 rsvd;
+    cr		4 "Center";
+    _		4 rsvd;
+    dp		4 "Depth";
+  };
+  
+  // 5.7.10
+  constants page_sel "Page selector" {
+    vs		= 0 "Vendor-specific";
+    p1		= 1 "Paged ID 01";
+  };
+
+  register aipm io( base, 0x24 ) "Audio interrupt and paging" {
+    is		1 rw "Interrupt status";
+    ics		1 ro "Sense status cause";
+    icg		1 ro "GPIO status cause";
+    isense	1 rw "Sense cycle start";
+    ie		1 rw "Interrupt enable";
+    _		7 rsvd;
+    pg		4 rw type(page_sel) "page selector";
+  };
+
+  // 5.7.11
+  register pcsr io( base, 0x26 ) "Powerdown control/status" {
+    eapd	1 rw "External amp powerdown";
+    pr6		1 rw "Aux out powerdown";
+    pr5		1 rw "Internal clk disable";
+    pr4		1 rw "Digital intf powerdown";
+    pr3		1 rw "Analog mixer powerdown (vref off)";
+    pr2		1 rw "Analog mixer powerdown (vref still on)";
+    pr1		1 rw "PCM out DACs powerdown";
+    pr0 	1 rw "PCM in ADCs & input mux powerdown";
+    _		4 rsvd;
+    ref		1 ro "Vref's up to nominal level";
+    anl		1 ro "Analog mixers ready";
+    dac		1 ro "DAC section ready to accept";
+    adc		1 ro "ADC section ready to transmit";
+  };
+
+};
+
+	

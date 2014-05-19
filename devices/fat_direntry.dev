@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2011, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * fat16_direntry.dev
+ *
+ * DESCRIPTION: FAT16 file system directory entry.
+ * 
+ */
+
+device fat_direntry msbfirst (addr b) "FAT 16 Directory Entry" {
+
+    regarray fn rw addr(b,0x00) [8] "Filename" type(uint8);
+
+    regarray ext rw addr(b,0x08) [3] "Filename extension" type(uint8);
+
+    register attr rw addr(b,0x0b) "File Attributes" {
+        _    2 rsvd;
+        ar   1 "Archive";
+        dir  1 "Directory";
+        vlb  1 "Volume label";
+        sys  1 "System file";
+        hid  1 "Hidden";
+        ro   1 "Read only";
+    };
+
+    register lwr rw addr(b,0x0c) "Base and extension case" {
+        _    3 rsvd;
+        el   1 "Extension is lowercase";
+        bl   1 "Base is lowercase";
+        _    3 rsvd;
+    };
+
+    regtype time "Time" {
+        hour  5 "Hour";
+        min   6 "Minutes";
+        dsec  5 "Double seconds (0-29)";
+    };
+
+    regtype date "Date" {
+        yr    7 "Years from 1980";
+        mnth  4 "Month of year";
+        day   5 "Day of month";
+    };
+
+    register ctms rw addr(b,0x0d) "Creation deca-milliseconds (0-199)" type(uint8);
+    register ctime rw addr(b,0x0e) "Creation time" type(time);
+    register cdate rw addr(b,0x10) "Create date" type(date);
+
+    register adate rw addr(b,0x12) "Last access date" type(date);
+
+    // register eaind rw addr(b,0x14) "EA-Index (?)" type(uint16);
+    register starth rw addr(b,0x14) "Start cluster high bits (FAT32)" type(uint16);
+
+    register wtime rw addr(b,0x16) "Last write time" type(time);
+    register wdate rw addr(b,0x18) "Last write date" type(date);
+
+    register start rw addr(b,0x1a) "Starting cluster" type(uint16);
+    register size  rw addr(b,0x1c) "File size" type(uint32);
+
+};

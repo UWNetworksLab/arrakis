@@ -1,0 +1,330 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_core_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_core_prm msbfirst ( addr base ) "" {
+    
+
+    constants intrconn_nret_bank_onstate_status width(2) "" {
+        INTRCONN_NRET_BANK_ONSTATE_3_r = 3 "Memory bank is on when the domain is ON.";
+    };
+
+    constants intrconn_nret_bank_retstate_status width(1) "" {
+        INTRCONN_NRET_BANK_RETSTATE_0_r = 0 "Memory bank is off when the domain is in the RETENTION state.";
+    };
+
+    constants mpu_m3_unicache_retstate_status width(1) "" {
+        MPU_M3_UNICACHE_RETSTATE_0 = 0 "Memory bank is off when the domain is in the RETENTION state.";
+        MPU_M3_UNICACHE_RETSTATE_1 = 1 "Memory bank is retained when domain is in RETENTION state.";
+    };
+
+    constants lowpowerstatechange_status width(1) "" {
+        LOWPOWERSTATECHANGE_0 = 0 "Do not request a low power state change.";
+        LOWPOWERSTATECHANGE_1 = 1 "Request a low power state change. This bit is automatically cleared when the power state is effectively changed or when power state is ON.";
+    };
+
+    constants powerstate_status width(2) "" {
+        POWERSTATE_0_r = 0 "Reserved";
+        POWERSTATE_1 = 1 "RETENTION state";
+        POWERSTATE_2 = 2 "INACTIVE state";
+        POWERSTATE_3 = 3 "ON State";
+    };
+    
+    register pm_core_pwrstctrl addr(base, 0x0) "This register controls the CORE power state to reach upon a domain sleep transition" {
+        _ 6 mbz;
+        intrconn_nret_bank_onstate 2 ro type(intrconn_nret_bank_onstate_status) "INTRCONN_WP bank and DMM bank2 state when domain is ON.";
+        mpu_m3_unicache_onstate 2 ro type(intrconn_nret_bank_onstate_status) "MPU_A3 UNICACHE bank state when domain is ON.";
+        mpu_m3_l2ram_onstate 2 ro type(intrconn_nret_bank_onstate_status) "MPU_A3 L2 bank state when domain is ON.";
+        core_ocmram_onstate 2 ro type(intrconn_nret_bank_onstate_status) "OCMRAM bank state when domain is ON.";
+        core_other_bank_onstate 2 ro type(intrconn_nret_bank_onstate_status) "DMA/ICR bank and DMM bank1 state when domain is ON.";
+        _ 3 mbz;
+        intrconn_nret_bank_retstate 1 ro type(intrconn_nret_bank_retstate_status) "INTRCONN_WP bank and DMM bank2 state when domain is RETENTION.";
+        mpu_m3_unicache_retstate 1 rw type(mpu_m3_unicache_retstate_status) "MPU_A3 UNICACHE bank state when domain is RETENTION.";
+        mpu_m3_l2ram_retstate 1 rw type(mpu_m3_unicache_retstate_status) "MPU_A3 L2 bank state when domain is RETENTION.";
+        core_ocmram_retstate 1 ro type(mpu_m3_unicache_retstate_status) "OCMRAM bank state when domain is RETENTION.";
+        core_other_bank_retstate 1 ro type(mpu_m3_unicache_retstate_status) "DMA/ICR bank and DMM bank1 state when domain is RETENTION.";
+        _ 3 mbz;
+        lowpowerstatechange 1 rw type(lowpowerstatechange_status) "Power state change request when domain has already performed a sleep transition. Allows going into deeper low power state without waking up the power domain.";
+        _ 1 mbz;
+        logicretstate 1 rw type(mpu_m3_unicache_retstate_status) "Logic state when power domain is RETENTION";
+        powerstate 2 rw type(powerstate_status) "Power state control";
+    };
+
+    constants lastpowerstateentered_status width(2) "" {
+        LASTPOWERSTATEENTERED_3_r = 3 "Power domain was previously ON-ACTIVE";
+        LASTPOWERSTATEENTERED_2_r = 2 "Power domain was previously ON-INACTIVE";
+        LASTPOWERSTATEENTERED_1_r = 1 "Power domain was previously in RETENTION";
+        LASTPOWERSTATEENTERED_0_r = 0 "Power domain was previously OFF";
+    };
+
+    constants intransition_status width(1) "" {
+        INTRANSITION_0_r = 0 "No ongoing transition on power domain";
+        INTRANSITION_1_r = 1 "Power domain transition is in progress.";
+    };
+
+    constants intrconn_nret_bank_statest_status width(2) "" {
+        INTRCONN_NRET_BANK_STATEST_0_r = 0 "Memory is OFF";
+        INTRCONN_NRET_BANK_STATEST_1_r = 1 "Reserved";
+        INTRCONN_NRET_BANK_STATEST_2_r = 2 "Reserved";
+        INTRCONN_NRET_BANK_STATEST_3_r = 3 "Memory is ON";
+    };
+
+    constants mpu_m3_unicache_statest_status width(2) "" {
+        MPU_M3_UNICACHE_STATEST_0_r = 0 "Memory is OFF";
+        MPU_M3_UNICACHE_STATEST_1_r = 1 "Memory is RETENTION";
+        MPU_M3_UNICACHE_STATEST_2_r = 2 "Reserved";
+        MPU_M3_UNICACHE_STATEST_3_r = 3 "Memory is ON";
+    };
+
+    constants logicstatest_status width(1) "" {
+        LOGICSTATEST_0_r = 0 "Logic in domain is OFF";
+        LOGICSTATEST_1_r = 1 "Logic in domain is ON";
+    };
+
+    constants powerstatest_status width(2) "" {
+        POWERSTATEST_0_r = 0 "Reserved";
+        POWERSTATEST_1_r = 1 "Power domain is in RETENTION";
+        POWERSTATEST_2_r = 2 "Power domain is ON-INACTIVE";
+        POWERSTATEST_3_r = 3 "Power domain is ON-ACTIVE";
+    };
+    
+    register pm_core_pwrstst addr(base, 0x4) "This register provides a status on the current CORE power domain state. [warm reset insensitive]" {
+        _ 6 mbz;
+        lastpowerstateentered 2 rw type(lastpowerstateentered_status) "Last low power state entered. Set to 0x3 upon write of the same only. This register is intended for debug purpose only.";
+        _ 3 mbz;
+        intransition 1 ro type(intransition_status) "Domain transition status";
+        _ 6 mbz;
+        intrconn_nret_bank_statest 2 ro type(intrconn_nret_bank_statest_status) "INTRCONN_WP bank and DMM bank2 state status";
+        mpu_m3_unicache_statest 2 ro type(mpu_m3_unicache_statest_status) "MPU_A3 UNICACHE bank state status";
+        mpu_m3_l2ram_statest 2 ro type(mpu_m3_unicache_statest_status) "MPU_A3 L2 bank state status";
+        core_ocmram_statest 2 ro type(mpu_m3_unicache_statest_status) "OCMRAM bank state status";
+        core_other_bank_statest 2 ro type(mpu_m3_unicache_statest_status) "DMA/ICR bank and DMM bank1 state status";
+        _ 1 mbz;
+        logicstatest 1 ro type(logicstatest_status) "Logic state status";
+        powerstatest 2 ro type(powerstatest_status) "Current power state status";
+    };
+
+    constants lostcontext_rff_status width(1) "" {
+        LOSTCONTEXT_RFF_0 = 0 "Context has been maintained";
+        LOSTCONTEXT_RFF_1 = 1 "Context has been lost";
+    };
+    
+    register rm_l3_1_l3_1_context addr(base, 0x24) "This register contains dedicated L3_1 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+    
+    register rm_l3_2_l3_2_context addr(base, 0x124) "This register contains dedicated L3_2 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+    
+    register rm_l3_2_gpmc_context addr(base, 0x12C) "This register contains dedicated GPMC context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register rm_l3_2_ocmc_ram_context addr(base, 0x134) "This register contains dedicated OCMC_RAM context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_core_ocmram 1 rw1c type(lostcontext_rff_status) "Specify if memory-based context in CORE_OCMRAM memory bank has been lost due to a previous power transition or other reset source (not affected by a global warm reset).";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+
+    constants rst3_status width(1) "" {
+        RST3_0 = 0 "Reset is cleared for MPU_A3 CACHE and MMU";
+        RST3_1 = 1 "Reset is asserted for the MPU_A3 CACHE and MMU";
+    };
+
+    constants rst2_status width(1) "" {
+        RST2_0 = 0 "Reset is cleared for the MPU_A3 Cortex M3 CPU2";
+        RST2_1 = 1 "Reset is asserted for the MPU_A3 Cortex M3 CPU2";
+    };
+
+    constants rst1_status width(1) "" {
+        RST1_0 = 0 "Reset is cleared for the MPU_A3 Cortex M3 CPU1";
+        RST1_1 = 1 "Reset is asserted for the MPU_A3 Cortex M3 CPU1";
+    };
+    
+    register rm_mpu_m3_rstctrl addr(base, 0x210) "This register controls the release of the MPU_A3 sub-system resets." {
+        _ 29 mbz;
+        rst3 1 rw type(rst3_status) "MPU_A3 MMU and CACHE interface reset control.";
+        rst2 1 rw type(rst2_status) "MPU_A3 Cortex M3 CPU2 reset control.";
+        rst1 1 rw type(rst1_status) "MPU_A3 Cortex M3 CPU1 reset control.";
+    };
+
+    constants icecrusher_rst2st_status width(1) "" {
+        ICECRUSHER_RST2ST_0 = 0 "No icecrusher reset";
+        ICECRUSHER_RST2ST_1 = 1 "CPU2 has been reset upon icecrusher reset";
+    };
+
+    constants icecrusher_rst1st_status width(1) "" {
+        ICECRUSHER_RST1ST_0 = 0 "No icecrusher reset";
+        ICECRUSHER_RST1ST_1 = 1 "CPU1 has been reset upon icecrusher reset";
+    };
+
+    constants emulation_rst2st_status width(1) "" {
+        EMULATION_RST2ST_0 = 0 "No emulation reset";
+        EMULATION_RST2ST_1 = 1 "CPU2 has been reset upon emulation reset";
+    };
+
+    constants emulation_rst1st_status width(1) "" {
+        EMULATION_RST1ST_0 = 0 "No emulation reset";
+        EMULATION_RST1ST_1 = 1 "CPU1 has been reset upon emulation reset";
+    };
+
+    constants rst3st_status width(1) "" {
+        RST3ST_0 = 0 "No software reset occured";
+        RST3ST_1 = 1 "MPU_A3 MMU and CACHE interface has been reset upon software reset";
+    };
+
+    constants rst2st_status width(1) "" {
+        RST2ST_0 = 0 "No software reset occured";
+        RST2ST_1 = 1 "Cortex M3 CPU2 has been reset upon software reset";
+    };
+
+    constants rst1st_status width(1) "" {
+        RST1ST_0 = 0 "No software reset occured";
+        RST1ST_1 = 1 "Cortex M3 CPU1 has been reset upon software reset";
+    };
+    
+    register rm_mpu_m3_rstst addr(base, 0x214) "This register logs the different reset sources of the MPU_A3 SS. Each bit is set upon release of the domain reset signal. Must be cleared by software. [warm reset insensitive]" {
+        _ 25 mbz;
+        icecrusher_rst2st 1 rw1c type(icecrusher_rst2st_status) "Cortex M3 CPU2 has been reset due to MPU_A3 ICECRUSHER2 reset source";
+        icecrusher_rst1st 1 rw1c type(icecrusher_rst1st_status) "Cortex M3 CPU1 has been reset due to MPU_A3 ICECRUSHER1 reset source";
+        emulation_rst2st 1 rw1c type(emulation_rst2st_status) "Cortex M3 CPU2 has been reset due to emulation reset source e.g. assert reset command initiated by the icepick module";
+        emulation_rst1st 1 rw1c type(emulation_rst1st_status) "Cortex M3 CPU1 has been reset due to emulation reset source e.g. assert reset command initiated by the icepick module";
+        rst3st 1 rw1c type(rst3st_status) "MPU_A3 MMU and CACHE interface software reset status";
+        rst2st 1 rw1c type(rst2st_status) "MPU_A3 Cortex-M3 CPU2 software reset status";
+        rst1st 1 rw1c type(rst1st_status) "MPU_A3 Cortex-M3 CPU1 software reset status";
+    };
+    
+    register rm_mpu_m3_mpu_m3_context addr(base, 0x224) "This register contains dedicated MPU_A3 context statuses. [warm reset insensitive]" {
+        _ 22 mbz;
+        lostmem_mpu_m3_l2ram 1 rw1c type(lostcontext_rff_status) "Specify if memory-based context in MPU_A3_L2RAM memory bank has been lost due to a previous power transition or other reset source.";
+        lostmem_mpu_m3_unicache 1 rw1c type(lostcontext_rff_status) "Specify if memory-based context in MPU_A3_UNICACHE memory bank has been lost due to a previous power transition or other reset source.";
+        _ 6 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of MPU_A3_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of MPU_A3_RST3 signal)";
+    };
+    
+    register rm_sdma_sdma_context addr(base, 0x324) "This register contains dedicated SDMA context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_core_other_bank 1 rw1c type(lostcontext_rff_status) "Specify if memory-based context in CORE_OTHER_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 6 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of SDMA_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register rm_memif_dmm_context addr(base, 0x424) "This register contains dedicated DMM context statuses. [warm reset insensitive]" {
+        _ 22 mbz;
+        lostmem_core_nret_bank 1 rw1c type(lostcontext_rff_status) "Specify if memory-based context in CORE_NRET_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        lostmem_core_other_bank 1 rw1c type(lostcontext_rff_status) "Specify if memory-based context in CORE_OTHER_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 6 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+    
+    register rm_memif_emif_fw_context addr(base, 0x42C) "This register contains dedicated EMIF_FW context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+    
+    register rm_memif_emif_1_context addr(base, 0x434) "This register contains dedicated EMIF_1 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RST signal)";
+    };
+    
+    register rm_memif_emif_2_context addr(base, 0x43C) "This register contains dedicated EMIF_2 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RST signal)";
+    };
+    
+    register rm_memif_dll_context addr(base, 0x444) "This register contains dedicated DLL context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of DLL_RST signal)";
+    };
+    
+    register rm_c2c_c2c_context addr(base, 0x524) "This register contains dedicated C2C context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+    
+    register rm_c2c_c2c_fw_context addr(base, 0x534) "This register contains dedicated C2C_FW context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+    
+    register rm_l4cfg_l4_cfg_context addr(base, 0x624) "This register contains dedicated L4_CFG context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+    
+    register rm_l4cfg_spinlock_context addr(base, 0x62C) "This register contains dedicated HW_SEM context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register rm_l4cfg_mailbox_context addr(base, 0x634) "This register contains dedicated MAILBOX context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RET_RST signal)";
+        _ 1 mbz;
+    };
+    
+    register rm_l4cfg_sar_rom_context addr(base, 0x63C) "This register contains dedicated SAR_ROM context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+    
+    register rm_l3instr_l3_3_context addr(base, 0x724) "This register contains dedicated L3_3 context statuses. [warm reset insensitive]" {
+        _ 30 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+    
+    register rm_l3instr_l3_instr_context addr(base, 0x72C) "This register contains dedicated L3_INSTR context statuses. [warm reset insensitive]" {
+        _ 31 mbz;
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+    
+    register rm_l3instr_ocp_wp1_context addr(base, 0x744) "This register contains dedicated OCP_WP1 context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_core_nret_bank 1 rw1c type(lostcontext_rff_status) "Specify if memory-based context in CORE_NRET_BANK memory bank has been lost due to a previous power transition or other reset source.";
+        _ 6 mbz;
+        lostcontext_rff 1 rw1c type(lostcontext_rff_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_PWRON_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostcontext_rff_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of CORE_RST signal)";
+    };
+};

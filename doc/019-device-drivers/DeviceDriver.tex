@@ -1,0 +1,573 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (c) 2013, ETH Zurich.
+% All rights reserved.
+%
+% This file is distributed under the terms in the attached LICENSE file.
+% If you do not find this file, copies can be found by writing to:
+% ETH Zurich D-INFK, Universitaetstr 6, CH-8092 Zurich. Attn: Systems Group.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,11pt,twoside]{report}
+\usepackage{bftn}
+\usepackage{calc}
+\usepackage{verbatim}
+\usepackage{xspace}
+\usepackage{pifont}
+\usepackage{textcomp}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{listings}
+
+\title{Device Drivers in Barrelfish}
+\author{Barrelfish project}
+% \date{\today}		% Uncomment (if needed) - date is automatic
+\tnnumber{19}
+\tnkey{Drivers}
+
+\begin{document}
+\maketitle			% Uncomment for final draft
+
+\begin{versionhistory}
+\vhEntry{0.1}{05.12.2013}{GZ}{Initial Version}
+\end{versionhistory}
+
+% \intro{Abstract}		% Insert abstract here
+% \intro{Acknowledgements}	% Uncomment (if needed) for acknowledgements
+\tableofcontents		% Uncomment (if needed) for final draft
+% \listoffigures		% Uncomment (if needed) for final draft
+% \listoftables			% Uncomment (if needed) for final draft
+\cleardoublepage
+\setcounter{secnumdepth}{2}
+
+\newcommand{\fnname}[1]{\textit{\texttt{#1}}}%
+\newcommand{\datatype}[1]{\textit{\texttt{#1}}}%
+\newcommand{\varname}[1]{\texttt{#1}}%
+\newcommand{\keywname}[1]{\textbf{\texttt{#1}}}%
+\newcommand{\pathname}[1]{\texttt{#1}}%
+\newcommand{\tabindent}{\hspace*{3ex}}%
+
+\lstset{
+  language=C,
+  basicstyle=\ttfamily \small,
+  flexiblecolumns=false,
+  basewidth={0.5em,0.45em},
+  boxpos=t,
+  captionpos=b
+}
+
+\chapter{Introduction}
+\label{chap:introduction}
+
+This document describes the way we write device drivers in Barrelfish. It will
+walk you through the necessary steps to integrate your driver in the
+Barrelfish infrastructure and gives an overview of available APIs,
+libraries and tools to help you with the process.
+
+In the next chapter, we will give a short overview and walkthrough of an
+existing driver in the Barrelfish code base, to introduce most of the common
+terms and concepts. In the following chapters, we will then go deeper and look
+into the hardware specific APIs available for all the different architectures
+that Barrelfish supports.
+
+Unfortunately, at this point, there is no unified interface for drivers on ARM
+and x86. So, we will usually distinguish between these two architectures in
+the document.
+
+\chapter{High-level overview: A first look at device drivers in Barrelfish}
+\label{chap:overview}
+
+In a first step, we will look at the necessary bits and pieces to write a new
+driver in Barrelfish on the ARM platform, by using an existing, very simple
+driver as a walkthrough from the Barrelfish code base -- the FDIF driver, a
+device used for face detection typically found on OMAP chips.
+
+The relevant code for the driver resides in the tree at
+\pathname{usr/drivers/omap44xx/fdif/}. In order to get an idea of what the
+driver entails, we will look at its Hakefile. Hakefiles are the declarative
+description of a how a program is built in Barrelfish and what its
+dependencies are. If you need more informations on our build system, you
+should have a look at the Hake technote~\cite{btn003-hake}, which provides a
+detailed description of Hake, the Barrelfish build system. We will look at the
+Hakefile for the FDIF driver in Listing~\ref{lst:hakefile} (a Haskell program,
+really) and explain what it means for the driver program. \varname{cFiles} is
+a list of C source files that are compiled and linked for this driver. In our
+case, we use hake to just search for every file that has a "c" file extension
+in the current directory and return this as a list of files for
+\varname{cFiles}. If you go and look at \pathname{usr/drivers/omap44xx/fdif}
+you will find that this will encompass only two files, \pathname{fdif.c} and
+\pathname{picture.c}.
+
+The next attribute, \varname{mackerelDevices}, contains a list Mackerl files,
+these are devices that we have specified in our domain specific language
+called Mackerel, and we would now like to use in our driver. If you do not
+know what Mackerel is, let me explain it to you: Mackerel is a DSL for
+describing device registers. You can find an abundance of Mackerel files in
+the \pathname{devices} directory inside the source tree. For example, the
+\keywname{omap44xx\_fdif} device mentioned in the Hakefile at the third
+position is found in \pathname{devices/omap/omap44xx\_fdif.dev}. They all,
+describe a particular device we use in Barrelfish to varying degrees of
+detail, ranging from ethernet cards to xAPIC or even descriptions of the file-
+allocation-table for the FAT file-system. Now, you might think, well, why
+can't I just use a regular C struct or even integer types with bit operations
+for that? And in general you could. However, the Mackerel compiler gives you a
+lot of nice things on top of this description. For one thing, it will generate
+for you all the code you need to program the register with certain values,
+that means it takes care of all the bit-shifting and masking operations based
+on your description. On the other hand, it will generate functions that let
+you print the contents of the register in a human readable way, which is a
+very useful thing for debugging. For more information on Mackerel you should
+read the Mackerel Technote~\cite{btn002-mackerel}.
+
+The \varname{addLibraries} entry specifies the libraries your application
+needs in order to run. In this example, we add driverkit, a helper library for
+finding, and mapping our device registers in the virtual memory space of the
+application.
+
+The last argument specifies the architectures we want to build this driver
+for. Since we are currently using this device on ARM/OMAP4 platforms, this is
+set to ARMv7 and ARMv7-M architectures.
+
+\begin{lstlisting}[caption={A Hakefile for a simple device driver}, label={lst:hakefile}]
+[   build application {
+        target = "fdif",
+        cFiles = (find withSuffices [".c"]),
+        mackerelDevices = [
+            "omap/omap44xx_cam_prm",
+            "omap/omap44xx_cam_cm2",
+            "omap/omap44xx_fdif",
+            "omap/omap44xx_device_prm" ],
+        addLibraries = ["driverkit"],
+        architectures = ["armv7", "armv7-m"]
+}]
+\end{lstlisting}
+
+Now let's have a look at \pathname{usr/drivers/omap44xx/fdif/fdif.c}, the
+device driver source code. If you open the file, aside from the comment
+header, you will see a bunch of included header files that are of interest to
+us (Listing~\ref{lst:mackerel}).
+
+\begin{lstlisting}[caption={Mackerel includes in driver source code.}, label={lst:mackerel}]
+#include <dev/omap/omap44xx_cam_prm_dev.h>
+#include <dev/omap/omap44xx_cam_cm2_dev.h>
+#include <dev/omap/omap44xx_fdif_dev.h>
+\end{lstlisting}
+
+These look very familiar to our specified \varname{mackerelDevices} in the
+Hakefile, and in fact, they are the generated header files based on our
+mackerel files. If you want to have a look at them, you can find these header
+files in your build directory in \pathname{<arch>/include/dev/omap}. In our
+code, we use various functions (the ones starting with \keywname{omap44xx\_})
+that are defined in these header files and use them to access device
+registers.
+
+Another interesting part is early on in the main function (Listing~\ref{lst:mapping}).
+
+\begin{lstlisting}[caption={Mapping device registers in virtual memory.}, label={lst:mapping}]
+err = map_device_register(0x4A10A000, 4096, &vbase);
+\end{lstlisting}
+
+\fnname{map\_device\_register} is a function provided by the driverkit
+library. We will talk more about it later, but for now, here is what it does:
+It takes the physical address of a device register (\varname{0x4A10A000}) the
+size of the register (\varname{4096}) and will map this at a random virtual
+address in your address space (given back to you by \varname{vbase}). Since
+our device drivers all run in user-space this function ensures that you can
+access the device in your address space. There is also the issue of how, and
+which programs we allow access to what device registers. We will discuss this
+in the next chapter.
+
+For the the FDIF device, we can receive an interrupt from the device in case
+the face processing is done. Since we run in user space, we have to invoke a
+system call to register for the interrupt in the kernel. Once the interrupt
+arrives, the kernel will use the message passing infrastructure of Barrelfish
+to forward the IRQ to us. Fortunately, libbarrelfish provides us with a high-
+level interface to do just that. In the function \fnname{enable\_irq\_mode},
+we register an interrupt for the device by using
+\fnname{inthandler\_setup\_arm} (Listing~\ref{lst:irqregister}). It takes as
+arguments a handler function (\fnname{irq\_handler}) that is executed in case
+the interrupt arrives, an additional state argument that is passed to that
+function for this particular interrupt, in our case NULL, and the interrupt
+number or vector we are interested in.
+
+\begin{lstlisting}[caption={Register to receive an Interrupt.}, label={lst:irqregister}]
+err = inthandler_setup_arm(irq_handler, NULL, FDIF_IRQ);
+\end{lstlisting}
+
+This concludes our walkthrough on the FDIF driver. So far, you have seen a
+glimpse of the user-level side on writing device drivers for ARM. It consists
+of an interplay of the build system, mackerel device descriptions,  mapping
+device registers, interrupt registrations and your actual driver code. In the
+next chapters we will have a closer look on what is actually happening behind
+the scenes and how to adapt the infrastructure for new architcures or boards.
+
+Note that the FDIF driver is a very minimal example of a driver. We use it to
+teach students about the basic concepts of device drivers. However, if you
+would want to write a real driver, you also need to export a interface for
+clients. In Barrelfish, the typical way is to export a message passing
+interface for the driver, so that applications can connect and communicate
+with the driver using messages. There are many source code examples in the
+tree on how to do this, as a starting point, have a look at
+\pathname{usr/examples/xmpl-call-response} in the source tree and the tech-
+note on inter-dispatcher communication~\cite{btn011-idc} to get started.
+
+\chapter{System Knowledge Base (SKB)}
+
+Before we start looking at the internals of device management in Barrelfish,
+we have to introduce the system knowledge base (SKB). The goal of the SKB
+is to store all knowledge about a system and provide an interface for
+clients to query and reason about this knowledge.
+
+\section{x86, Octopus and the ECLiPSe Prolog engine}
+
+On x86 architectures, the SKB is implemented using the ECLiPSe logic and
+constraint programming (CLP) engine. The SKB was built as a part of Adrian
+Sch\"upbach's Phd thesis \cite{}, available on \url{barrelfish.org}. In this
+technote we briefly cover the main aspects. The SKB provides two different
+interfaces to clients. One of them is a direct way to access the Prolog query
+engine of the ECLiPSe runtime. This allows you to query for facts (i.e.,
+knowledge) about the system in a very generic and flexible way. You can find
+an API to access the SKB in \pathname{lib/skb}. The other interface is a key--value storage engine, called Octopus, implemented in combination with
+the ECLiPSe engine. Octopus is used to provide various functionality in
+Barrelfish. The key--value store also offers as a publish--subscribe mechanism
+based for stored records. It allows subscribers to receive events in case
+of state changes in the system. We use Octopus to implement various
+functionality in the system such as a nameserver. The system also uses Octopus
+for device related events, if PCI devices are found in the system or CPUs
+are discovered for example. In most cases the device manager, which we will
+introduce in the next chapter, will handle these events for you. However, some
+subsystems such as USB, use Octopus directly to receive events about
+hotplugged devices. You can find the API to interact with the Octopus service
+in \pathname{lib/octopus/client}.
+
+A documentation of the facts stored in the SKB is on the Barrelfish
+Wiki at \url{http://wiki.barrelfish.org/}.
+
+
+\section{ARM and the simple SKB}
+\label{sec:simpleskb}
+
+If you look in the source tree of the SKB (\pathname{usr/skb/}) you will find
+that there are currently two different versions of the SKB built. One is the
+SKB based on the ECLiPSe runtime engine for x86 systems, the other is the SKB
+simple for ARM. This is due to portability issues of the ECLiPSe runtime for
+ARM. So, what is the simple SKB? It is an implementation of the Octopus API.
+It is important to have at least a minimal a implementation of Octopus for all
+architectures we run on. Because it provides essential system features such as
+the name-service which is used most for of the service look-ups.
+
+Not having the constraint logic programming interface unfortunately means we
+can currently not use the APIs in \pathname{lib/skb} on ARM. We are currently
+investigating alternatives for a constraint solver that will run on both
+platforms.
+
+\chapter{Kaluga -- The device manager}
+
+
+Kaluga is the device manager in Barrelfish. Its responsibility is to manage
+the periperhals of a system. That encompasses starting the correct drivers,
+once a device is discovered, in the right order and making sure that each driver
+has the permissions (capabilities) to access the device' memory areas
+or I/O ports. In this chapter wewill learn how Kaluga interacts with the
+rest of the system for device discovery and driver start-up.
+
+For reasons stated in Section~\ref{sec:simpleskb} we currently do not have the
+full system knowledge base on non-x86 platforms. Also, the ARM platforms we
+support right now, do not have an infrastructure like PCI that brings
+automatic device discovery -- there are device trees, but we do not
+have support for them yet.
+
+This means that right now, the way Kaluga finds the available devices differs
+quite a bit based on the platform we are running on. This ranges from
+automatic discovery using PCI, Octopus and the SKB on x86, to hardcoded
+information in Kaluga for the OMAP4 SoC. However, the general way of
+discovering what drivers are available and how we start them remains the same.
+We will briefly look at what operations Kaluga provides for finding binaries
+and how you can program it to start drivers the right way in your system.
+
+If you look inside of the main function in Kaluga, you can see a call to the
+\fnname{init\_boot\_modules} function. We usually rely on multiboot to provide
+us with a set of ELF files at start-up. The \fnname{init\_boot\_modules}
+function parses the information provided by multiboot (your menu.lst file)  to
+find a list of available binaries. It then looks at the arguments that are
+hardcoded next to those binaries and follows a simple policy for these, if a
+binary has the argument `'auto`' next to it, it considers this binary as a
+driver and will start it, if it finds a suitable device. How Kaluga finds a
+suitable device is explained in the following sections. Drivers are started in
+different ways, ranging from just starting one driver binary to a number of
+binaries or sending notifications to other subsystems and starting a driver.
+Kaluga supports custom start-up policies for different binaries in your
+system, you can set a start-up policy per driver binary using the
+\fnname{set\_start\_function}. The default start function, the one that is
+chosen if no special start-up function, is set for a binary, is defined in
+\pathname{usr/kaluga/driver\_startup.c}. For example, on x86, this function
+will just spawn the binary and provide as arguments the PCI device identifiers
+(bus, class, function etc.) to the driver program.
+
+As we mentioned before, a driver usually needs a special set of permissions to
+gain access to the device registers. For historical reasons, the way we
+provide this permissions currently differs between x86 and ARM. Unifying this
+interface is part of future work.
+
+\section{Starting PCI drivers on x86}
+\label{sec:pcidriverstart}
+
+On x86, peripherals are usually in the form of PCI or PCI express cards. PCI
+supports automatic discovery of periperhals using PCI bus enumeration. In
+Barrelfish, the PCI related code lives in \pathname{usr/pci}. PCI is
+structured as a hierarchical tree with it's leaves being devices. The root
+node, called PCI root bridge, forms the entry point to such a tree. PCI root
+bridges are found by reading the ACPI tables. ACPI, short for Advanced
+Configuration and Power Interface, is an open standard for device
+configuration and power management in operating systems. ACPI related code in
+Barrelfish lives in \pathname{usr/acpi}.
+
+The bootstrapping of an x86 machine in Barrelfish works as follows: After
+parsing the boot script, Kaluga starts ACPI. ACPI will then add specific
+Octopus records for every PCI root bridge it finds. Meanwhile, Kaluga will
+receive notification for all the root bridges added to Octopus. If a root
+bridge is found, Kaluga will start the PCI domain which in turn will do a PCI
+bus enumeration. Devices found during PCI bus enumeration are again added to
+Octopus and propagated to Kaluga which will start individual device drivers to
+handle the peripherals. How does Kaluga know what driver to start for each
+device record? We already discussed how Kaluga uses different start functions
+for different types of devices. But how do we choose the right binary? Kaluga
+uses the SKB that stores a mapping from PCI identifiers to driver binaries. This
+mapping is retrieved from the SKB once Kaluga receives a Octopus record for a
+new device. You will find the mapping database in
+\pathname{usr/skb/programs/device\_db.pl}. If you want to start your PCI driver
+with Kaluga, you will need to add it there and provide at least the
+corresponding device and vendor id.
+
+Barrelfish has a number of drivers for PCI cards. Mostly for network
+interfaces. Barrelfish drivers, including the ones for PCI, are located in the
+source tree in \pathname{usr/drivers/}.
+
+\section{Writing PCI drivers}
+\label{sec:pcidriverwriting}
+
+In order to write a PCI driver, one has to communicate with the PCI domain.
+There is a client library that provides a helpful API in \pathname{lib/pci} that
+helps doing that. One of the first steps is to initialize the client library
+by connecting to the PCI domain:
+
+\begin{lstlisting}[caption={A client connects to the PCI subsystem.}, label={lst:pciconenct}]
+err = pci_client_connect();
+\end{lstlisting}
+
+After that, you are able to invoke the library functions in
+Listing~\ref{lst:pciapi} to initialize devices. The functions allow to gain
+control for a specific PCI device. The device is identified by using the
+numerous PCI identifiers (subclass, prog\_if, vendor et. al.). The caller
+provides a callback function (\fnname{init\_func}) that gets called by the
+library once it has registered the device with the PCI domain.
+\fnname{init\_func} takes as an argument an array of \keywname{struct
+device\_mem}. A description of the basic address registers (BAR) for this PCI
+device and also permissions (capabilities) to map these address registers in
+the drivers address space. You can use the defined in helper functions in
+\pathname{include/pci/mem.h} to map these BARs into the address space of the
+client. For legacy devices (such as a serial driver for example) that live in
+the I/O address space and do not use memory mapped registers you can use the
+\fnname{pci\_register\_legacy\_driver\_irq} function.
+
+
+\begin{lstlisting}[caption={A driver uses one of the following functions to register for PCI devices.}, label={lst:pciapi}]
+errval_t pci_register_driver_noirq(pci_driver_init_fn init_func, uint32_t class,
+                                   uint32_t subclass, uint32_t prog_if,
+                                   uint32_t vendor, uint32_t device,
+                                   uint32_t bus, uint32_t dev, uint32_t fun);
+
+errval_t pci_register_driver_irq(pci_driver_init_fn init_func, uint32_t class,
+                                 uint32_t subclass, uint32_t prog_if,
+                                 uint32_t vendor, uint32_t device,
+                                 uint32_t bus, uint32_t dev, uint32_t fun,
+                                 interrupt_handler_fn handler, void *handler_arg);
+
+errval_t pci_register_legacy_driver_irq(legacy_driver_init_fn init_func,
+                                        uint16_t iomin, uint16_t iomax, int irq,
+                                        interrupt_handler_fn handler,
+                                        void *handler_arg);
+\end{lstlisting}
+
+Note that the discussed PCI API is rather low-level and provides a lot of
+freedom in who can register for PCI devices. In the future the plan is for x86
+to push more of that complexity in Kaluga. The device registration with PCI
+should be done by Kaluga before the driver is started, the driver then only
+receives a list of capabilities for a particular device which it can map in
+its address space. That means a driver no longer has the need to call these
+functions.
+
+\section{Writing drivers for ARM and System-on-Chip platforms}
+\label{sec:armdriverwriting}
+
+You have already encountered most of the provided functionality for ARM
+drivers in the overview in Chapter~\ref{chap:overview}. This section
+will focus on how we currently support the OMAP platform to start
+drivers in Kaluga.
+
+On ARM the situation differs compared to x86. There is currently no
+established standard like PCI for x86. That means that the way we have to
+integrate ARM differs from platform to platform. We also have no support for
+device trees at the moment. Therefore, if you look at the \fnname{main}
+function in Kaluga, you will find that we currently look-up the binaries using
+the \fnname{find\_module} function and hardwire the start-up of these drivers
+for the pandaboard platform. In \pathname{omap\_startup.c} we define the start
+function for these binaries. If you look at the code in the file you'll also
+see that we use the function \fnname{spawn\_program\_with\_caps} to start the
+driver and pass the driver a list of memory capabilities to access the device
+memory. This is the service part of the driverkit library we have seen in
+Chapter~\ref{chap:overview}, it makes sure the capabilities are actually given
+to the driver in a way that driverkit can map them. What capabilities we give
+to a driver for the OMAP chip is also hardcoded at the moment, you can find a
+series of \varname{struct allowed\_registers} in the same file that defines for a
+given driver, what memory ranges it is allowed to access. The situation is not
+solved sufficiently right now, in the future, we would like to store this
+information in a SKB like system that also runs on ARM and lets us query for
+information about various platforms.
+
+If you go on and read the capability technote \cite{btn013-capabilities}
+you'll learn that capabilities can only be created in the kernel, and the
+representation we have in user-space, are references to capabilities. So, a
+valid question here is how Kaluga gets the capabilities for these devices in
+the first place. For that we have to look at the \fnname{device\_caps.c} file
+inside Kaluga. The file contains the capability manager or memory manager for
+Kaluga, it is an instance of the memory management library found in
+\pathname{lib/mm}. The memory manager (\keywname{libmm}) manages capabilities
+for you, in reality it is a B+-tree structure that will manage a certain range
+of memory, in our case device memory. It allows you to request a smaller range
+from this usually very large range that we initalize our memory manager with
+and, \keywname{libmm} will split up the inital capability we gave to the
+instance at the beginning into smaller pieces and hand them out to you, giving
+you a way to have fine grained, page level access control on memory. In
+practice, because capabilities can only be created and split in half in the
+kernel, it has to invoke system calls to do that.
+
+As a note aside, there are three important memory managers in the system. The
+one found in memserv (\pathname{usr/memserv}), it manages all physical memory,
+the one in ACPI (\pathname{usr/acpi}), it handles all device memory on x86 and
+should really be merged with the third one in Kaluga that we use for ARM.
+
+If you look at the function \fnname{init\_cap\_manager} in \pathname{usr/kaluga/device\_caps.c}
+you will find a call to the monitor to request the I/O capability:
+
+\begin{lstlisting}[caption={RPC call to receive the I/O capability from
+the monitor.}, label={lst:getio}]
+err = cl->vtbl.get_io_cap(cl, &requested_cap, &error_code);
+\end{lstlisting}
+
+In the case of the ARM Pandaboard, the requested capability allows one to
+access the whole space of the device memory. We pass this capability on to the
+device manager in the \fnname{mm\_add} call further down. Now, we are free to
+use the \fnname{get\_device\_cap} function, also defined in this file to
+create fine grained capabilities for this entire memory range. If you go back
+and look at code in \pathname{usr/kaluga/omap\_startup.c} you will find it
+actually uses \fnname{get\_device\_cap} to create the capabilities it needs to
+pass on to the device drivers.
+
+Now you should understand how the user-space side works if you want to write
+user-space drivers for your own platform. We have not covered yet how we
+actually create a capability in the kernel and how it ends up in the monitor,
+but we will cover that shortly in Section~\ref{sec:kernelmemory}.
+
+\chapter{Kernel support for user-space drivers}
+\label{chap:kernel}
+
+In this chapter, we will look at the necessary support in the kernel, if we
+want to write user-level device drivers on a new, unsupported platform. We
+cover the main parts that are needed in this case: How do we forward
+interrupts to user-space and how we create capabilities for device memory.
+
+\section{Interrupts}
+\label{sec:kernelirq}
+
+In Chapter~\ref{chap:overview} we have already seen how we can register to
+receive interrupts using the message passing architecture in Barrelfish. In
+this section we will look at what the kernel does in order to forward the
+interrupt to you. It all starts with having a driver for your interrupt
+controller. We have support for a number of interrupt controllers already in
+Barrelfish, like the xAPIC on x86 (\pathname{kernel/x86/apic.c}) or the GIC in
+ARMv7 (\pathname{kernel/arch/armv7/gic.c}). If there is currently no interrupt
+controller for your architecture, you'll have to write one yourself. In any
+case, if you want to forward interrupts to user-space, you can rely on the
+\fnname{send\_user\_interrupt} function provided by the architecture
+independent part of the CPU driver. It allows you to forward interrupts
+from the kernel to a domain running on its core using the message passing
+infrastructure of Barrelfish \cite{btn011-idc}.
+
+
+\section{Device Memory}
+\label{sec:kernelmemory}
+
+In Section~\ref{sec:armdriverwriting} we talked about how Kaluga constructs a
+series of smaller capabilities for device drivers from an initial, huge
+capability it receives from the monitor. We also mention that capabilities are
+created in the kernel. In this Section we look at what is necessary to
+create capabilities for device memory and how we can pass it on to user-space.
+
+First you need to know what memory areas your devices are in. On x86 we
+usually ask the BIOS to get a list of memory regions for RAM and device
+memory. In Barrelfish, we construct capabilities for these regions and we hand
+the device regions to ACPI which is the domain that initializes the ACPI
+subsystem and does the memory book keeping for PCI drivers. On an ARM
+platform, the device memory usually lives in a statically pre-defined range.
+In \pathname{kernel/arch/omap44xx/startup\_arch.c} in
+\fnname{spawn\_init\_common} we can see how we construct a capability for the
+device memory range of the the OMAP4 platform. The relevant parts are
+given in Listing~\ref{lst:capcreate}.
+
+\begin{lstlisting}[caption={Creating a cabaility in the kernel and placing
+it in the I/O slot in a task cnode.}, label={lst:capcreate}]
+struct cte *iocap = caps_locate_slot(CNODE(spawn_state.taskcn), TASKCN_SLOT_IO);
+errval_t  err = caps_create_new(ObjType_DevFrame, 0x40000000, 30, 30, iocap);
+\end{lstlisting}
+
+\fnname{spawn\_init\_common} is setting up a new dispatcher control block, for
+the first user-space program called init, in the system. Similar to a UNIX
+based OS, all subsequent programs are children of init. The call to
+\fnname{caps\_create\_new} creates a new capability of type
+\varname{ObjType\_DevFrame}, a special type for device memory that makes sure
+the pages are not zeroed before mapping it for the first time. The next two
+arguments are the physical base of the address range and the size (in bits) of
+the range. This particular capability covers a memory range of $2^{30}$ bytes,
+or one GiB, starting from address \varname{0x40000000} -- the device memory
+region of the OMAP4 chip. The last argument specifies where this new
+capability is stored. The location is defined by the preceding
+\fnname{caps\_locate\_slot} function call. You can think of the
+\fnname{caps\_locate\_slot} function as an array look-up. We use the task
+CNode (a table of capabilities) of \varname{spawn\_state}, a struct
+representing the kernel state for the init domain. We use
+\varname{TASKCN\_SLOT\_IO}  as an index to the cnode table. Once init is
+started, it can refers to this capability by using the \varname{TASKCN\_SLOT\_IO}
+offset to find it. If you look inside \pathname{usr/init/spawn.c} you will
+find the code (Listing~\ref{lst:slotio}) doing just that to propagate the capability on to the monitors task cnode. Notice that \fnname{cap\_copy} is
+now a system call. The monitor then can use the I/O capability in
+his task cnode if somebody requests it (for example by using \fnname{get\_io\_cap},
+seen in Listing~\ref{lst:getio}).
+
+\begin{lstlisting}[caption={Copy of the I/O capability from
+    \varname{src} to \varname{dest}.}, label={lst:slotio}]
+/* Give monitor IO */
+dest.cnode = si->taskcn;
+dest.slot  = TASKCN_SLOT_IO;
+src.cnode = cnode_task;
+src.slot  = TASKCN_SLOT_IO;
+err = cap_copy(dest, src);
+if (err_is_fail(err)) {
+    return err_push(err, INIT_ERR_COPY_IO_CAP);
+}
+\end{lstlisting}
+
+\chapter{Limitations \& Work in Progress}
+
+Altough we currently have the necessary support for user-space drivers
+on both major platforms Barrelfish runs on we do not yet have an
+unified interface between ARM and x86 architectures. In this technote
+we have seen both approaches explained to varying levels of details and
+we mentioned briefly where the two approaches differ. In the future we will
+most likely unify both platforms under a standardized API which will have
+the best of both worlds.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{abbrv}
+\bibliography{barrelfish}
+
+\end{document}

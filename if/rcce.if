@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface rcce "The RCCE Interface" {
+
+        message init_request(uint8 coreid, uint8 bspid, uint64 state,
+		             cap shared_mem);
+
+	message ssf(uint8 id, uint64 pyaload, uint64 timestamp);
+	message jump(uint8 id, uint64 timestamp);
+	message acknowledgement(uint8 id, uint64 time);
+
+        message wait_request();
+        message wait_reply();
+
+        message ring_request();
+        message ring_reply();
+
+	message error_reply(errval err, uint64 state);
+
+	message message_request(uint16 coreid, uint8 msg[size]);
+	message message_reply(uint16 coreid);
+
+	message bulk_message_request(uint16 coreid, uint64 id, uint64 size,
+				     uint8 last_fragment);
+        message bulk_message_reply(uint16 coreid, uint64 id);
+
+	message bulk_recv_ready(uint16 coreid, uint64 size);
+};

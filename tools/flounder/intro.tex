@@ -1,0 +1,90 @@
+\section{Introduction}
+
+\subsection{Closure Data-Structures}
+
+Let assume we are defining an interface named \emph{if}, with the
+following \emph{call} messages:
+\begin{itemize}
+  \item \verb!init_device_irq!
+  \item \verb!init_device!
+  \item \verb!get_cap!
+\end{itemize}
+
+And the following \emph{response} messages:
+\begin{itemize}
+  \item \verb!transmit_next_cap_response!
+  \item \verb!transmit_next_cap_error!
+  \item \verb!init_device_error!
+  \item \verb!init_device_response!
+\end{itemize}
+
+This will generates the following data-structures in \verb!if.h!. 
+
+\subsubsection{Server-side}
+
+\begin{description}
+  \item \verb!if_service_response!:
+    \begin{itemize}
+    \item \verb!if_server_response_vtbl *! \verb!f!
+      \begin{description}
+        \item \verb!if_server_response_vtbl!: (auto-generated)
+          \begin{itemize}
+            \item \verb!if_transmit_next_cap_response_fn *! \verb!transmit_next_cap_response!
+            \item \verb!if_transmit_next_cap_error_fn *! \verb!transmit_next_cap_error!
+            \item \verb!if_init_device_error_fn *! \verb!init_device_error!
+            \item \verb!if_init_device_response_fn *! \verb!init_device_response!
+            \item \verb!chips_disconnect_handler_t! \verb!_disconnect!
+          \end{itemize}
+      \end{description}
+    \item \verb!chips_connection *! conn
+    \item \verb!if_service *! clp
+      \begin{description}
+        \item \verb!if_service!:
+          \begin{itemize}
+            \item \verb!if_server_call_vtbl *! \verb!f!
+              \begin{description}
+                \item \verb!if_server_call_vtbl!: (to be filled)
+                  \begin{itemize}
+                    \item \verb!if_init_device_fn *! \verb!init_device!
+                    \item \verb!if_get_cap_fn *! \verb!get_cap!
+                    \item \verb!chips_disconnect_handler_t! \verb!_disconnect!
+                    \item \verb!chips_listen_callback_t! \verb!_listening!
+                  \end{itemize}
+              \end{description}
+            \item \verb!void *! \verb!st!
+          \end{itemize}
+      \end{description}
+    \end{itemize}
+\end{description}
+
+
+\subsubsection{Client-side}
+
+\begin{description}
+  \item \verb!if_client_response!:
+    \begin{itemize}
+      \item \verb!if_client_response_vtbl *! \verb!f!
+        \begin{description}
+          \item \verb!if_client_response_vtbl!: (to be filled)
+            \begin{itemize}
+            \item \verb!if_transmit_next_cap_response_fn *! \verb!transmit_next_cap_response!
+            \item \verb!if_transmit_next_cap_error_fn *! \verb!transmit_next_cap_error!
+            \item \verb!if_init_device_error_fn *! \verb!init_device_error!
+            \item \verb!if_init_device_response_fn *! \verb!init_device_response!
+            \item \verb!chips_disconnect_handler_t! \verb!_disconnect!
+            \item \verb!if_connected_cb! \verb!_connected!
+            \end{itemize}
+        \end{description}
+      \item \verb!if_client_call_vtbl *! \verb!f!
+        \begin{description}
+        \item \verb!if_client_call_vtbl!: (auto-generated)
+          \begin{itemize}
+          \item \verb!if_init_device_fn *! \verb!init_device!
+          \item \verb!if_get_cap_fn *! \verb!get_cap!
+          \item \verb!chips_disconnect_handler! \verb!_disconnect!
+          \end{itemize}
+        \end{description}
+      \item \verb!chips_connection *! \verb!conn!
+      \item \verb!void *! \verb!st!
+    \end{itemize}
+\end{description}

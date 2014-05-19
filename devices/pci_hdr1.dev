@@ -1,0 +1,219 @@
+/*
+ * Copyright (c) 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * pci_hdr1.dev
+ *
+ * DESCRIPTION: PCI Type 1 Configuration header
+ * 
+ */
+
+device pci_hdr1 msbfirst ( pci base ) "PCI Type 1 Configuration" {
+
+  register vendor_id ro pci( base, 0x00 ) "Vendor ID" type(uint16);
+  register device_id ro pci( base, 0x02 ) "Device ID" type(uint16);
+
+  register command rw pci( base, 0x04 ) "Command" {
+    _		5; 
+    int_dis	1 rw "Interrupt disable";
+    back2back	1 ro "Fast back-to-back enable";
+    serr	1 rw "SERR# enable";
+    stepping	1 ro "IDSEL stepping/wait cycle control";
+    parity	1 rw "Parity error response";
+    vga_snoop	1 ro "VGA palette snoop enable";
+    mem_inval	1 ro "Memory write and invalidate enable";
+    special	1 ro "Special cycles";
+    master	1 rw "Bus master";
+    mem_space	1 rw "Memory space enable";
+    io_space	1 rw "I/O space enable";
+  };
+
+  regtype statreg "Interface status" {
+    parity_err	1 rwc "Detected parity error";
+    system_err	1 rwc "Signalled system error";
+    rx_m_abrt	1 rwc "Received master abort";
+    rx_t_abrt	1 rwc "Received target abort";
+    sig_t_abrt	1 rwc "Signalled target abort";
+    devsel	2 ro  "DEVSEL timing";
+    md_parity	1 rwc "Master data parity error";
+    back2back   1 ro  "Fast Back-to-Back enable";
+    udf		1 ro  "UDF supported";
+    m66		1 ro  "66MHz capable";
+    caplist	1 ro  "Capabilities list";
+    intstat	1 ro  "Interrupt status";
+    _		3;
+  };
+
+  register status pci( base, 0x06 ) "Status" type(statreg);
+  register sec_stat pci (base, 0x1e) "Secondary status" type(statreg);
+
+  //
+  // Revision ID and Class code fall in the same 32-bit space.  We
+  // allow access to the Revision ID as an 8-bit value, and the Class
+  // Code as a 32-bit value with the bottom 8 bits reserved, but we
+  // could I suppose combine them all into one register.
+  //
+
+  register rev_id ro pci( base, 0x08 ) "Revision ID" type(uint8);
+
+  constants classcode "Class code" {
+    bridge	= 0x06 "Bridge device";
+  };
+
+  register class_code ro also pci( base, 0x08 ) "Class code" {
+    clss	8 type(classcode) "Class code";
+    subclss	8 "Subclass code";
+    prog_if	8 "Programming intf";
+    _		8; 
+  };
+
+  register cache_sz rw pci( base, 0x0c ) "Cache line size" type(uint8);
+  register latency rw pci( base, 0x0d ) "Master latency timer" type(uint8);
+
+  //
+  // Important stuff: whether this is actually a Type-0 header at
+  // all.  This is currently duplicated into the Type-1 definition -
+  // when Mackerel gets a module system we can break this out into
+  // other files. 
+  //
+  constants hdrtype "Configuration header types" {
+    nonbridge	= 0 "non-bridge function";
+    pci2pci	= 1 "PCI-to-PCI bridge";
+    cardbus	= 2 "CardBus bridge";
+  };
+
+  register hdr_type ro pci( base, 0x0e ) "Header type" { 
+    multi	1 "Multifunction device";
+    fmt		7 type(hdrtype) "Configuration header format";
+  };
+
+  register bist pci( base, 0x0f ) "Built-in self-test" {
+    cap		1 ro "BIST capable";
+    start	1 rw "Start BIST";
+    _		2;
+    comp	4 ro "Completion code";
+  };
+
+  // 
+  // Base-Address registers.  These are problematic for Mackerel,
+  // since you don't know exactly what the register is (32, 64, or IO)
+  // until you read it.  And only then do you know where the next one
+  // might be.   This is beyond Mackerel, and in all honesty probably
+  // should stay that way.  
+  // 
+  // As a compromise we define register types for each BAR, and give
+  // the BAR block as simply a set of 6 32-bit registers.  PCI
+  // enumeration code can do the rest. 
+  // 
+  constants bardecoder "BAR decoder type" {
+    bar_32bit	= 0b00 "32-bit decoder";
+    bar_64bit	= 0b10 "64-bit decoder";
+  };
+
+  regtype bar32 "32-bit memory base address" {
+    base	25 rw "Base address";
+    _		3;
+    prefetch	1 ro "Prefetchable";
+    tpe		2 ro type(bardecoder) "Memory decoder type";
+    space       1 ro "Memory space indicator";
+  };
+  regtype bar64 "64-bit memory base address" {
+    base	57 rw "Base address";
+    _		3;
+    prefetch	1 ro "Prefetchable";
+    tpe		2 ro type(bardecoder) "Memory decoder type";
+    space       1 ro "Memory space indicator";
+  };
+  regtype bario "I/O space base address" {
+    base	30 rw "Base address";
+    _		1;
+    space	1 ro "I/O space indicator";
+  };
+  
+  register bar0 pci ( base, 0x10 ) "Base address 0" type(uint32);
+  register bar1 pci ( base, 0x14 ) "Base address 1" type(uint32);
+
+  register bcfg pci (base, 0x18) "Bus configuration register" {
+    sec_lat    8   "Secondary latency timer";
+    sub_bus    8   "Subordinate bus number";
+    sec_bus    8   "Secondary bus number";
+    pri_bus    8   "Primary bus number";
+  };
+
+  //
+  // I/O base and limit registers
+  //
+  constants iobl_decode "I/O Base and limit decode type" {
+    io_16bit	= 0b00 "16-bit I/O decode";
+    io_32bit	= 0b01 "32-bit I/O decode";
+  };
+  regtype iobl "I/O Base and limit" {
+    val		4 rw "Low bits of address";
+    tpe		4 ro type(iobl_decode) "Decode type";
+  };
+
+  register io_base pci (base, 0x1c) "I/O base" type(iobl);
+  register io_limit pci (base, 0x1d) "I/O limit" type(iobl);
+  register io_base_upper pci (base, 0x30) "I/O base upper 16b" type(uint16);
+  register io_limit_upper pci (base, 0x32) "I/O limit upper 16b" type(uint16);
+
+  //
+  // Memory-mapped I/O base and limit registers
+  //
+
+  register membl pci (base, 0x20) "Memory base and limit" {
+    limit  16	 "Limit";
+    base   16	 "Base";
+  };
+
+  //
+  // Prefetchable memory base and limit registers
+  //
+  constants pref_decode "Prefetchable memory base and limit decode type" {
+    mem_32bit	= 0b00 "32-bit memory decode";
+    mem_64bit	= 0b01 "64-bit memory decode";
+  };
+  regtype prefbl "Prefetchable memory base and limit" {
+    val		12 rw "Low bits of address";
+    tpe		4 ro type(iobl_decode) "Decode type";
+  };
+  register pref_base pci (base, 0x24) "Prefetchable memory base" type(prefbl);
+  register pref_limit pci (base, 0x26) "Prefetchable memory limit" type(prefbl);
+  register pref_base_upper pci (base, 0x28) "Prefetch base upper 32b" type(uint32);
+  register pref_limit_upper pci (base, 0x2C) "Prefetch limit upper 32b" type(uint32);
+  
+  register cap_ptr ro pci(base, 0x34) "Capabilities ptr" type(uint8);
+  
+  register rom_base rw pci(base, 0x38) "Expansion ROM base addr" {
+    base	21 "ROM Base address high bits";
+    _		10;
+    enable	1 "ROM address decoder enable";
+  };
+
+  register int_line rw pci(base, 0x3c) "Interrupt line" type(uint8);
+  register int_pin ro pci(base, 0x3d) "Interrupt ping" type(uint8);
+
+  register brdg_ctrl pci(base, 0x3e) "Bridge control" {
+    _		4;
+    serr_dis	1 ro "Discard timer SERR# enable";
+    tstat_dis	1 ro "Discard timer status";
+    sectm_dis	1 ro "Secondary discard timeout";
+    pritm_dis	1 ro "Primary discard timeout";
+    back2back   1 ro "Fast back-to-back enable";
+    sec_reset   1 rw "Secondary bus reset";
+    mabort	1 rw "Master abort mode";
+    _		1;
+    vga		1 rw "VGA enable";
+    isa		1 rw "ISA enable";
+    serr_en	1 rw "SERR# enable";
+    parity	1 rw "Parity error response";
+  };
+
+};
+
+

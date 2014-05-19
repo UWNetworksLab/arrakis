@@ -1,0 +1,274 @@
+/*
+ * Copyright (c) 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ahci_port.dev
+ *
+ * DESCRIPTION: AHCI (SATA) Host bus adaptor, per-port registers
+ * 
+ * Section numbers refer to the Serial ATA Advanced Host Controller
+ *   Interface (AHCI) specification 1.3, June 2008
+ */
+
+device ahci_port msbfirst (addr b) "AHCI port" {
+
+    // 3.3.1-2 
+    // Low 10 bits mbz
+    register clb rw addr(b,0x00) "Command list base address" type(uint64);
+    
+    // 3.3.3-4
+    // Low 10 bits mbz
+    register fb rw addr(b,0x08) "FIS base address" type(uint64);
+    
+    // 3.3.5
+    register is addr(b,0x10) "Interrupt status" {
+	cpds	1 rw1c "Cold port detect";
+	tfes	1 rw1c "Task file error";
+	hbfs	1 rw1c "Host bus fatal error";
+	hbds	1 rw1c "Host bus data error";
+	ifs	1 rw1c "Interface fatal error";
+	infs	1 rw1c "Interface non-fatal error";
+	_	1 rsvd;
+	ofs	1 rw1c "Overflow status";
+	ipms	1 rw1c "Incorrect port multiplier status";
+	prcs	1 ro   "PhyRdy change status";
+	_	14 rsvd;
+	dmps	1 rw1c "Device mechanical presence";
+	pcs	1 ro   "Port connect change";
+	dps	1 rw1c "Descriptor processed";
+	ufs	1 ro   "Unknown FIS interrupt";
+	sdbs	1 rw1c "Set device bits interrupt";
+	dss	1 rw1c "DMA setup FIS interrupt";
+	pss	1 rw1c "PIO setup FIS interrupt";
+	dhrs	1 rw1c "Device to host register FIS interrupt";
+    };
+    
+    // 3.3.6
+    register ie addr(b,0x14) "Interrupt enable" {
+	cpde	1 rw "Cold port detect";
+	tfee	1 rw "Task file error";
+	hbfe	1 rw "Host bus fatal error";
+	hbde	1 rw "Host bus data error";
+	ife     1 rw "Interface fatal error";
+	infe	1 rw "Interface non-fatal error";
+	_	1 rsvd;
+	ofe	1 rw "Overflow enable";
+	ipme	1 rw "Incorrect port multiplier status";
+	prce	1 ro   "PhyRdy change status";
+	_	14 rsvd;
+	dmpe	1 rw "Device mechanical presence";
+	pce	1 ro   "Port connect change";
+	dpe	1 rw "Descriptor processed";
+	ufe	1 ro   "Unknown FIS interrupt";
+	sdbe	1 rw "Set device bits interrupt";
+	dse	1 rw "DMA setup FIS interrupt";
+	pse	1 rw "PIO setup FIS interrupt";
+	dhre	1 rw "Device to host register FIS interrupt";
+    };
+    
+    // 3.3.7 
+    constants icct "Interface communication control" {
+	slumber	= 0x6 "Slumber";
+	partial = 0x2 "Partial";
+	active  = 0x1 "Active";
+	idle	= 0x0 "No-Op / Idle";
+    };
+    register cmd addr(b,0x18) "Command and status" {
+	icc	4 rw type(icct) "Interface communication control";
+	asp	1 rw "Aggressive slumber / partial";
+	alpe	1 rw "Aggressive link power management enable";
+	dlae	1 rw "Drive LED on ATAPI enable";
+	atapi	1 rw "Device is ATAPI";
+	apste	1 rw "Automatic partial to slumber transitions enabled";
+	fbscp	1 ro "FIS-based switching capable port";
+	esp	1 ro "External SATA port";
+	cpd	1 ro "Cold presence detection";
+	mpsp	1 ro "Mechanical presence switch";
+	hpcp	1 ro "Hot plug capable port";
+	pma	1 rw "Port multiplier attached";
+	cps	1 ro "Cold presence state";
+	cr	1 ro "Command list running";
+	fr	1 ro "FIS receive running";
+	mpss	1 ro "Mechanical presence switch state";
+	ccs	5 ro "Current command slot";
+	_	3 rsvd;
+	fre	1 rw "FIS receive enable";
+	clo	1 rw "Command list override";
+	pod	1 rw "Power on device";
+	sud	1 rw "Spin-up device";
+	st	1 rw "Start";
+    };
+
+    // 3.3.8 
+    register tfd ro addr(b,0x20) "Task file data" {
+	_	16 rsvd;
+	err	8 "Error";
+	sts	8 "Status (task file status)";
+    };
+    
+    // 3.3.9
+    register sig ro addr(b,0x24) "Signature" {
+	lbah	8 "LBA high";
+	lbam	8 "LBA mid";
+	lbal	8 "LBA low";
+	sectors 8 "Sector count";
+    };
+    
+    // 3.3.10
+    constants speed "Interface speed" {
+	gen1	= 0b0001 "Gen 1 (1.5 Gbps)";
+	gen2	= 0b0010 "Gen 2 (3 Gbps)";
+	gen3	= 0b0011 "Gen 3 (6 Gbps)";
+    };
+    constants dets "Device detection state" {
+	nodev	= 0x0 "No device, no PHY";
+	nophy	= 0x1 "Device detected, no PHY comm. established";
+	detect  = 0x3 "Device detected and PHY comm. established";
+	offline = 0x4 "PHY in offline mode or loopback";
+    };
+    register ssts ro addr(b,0x28) "Serial ATA status" {
+	_	20 rsvd;
+	ipm	4 type(icct) "Interface power management";
+	spd	4 type(speed) "Current interface speed";
+	det	4 type(dets) "Device detection";
+    };
+    
+    // 3.3.11
+    constants ipmall "Interface transitions" {
+	noipm	= 0x0 "No interface restrictions";
+	noprtl	= 0x1 "Transitions to Partial state disabled";
+	noslmb  = 0x2 "Transitions to Slumber state disabled";
+	noboth	= 0x3 "Transitions to both Partial and Slumber disabled";
+    };
+    register sctl addr(b,0x2c) "Serial ATA control" {
+	_	12 rsvd;
+	_	4 rsvd "Port multiplier port (unused)";
+	_	4 rsvd "Select power mgmt (unused)";
+	ipm	4 rw type(ipmall) "Interface power mgmt transitions allowed";
+	spd	4 rw type(speed) "Speed allowed";
+	det	4 rw type(dets) "Device detection initialization";
+    };
+
+    // 3.3.12
+    register serr rw1c addr(b,0x30) "Serial ATA error" {
+	_	5 rsvd;
+	dx	1 "Exchanged";
+	df	1 "Unknown FIS type";
+	dt	1 "Transport state transition error";
+	ds	1 "Link sequence error";
+	dh	1 "Handshake error";
+	dc	1 "CRC error";
+	dd	1 "Disparity error";
+	db	1 "10b to 8b decode error";
+	dw	1 "Comm wake";
+	di	1 "Phy internal error";
+	dn	1 "PhyRdy change";
+	_	4 rsvd;
+	ee	1 "Internal error";
+	ep	1 "Protocol error";
+	ec	1 "Persistent communication or data integrity error";
+	et	1 "Transient data integrity error";
+	_	6 rsvd;
+	em	1 "Recovered communications error";
+	ei	1 "Recovered data integrity error";
+    };
+
+    // 3.3.13
+    register sact rw addr(b,0x34) "Serial ATA active" type(uint32);
+
+    // 3.3.14
+    register ci rw addr(b,0x38) "Command issue" type(uint32);
+    
+    // 3.3.15 
+    register sntf addr(b,0x3c) "Serial ATA notification" {
+	_	16 mbz;
+	pmn	16 rw1c "PMN notify";
+    };
+    
+    // 3.3.16
+    register fbs addr(b,0x40) "FIS-based switching control" {
+	_	12 mbz;
+	dwe	4 ro "Device with error";
+	ado	4 ro "Active device optimization";
+	dev	4 rw "Device to issue";
+	_	5 mbz;
+	sde	1 ro "Single device error";
+	dec	1 rw1c "Device error clear";
+	en	1 rw "Enable";
+    };
+
+    // 4.2.2 Command List Structure, elements are Command Headers
+    datatype chdr msbfirst(32) "Command Header" {
+	prdtl	16 "Physical region descriptor table length";
+	pmp	4  "Port multiplier port";
+	_	1;
+	c	1 "Clear busy upon R_OK";
+	b	1 "BIST";
+	r	1 "Reset";
+	p	1 "Prefetchable";
+	w	1 "Write";
+	a	1 "ATAPI";
+	cfl	5 "Command FIS length";
+	
+	prdbc	32 "Physical region descriptor byte count";
+	
+	ctba	32 "Command table descriptor base address";
+	
+	ctbau	32 "Command table descriptor base address upper";
+	_	32;
+	_	32;
+	_	32;
+	_	32;
+    };
+
+    // 4.2.3.3 Physical Region Descriptor Table
+    datatype prd msbfirst(32) "Physical region descriptor" {
+	dba	32 "Data base address";
+	dbau	32 "Data base address upper";
+	_	32;
+	i	1 "Interrupt on completion";
+	_	9;
+	dbc	22 "Data byte count";
+    };
+    
+    // 12.2
+    constants emtype "Enclosure message type" {
+	led	= 0x0 "LED";
+	saf_te	= 0x1 "SAF-TE";
+	ses_2	= 0x2 "SES-2";
+	sgpio	= 0x3 "SGPOI (register-based interface";
+    };
+    datatype encmsg "Enclosure management message" {
+	_	4;
+	mtype	4 type(emtype) "Message type";
+	dsize	8 "Data size";
+	msize	8 "Message size";
+	_	8;
+    };
+    
+    // 12.2.1
+    constants emledstate "Enclosure LED state" {
+	off	= 0b000 "LED shall be off";
+	solid	= 0b001 "LED shall be solid on";
+	vs1	= 0b100 "Vendor specific 1";
+	vs2	= 0b101 "Vendor specific 2";
+	vs3	= 0b110 "Vendor specific 3";
+	vs4	= 0b111 "Vendor specific 4";
+    };
+    datatype emledmsg "Enclosure LED message" {
+	_	7;
+	fault	3 type(emledstate) "Vendor-specific LED (e.g. fault)";
+	locate	3 type(emledstate) "Vendor-specific LED (e.g. locate)";
+	activity 3 type(emledstate) "Activity LED";
+	_	4;
+	pmi	4 "Port multiplier information";
+	_	2;
+	vsm	1 "Vendor-specific enclosure message";
+	hbapn	5 "HBA port number for update";
+    };
+};

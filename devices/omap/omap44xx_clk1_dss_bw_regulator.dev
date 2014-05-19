@@ -1,0 +1,68 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_clk1_dss_bw_regulator.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_clk1_dss_bw_regulator msbfirst ( addr base ) "" {
+    
+
+    constants stdhosthdr_corereg_vendorcode_status width(1) "" {
+        STDHOSTHDR_COREREG_VENDORCODE_0_r = 0 "Third-party vendor.";
+        STDHOSTHDR_COREREG_VENDORCODE_1_r = 1 "";
+    };
+    
+    register l3_bw_r_stdhosthdr_corereg addr(base, 0x0) "" {
+        _ 10 mbz;
+        stdhosthdr_corereg_corecode 6 ro "The Core Code field is a constant reporting a vendor-specific core generator code. Type: Constant. Reset value: 0x31.";
+        _ 15 mbz;
+        stdhosthdr_corereg_vendorcode 1 ro type(stdhosthdr_corereg_vendorcode_status) "The Vendor Code field is a constant reporting the core generator vendor code. Type: Constant. Reset value: 0x1.";
+    };
+    
+    register l3_bw_r_stdhosthdr_versionreg addr(base, 0x4) "" {
+        stdhosthdr_versionreg_revisionid 8 ro "The Revision Identifier field is a constant reporting the core generator revision number. Type: Constant. Reset value: 0x0.";
+        stdhosthdr_versionreg_coreparamschecksum 24 ro "Reserved. Type: Reserved. Reset value: Reserved.";
+    };
+    
+    register l3_bw_r_bandwidth addr(base, 0x8) "" {
+        _ 16 mbz;
+        bandwidth 16 rw "Bandwidth, in bytes per second. Type: Control. Reset value: 0x0.";
+    };
+    
+    register l3_bw_r_watermark addr(base, 0xC) "" {
+        _ 20 mbz;
+        watermark 12 rw "Peak permissible bandwidth, in bytes. Type: Control. Reset value: 0x1.";
+    };
+    
+    register l3_bw_r_press addr(base, 0x10) "" {
+        _ 30 mbz;
+        press_low 1 ro "Pressure value inserted if the measured bandwidth is over the watermark. The pressure is bar graph encoded. Type: Control. Reset value: 0x0.";
+        press_high 1 ro "Pressure value inserted if the measured bandwidth is under the watermark. The pressure is bar graph encoded. Type: Control. Reset value: 0x1.";
+    };
+    
+    register l3_bw_r_clearhistory addr(base, 0x14) "" {
+        _ 31 mbz;
+        clearhistory 1 rw "Write a 1 clear the traffic counter Type: Give_AutoCleared. Reset value: 0x0.";
+    };
+};

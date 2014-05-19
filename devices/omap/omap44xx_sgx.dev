@@ -1,0 +1,345 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_sgx.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_sgx msbfirst ( addr base ) "" {
+    
+    
+    register ocp_revision ro addr(base, 0xFE00) "OCP Revision Register." type(uint32);
+
+    constants mem_bus_width_status width(1) "" {
+        MEM_BUS_WIDTH_0_r = 0 "Memory bus width is 64 bits.";
+        MEM_BUS_WIDTH_1_r = 1 "Memory bus width is 128 bits.";
+    };
+
+    constants sys_bus_width_status width(2) "" {
+        SYS_BUS_WIDTH_0_r = 0 "System bus width is 32 bits.";
+        SYS_BUS_WIDTH_1_r = 1 "System bus width is 64 bits.";
+        SYS_BUS_WIDTH_2_r = 2 "System bus width is 128 bits.";
+        SYS_BUS_WIDTH_3_r = 3 "Reserved";
+    };
+    
+    register ocp_hwinfo addr(base, 0xFE04) "Hardware implementation information" {
+        _ 29 mbz;
+        mem_bus_width 1 ro type(mem_bus_width_status) "Memory bus width:";
+        sys_bus_width 2 ro type(sys_bus_width_status) "System bus width:";
+    };
+
+    constants standby_mode_status width(2) "" {
+        STANDBY_MODE_0 = 0 "Force-standby mode";
+        STANDBY_MODE_1 = 1 "No-standby mode";
+    };
+
+    constants idle_mode_status width(2) "" {
+        IDLE_MODE_0 = 0 "Force-idle mode";
+        IDLE_MODE_1 = 1 "No-idle mode";
+    };
+    
+    register ocp_sysconfig addr(base, 0xFE10) "System Configuration register" {
+        _ 26 mbz;
+        standby_mode 2 rw type(standby_mode_status) "Clock standby mode:0x2, 0x3: Smart-standby mode . .";
+        idle_mode 2 rw type(idle_mode_status) "Clock Idle mode:0x2, 0x3: Smart-idle mode . .";
+        _ 2 mbz;
+    };
+
+    constants init_minterrupt_raw_status width(1) "" {
+        INIT_MINTERRUPT_RAW_0_w = 0 "No action.";
+        INIT_MINTERRUPT_RAW_0_r = 0 "No event pending.";
+        INIT_MINTERRUPT_RAW_1_r = 1 "Event pending.";
+        INIT_MINTERRUPT_RAW_1_w = 1 "Set event (used for debug).";
+    };
+    
+    register ocp_irqstatus_raw_0 addr(base, 0xFE24) "Raw IRQ 0 Status" {
+        _ 31 mbz;
+        init_minterrupt_raw 1 rw type(init_minterrupt_raw_status) "Interrupt 0 - Master port raw event:";
+    };
+    
+    register ocp_irqstatus_raw_1 addr(base, 0xFE28) "Raw IRQ 1 Status. Slave port interrupt." {
+        _ 31 mbz;
+        target_sinterrupt_raw 1 rw type(init_minterrupt_raw_status) "Interrupt 1- Slave port raw event";
+    };
+    
+    register ocp_irqstatus_raw_2 addr(base, 0xFE2C) "Raw IRQ 2 Status. Core interrupt." {
+        _ 31 mbz;
+        core_irq_raw 1 rw type(init_minterrupt_raw_status) "Interrupt 2 - Core raw event";
+    };
+
+    constants init_minterrupt_status_status width(1) "" {
+        INIT_MINTERRUPT_STATUS_0_w = 0 "No action.";
+        INIT_MINTERRUPT_STATUS_0_r = 0 "No event pending.";
+        INIT_MINTERRUPT_STATUS_1_r = 1 "Event pending and interrupt enabled.";
+        INIT_MINTERRUPT_STATUS_1_w = 1 "Clear event.";
+    };
+    
+    register ocp_irqstatus_0 addr(base, 0xFE30) "Interrupt 0 Status event. Master port interrupt." {
+        _ 31 mbz;
+        init_minterrupt_status 1 rw type(init_minterrupt_status_status) "Interrupt 0 - Master port status event";
+    };
+    
+    register ocp_irqstatus_1 addr(base, 0xFE34) "Interrupt 1 - slave port status event" {
+        _ 31 mbz;
+        target_sinterrupt_status 1 rw type(init_minterrupt_status_status) "Interrupt 1 - Slave port status event";
+    };
+    
+    register ocp_irqstatus_2 addr(base, 0xFE38) "Interrupt 2 - Core status event" {
+        _ 31 mbz;
+        core_irq_status 1 rw type(init_minterrupt_status_status) "Interrupt 2 - Core status event";
+    };
+
+    constants init_minterrupt_enable_status width(1) "" {
+        INIT_MINTERRUPT_ENABLE_0_w = 0 "No action.";
+        INIT_MINTERRUPT_ENABLE_0_r = 0 "Interrupt is enabled.";
+        INIT_MINTERRUPT_ENABLE_1_r = 1 "Interrupt is disabled.";
+        INIT_MINTERRUPT_ENABLE_1_w = 1 "Enable interrupt.";
+    };
+    
+    register ocp_irqenable_set_0 addr(base, 0xFE3C) "Enable Interrupt 0 - Master port" {
+        _ 31 mbz;
+        init_minterrupt_enable 1 rw type(init_minterrupt_enable_status) "Enable interrupt 0 - Master port";
+    };
+    
+    register ocp_irqenable_set_1 addr(base, 0xFE40) "Enable Interrupt 1. Target port interrupt." {
+        _ 31 mbz;
+        target_sinterrupt_enable 1 rw type(init_minterrupt_enable_status) "Enable interrupt 1 - Slave port interrupt";
+    };
+    
+    register ocp_irqenable_set_2 addr(base, 0xFE44) "Enable Interrupt 2. Core interrupt." {
+        _ 31 mbz;
+        core_irq_enable 1 rw type(init_minterrupt_enable_status) "Enable interrupt 2 - Core interrupt";
+    };
+
+    constants init_minterrupt_disable_status width(1) "" {
+        INIT_MINTERRUPT_DISABLE_0_w = 0 "No action.";
+        INIT_MINTERRUPT_DISABLE_0_r = 0 "Interrupt is enabled.";
+        INIT_MINTERRUPT_DISABLE_1_r = 1 "Interrupt is disabled.";
+        INIT_MINTERRUPT_DISABLE_1_w = 1 "Disable interrupt.";
+    };
+    
+    register ocp_irqenable_clr_0 addr(base, 0xFE48) "Disable Interrupt 0 - Master port" {
+        _ 31 mbz;
+        init_minterrupt_disable 1 rw type(init_minterrupt_disable_status) "Disable interrupt 0 - Master port";
+    };
+    
+    register ocp_irqenable_clr_1 addr(base, 0xFE4C) "Disable Interrupt 1 - slave port" {
+        _ 31 mbz;
+        target_sinterrupt_disable 1 rw type(init_minterrupt_disable_status) "Disable interrupt 1 - Slave port";
+    };
+    
+    register ocp_irqenable_clr_2 addr(base, 0xFE50) "Disable Interrupt 2 - Core interrupt" {
+        _ 31 mbz;
+        core_irq_disable 1 rw type(init_minterrupt_disable_status) "Disable interrupt 2 - Core interrupt";
+    };
+
+    constants ocp_page_size_status width(2) "" {
+        OCP_PAGE_SIZE_0 = 0 "Page size is 4KB.";
+        OCP_PAGE_SIZE_1 = 1 "Page size is 2KB";
+        OCP_PAGE_SIZE_2 = 2 "Page size is 1KB.";
+        OCP_PAGE_SIZE_3 = 3 "Page size is 512B.";
+    };
+
+    constants mem_page_check_en_status width(1) "" {
+        MEM_PAGE_CHECK_EN_0 = 0 "Page boundary checking disabled.";
+        MEM_PAGE_CHECK_EN_1 = 1 "Page boundary checking enabled.";
+    };
+    
+    register ocp_page_config addr(base, 0xFF00) "Configure memory pages.." {
+        _ 27 mbz;
+        ocp_page_size 2 rw type(ocp_page_size_status) "Defines the page size on OCP memory interface";
+        mem_page_check_en 1 rw type(mem_page_check_en_status) "Enable page boundary checking.";
+        mem_page_size 2 rw type(ocp_page_size_status) "Defines the page size on internal memory interface";
+    };
+
+    constants target_invalid_ocp_cmd_status width(1) "" {
+        TARGET_INVALID_OCP_CMD_0_w = 0 "Clear the event.";
+        TARGET_INVALID_OCP_CMD_0_r = 0 "No event pending.";
+        TARGET_INVALID_OCP_CMD_1_r = 1 "Event pending.";
+        TARGET_INVALID_OCP_CMD_1_w = 1 "Set event and interrupt if enabled (debug only).";
+    };
+
+    constants target_cmd_fifo_full_status width(1) "" {
+        TARGET_CMD_FIFO_FULL_0_w = 0 "Write 0 to clear the event.";
+        TARGET_CMD_FIFO_FULL_0_r = 0 "Read 0 implies no event pending.";
+        TARGET_CMD_FIFO_FULL_1_r = 1 "Read 1 indicates event pending.";
+        TARGET_CMD_FIFO_FULL_1_w = 1 "Write 1 to set event and interrupt if enabled (debug only).";
+    };
+    
+    register ocp_interrupt_event addr(base, 0xFF04) "Interrupt events" {
+        _ 21 mbz;
+        target_invalid_ocp_cmd 1 rw type(target_invalid_ocp_cmd_status) "Invalid command from OCP";
+        target_cmd_fifo_full 1 rw type(target_cmd_fifo_full_status) "Command FIFO full";
+        target_resp_fifo_full 1 rw type(target_invalid_ocp_cmd_status) "Response FIFO full.";
+        _ 2 mbz;
+        init_mem_req_fifo_overrun 1 rw type(target_invalid_ocp_cmd_status) "Memory request FIFO overrun.";
+        init_read_tag_fifo_overrun 1 rw type(target_invalid_ocp_cmd_status) "Read tag FIFO overrun.";
+        init_page_cross_error 1 rw type(target_invalid_ocp_cmd_status) "Memory page had been crossed during a burst.";
+        init_resp_error 1 rw type(target_invalid_ocp_cmd_status) "Receiving error response";
+        init_resp_unused_tag 1 rw type(target_invalid_ocp_cmd_status) "Receiving response on an unused tag";
+        init_resp_unexpected 1 rw type(target_invalid_ocp_cmd_status) "Receiving response when not expected";
+    };
+
+    constants core_int_bypass_status width(1) "" {
+        CORE_INT_BYPASS_0 = 0 "Don't Bypass.";
+        CORE_INT_BYPASS_1 = 1 "Bypass core interrupt to IO pin, ie disregard the interrupt enable setting in IPG register.";
+    };
+
+    constants select_init_idle_status width(1) "" {
+        SELECT_INIT_IDLE_0 = 0 "Whole SGX Idle.";
+        SELECT_INIT_IDLE_1 = 1 "OCP initiator idle only.";
+    };
+
+    constants force_pass_data_status width(1) "" {
+        FORCE_PASS_DATA_0 = 0 "Normal mode. Don't force.";
+        FORCE_PASS_DATA_1 = 1 "Never fence request to OCP.";
+    };
+
+    constants force_init_idle_status width(2) "" {
+        FORCE_INIT_IDLE_0 = 0 "Normal mode - no force.";
+        FORCE_INIT_IDLE_1 = 1 "Force port to be always idle.";
+        FORCE_INIT_IDLE_2 = 2 "Forces target port to never be in idle mode.";
+        FORCE_INIT_IDLE_3 = 3 "Normal mode. No force.";
+    };
+    
+    register ocp_debug_config addr(base, 0xFF08) "Configuration of debug modes." {
+        core_int_bypass 1 rw type(core_int_bypass_status) "Bypass OCP IPG interrupt logic.";
+        _ 25 mbz;
+        select_init_idle 1 rw type(select_init_idle_status) "To select which idle the disconnect protocol should act on 0";
+        force_pass_data 1 rw type(force_pass_data_status) "Forces the initiator to pass data independent of disconnect protocol";
+        force_init_idle 2 rw type(force_init_idle_status) "Forces the OCP master port to idle.";
+        force_target_idle 2 rw type(force_init_idle_status) "Forces the OCP target port to idle.";
+    };
+
+    constants cmd_debug_state_status width(1) "" {
+        CMD_DEBUG_STATE_0 = 0 "Idle";
+        CMD_DEBUG_STATE_1 = 1 "Accept command.";
+    };
+
+    constants cmd_resp_debug_state_status width(1) "" {
+        CMD_RESP_DEBUG_STATE_0 = 0 "Send accept.";
+        CMD_RESP_DEBUG_STATE_1 = 1 "Wait accept.";
+    };
+
+    constants target_cmd_out_status width(3) "" {
+        TARGET_CMD_OUT_0_r = 0 "Command WRSYS received";
+        TARGET_CMD_OUT_1_r = 1 "Command RDSYS received";
+        TARGET_CMD_OUT_2_r = 2 "Command WR_ERROR received";
+        TARGET_CMD_OUT_3_r = 3 "Command RD_ERROR received";
+        TARGET_CMD_OUT_4_r = 4 "Command CHK_WRADDR_PAGE received. Not used.";
+        TARGET_CMD_OUT_5_r = 5 "Command CHK_RDADDR_PAGE received. Not used.";
+        TARGET_CMD_OUT_6_r = 6 "Command TARGET_REG_WRITE received.";
+        TARGET_CMD_OUT_7_r = 7 "Command TARGET_REG_READ received";
+    };
+
+    constants init_mdiscreq_status width(2) "" {
+        INIT_MDISCREQ_0_r = 0 "State is FUNCT";
+        INIT_MDISCREQ_1_r = 1 "State is SLEEP TRANS";
+        INIT_MDISCREQ_2_r = 2 "Reserved";
+        INIT_MDISCREQ_3_r = 3 "State is IDLE.";
+    };
+
+    constants init_mdiscack_status width(1) "" {
+        INIT_MDISCACK_0_w = 0 "Clear the event.";
+        INIT_MDISCACK_0_r = 0 "No event pending";
+        INIT_MDISCACK_1_r = 1 "Event pending";
+        INIT_MDISCACK_1_w = 1 "Set the event and interrupt if enabled (debug only)";
+    };
+
+    constants init_sconnect2_status width(1) "" {
+        INIT_SCONNECT2_0_r = 0 "Skip M_WAIT state.";
+        INIT_SCONNECT2_1_r = 1 "Wait in M_WAIT state.";
+    };
+
+    constants init_sconnect1_status width(1) "" {
+        INIT_SCONNECT1_0_r = 0 "Slave is drained.";
+        INIT_SCONNECT1_1_r = 1 "Slave is loaded.";
+    };
+
+    constants init_sconnect0_status width(1) "" {
+        INIT_SCONNECT0_0_r = 0 "Disconnect request from slave.";
+        INIT_SCONNECT0_1_r = 1 "Connect request from slave.";
+    };
+
+    constants init_mconnect_status width(2) "" {
+        INIT_MCONNECT_0_r = 0 "State is M_OFF.";
+        INIT_MCONNECT_1_r = 1 "State is M_WAIT.";
+        INIT_MCONNECT_2_r = 2 "State is M_DISC.";
+        INIT_MCONNECT_3_r = 3 "State is M_CON.";
+    };
+
+    constants target_sidleack_status width(2) "" {
+        TARGET_SIDLEACK_0_r = 0 "State is FUNCT.";
+        TARGET_SIDLEACK_1_r = 1 "State is SLEEP TRANS.";
+        TARGET_SIDLEACK_2_r = 2 "Reserved";
+        TARGET_SIDLEACK_3_r = 3 "State is IDLE.";
+    };
+
+    constants target_sdiscack_status width(2) "" {
+        TARGET_SDISCACK_0_r = 0 "State is FUNCT.";
+        TARGET_SDISCACK_1_r = 1 "State is TRANS.";
+        TARGET_SDISCACK_2_r = 2 "Reserved";
+        TARGET_SDISCACK_3_r = 3 "State is IDLE.";
+    };
+
+    constants target_sidlereq_status width(1) "" {
+        TARGET_SIDLEREQ_0_r = 0 "Don't go idle, or go active.";
+        TARGET_SIDLEREQ_1_r = 1 "Go idle.";
+    };
+
+    constants target_sconnect_status width(1) "" {
+        TARGET_SCONNECT_0_r = 0 "Disconnect interface.";
+        TARGET_SCONNECT_1_r = 1 "Connect OCP interface.";
+    };
+
+    constants target_mconnect_status width(2) "" {
+        TARGET_MCONNECT_0_r = 0 "Target is in M_OFF state.";
+        TARGET_MCONNECT_1_r = 1 "Target is in M_WAIT disconnect state.";
+        TARGET_MCONNECT_2_r = 2 "Target is in M_DISC state.";
+        TARGET_MCONNECT_3_r = 3 "Target is in M_CON state.";
+    };
+    
+    register ocp_debug_status addr(base, 0xFF0C) "Status of debug." {
+        cmd_debug_state 1 rw type(cmd_debug_state_status) "Target command state-machine";
+        cmd_resp_debug_state 1 rw type(cmd_resp_debug_state_status) "Target response state-machine";
+        target_idle 1 ro "Target idle";
+        resp_fifo_full 1 ro "Target response FIFO full";
+        cmd_fifo_full 1 ro "Target command FIFO full";
+        resp_error 1 ro "Respond to OCP with error, which could be caused by either address misalignment or invalid byte enable.";
+        which_target_register 5 rw "Indicates which OCP target registers to read";
+        target_cmd_out 3 ro type(target_cmd_out_status) "Command received from OCP";
+        init_mstandby 1 ro "Status of init_MStandby signal";
+        init_mwait 1 ro "Status of init_MWait signal";
+        init_mdiscreq 2 ro type(init_mdiscreq_status) "Disconnect status of the OCP interface";
+        init_mdiscack 1 rw type(init_mdiscack_status) "Memory request FIFO full";
+        init_sconnect2 1 ro type(init_sconnect2_status) "Defines whether to wait in M_WAIT state for MConnect FSM";
+        init_sconnect1 1 ro type(init_sconnect1_status) "Defines the busy-ness state of the slave";
+        init_sconnect0 1 ro type(init_sconnect0_status) "Disconnect from slave";
+        init_mconnect 2 ro type(init_mconnect_status) "Initiator MConnect state";
+        target_sidleack 2 ro type(target_sidleack_status) "Acknowledge the SIdleAck state machine";
+        target_sdiscack 2 ro type(target_sdiscack_status) "Acknowledge the SDiscAck state-machine";
+        target_sidlereq 1 ro type(target_sidlereq_status) "Request the target to go idle.";
+        target_sconnect 1 ro type(target_sconnect_status) "Target SConnect state";
+        target_mconnect 2 ro type(target_mconnect_status) "Target MConnect state";
+    };
+};

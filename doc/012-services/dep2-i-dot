@@ -1,0 +1,36 @@
+# process with: dot -Tpdf mydep2.dot -O -Gratio=0.5
+digraph dep {
+	colorscheme=x11;
+binding_1  ->  VMem_2  [color=" #808080 "][style="bold"];
+binding_1  ->  lock_service_2  [color=" #808080 "][style="dashed"];
+naming_1  ->  group_comm_2  [color=" #411BEA "][style="dashed"];
+device_man_1  ->  lock_service_2  [color=" #BFBF00 "][style="dashed"];
+terminal_1  ->  VMem_2  [color=" #FF0000 "][style="dashed"];
+terminal_1  ->  capability_mgmt_2  [color=" #FF0000 "][style="dashed"];
+terminal_1  ->  lock_service_2  [color=" #FF0000 "][style="dashed"];
+VMem_1  ->  group_comm_2  [color=" #8080FF "][style="dashed"];
+VMem_1  ->  lock_service_2  [color=" #8080FF "][style="dashed"];
+routing_1  ->  group_comm_2  [color=" #362698 "][style="dashed"];
+routing_1  ->  lock_service_2  [color=" #362698 "][style="dashed"];
+skb_1  ->  storage_mgmt_2  [color=" #808080 "][style="bold"];
+process_mgmt_1  ->  group_comm_2  [color=" #ED7651 "][style="dashed"];
+power_mgmt_1  ->  group_comm_2  [color=" #F0C80E "][style="dashed"];
+power_mgmt_1  ->  lock_service_2  [color=" #F0C80E "][style="dashed"];
+driver_1  ->  lock_service_2  [color=" #008000 "][style="dashed"];
+capability_mgmt_1  ->  group_comm_2  [color=" #000000 "][style="dashed"];
+group_comm_1  ->  routing_2  [color=" #8080FF "][style="dashed"];
+resource_acct_mgmt_1  ->  group_comm_2  [color=" #19CB97 "][style="dashed"];
+resource_acct_mgmt_1  ->  tracing_2  [color=" #19CB97 "][style="dashed"];
+resource_acct_mgmt_1  ->  lock_service_2  [color=" #19CB97 "][style="dashed"];
+VMachine_1  ->  power_mgmt_2  [color=" #80FFFF "][style="dashed"];
+VMachine_1  ->  network_stack_2  [color=" #80FFFF "][style="dashed"];
+VMachine_1  ->  lock_service_2  [color=" #80FFFF "][style="dashed"];
+VMachine_1  ->  storage_mgmt_2  [color=" #80FFFF "][style="dashed"];
+network_stack_1  ->  environment_2  [color=" #1EAC41 "][style="dashed"];
+network_stack_1  ->  VMem_2  [color=" #1EAC41 "][style="dashed"];
+network_stack_1  ->  group_comm_2  [color=" #1EAC41 "][style="dashed"];
+network_stack_1  ->  lock_service_2  [color=" #1EAC41 "][style="dashed"];
+lock_service_1  ->  group_comm_2  [color=" #BF40BF "][style="dashed"];
+storage_mgmt_1  ->  group_comm_2  [color=" #000000 "][style="dashed"];
+storage_mgmt_1  ->  lock_service_2  [color=" #000000 "][style="dashed"];
+}

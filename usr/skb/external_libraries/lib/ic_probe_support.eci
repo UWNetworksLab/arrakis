@@ -1,0 +1,19 @@
+:- module(ic_probe_support).
+:- export iddiff / 3.
+:- export idmemb / 2.
+:- export remove1 / 3.
+:- export replace_list / 4.
+:- export set_to_tent / 1.
+:- export set_to_min / 1.
+:- export my_tent_call / 4.
+:- export demon_suspend / 4.
+:- export task_structure / 4.
+:- export struct(task(start, duration, resource)).
+:- export struct(options(granularity, priority)).
+:- tool(demon_suspend / 4, demon_suspend / 5).
+:- tool(my_tent_call / 4, my_tent_call / 5).
+:- comment(summary, "Probe Support Library").
+:- comment(author, "Mark Wallace, Hani El Sakkout").
+:- comment(date, "$Date: 2006/09/23 01:53:48 $").
+:- comment(copyright, "Cisco Systems, Inc.").
+:- comment(desc, html("\n    A library exporting structures and predicates used in probing for scheduling.\n<P>\nThe following two structures are exported:\n<PRE>\ntask(start,duration,resource)\noptions(granularity,priority)\n</PRE>\n<P>\n    ")).

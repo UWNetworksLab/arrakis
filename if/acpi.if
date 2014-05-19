@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface acpi "acpi RPC Interface" {
+    typedef struct {
+        uint8 bus;
+        uint8 device;
+        uint8 function;
+    } pci_address;
+    
+    // XXX: SKB fails when these values are stored as predicate?
+    rpc get_pcie_confspace(out errval err,
+                           out uint64 address, 
+                           out uint16 segment, 
+                           out uint8 startbus, 
+                           out uint8 endbus);
+    
+    rpc read_irq_table(in string handle, 
+                       in pci_address addr, 
+                       in uint8 bus,
+                       out errval error,
+                       out string child);
+                       
+    rpc set_device_irq(in string handle,
+                       in uint32 irq, 
+                       out errval error); 
+
+    rpc enable_and_route_interrupt(in uint32 gsi, 
+                                   in coreid dest, 
+                                   in uint32 vector,
+                                   out errval error_code);
+
+    rpc reset(out errval err);
+    rpc sleep(in uint32 state, out errval err);
+    
+    // Kludge: retrieve frame cap to VBE BIOS;
+    rpc get_vbe_bios_cap(out errval err, out cap cap, out uint32 size);
+
+    rpc create_domain(in cap pml4, out errval err);
+
+    rpc delete_domain(in cap pml4, out errval err);
+
+    rpc vtd_add_device(in uint32 seg, in uint32 bus, in uint32 dev, in uint32 funct, in cap pml4, out errval err);
+
+    rpc vtd_remove_device(in uint32 seg, in uint32 bus, in uint32 dev, in uint32 funct, in cap pml4, out errval err);
+
+    rpc vtd_id_dom_add_devices(out errval err);
+    
+    // More Kludge; cap retrieval for pci
+    // We need a designated service to maintain the physical address
+    // space caps (to avoid sibling errors).
+    rpc mm_alloc_range_proxy(in uint8 sizebits, in uint64 minbase,
+                             in uint64 maxlimit, out cap devframe, out errval err);
+    rpc mm_free_proxy(in cap devframe, in uint64 base, in uint8 sizebits, out errval err);
+};

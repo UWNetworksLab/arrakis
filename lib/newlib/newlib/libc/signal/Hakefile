@@ -1,0 +1,9 @@
+if Config.libc == "newlib" then [ build library {
+  target     = "signal",
+  cFiles     = [ "raise.c", "signal.c" ],
+  addCFlags  = Config.newlibAddCFlags,
+  omitCFlags = [ "-Wmissing-prototypes",
+                 "-Wmissing-declarations",
+                 "-Wimplicit-function-declaration",
+                 "-Werror" ]
+} ] else []

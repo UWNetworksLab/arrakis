@@ -1,0 +1,38 @@
+timeout 0
+
+#
+# This script is used to describe the commands to start at
+# boot-time and the arguments they should receive.
+#
+
+title Barrelfish
+#root (nd)
+kernel /armv7/sbin/cpu_omap44xx loglevel=4
+module /armv7/sbin/cpu_omap44xx
+module /armv7/sbin/init
+
+# Domains spawned by init
+module /armv7/sbin/mem_serv
+module /armv7/sbin/monitor
+
+# Special boot time domains spawned by monitor
+#module /armv7/sbin/chips boot
+module /armv7/sbin/ramfsd boot
+module /armv7/sbin/skb boot
+module /armv7/sbin/kaluga boot
+module /armv7/sbin/spawnd boot bootarm=0
+module /armv7/sbin/startd boot
+
+# General user domains
+module /armv7/sbin/serial auto portbase=2
+module /armv7/sbin/fish nospawn
+module  /armv7/sbin/angler serial0.terminal xterm
+
+module /armv7/sbin/memtest
+
+module /armv7/sbin/usb_manager auto
+module /armv7/sbin/usb_keyboard auto
+
+
+# For pandaboard, use following values.
+mmap map 0x80000000 0x40000000 1

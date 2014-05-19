@@ -1,0 +1,56 @@
+libcrt - Barrelfish C and C++ run-time support code
+
+INTRODUCTION
+
+This code supports the C and C++ run-times. It is responsible for
+calling the main() function and (if available) all static, global
+constructors, before doing so. On program exit, it is responsible for
+calling the corresponding global destructors.
+
+GLOBAL (DE-)CONSTRUCTION
+
+This is supported for both C and C++. C global constructors are a GCC
+extension. In libcrt, crtbegin.c and crtend.c are responsible for
+global (de-)construction.
+
+For global construction, the GCC C++ ABI mandates that a .ctors
+section be contained in the ELF binary, which contains an array of
+function pointers to global constructor functions, prefixed by a
+processor word specifying its length. The length is equal to the
+number of elements in the array, or -1, which specifies no length
+information. For a length of -1, the array shall be NULL terminated
+instead. libcrt uses a NULL terminated array and a length of -1, but
+supports loading the other format.
+
+In order for this to work, crtbegin.o has to be linked before any
+other object file, except crt0.o, and crtend.o after any other object
+file, respectively. crtbegin.o starts the .ctors section by giving the
+length word of -1. crtend.o gives the NULL terminator. GCC inserts its
+function pointers into the other object files, where appropriate.
+
+Global deconstruction is unimplemented.
+
+UPDATE: In recent versions of binutils (e.g. 2.21.51.20110523), the
+linker converts .ctors into .init_array and creates two new symbols
+__init_array_start, and __init_array_end, which point to the start and
+after the end of the .init_array section, respectively. .init_array
+seems to be a forward-walked array of function pointers, without a
+length header.
+
+
+RUN-TIME INITIALIZATION
+
+crt0.S defines _start, the entry point for all Barrelfish ELF
+binaries. It is responsible for setting up an initial stack and will
+call barrelfish_init_disabled() for libbarrelfish initialization.
+
+A special entry point is _start_init, which passes a third parameter
+to barrelfish_init_disabled() to mark an "init domain". Refer to
+libbarrelfish documentation for more information.
+
+
+CALLING MAIN
+
+crtbegin.c contains _main(), which is expected to be called by
+libbarrelfish after initialization. This will call all global
+constructors and then call main().

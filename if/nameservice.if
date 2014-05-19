@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, 2010, 2011, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/* Name server RPC interface. */
+interface nameservice "Name server (chips) interface" {
+    typedef uint64 reghandle; // registration handle
+    typedef uint64 srvref;    // service reference
+    //typedef srvref srvref_seq[];
+
+    rpc register_service(in iref iref, in string iface, out reghandle reghandle); // XXX: properties dictionary missing
+    rpc unregister_service(in reghandle reghandle);
+    rpc get_service_reference(in string iface, out srvref ref);
+    //rpc get_service_references(in string iface, in string filter, out srvref_seq srvrefs);
+    rpc wait_for_service_reference(in string iface, out srvref ref);
+    rpc get_service(in srvref srvref, out iref iref);
+
+    // Simple capability storage
+    rpc get_cap(in string key, out cap retcap, out errval reterr);
+    rpc put_cap(in string key, in cap storecap, out errval reterr);
+    rpc remove_cap(in string key, out errval reterr);
+
+    // Shared-memory semaphores
+    rpc sem_new(in uint32 value, out uint32 sem, out errval reterr);
+    rpc sem_post(in uint32 sem);
+    rpc sem_wait(in uint32 sem);
+    rpc sem_trywait(in uint32 sem, out bool success);
+};

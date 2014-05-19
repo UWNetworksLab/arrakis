@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2010, ETH Zurich.
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+interface test "Test interface" {
+        message basic(uint32 arg);
+        message str(uint32 arg, string s);
+        message caps(uint32 arg, cap cap1, cap cap2);
+        message buf(uint8 buf[buflen]);
+};

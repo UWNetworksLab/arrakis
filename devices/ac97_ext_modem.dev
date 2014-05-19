@@ -1,0 +1,107 @@
+/*
+ * Copyright (c) 2008, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ac97_ext_modem.dev
+ *
+ * DESCRIPTION: AC'97 Extended Modem Register Set
+ * 
+ * Numbers in comments refer to the Intel Audio Codec '97 specification, 
+ * revision 2.3 revision 1.0, April, 2002
+ */
+
+device ac97_ext_modem msbfirst ( io base ) "AC97 Extended Modem" {
+
+  // 6.6.1
+  register emid rw io( base, 0x3c ) "Extended modem ID" {
+    lin1	1 "Line 1 supported";
+    lin2	1 "Line 2 supported";
+    hset        1 "Handset DAC/ADC supported";
+    cid1	1 "Caller ID decode on line 1 supported";
+    cid2	1 "Caller ID decode on line 2 supported";
+    _		9;
+    id		2 "Codec configuration";
+  };
+
+  // 6.6.2
+  register emsc io( base, 0x3e ) "Extended modem control/status" {
+    gpio	1 ro "GPIO ready";
+    mref	1 ro "Modem Vref nominal";
+    adc1	1 ro "Line 1 ADC ready";
+    dac1	1 ro "Line 1 DAC ready";
+    adc2	1 ro "Line 2 ADC ready";
+    dac2	1 ro "Line 2 DAC ready";
+    hadc	1 ro "Handset ADC ready";
+    hdac	1 ro "Handset DAC ready";
+    pra		1 rw "GPIO power down";
+    prb		1 rw "Modem Vref off";
+    prc		1 rw "Line 1 ADC off";
+    prd		1 rw "Line 1 DAC off";
+    pre		1 rw "Line 2 ADC off";
+    prf		1 rw "Line 2 DAC off";
+    prg		1 rw "Handset ADC off";
+    prf		1 rw "Handset DAC off";
+  };
+
+  // 6.6.3
+  register line1rate rw io( base, 0x40 ) "Line 1 sample rate" type(uint16);
+  register line2rate rw io( base, 0x42 ) "Line 2 sample rate" type(uint16);
+  register handsrate rw io( base, 0x44 ) "Handset sample rate" type(uint16);
+
+  // 6.6.4
+  regtype lvlcntl "Modem DAC/ADC level control" {
+    dmute	1 "DAC mute";
+    _		3;
+    dac		4 "DAC level";
+    amute	1 "ADC mute";
+    _		3;
+    adc		4 "ADC level";
+  };
+  register line1lvl rw io (base, 0x46 ) "Line 1 level control" type(lvlcntl);
+  register line2lvl rw io (base, 0x48 ) "Line 2 level control" type(lvlcntl);
+  register handslvl rw io (base, 0x4a ) "Handset level control" type(lvlcntl);
+
+  // 6.6.5
+  register gpioconf rw io(base, 0x4c) "GPIO pin configuration" type(uint16);
+
+  // 6.6.6
+  register gpiopol rw io(base, 0x4e) "GPIO pin polarity/type" type(uint16);
+
+  // 6.6.7
+  register gpiosticky rw io(base, 0x50) "GPIO pin sticky" type(uint16);
+
+  // 6.6.8
+  register gpiowake rw io(base, 0x52) "GPIO pin wake-up mask" type(uint16);
+
+  // 6.6.9
+  register gpiostat rw io(base, 0x54) "GPIO pin status" type(uint16);
+
+  // 6.6.10
+
+  constants lpbkmode "Loopback modes" {
+    dis		= 0b000 "Disabled";
+    adc		= 0b001 "ADC loopback";
+    local	= 0b010 "Local analog loopback";
+    dac		= 0b011 "DAC loopback";
+    remote	= 0b100 "Remote analog loopback";
+  };
+
+  register misc rw io(base, 0x56) "Misc modem AFE status/control" {
+    cid2	1 "Caller ID decode line 2 supported";
+    cid1	1 "Caller ID decode line 1 supported";
+    cidr	1 "Caller ID raw data";
+    mlnk	1 "Secondary modem codec AC-link status";
+    _		1;
+    hsb		3 type(lpbkmode) "Handset loopback mode";
+    _		1;
+    l2b		3 type(lpbkmode) "Line 2 loopback mode";
+    _		1;
+    l1b		3 type(lpbkmode) "Line 1 loopback mode";
+  };
+};
+	

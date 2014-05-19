@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * arm_icp_pit.dev
+ *
+ * DESCRIPTION: Timers for for integrator/cp
+ *
+ * This is derived from:
+ *
+ * This is derived from the Intel IXP2400/IXP2800 Network Processor 
+ * Programmer's Reference Manual (November 2003), p. 352ff
+ *
+ */
+
+device ixp2800_icp_pit msbfirst ( addr base ) "IXP2800 Integrator timer"
+{
+  // p.352, section 5.6.5.1 
+  constants scale "Timer scaling factors" {
+    none   = 0b00 "Use clock to trigger counter";
+    div16  = 0b01 "Use clock devided by 16 to trigger counter";
+    div256 = 0b10 "Use clock devided by 256 to trigger counter";
+    gpio   = 0b11 "Use GPIO pins";
+  };
+
+
+  register CONTROL addr(base, 0x00) "Control register" {
+    _         24   ro "Reserved";
+    ACT        1   rw "Activate timer";
+    _          3   ro "Reserved";
+    PSS	       2   rw type(scale) "Select the pre-scalar";
+    _          2   ro "Reserved";
+  };
+
+  register LOADING addr(base, 0x10) "Load value for timer" {
+    CLV      32   rw "Counter initial value";
+  };
+
+  register STATUS addr(base, 0x20) "Current value for timer" {
+    CSV      32   rw "Current counter value";
+  };
+
+  register CLEAR addr(base, 0x30) "Interrupt clear" {
+    _	     31	  ro "Reserved";
+    ICL       1   rw "Write one to clear interrupt";
+  };
+
+  register WATCHDOG addr(base, 0x40) "Enable timer 4 to be a watchdog timer" {
+    _	     31   ro "Reserved";
+    WDE	      1	  rw "Write one to enable watchdog";
+  }; 
+
+};
+

@@ -1,0 +1,459 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_ehci.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_ehci msbfirst ( addr base ) "" {
+    
+    
+    register hccapbase addr(base, 0x0) "Host controller capability register" {
+        hciversion 16 ro "Interface version number. It contains a BCD encoding of the EHCI revision number supported by this host controller.[7:4] Major revision . [3:0] Minor revision .";
+        _ 8 mbz;
+        caplength 8 ro "Capability register length";
+    };
+
+    constants p_indicator_status width(1) "" {
+        P_INDICATOR_1 = 1 "The port status and control registers include a read/write field for controlling the state of the port indicator.";
+    };
+
+    constants n_cc_status width(4) "" {
+        N_CC_0 = 0 "There are no companion host controllers. Port-ownership hand-off is not supported. Only high-speed devices are supported on the host controller root ports.";
+    };
+
+    constants ppc_status width(1) "" {
+        PPC_0 = 0 "The ports do not have port power switches.";
+        PPC_1 = 1 "The ports have port power switches.";
+    };
+    
+    register hcsparams addr(base, 0x4) "Host controller structural parameters" {
+        _ 12 mbz;
+        _ 3 mbz;
+        p_indicator 1 ro type(p_indicator_status) "Port indicator support indicationThis bit indicates whether the ports support port indicator control. .";
+        n_cc 4 ro type(n_cc_status) "Number of companion controllersThis field indicates the number of companion controllers associated with this USB 2.0 host controller. . Others: There are companion USB 1.1 host controller(s). Port-ownership hand-off is supported. High-, full-, and low-speed devices are supported on the host controller root ports. .";
+        n_pcc 4 ro "Number of ports per companion controllerThis field indicates the number of ports supported per companion host controller. It is used to indicate the port routing configuration to system software. . For example, if N_PORTS has a value of 6 and N_CC has a value of 2, then N_PCC can have a value of 3. . The convention is that the first N_PCC ports are assumed to be routed to companion controller 1, the next N_PCC ports to companion controller 2, etc. . The number in this field must be consistent with N_PORTS and N_CC. .";
+        prr 1 ro "Port routing rulesThe first N_PCC ports are routed to the lowest-numbered function companion host controller, the next N_PCC ports are routed to the next lowest-function companion controller, and so on. .";
+        _ 2 mbz;
+        ppc 1 ro type(ppc_status) "Port power controlThis field indicates whether the host controller implementation includes port power control. .";
+        n_ports 4 ro "Number of downstream portsThis field specifies the number of physical downstream ports implemented on this host controller. .";
+    };
+
+    constants lpm_status width(1) "" {
+        LPM_0 = 0 "Link power management not supported";
+        LPM_1 = 1 "Link power management supported";
+    };
+
+    constants pflf_status width(1) "" {
+        PFLF_0 = 0 "System software must use a frame list length of 1024 elements with this host controller.";
+        PFLF_1 = 1 "System software can specify and use a smaller frame list and configure the host controller through the USBHOST.[3:2] FLS bit field. The frame list must always be aligned on a 4-K page boundary.";
+    };
+
+    constants bit64ac_status width(1) "" {
+        BIT64AC_0 = 0 "Data structures using 32-bit address memory pointers";
+        BIT64AC_1 = 1 "Data structures using 64-bit address memory pointers";
+    };
+    
+    register hccparams addr(base, 0x8) "Host controller capability parameters" {
+        _ 14 mbz;
+        lpm 1 ro type(lpm_status) "Link power management capability";
+        _ 1 mbz;
+        eecp 8 ro type(n_cc_status) "EHCI extended capabilities pointerThis field indicates the existence of a capabilities list. . Others: The offset in PCI configuration space of the first EHCI extended capability. .";
+        ist 4 ro "Isochronous scheduling thresholdThis field indicates where software can reliably update the isochronous schedule in relation to the current position of the executing host controller. . The host controller can hold one microframe of isochronous data structures before flushing the state. .";
+        _ 1 mbz;
+        aspc 1 ro type(p_indicator_status) "Asynchronous schedule park capabilityThe feature can be disabled or enabled and set to a specific level by using the USBHOST.[11]ASPME bit and the USBHOST.[9:8] ASPMC bit field. .";
+        pflf 1 ro type(pflf_status) "Programmable frame list flag";
+        bit64ac 1 ro type(bit64ac_status) "64-bit addressing capabilityThis field documents the addressing range capability of this implementation. .";
+    };
+
+    constants hird_status width(4) "" {
+        HIRD_0 = 0 "50 us";
+    };
+
+    constants itc_status width(8) "" {
+        ITC_0 = 0 "Reserved";
+        ITC_1 = 1 "1 microframe";
+        ITC_2 = 2 "2 microframes";
+        ITC_4 = 4 "4 microframes";
+        ITC_8 = 8 "8 microframes (default, equates to 1 ms)";
+        ITC_16 = 16 "16 microframes (2 ms)";
+        ITC_32 = 32 "32 microframes (4 ms)";
+        ITC_64 = 64 "64 microframes (8 ms)";
+    };
+
+    constants aspme_status width(1) "" {
+        ASPME_0 = 0 "Park mode is disabled.";
+        ASPME_1 = 1 "Park mode is enabled.";
+    };
+
+    constants iaad_status width(1) "" {
+        IAAD_1_w = 1 "Ring the doorbell.";
+    };
+
+    constants ase_status width(1) "" {
+        ASE_0 = 0 "Do not process the asynchronous schedule";
+        ASE_1 = 1 "Use the USBHOST. register to access the asynchronous schedule.";
+    };
+
+    constants pse_status width(1) "" {
+        PSE_0 = 0 "Do not process the periodic schedule";
+        PSE_1 = 1 "Use the USBHOST. register to access the periodic schedule.";
+    };
+
+    constants fls_status width(2) "" {
+        FLS_0 = 0 "1024 elements (4096 bytes)";
+        FLS_1 = 1 "512 elements (2048 bytes)";
+        FLS_2 = 2 "256 elements (1024 bytes), for resource-constrained environments";
+        FLS_3 = 3 "Reserved";
+    };
+
+    constants hcr_status width(1) "" {
+        HCR_1 = 1 "Reset the host controller, the PCI configuration registers are not affected by this reset and all operational registers are set to their initial values.";
+    };
+
+    constants rs_status width(1) "" {
+        RS_1 = 1 "Run, the host controller proceeds with execution of the schedule. The host controller continues execution as long as this bit is set to 1.";
+        RS_0 = 0 "Stop, the host controller completes the current and any actively pipelined transactions on the USB and then halts.";
+    };
+    
+    register usbcmd addr(base, 0x10) "USB command" {
+        _ 4 mbz;
+        hird 4 rw type(hird_status) "Host-initiated resume duration.If LPM is enabled, this field is RW; otherwise, it is R. . The minimum for K-state during resume from LPM: . Each increment adds 75 us. .";
+        itc 8 rw type(itc_status) "Interrupt threshold controlThis field is used by the system software to select the maximum rate at which the host controller issues interrupts. The only valid values are defined below. If software writes an invalid value to this register, the results are undefined. . Others: Undefined .";
+        _ 4 mbz;
+        aspme 1 rw type(aspme_status) "Asynchronous schedule park mode enable";
+        _ 1 mbz;
+        aspmc 2 rw "Asynchronous schedule park mode countIt contains a count of the number of successive transactions the host controller is allowed to execute from a high-speed queue head on the asynchronous schedule before continuing traversal of the asynchronous schedule. . Valid values are 0x1 to 0x3. Software must not write 0 to this bit when park mode enable is 1 because this may result in undefined behavior. .";
+        lhcr 1 rw type(bit64ac_status) "Light host controller resetIt allows the driver to reset the EHCI controller without affecting the state of the ports or the relationship to the companion host controllers. .";
+        iaad 1 rw type(iaad_status) "Interrupt on async advance doorbellThis bit is used as a doorbell by software to tell the host controller to issue an interrupt the next time it advances asynchronous schedule. . Software must not write 1 to this bit when the asynchronous schedule is disabled. Doing so may yield undefined results. .";
+        ase 1 rw type(ase_status) "Asynchronous schedule enableThis bit controls whether the host controller skips processing the asynchronous schedule. .";
+        pse 1 rw type(pse_status) "Periodic schedule enableThis bit controls whether the host controller skips processing the periodic schedule. .";
+        fls 2 rw type(fls_status) "Frame list sizeThis field specifies the size of the frame list. The size of the frame list controls which bits in the frame index register should be used for the frame list current index. .";
+        hcr 1 wo type(hcr_status) "Host controller resetThis control bit is used by software to reset the host controller. Write . This bit is set to 0 by the host controller when the reset process is complete. .";
+        rs 1 rw type(rs_status) "Run/stop";
+    };
+    
+    register usbsts addr(base, 0x14) "USB status" {
+        _ 16 mbz;
+        ass 1 ro type(bit64ac_status) "Asynchronous schedule statusThe bit reports the current real status of the asynchronous schedule. .";
+        pss 1 ro type(bit64ac_status) "Periodic schedule statusThe bit reports the current real status of the periodic schedule. .";
+        rec 1 ro "ReclamationIt is used to detect an empty asynchronous schedule. .";
+        hch 1 ro "Host controller haltedThis bit is a 0 whenever the USBHOST.[0] RS bit is a 1. The host controller sets this bit to 1 after it has stopped executing as a result of the RS bit being set to 0, either by software or by the host controller hardware. .";
+        _ 6 mbz;
+        iaa 1 rw "Interrupt on async advanceSystem software can force the host controller to issue an interrupt the next time the host controller advances the asynchronous schedule by setting the USBHOST.[6] IAAD bit to 1. This status bit indicates the assertion of that interrupt source. .";
+        hse 1 rw "Host system errorThe host controller sets this bit to 1 when a serious error occurs during a host system access involving the host controller module. .";
+        flr 1 rw "Frame list rolloverThe host controller sets this bit to 1 when the USBHOST. rolls over from its maximum value to 0. The exact value at which the rollover occurs depends on the frame list size. .";
+        pcd 1 rw "Port change detectThe host controller sets this bit to 1 when any port for which the USBHOST.[13] PO bit is set to 0 has a change bit transition from 0 to 1 or a USBHOST.[6] FPR bit transition from 0 to 1. . This bit is also set as a result of the USBHOST.[1] CSC bit being set to 1 after system software has relinquished ownership of a connected port by setting the USBHOST.[13] PO bit to 1. .";
+        usbei 1 rw "USB error interruptThe host controller sets this bit to 1 when completion of a USB transaction results in an error condition. .";
+        usbi 1 rw "USB interruptThe host controller sets this bit to 1 on completion of a USB transaction, which results in the retirement of a transfer descriptor that had its IOC bit set. . The host controller also sets this bit to 1 when a short packet is detected (actual number of bytes received was less than the expected number of bytes). .";
+    };
+
+    constants iaae_status width(1) "" {
+        IAAE_1 = 1 "When the[5] IAA bit is 1, the host controller issues an interrupt at the next interrupt threshold. The interrupt is acknowledged by software clearing the [5] IAA bit.";
+    };
+
+    constants hsee_status width(1) "" {
+        HSEE_1 = 1 "When the[4] HSE bit is 1, the host controller issues an interrupt. The interrupt is acknowledged by software clearing the [4] HSE bit.";
+    };
+
+    constants flre_status width(1) "" {
+        FLRE_1 = 1 "When the[3] FLR bit is 1, the host controller issues an interrupt. The interrupt is acknowledged by software clearing the [3] FLR bit.";
+    };
+
+    constants pcie_status width(1) "" {
+        PCIE_1 = 1 "When the[2] PCD bit is 1, the host controller issues an interrupt. The interrupt is acknowledged by software clearing the [3] FLR bit.";
+    };
+
+    constants usbeie_status width(1) "" {
+        USBEIE_1 = 1 "When the[1] USBEI bit is 1, the host controller issues an interrupt at the next interrupt threshold. The interrupt is acknowledged by software clearing the [1] USBEI bit.";
+    };
+
+    constants usbie_status width(1) "" {
+        USBIE_1 = 1 "When the[0] USBI bit is 1, the host controller issues an interrupt at the next interrupt threshold. The interrupt is acknowledged by software clearing the [0] USBI bit.";
+    };
+    
+    register usbintr addr(base, 0x18) "USB interrupt enable" {
+        _ 26 mbz;
+        iaae 1 rw type(iaae_status) "Interrupt on async advance enable";
+        hsee 1 rw type(hsee_status) "Host system error enable";
+        flre 1 rw type(flre_status) "Frame list rollover enable";
+        pcie 1 rw type(pcie_status) "Port change interrupt enable";
+        usbeie 1 rw type(usbeie_status) "USB error interrupt enable";
+        usbie 1 rw type(usbie_status) "USB interrupt enable";
+    };
+    
+    register frindex addr(base, 0x1C) "USB frame index" {
+        _ 18 mbz;
+        fi 14 rw "Frame indexThe value in this register is incremented at the end of each time frame. .";
+    };
+    
+    register ctrldssegment ro addr(base, 0x20) "4G segment selector" type(uint32);
+    
+    register periodiclistbase addr(base, 0x24) "Frame list base address" {
+        bal 20 rw "Base address (low)These bits correspond to memory address signals. .";
+        _ 12 mbz;
+    };
+    
+    register asynclistaddr addr(base, 0x28) "Next asynchronous list address" {
+        lpl 27 rw "Link pointer lowIt contains the address of the next asynchronous queue head to be executed. .";
+        _ 5 mbz;
+    };
+    
+    register configflag addr(base, 0x50) "Configured flag register" {
+        _ 31 mbz;
+        cf 1 rw type(bit64ac_status) "Configure flagThis bit controls the default port-routing control logic. .";
+    };
+
+    constants suspendstatus_status width(2) "" {
+        SUSPENDSTATUS_0 = 0 "Success";
+        SUSPENDSTATUS_1 = 1 "Not yet";
+        SUSPENDSTATUS_2 = 2 "Not supported";
+        SUSPENDSTATUS_3 = 3 "Time-out/error";
+    };
+
+    constants ptc_status width(4) "" {
+        PTC_0 = 0 "Test mode not enabled";
+        PTC_1 = 1 "Test J_STATE";
+        PTC_2 = 2 "Test K_STATE";
+        PTC_3 = 3 "Test SE0_NAK";
+        PTC_4 = 4 "Test Packet";
+        PTC_5 = 5 "Test FORCE_ENABLE";
+    };
+
+    constants po_status width(1) "" {
+        PO_1 = 1 "A companion host controller owns and controls the port.";
+    };
+
+    constants suspendl1_status width(1) "" {
+        SUSPENDL1_0 = 0 "Suspend using L2";
+        SUSPENDL1_1 = 1 "Suspend using L1 (LPM)";
+    };
+
+    constants pr_status width(1) "" {
+        PR_0 = 0 "Port is not in reset. / Terminate the bus reset sequence.";
+        PR_1 = 1 "Port is in reset.";
+    };
+
+    constants sus_status width(1) "" {
+        SUS_0 = 0 "Port disabled";
+    };
+
+    constants fpr_status width(1) "" {
+        FPR_0 = 0 "No resume (K-state) detected/driven on port";
+        FPR_1 = 1 "Resume detected/driven on port";
+    };
+
+    constants pedc_status width(1) "" {
+        PEDC_0_r = 0 "No change.";
+        PEDC_1_r = 1 "Port enabled/disabled status has changed.";
+    };
+
+    constants ped_status width(1) "" {
+        PED_0 = 0 "Disable";
+        PED_1 = 1 "Enable";
+    };
+
+    constants csc_status width(1) "" {
+        CSC_0_r = 0 "No change";
+        CSC_1_r = 1 "Change in current connect status";
+    };
+
+    constants ccs_status width(1) "" {
+        CCS_0 = 0 "No device is present.";
+        CCS_1 = 1 "Device is present on port.";
+    };
+    
+    register portsc_i_0 addr(base, 0x54) "Port status/control" {
+        deviceaddress 7 rw "The USB device address for the device attached to and immediately downstream from the associated root port. R/W only if LPM is enabled; otherwise, R.";
+        suspendstatus 2 ro type(suspendstatus_status) "Addition for LPM support.Indicates status of L1 suspend request: .";
+        _ 1 mbz;
+        wde 1 rw type(p_indicator_status) "Wake on disconnect enableThis field is 0 if the PP bit is 0. .";
+        wce 1 rw type(p_indicator_status) "Wake on connect enableThis field is 0 if the PP bit is 0. .";
+        ptc 4 rw type(ptc_status) "Port test controlThe port is operating in specific test modes as indicated by the specific value. The encoding of the test mode bits are: . Others: Reserved .";
+        pic 2 ro "Port indicator control (not implemented)";
+        po 1 rw type(po_status) "Port ownerThis bit unconditionally goes to 0x0 when the USBHOST.[0] CF bit makes a transition from 0 to 1. This bit unconditionally goes to 0 whenever the USBHOST.[0] CF bit is 0. .";
+        pp 1 rw "Port powerThe function of this bit depends on the value of the USBHOST.[4] PPC bit. The behavior is as follows: . PPC PP Operation . 0x0 0x0 Forbidden . 0x0 0x1 Host controller does not have port power. control switches. Each port is hardwired to power. . 0x1 0x0 Host controller has port power control switches. Current switch state is off. . 0x1 0x1 Host controller has port power control switches. Current switch state is on. . When an overcurrent condition is detected on a powered port and the USBHOST.[4] PPC bit is a 1, the PP bit in each affected port may be transitioned by the host controller from 1 to 0. .";
+        ls 2 ro "Line statusThese bits reflect the current logical levels of the D+ (bit 11) and D- (bit 10) signal lines. This field is valid only when the port enable bit is 0 and the current connect status bit is set to 1. The encoding of the bits is: . Bits[11:10] USB State Interpretation . 0x0 SE0 Not low-speed device, perform EHCI reset. . 0x2 J-state Not low-speed device, perform EHCI reset. . 0x1 K-state Low-speed device, release ownership of port. . 0x3 Undefined Not low-speed device, perform EHCI reset. .";
+        suspendl1 1 rw type(suspendl1_status) "When this bit is set to 1, an LPM token is generated.";
+        pr 1 rw type(pr_status) "Port resetThis field is 0 if the PP bit is 0. . Write 0x1 when at 0x0: The bus reset sequence is started. .";
+        sus 1 rw type(sus_status) "SuspendThis field is 0 if the PP bit is 0. . 0x0 when PED = 0x1: Port enabled . 0x1 when PED = 0x1: Port in suspend state .";
+        fpr 1 rw type(fpr_status) "Force port resumeThis field is 0 if the PP bit is 0. .";
+        _ 2 mbz;
+        pedc 1 rw type(pedc_status) "Port enabled/disabled changeThis field is 0 if the PP bit is 0. .";
+        ped 1 rw type(ped_status) "Port enabled/disabledSoftware cannot enable a port by setting this bit to 1. The host controller only sets this to 1 when the reset sequence determines that the attached device is a high-speed device. . Ports can be disabled by either a fault condition (disconnect event or other fault condition) or by host software. . This field is 0 if the PP bit is 0. .";
+        csc 1 rw type(csc_status) "Connect status changeIndicates a change has occurred in the port CCS bit. . This field is 0 if the PP bit is 0. .";
+        ccs 1 ro type(ccs_status) "Current connect statusThis value reflects the current state of the port, and may not correspond directly to the event that caused the CSC bit to be set. . This field is 0 if the PP bit is 0. .";
+    };
+    
+    register portsc_i_1 addr(base, 0x58) "Port status/control" {
+        deviceaddress 7 rw "The USB device address for the device attached to and immediately downstream from the associated root port. R/W only if LPM is enabled; otherwise, R.";
+        suspendstatus 2 ro type(suspendstatus_status) "Addition for LPM support.Indicates status of L1 suspend request: .";
+        _ 1 mbz;
+        wde 1 rw type(pedc_status) "Wake on disconnect enableThis field is 0 if the PP bit is 0. .";
+        wce 1 rw type(pedc_status) "Wake on connect enableThis field is 0 if the PP bit is 0. .";
+        ptc 4 rw type(ptc_status) "Port test controlThe port is operating in specific test modes as indicated by the specific value. The encoding of the test mode bits are: . Others: Reserved .";
+        pic 2 ro "Port indicator control (not implemented)";
+        po 1 rw type(po_status) "Port ownerThis bit unconditionally goes to 0x0 when the USBHOST.[0] CF bit makes a transition from 0 to 1. This bit unconditionally goes to 0 whenever the USBHOST.[0] CF bit is 0. .";
+        pp 1 rw "Port powerThe function of this bit depends on the value of the USBHOST.[4] PPC bit. The behavior is as follows: . PPC PP Operation . 0x0 0x0 Forbidden . 0x0 0x1 Host controller does not have port power. control switches. Each port is hardwired to power. . 0x1 0x0 Host controller has port power control switches. Current switch state is off. . 0x1 0x1 Host controller has port power control switches. Current switch state is on. . When an overcurrent condition is detected on a powered port and the USBHOST.[4] PPC bit is a 1, the PP bit in each affected port may be transitioned by the host controller from 1 to 0. .";
+        ls 2 ro "Line statusThese bits reflect the current logical levels of the D+ (bit 11) and D- (bit 10) signal lines. This field is valid only when the port enable bit is 0 and the current connect status bit is set to 1. The encoding of the bits is: . Bits[11:10] USB State Interpretation . 0x0 SE0 Not low-speed device, perform EHCI reset. . 0x2 J-state Not low-speed device, perform EHCI reset. . 0x1 K-state Low-speed device, release ownership of port. . 0x3 Undefined Not low-speed device, perform EHCI reset. .";
+        suspendl1 1 rw type(suspendl1_status) "When this bit is set to 1, an LPM token is generated.";
+        pr 1 rw type(pr_status) "Port resetThis field is 0 if the PP bit is 0. . Write 0x1 when at 0x0: The bus reset sequence is started. .";
+        sus 1 rw type(sus_status) "SuspendThis field is 0 if the PP bit is 0. . 0x0 when PED = 0x1: Port enabled . 0x1 when PED = 0x1: Port in suspend state .";
+        fpr 1 rw type(fpr_status) "Force port resumeThis field is 0 if the PP bit is 0. .";
+        _ 2 mbz;
+        pedc 1 rw type(pedc_status) "Port enabled/disabled changeThis field is 0 if the PP bit is 0. .";
+        ped 1 rw type(ped_status) "Port enabled/disabledSoftware cannot enable a port by setting this bit to 1. The host controller only sets this to 1 when the reset sequence determines that the attached device is a high-speed device. . Ports can be disabled by either a fault condition (disconnect event or other fault condition) or by host software. . This field is 0 if the PP bit is 0. .";
+        csc 1 rw type(csc_status) "Connect status changeIndicates a change has occurred in the port CCS bit. . This field is 0 if the PP bit is 0. .";
+        ccs 1 ro type(ccs_status) "Current connect statusThis value reflects the current state of the port, and may not correspond directly to the event that caused the CSC bit to be set. . This field is 0 if the PP bit is 0. .";
+    };
+    
+    register portsc_i_2 addr(base, 0x5C) "Port status/control" {
+        deviceaddress 7 rw "The USB device address for the device attached to and immediately downstream from the associated root port. R/W only if LPM is enabled; otherwise, R.";
+        suspendstatus 2 ro type(suspendstatus_status) "Addition for LPM support.Indicates status of L1 suspend request: .";
+        _ 1 mbz;
+        wde 1 rw type(pedc_status) "Wake on disconnect enableThis field is 0 if the PP bit is 0. .";
+        wce 1 rw type(pedc_status) "Wake on connect enableThis field is 0 if the PP bit is 0. .";
+        ptc 4 rw type(ptc_status) "Port test controlThe port is operating in specific test modes as indicated by the specific value. The encoding of the test mode bits are: . Others: Reserved .";
+        pic 2 ro "Port indicator control (not implemented)";
+        po 1 rw type(po_status) "Port ownerThis bit unconditionally goes to 0x0 when the USBHOST.[0] CF bit makes a transition from 0 to 1. This bit unconditionally goes to 0 whenever the USBHOST.[0] CF bit is 0. .";
+        pp 1 rw "Port powerThe function of this bit depends on the value of the USBHOST.[4] PPC bit. The behavior is as follows: . PPC PP Operation . 0x0 0x0 Forbidden . 0x0 0x1 Host controller does not have port power. control switches. Each port is hardwired to power. . 0x1 0x0 Host controller has port power control switches. Current switch state is off. . 0x1 0x1 Host controller has port power control switches. Current switch state is on. . When an overcurrent condition is detected on a powered port and the USBHOST.[4] PPC bit is a 1, the PP bit in each affected port may be transitioned by the host controller from 1 to 0. .";
+        ls 2 ro "Line statusThese bits reflect the current logical levels of the D+ (bit 11) and D- (bit 10) signal lines. This field is valid only when the port enable bit is 0 and the current connect status bit is set to 1. The encoding of the bits is: . Bits[11:10] USB State Interpretation . 0x0 SE0 Not low-speed device, perform EHCI reset. . 0x2 J-state Not low-speed device, perform EHCI reset. . 0x1 K-state Low-speed device, release ownership of port. . 0x3 Undefined Not low-speed device, perform EHCI reset. .";
+        suspendl1 1 rw type(suspendl1_status) "When this bit is set to 1, an LPM token is generated.";
+        pr 1 rw type(pr_status) "Port resetThis field is 0 if the PP bit is 0. . Write 0x1 when at 0x0: The bus reset sequence is started. .";
+        sus 1 rw type(sus_status) "SuspendThis field is 0 if the PP bit is 0. . 0x0 when PED = 0x1: Port enabled . 0x1 when PED = 0x1: Port in suspend state .";
+        fpr 1 rw type(fpr_status) "Force port resumeThis field is 0 if the PP bit is 0. .";
+        _ 2 mbz;
+        pedc 1 rw type(pedc_status) "Port enabled/disabled changeThis field is 0 if the PP bit is 0. .";
+        ped 1 rw type(ped_status) "Port enabled/disabledSoftware cannot enable a port by setting this bit to 1. The host controller only sets this to 1 when the reset sequence determines that the attached device is a high-speed device. . Ports can be disabled by either a fault condition (disconnect event or other fault condition) or by host software. . This field is 0 if the PP bit is 0. .";
+        csc 1 rw type(csc_status) "Connect status changeIndicates a change has occurred in the port CCS bit. . This field is 0 if the PP bit is 0. .";
+        ccs 1 ro type(ccs_status) "Current connect statusThis value reflects the current state of the port, and may not correspond directly to the event that caused the CSC bit to be set. . This field is 0 if the PP bit is 0. .";
+    };
+    
+    register insnreg00 addr(base, 0x90) "Implementation-specific register 0" {
+        _ 18 mbz;
+        uframe_cnt 13 rw "1-microframe length value, to reduce simulation time. SIMULATIONS ONLY, NOT AN ACTUAL REGISTER.";
+        en 1 rw "Enable of this register";
+    };
+    
+    register insnreg01 addr(base, 0x94) "Implementation-specific register 1" {
+        out_threshold 16 rw "Programmable output packet buffer threshold, in 32-bit words";
+        in_threshold 16 rw "Programmable input packet buffer threshold, in 32-bit words";
+    };
+    
+    register insnreg02 addr(base, 0x98) "Implementation-specific register 2" {
+        _ 20 mbz;
+        buf_depth 12 rw "Programmable packet buffer depth, in 32-bit words";
+    };
+
+    constants brk_mem_trsf_status width(1) "" {
+        BRK_MEM_TRSF_0 = 0 "Disabled";
+        BRK_MEM_TRSF_1 = 1 "Enabled";
+    };
+    
+    register insnreg03 addr(base, 0x9C) "Implementation-specific register 3" {
+        _ 31 mbz;
+        brk_mem_trsf 1 rw type(brk_mem_trsf_status) "Break memory transfer, in conjunction withINSNREG01";
+    };
+    
+    register insnreg04 addr(base, 0xA0) "Implementation-specific register 4" {
+        _ 27 mbz;
+        nak_fix_dis 1 rw "Disable NAK fix (don't touch)";
+        _ 1 mbz;
+        short_port_enum 1 rw "Scale down port enumeration time (debug)";
+        hccparams_wre 1 rw "Make read-onlyHCCPARAMS register writable (debug)";
+        hcsparams_wre 1 rw "Make read-onlyHCSPARAMS register writable (debug)";
+    };
+
+    constants control_status width(1) "" {
+        CONTROL_0 = 0 "ULPI access done";
+        CONTROL_1 = 1 "Start ULPI access";
+    };
+
+    constants portsel_status width(4) "" {
+        PORTSEL_1 = 1 "Port 1 selected for register access";
+        PORTSEL_2 = 2 "Port 2 selected for register access";
+    };
+
+    constants opsel_status width(2) "" {
+        OPSEL_2 = 2 "Register access is write.";
+        OPSEL_3 = 3 "Register access is read.";
+    };
+
+    constants regadd_status width(6) "" {
+        REGADD_47 = 47 "Triggers an extended address";
+    };
+    
+    register insnreg05_ulpi addr(base, 0xA4) "Implementation-specific register 5. Register functionality for ULPI mode." {
+        control 1 rw type(control_status) "Control/status of the ULPI register access";
+        _ 3 mbz;
+        portsel 4 rw type(portsel_status) "";
+        opsel 2 rw type(opsel_status) "";
+        regadd 6 rw type(regadd_status) "ULPI direct register address, for any value different than 0x2F.";
+        extregadd 8 rw "Address for extended register accesses. Don't care for direct accesses.";
+        rdwrdata 8 rw "Read/write data of (resp. read/write) register access";
+    };
+
+    constants vbusy_status width(1) "" {
+        VBUSY_0_r = 0 "Vendor interface is done/inactive";
+        VBUSY_1_r = 1 "Vendor interface is busy";
+    };
+
+    constants vport_status width(4) "" {
+        VPORT_1 = 1 "Port 1 vendor interface selected";
+        VPORT_2 = 2 "Port 2 vendor interface selected";
+    };
+
+    constants vcontrolloadm_status width(1) "" {
+        VCONTROLLOADM_0 = 0 "Load Vcontrol value into PHY";
+        VCONTROLLOADM_1 = 1 "No Action";
+    };
+    
+   /* register insnreg05_utmi addr(base, 0xA4) "Implementation-specific register 5. Register functionality for UTMI mode." {
+        _ 14 mbz;
+        vbusy 1 ro type(vbusy_status) "";
+        vport 4 rw type(vport_status) "Vendor interface port selection .";
+        vcontrolloadm 1 rw type(vcontrolloadm_status) "UTMI VcontrolLoadM output (active-low)";
+        vcontrol 4 rw "UTMI Vcontrol output, to be loaded into the PHY";
+        vstatus 8 ro "UTMI Vstatus input image, from PHY";
+    };*/
+
+    constants errorcap_status width(1) "" {
+        ERRORCAP_0_w = 0 "Clear pending error";
+        ERRORCAP_1_r = 1 "Error pending";
+    };
+    
+    register insnreg06 addr(base, 0xA8) "AHB error status" {
+        errorcap 1 rw type(errorcap_status) "Indicator that an AHB error was encountered and values were captured";
+        _ 19 mbz;
+        hburst 3 ro "HBURST Value of the control phase at which the AHB error occurred";
+        beatsexp 5 ro "Number of beats expected in the burst at which the AHB error occurred. Valid values are 0 to 16.";
+        beatscomp 4 ro "Number of successfully completed beats in the current burst before the AHB error occurred";
+    };
+    
+    register insnreg07 ro addr(base, 0xAC) "AHB master error address" type(uint32);
+    
+    register insnreg08 addr(base, 0xB0) "" {
+        _ 16 mbz;
+        newbitfield1 16 rw "";
+    };
+};

@@ -1,0 +1,96 @@
+--------------------------------------------------------------------------
+-- Copyright (c) 2012, ETH Zurich
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+-- Attn: Systems Group.
+--
+-- Hakefile for usr/openssh/src/openbsdcompat
+--
+--------------------------------------------------------------------------
+
+[
+    build library { target = "openbsdcompat",
+                    addCFlags = [ "-Wpointer-arith",
+                                  "-Wuninitialized",
+                                  "-Wsign-compare",
+                                  "-Wformat-security",
+                                  "-Wno-pointer-sign",
+                                  "-Wno-unused-result",
+                                  "-fno-strict-aliasing",
+                                  "-D_FORTIFY_SOURCE=2",
+                                  "-DHAVE_CONFIG_H" ],
+                    omitCFlags = [ "-Wredundant-decls",
+                                   "-Wmissing-prototypes",
+                                   "-Wmissing-declarations",
+                                   "-Wold-style-definition",
+                                   "-Werror" ],
+                    cFiles = [ -- OPENBSD
+                               "base64.c",
+                               "basename.c",
+                               "bindresvport.c",
+                               "daemon.c",
+                               "dirname.c",
+                               "fmt_scaled.c",
+                               "getcwd.c",
+                               "getgrouplist.c",
+                               "getopt.c",
+                               "getrrsetbyname.c",
+                               "glob.c",
+                               "inet_aton.c",
+                               "inet_ntoa.c",
+                               "inet_ntop.c",
+                               "mktemp.c",
+                               "pwcache.c",
+                               "readpassphrase.c",
+                               "realpath.c",
+                               "rresvport.c",
+                               "setenv.c",
+                               "setproctitle.c",
+                               "sha2.c",
+                               "sigact.c",
+                               "strlcat.c",
+                               "strlcpy.c",
+                               "strmode.c",
+                               "strnlen.c",
+                               "strptime.c",
+                               "strsep.c",
+                               "strtonum.c",
+                               "strtoll.c",
+                               "strtoul.c",
+                               "timingsafe_bcmp.c",
+                               "vis.c",
+                               -- COMPAT
+                               "bsd-arc4random.c",
+                               "bsd-asprintf.c",
+                               "bsd-closefrom.c",
+                               "bsd-cray.c",
+                               "bsd-cygwin_util.c",
+                               "bsd-getpeereid.c",
+                               "getrrsetbyname-ldns.c",
+                               "bsd-misc.c",
+                               "bsd-nextstep.c",
+                               "bsd-openpty.c",
+                               "bsd-poll.c",
+                               "bsd-snprintf.c",
+                               "bsd-statvfs.c",
+                               "bsd-waitpid.c",
+                               "fake-rfc2553.c",
+                               "openssl-compat.c",
+                               "xmmap.c",
+                               "xcrypt.c",
+                               -- PORTS
+                               "port-aix.c",
+                               "port-irix.c",
+                               "port-linux.c",
+                               "port-solaris.c",
+                               "port-tun.c",
+                               "port-uw.c"
+                               ],
+                    addIncludes = [ "../",    -- for includes.h
+                                    "../../"  -- for config.h
+                                  ]
+    }
+]

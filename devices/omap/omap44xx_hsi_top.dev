@@ -1,0 +1,490 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_hsi_top.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_hsi_top msbfirst ( addr base ) "" {
+    
+    
+    register hsi_revision ro addr(base, 0x0) "IP Revision Identifier (X.Y.R)Used by software to track features, bugs, and compatibility" type(uint32);
+    
+    register hsi_hwinfo ro addr(base, 0x4) "Information about the IP module's hardware configuration, i.e. typically the module's HDL generics (if any).Actual field format and encoding is decided by the module's designer." type(uint32);
+
+    constants midlemode_status width(2) "" {
+        MIDLEMODE_0 = 0 "force standby";
+        MIDLEMODE_1 = 1 "no standby";
+        MIDLEMODE_2 = 2 "smart standby";
+        MIDLEMODE_3 = 3 "smart standby wakeup";
+    };
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_0 = 0 "force idle";
+        SIDLEMODE_1 = 1 "no idle";
+        SIDLEMODE_2 = 2 "smart idle";
+        SIDLEMODE_3 = 3 "smart idle wakeup";
+    };
+
+    constants free_emu_status width(1) "" {
+        FREE_EMU_0 = 0 "module is sensitive to emulation suspend";
+        FREE_EMU_1 = 1 "module is not sensitive to emulation suspend";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "no reset applied";
+        SOFTRESET_1 = 1 "Software reset applied";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "interface clock is free-running";
+        AUTOIDLE_1 = 1 "automatic interface clock gating strategy, based on interconnect interface activity";
+    };
+    
+    register hsi_sysconfig addr(base, 0x10) "This register allows controlling various parameters of the L4_CFG interface" {
+        _ 18 mbz;
+        midlemode 2 rw type(midlemode_status) "Master interface power management, standby/wait control";
+        _ 7 mbz;
+        sidlemode 2 rw type(sidlemode_status) "Slave interface power management, request/acknowledgement control";
+        free_emu 1 rw type(free_emu_status) "Sensitivity to emulation (debug) suspend input signal";
+        softreset 1 rw type(softreset_status) "Software reset";
+        autoidle 1 rw type(autoidle_status) "Internal interface clock gating strategy";
+    };
+    
+    register hsi_sysstatus ro addr(base, 0x14) "Status on module, (reset done on bit 0, available for more status info)" type(uint32);
+    
+    register hsi_p1_m_irq0u_status addr(base, 0x408) "IRQ status register for FIFO (8..15) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on any channel 8..15";
+        hsr_break 1 rw "Break detected on any channel 8..15";
+        hsr_error 1 rw "Error detected on any channel 8..15";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 8..15 (LSB stands for channel 8 and MSB for channel 15).";
+        hsr_available_chi 8 rw "Data received on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p1_m_irq0u_enable addr(base, 0x40C) "IRQ enable register for FIFO (8..15) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for all channels 8..15";
+        hsr_break 1 rw "Break interrupt enable for all channels 8..15";
+        hsr_error 1 rw "Error interrupt enable for all channels 8..15";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p1_m_irq1u_status addr(base, 0x410) "IRQ status register for FIFO (8..15) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on any channel 8..15";
+        hsr_break 1 rw "Break detected on any channel 8..15";
+        hsr_error 1 rw "Error detected on any channel 8..15";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 8..15 (LSB stands for channel 8 and MSB for channel 15).";
+        hsr_available_chi 8 rw "Data received on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p1_m_irq1u_enable addr(base, 0x414) "IRQ enable register for FIFO (8..15) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for all channels 8..15";
+        hsr_break 1 rw "Break interrupt enable for all channels 8..15";
+        hsr_error 1 rw "Error interrupt enable for all channels 8..15";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p2_m_irq0u_status addr(base, 0x418) "IRQ status register for FIFO (8..15) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on any channel 8..15";
+        hsr_break 1 rw "Break detected on any channel 8..15";
+        hsr_error 1 rw "Error detected on any channel 8..15";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 8..15 (LSB stands for channel 8 and MSB for channel 15).";
+        hsr_available_chi 8 rw "Data received on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p2_m_irq0u_enable addr(base, 0x41C) "IRQ enable register for FIFO (8..15) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for all channels 8..15";
+        hsr_break 1 rw "Break interrupt enable for all channels 8..15";
+        hsr_error 1 rw "Error interrupt enable for all channels 8..15";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p2_m_irq1u_status addr(base, 0x420) "IRQ status register for FIFO (8..15) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on any channel 8..15";
+        hsr_break 1 rw "Break detected on any channel 8..15";
+        hsr_error 1 rw "Error detected on any channel 8..15";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 8..15 (LSB stands for channel 8 and MSB for channel 15).";
+        hsr_available_chi 8 rw "Data received on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p2_m_irq1u_enable addr(base, 0x424) "IRQ enable register for FIFO (8..15) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for all channels 8..15";
+        hsr_break 1 rw "Break interrupt enable for all channels 8..15";
+        hsr_error 1 rw "Error interrupt enable for all channels 8..15";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p1_d_irq0u_status addr(base, 0x430) "IRQ status register for FIFO (8..15) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on any channel 8..15";
+        hsr_break 1 rw "Break detected on any channel 8..15";
+        hsr_error 1 rw "Error on any channel 8..15";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hsr_available_chi 8 rw "Data received on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p1_d_irq0u_enable addr(base, 0x434) "IRQ enable register for FIFO (8..15) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for channel 8..15";
+        hsr_break 1 rw "Break interrupt enable for channel 8..15";
+        hsr_error 1 rw "Error interrupt enable for channel 8..15";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 8..15";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p1_d_irq1u_status addr(base, 0x438) "IRQ status register for FIFO (8..15) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on any channel 8..15";
+        hsr_break 1 rw "Break detected on any channel 8..15";
+        hsr_error 1 rw "Error on any channel 8..15";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hsr_available_chi 8 rw "Data received on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p1_d_irq1u_enable addr(base, 0x43C) "IRQ enable register for FIFO (8..15) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for channel 8..15";
+        hsr_break 1 rw "Break interrupt enable for channel 8..15";
+        hsr_error 1 rw "Error interrupt enable for channel 8..15";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 8..15";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p2_d_irq0u_status addr(base, 0x440) "IRQ status register for FIFO (8..15) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on any channel 8..15";
+        hsr_break 1 rw "Break detected on any channel 8..15";
+        hsr_error 1 rw "Error on any channel 8..15";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hsr_available_chi 8 rw "Data received on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p2_d_irq0u_enable addr(base, 0x444) "IRQ enable register for FIFO (8..15) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for channel 8..15";
+        hsr_break 1 rw "Break interrupt enable for channel 8..15";
+        hsr_error 1 rw "Error interrupt enable for channel 8..15";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 8..15";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p2_d_irq1u_status addr(base, 0x448) "IRQ status register for FIFO (8..15) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on any channel 8..15";
+        hsr_break 1 rw "Break detected on any channel 8..15";
+        hsr_error 1 rw "Error on any channel 8..15";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hsr_available_chi 8 rw "Data received on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_p2_d_irq1u_enable addr(base, 0x44C) "IRQ enable register for FIFO (8..15) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for channel 8..15";
+        hsr_break 1 rw "Break interrupt enable for channel 8..15";
+        hsr_error 1 rw "Error interrupt enable for channel 8..15";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 8..15";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 8..15 (LSB stands for channel 8 and MSB for channel 15)";
+    };
+    
+    register hsi_dma_m_irqstatus addr(base, 0x800) "This register collects status for all of the DMA events able to generate interrupt to MPU:Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 16 mbz;
+        dma_chi 16 rw "Channel i status (LSB stands for channel 0 and MSB for channel 15)";
+    };
+    
+    register hsi_dma_m_irqenable addr(base, 0x804) "This register masks and unmasks DMA sources of interrupt to MPU:Write 0: event is maskedWrite 1: event is enabled" {
+        _ 16 mbz;
+        dma_en_chi 16 rw "Channel i (LSB stands for channel 0 and MSB for channel 15)";
+    };
+    
+    register hsi_p1_m_irq0_status addr(base, 0x808) "IRQ status register for FIFO (0..7) events and for port p break, wake and error events Events will signal interrupt for MPU line r (Mpuirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on Port p";
+        hsr_break 1 rw "Break detected on Port p";
+        hsr_error 1 rw "Error on Port p";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_chi 8 rw "Data received on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p1_m_irq0_enable addr(base, 0x80C) "IRQ enable register for FIFO (0..7) events and for port p break, wake and error events signaled to MPU line r (Mpuirq_r).Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for Port p";
+        hsr_break 1 rw "Break interrupt enable for Port p";
+        hsr_error 1 rw "Error interrupt enable for Port p";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p1_m_irq1_status addr(base, 0x810) "IRQ status register for FIFO (0..7) events and for port p break, wake and error events Events will signal interrupt for MPU line r (Mpuirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on Port p";
+        hsr_break 1 rw "Break detected on Port p";
+        hsr_error 1 rw "Error on Port p";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_chi 8 rw "Data received on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p1_m_irq1_enable addr(base, 0x814) "IRQ enable register for FIFO (0..7) events and for port p break, wake and error events signaled to MPU line r (Mpuirq_r).Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for Port p";
+        hsr_break 1 rw "Break interrupt enable for Port p";
+        hsr_error 1 rw "Error interrupt enable for Port p";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p2_m_irq0_status addr(base, 0x818) "IRQ status register for FIFO (0..7) events and for port p break, wake and error events Events will signal interrupt for MPU line r (Mpuirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on Port p";
+        hsr_break 1 rw "Break detected on Port p";
+        hsr_error 1 rw "Error on Port p";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_chi 8 rw "Data received on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p2_m_irq0_enable addr(base, 0x81C) "IRQ enable register for FIFO (0..7) events and for port p break, wake and error events signaled to MPU line r (Mpuirq_r).Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for Port p";
+        hsr_break 1 rw "Break interrupt enable for Port p";
+        hsr_error 1 rw "Error interrupt enable for Port p";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p2_m_irq1_status addr(base, 0x820) "IRQ status register for FIFO (0..7) events and for port p break, wake and error events Events will signal interrupt for MPU line r (Mpuirq_r)Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on Port p";
+        hsr_break 1 rw "Break detected on Port p";
+        hsr_error 1 rw "Error on Port p";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_chi 8 rw "Data received on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p2_m_irq1_enable addr(base, 0x824) "IRQ enable register for FIFO (0..7) events and for port p break, wake and error events signaled to MPU line r (Mpuirq_r).Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for Port p";
+        hsr_break 1 rw "Break interrupt enable for Port p";
+        hsr_error 1 rw "Error interrupt enable for Port p";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_dma_d_irqstatus addr(base, 0x828) "IRQ status register for all DMA events. Events will generate interrupt for DSP.Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 16 mbz;
+        dma_chi 16 rw "IRQ event happened on DMA channel i (LSB stands for channel 0 and MSB for channel 15)";
+    };
+    
+    register hsi_dma_d_irqenable addr(base, 0x82C) "IRQ enable register for all DMA events signaled to DSP..Write 0: event is maskedWrite 1: event is enabled" {
+        _ 16 mbz;
+        dma_en_chi 16 rw "Channel i (LSB stands for channel 0 and MSB for channel 15)";
+    };
+    
+    register hsi_p1_d_irq0_status addr(base, 0x830) "IRQ status register for FIFO (0..7) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r).Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on Port p";
+        hsr_break 1 rw "Break detected on Port p";
+        hsr_error 1 rw "Error on Port p";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_chi 8 rw "Data received on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p1_d_irq0_enable addr(base, 0x834) "IRQ enable register for FIFO (0..7) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for Port p";
+        hsr_break 1 rw "Break interrupt enable for Port p";
+        hsr_error 1 rw "Error interrupt enable for Port p";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p1_d_irq1_status addr(base, 0x838) "IRQ status register for FIFO (0..7) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r).Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on Port p";
+        hsr_break 1 rw "Break detected on Port p";
+        hsr_error 1 rw "Error on Port p";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_chi 8 rw "Data received on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p1_d_irq1_enable addr(base, 0x83C) "IRQ enable register for FIFO (0..7) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for Port p";
+        hsr_break 1 rw "Break interrupt enable for Port p";
+        hsr_error 1 rw "Error interrupt enable for Port p";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p2_d_irq0_status addr(base, 0x840) "IRQ status register for FIFO (0..7) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r).Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on Port p";
+        hsr_break 1 rw "Break detected on Port p";
+        hsr_error 1 rw "Error on Port p";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_chi 8 rw "Data received on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p2_d_irq0_enable addr(base, 0x844) "IRQ enable register for FIFO (0..7) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for Port p";
+        hsr_break 1 rw "Break interrupt enable for Port p";
+        hsr_error 1 rw "Error interrupt enable for Port p";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p2_d_irq1_status addr(base, 0x848) "IRQ status register for FIFO (0..7) events and for port p break, wake and error events. Events will signal interrupt for DSP line r (Dspirq_r).Read 0: event has not occurredRead 1: event has occurredWrite 0: bit stays unchangedWrite 1: bit gets reset to 0" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake detected on Port p";
+        hsr_break 1 rw "Break detected on Port p";
+        hsr_error 1 rw "Error on Port p";
+        hsr_overrun_chi 8 rw "Data overrun in real time mode channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_chi 8 rw "Data received on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_chi 8 rw "Data transmitted on channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p2_d_irq1_enable addr(base, 0x84C) "IRQ enable register for FIFO (0..7) events and for port p break, wake and error events signaled to DSP line r (Dspirq_r)Write 0: event is maskedWrite 1: event is enabled" {
+        _ 5 mbz;
+        hsr_wake 1 rw "Wake interrupt enable for Port p";
+        hsr_break 1 rw "Break interrupt enable for Port p";
+        hsr_error 1 rw "Error interrupt enable for Port p";
+        hsr_overrun_eni 8 rw "Overrun interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hsr_available_eni 8 rw "Data available interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+        hst_accepted_eni 8 rw "Data accepted interrupt enable for channel 0..7 (LSB stands for channel 0 and MSB for channel 7)";
+    };
+    
+    register hsi_p1_wake addr(base, 0xC00) "Programmed wake state for each channel, in port 10x0: no channel wakeup on WAKE line requested0x1: channel wakeup requested" {
+        _ 16 mbz;
+        hsi_wake_chi 16 ro "Channel 0..15 (LSB stands for channel 0 and MSB for channel 15)";
+    };
+    
+    register hsi_p1_clear_wake addr(base, 0xC04) "Clear register for programmed wake state on port 1 HST_WAKE for each channel0x0: no effect0x1: clears bit" {
+        _ 16 mbz;
+        hsi_clear_wake_chi 16 wo "Channel 0..15 (LSB stands for channel 0 and MSB for channel 15)";
+    };
+
+    constants hsi_ready_lvl_status width(1) "" {
+        HSI_READY_LVL_0 = 0 "READY defaults to 0";
+        HSI_READY_LVL_1 = 1 "READY defaults to 1";
+    };
+
+    constants hsi_3_wires_status width(1) "" {
+        HSI_3_WIRES_0 = 0 "sets 4 wires behavior (wakeup with WAKE signal)";
+        HSI_3_WIRES_1 = 1 "sets 3 wire behavior (wakeup on line activity without WAKE signal)";
+    };
+
+    constants hsi_set_wake_chi_status width(16) "" {
+        HSI_SET_WAKE_CHI_0_w = 0 "no effect";
+        HSI_SET_WAKE_CHI_1_w = 1 "sets bit";
+    };
+    
+    register hsi_p1_set_wake addr(base, 0xC08) "Set function for wake state for each channel, in port 10x0: no effect0x1: sets bit" {
+        _ 14 mbz;
+        hsi_ready_lvl 1 rw type(hsi_ready_lvl_status) "READY default level";
+        hsi_3_wires 1 rw type(hsi_3_wires_status) "Sets 3 wires behavior";
+        hsi_set_wake_chi 16 wo type(hsi_set_wake_chi_status) "Sets programmed WAKE state for channel i";
+    };
+    
+    register hsi_p2_wake addr(base, 0xC10) "Programmed wake state for each channel, in port 20x0: no channel wakeup on WAKE line requested0x1: channel wakeup requested" {
+        _ 16 mbz;
+        hsi_wake_chi 16 ro "Channel 0..15 (LSB stands for channel 0 and MSB for channel 15)";
+    };
+    
+    register hsi_p2_clear_wake addr(base, 0xC14) "Clear register for programmed wake state on port 2 HST_WAKE for each channel0x0: no effect0x1: clears bit" {
+        _ 16 mbz;
+        hsi_clear_wake_chi 16 wo "Channel 0..15 (LSB stands for channel 0 and MSB for channel 15)";
+    };
+    
+    register hsi_p2_set_wake addr(base, 0xC18) "Set function for wake state for each channel, in port 20x0: no effect0x1: sets bit" {
+        _ 14 mbz;
+        hsi_ready_lvl 1 rw type(hsi_ready_lvl_status) "READY default level";
+        hsi_3_wires 1 rw type(hsi_3_wires_status) "Sets 3 wires behavior";
+        hsi_set_wake_chi 16 wo type(hsi_set_wake_chi_status) "Sets programmed WAKE state for channel i";
+    };
+
+    constants autogating_status width(1) "" {
+        AUTOGATING_0 = 0 "no DMA clock control";
+        AUTOGATING_1 = 1 "DMA clock control";
+    };
+
+    constants switch_off_status width(1) "" {
+        SWITCH_OFF_0 = 0 "DMA Clock released";
+        SWITCH_OFF_1 = 1 "DMA Clock cutoff";
+    };
+    
+    register dma_gcr addr(base, 0x1100) "Global Control Register: suspend and clock gating" {
+        _ 28 mbz;
+        autogating 1 rw type(autogating_status) "DMA clock autogating enable";
+        _ 2 mbz;
+        switch_off 1 rw type(switch_off_status) "DMA global clock control";
+    };
+
+    constants swreset_status width(1) "" {
+        SWRESET_1 = 1 "writing 1 resets the DMA. It is automatically reset to 0 by hardware once software reset is done";
+    };
+    
+    register dma_grst addr(base, 0x1200) "DMA software reset control register" {
+        _ 31 mbz;
+        swreset 1 rw type(swreset_status) "DMA sw reset control bit";
+    };
+};

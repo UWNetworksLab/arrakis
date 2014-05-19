@@ -1,0 +1,329 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_emif.dev
+ *
+ * DESCRIPTION: OMAP44xx device identification
+ *
+ * This is derived from:
+ *
+ * OMAP4460 Multimedia Device Silicon Revision 1.x Technical Reference
+ * Manual Version Q, in particular Section 15.3.6
+ *
+ */
+
+device omap44xx_emif msbfirst ( addr base ) "OMAP44xx external memory intf." {
+
+    register mod_id_rev ro addr(base, 0x0000) "Revision" type(uint32);
+
+    register status ro addr(base, 0x0004) "SDRAM status" 
+    {
+	be		1	"Big endian select for 8 and 16-bit devices";
+	dual_clk	1	"Dual Clock mode";
+	fast_init	1	"Fast initialization mode";
+	_		26 mbz;
+	phy_dll_ready	1	"DDR Phy ready";
+	_		2 mbz;
+    };
+
+    constants sdram_type width(3) "SDRAM type values" {
+	sdram_s4 = 0x4		"LPDDR2-S4";
+	sdram_s2 = 0x5		"LPDDR2-S2";
+    };
+
+    register sdram_config rw addr(base, 0x0008) "SDRAM config" 
+    {
+	sdram_type	3 type(sdram_type) "SDRAM type";
+	ibank_pos	2	"Internal bank position";
+	_	        11;
+	narrow_mode	2	"SDRAM data bus width";
+	cl		4	"CAS latency";
+	rowsize		3	"Row size (add 9 for # row bits)";
+	ibank		3	"Internal bank setup: (1<<x) banks";
+	ebank		1	"External chip select setup";
+	pagesize	3	"Page size (add 9 for # column bits)";
+    };
+
+    register sdram_config2 rw addr(base, 0x000c) "SDRAM config 2" 
+    {
+	_		1;
+	cs1nvmen	1	"CS1 LPDDR2-NVM enable";
+	_		2;
+	ebank_pos	1	"External bank position";
+	_		21;
+	rdbnum		2	"Row buffer setup (1<<x) row buffers";
+	_		1;
+	rdbsize		3	"Row data buffer size 32(1<<x) bytes";
+    };
+
+    register sdram_ref_ctrl rw addr(base, 0x0010) "SDRAM refresh control" 
+    {
+	initref_dis	1	"Initialization and refresh disable";
+	_		15;
+	refresh_rate	16	"Refresh rate";
+    };
+    register sdram_ref_ctrl_shdw rw addr(base, 0x0014) 
+	"SDRAM refresh control shadow" type(sdram_ref_ctrl);
+
+    register sdram_tim1 rw addr(base, 0x0018) "SDRAM timing 1" 
+    {
+	_		3;
+	rp		4	"Minimum #DDR clocks precharge to act. or ref.";
+	rcd		4	"Minimum #DDR clocks activate to r or w";
+	wr		4	"Minimum #DDR clocks write to precharge";
+	ras		5	"Minimum #DDR clocks activate to precharge";
+	rc		6	"Minimum #DDR clocks activate to activate";
+	rrd		3	"Minimum #DDR clocks act. to act. other bank";
+	wtr		3	"Minimum #DDR clocks last write to read";
+    };
+    register sdram_tim1_shdw rw addr(base, 0x001c) "SDRAM timing 1 shadow" 
+	type(sdram_tim1);
+
+
+    register sdram_tim2 rw addr(base, 0x0020) "SDRAM timing 2" 
+    {
+	_		1;
+	xp		3	"Minimum #DDR clocks powerdown to non-read";
+	_		3;
+	xsnr		9	"Minimum #DDR clocks self-refresh to non-read";
+	xsrd		10	"Minimum #DDR clocks self-refresh to read";
+	rtp		3	"Minimum #DDR clocks last read to precharge";
+	cke		3	"Minimum #DDR clocks between pad_cke_o changes";
+    };
+    register sdram_tim2_shdw rw addr(base, 0x0024) "SDRAM timing 2 shadow" 
+	type(sdram_tim2);
+
+    register sdram_tim3 rw addr(base, 0x0028) "SDRAM timing 3" 
+    {
+	_		8;
+	ckesr		3	"Minimum #DDR clocks LPDDR2 in self-refresh";
+	zqcs		6	"#DDR clocks a ZQCS command";
+	tdqsckmax	2	"#DDR clocks that satisfies tDQSCKmax";
+	rfc		9	"Minimum #DDR clocks from ref/ld to ref/act.";
+	ras_max		4	"Maximum #interfaces from act. to precharge";
+     };
+    register sdram_tim3_shdw rw addr(base, 0x002c) "SDRAM timing 3 shadow" 
+	type(sdram_tim3);
+
+    register lpddr2_nvm_tim rw addr(base, 0x0030) "LPDDR2-NVM timing" 
+    {
+	_		1;
+	xp		3	"Minimum #DDR clocks from powerdown";
+	_		1;
+	wtr		3	"Minimum #DDR clocks last write to read";
+	rp		4	"Minimum #DDR clocks preactive to activate";
+	wra		4	"Minimum #DDR clocks last write to activate";
+	rrd		8	"Minimum #DDR clocks act. to act. other bank.";
+	rcdmin		8	"Minimum #DDR clocks activate to r/w";
+    };
+    register lpddr2_nvm_tim_shdw rw addr(base, 0x0034) 
+	"LPDDR2-NVM timing shadow" type(lpddr2_nvm_tim);
+
+
+    constants apm_mode width(3) "Auto power management mode" {
+	apm_cs = 1	"Clock stop";
+	apm_sr = 2	"Self-refresh";
+	apm_pd = 4	"Power down";
+    };
+    
+    register pwr_mgmt_ctrl rw addr(base, 0x0038) "Power management control" 
+    {
+	_		16;
+	pd_tim		4	"Power mangement timer for power-down";
+	dpd_en		1	"Deep power down enable";
+	lp_mode		3 type(apm_mode) "Automatic power management enable";
+	sr_tim		4	"Power mangement timer for self refresh";
+	cs_tim		4	"Power mangement timer for clock stop";
+    };
+    register pwr_mgmt_ctrl_shdw rw addr(base, 0x003c) 
+	"Power management control shadow" type(pwr_mgmt_ctrl);
+
+    register lpddr2_mode_reg_data rw addr(base, 0x0040) 
+	"LPDDR2 mode register data" type(uint32);
+
+    register lpddr2_mode_reg_cfg rw addr(base, 0x0050) 
+        "LPDDR2 mode register config"
+    {
+        cs              1       "Chip select to issue mode register command";
+        refresh_en      1       "Refresh Enable after MRW write";
+        _               22;
+        address         8       "Mode register address";
+    };
+
+    register l3_config rw addr(base, 0x0054) "L3 configuration" 
+    {
+	_		4;
+	sys_thresh_max	4	"System L3 threshold maximum";
+	_		4;
+	ll_thresh_max	4	"Low-latency L3 threshold maximum";
+	_		8;
+	pr_old_count	8	"Priority raise old counter";
+    };
+
+    register l3_cfg_val1 ro addr(base, 0x0058) "L3 config value 1" 
+    {
+	sys_bus_width	2	"System L3 data bus width 32*(1<<x) bits";
+	ll_bus_width	2	"Low-latency L3 data bus width 32*(1<<x)";
+	_		12 mbz;
+	wr_fifo_depth	8	"Write data FIFO depth";
+	cmd_fifo_depth	8	"Command FIFO depth";
+    };
+
+    register l3_cfg_val2 ro addr(base, 0x005c) "L3 config value 2" 
+    {
+	_		8 mbz;
+	rreg_fifo_depth 8	"Register Read Data FIFO depth";
+	rsd_fifo_depth	8	"SDRAM read data FIFO depth";
+	rcmd_fifo_depth	8	"Read command FIFO depth";
+    };
+
+    register perf_cnt_1 ro addr(base, 0x0080) "Perf. counter 1" type(uint32);
+    register perf_cnt_2 ro addr(base, 0x0084) "Perf. counter 2" type(uint32);
+
+    constants pcfilter width(4) "Performance counter filter" {
+	pcf_sdr_acc	= 0x0	"Total SDRAM accesses";
+	pcf_sdr_act	= 0x1	"Total SDRAM activates";
+	pcf_tot_rds	= 0x2	"Total reads";
+	pcf_tot_wrs	= 0x3	"Total writes";
+	pcf_cf_full	= 0x4	"Cycles L3 command FIFO is full";
+	pcf_wf_full	= 0x5	"Cycles L3 Write Data FIFO is full";
+	pcf_rf_full	= 0x6	"Cycles L3 Read Data FIFO is full";
+	pcf_tf_full	= 0x7	"Cycles L3 Return Command FIFO is full";
+	pcf_pri_elv	= 0x8	"Priority elevations";
+	pcf_cmd_pnd	= 0x9	"Cycles that a command was pending";
+	pcf_mem_xfr	= 0xa	"Cycles for which mem. data bus xferd data";
+    };
+    register perf_cnt_cfg rw addr(base, 0x0088) "Perf. cntr. config" 
+    {
+	cntr2_mconnid_en 1	"MConnID filter enable for perf. cntr. 2";
+	cntr2_region_en	1	"Chip Select filter enable for Perf. cntr 2";
+	_		10;
+	cntr2_cfg	4 type(pcfilter) "Filter config. for perf. cntr. 2";
+	cntr1_mconnid_en 1	"MConnID filter enable for perf. cntr. 1";
+	cntr1_region_en	1	"Chip Select filter enable for Perf. cntr 1";
+	_		10;
+	cntr1_cfg	4 type(pcfilter) "Filter config. for perf. cntr. 1";
+    };
+
+    register perf_cnt_sel rw addr(base, 0x008c) "Perf. cntr. master reg. sel." 
+    {
+	mconnid2	8	"MConnID for perf. counter 2";
+	_		6;
+	region_sel2	2	"MAddrSpace for perf. counter 2";
+	mconnid1	8	"MConnID for perf. counter 1";
+	_		6;
+	region_sel1	2	"MAddrSpace for perf. counter 1";
+    };
+
+    register perf_cnt_tim ro addr(base, 0x0090) "Perf. counter time" 
+	type(uint32);
+
+    register read_idle_ctrl rw addr(base, 0x0098) "Read idle control" 
+    {
+	_		12;
+	read_idle_len	4	"Min size of read idle window";
+	_		7;
+	read_idle_interval 9	"Read idle interval";
+    };
+    register read_idle_ctrl_shdw rw addr(base, 0x009C)
+	"Read idle control shadow" type(read_idle_ctrl);
+
+
+    regtype irq_l3 "L3 interrupt" { 
+	_		30;
+	ta_sys		1 	"SDRAM temperature alert.";
+	err_sys		1	"Command or address error.";
+    };
+
+    register irqstatus_raw_sys rw addr(base, 0x00a4) 
+	"System L3 interrupt raw status" type(irq_l3);
+
+    register irqstatus_raw_ll rw addr(base, 0x00a8) 
+	"Low-latency L3 interrupt raw status" type(irq_l3);
+
+    register irqstatus_sys rw addr(base, 0x00ac) 
+	"System L3 interrupt status" type(irq_l3);
+
+    register irqstatus_ll rw addr(base, 0x00b0) 
+	"Low-latency L3 interrupt status" type(irq_l3);
+
+    register irqenable_set_sys rw addr(base, 0x00b4) 
+	"System L3 interrupt enable set" type(irq_l3);
+
+    register irqenable_set_ll rw addr(base, 0x00b8) 
+	"Low-latency L3 interrupt enable set" type(irq_l3);
+
+    register irqenable_clr_sys rw addr(base, 0x00bc) 
+	"System L3 interrupt enable clear" type(irq_l3);
+
+    register irqenable_clr_ll rw addr(base, 0x00c0)
+	"Low-latency L3 interrupt enable clear" type(irq_l3);
+
+    register zq_config rw addr(base, 0x00c8) 
+	"SDRAM output impedance calibration config"
+    {
+	cs1en		1	"Enable ZQ calibration for CS1";
+	cs0en		1	"Enable ZQ calibration for CS0";
+	dualcalen	1	"ZQ Dual Calibration enable";
+	sfexiten	1	"ZQCL on self-rfr., act. pwrdn, prchrge pwrdwn";
+	_		8;
+	zqinit_mult	2	"Num ZQCL intervals in a ZQINIT interval -1";
+	zqcl_mult	2	"Num ZQCS intervals in a ZQCL interval -1";
+	refinterval	16	"Num rfrsh periods between ZQCS commands";
+    };
+
+    register temp_alert_config rw addr(base, 0x00cc) "Temperature Alert Config" 
+    {
+	cs1en		1	"Enables temperature alert polling for CS1";
+	cs0en		1	"Enables temperature alert polling for CS0";
+	_		1;
+	sfexiten	1	"Poll on self-rfr., act. pwrdn, prchrge pwrdwn";
+	devwdt		2	"Physical device width";
+	devcnt		2	"#lanes w/ temp. monitoring device";
+	_		2;
+	refinterval	22	"Num. refresh periods btw alert polls";
+    };
+
+    constants err_spc width(2) "Address space of errored transaction" {
+	es_sdram	= 0x0	"SDRAM";
+	es_ddr2		= 0x1	"LPDDR2-NVM";
+	es_int		= 0x3	"Internal registers";
+    };
+
+    register l3_err_log ro addr(base, 0x00d0) "Error log" 
+    {		
+	_		16;
+	maddrspace	2 type(err_spc) "Addr spc of 1st errored transaction";
+	mburstseq	3	"Addr mode of 1st errored transaction";
+	mcmd		3	"Cmd type of 1st errored transaction";
+	mconnid		8	"Connection ID of 1st errored transaction";
+    };
+
+    register ddr_phy_ctrl_1 rw addr(base, 0x00e4) "DDR PHY control 1" 
+    {
+	_		2;
+	freeze_delay_code_postamble	4
+	    "Postamble time respected by the DATA PHY";
+	freeze_delay_code_preamble	4
+	    "Preamble time respected by the DATA PHY";
+	dll_master_sw_code_ctrl		10 
+	    "DLL delay code when in software override mode";
+	dll_slave_dly_ctrl		8 
+	    "DLL slave delay ratio control";
+	read_latency			4
+	    "Read latency for the read data from SDRAM in DDR clock cycles";
+    };
+
+    register ddr_phy_ctrl_1_shdw rw addr(base, 0x00e8) 
+	"DDR PHY control 1 shadow" type(ddr_phy_ctrl_1);
+
+    register ddr_phy_ctrl_2 rw addr(base, 0x00ec) "DDR PHY control 2" 
+	type(uint32);
+};

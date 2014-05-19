@@ -1,0 +1,214 @@
+let
+  malloc_provided = case Config.newlib_malloc of
+    "sbrk"      -> False
+    "dlmalloc"  -> True
+    "oldmalloc" -> True
+  common_cflags = Config.newlibAddCFlags
+                  ++ if malloc_provided then ["-DMALLOC_PROVIDED"] else []
+  common_omitcflags = [ "-std=c99",
+                        "-Wredundant-decls",
+                        "-Wmissing-prototypes",
+                        "-Wmissing-declarations",
+                        "-Wimplicit-function-declaration",
+                        "-Werror" ]
+in
+  if Config.libc == "newlib" then
+  [
+    build library {
+      target = "stdlib_free",
+      cFiles = [ "freer.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_FREE" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_realloc",
+      cFiles = [ "reallocr.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_REALLOC" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_calloc",
+      cFiles = [ "callocr.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_CALLOC" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_cfree",
+      cFiles = [ "cfreer.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_CFREE" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_mallinfo",
+      cFiles = [ "mallinfor.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_MALLINFO" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_mallstats",
+      cFiles = [ "mallstatsr.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_MALLOC_STATS" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_msize",
+      cFiles = [ "msizer.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_MALLOC_USABLE_SIZE" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_malloc",
+      cFiles = [ "mallocr.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_MALLOC" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_malign",
+      cFiles = [ "malignr.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_MEMALIGN" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_mallopt",
+      cFiles = [ "malloptr.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_MALLOPT" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_pvalloc",
+      cFiles = [ "pvallocr.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_PVALLOC" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib_valloc",
+      cFiles = [ "vallocr.c" ],
+      addCFlags = common_cflags ++ [ "-DINTERNAL_NEWLIB", "-DDEFINE_VALLOC" ],
+      omitCFlags = common_omitcflags
+    },
+
+    build library {
+      target = "stdlib",
+      cFiles = [
+        "__adjust.c" ,
+        "__atexit.c" ,
+        "__call_atexit.c" ,
+        "__exp10.c" ,
+        "__ten_mu.c" ,
+        --"_Exit.c" ,
+        --"abort.c" ,
+        "abs.c" ,
+        "assert.c" ,
+        "atexit.c" ,
+        "atof.c" ,
+        "atoff.c" ,
+        "atoi.c" ,
+        "atol.c" ,
+        "calloc.c" ,
+        "div.c" ,
+        "dtoa.c" ,
+        "dtoastub.c" ,
+        "environ.c" ,
+        "envlock.c" ,
+        "eprintf.c" ,
+        "exit.c" ,
+        "gdtoa-gethex.c" ,
+        "gdtoa-hexnan.c" ,
+        "getenv.c" ,
+        "getenv_r.c" ,
+        "labs.c" ,
+        "ldiv.c" ,
+        "ldtoa.c",
+        "malloc.c",
+        "mblen.c",
+        "mblen_r.c",
+        "mbstowcs.c",
+        "mbstowcs_r.c",
+        "mbtowc.c",
+        "mbtowc_r.c",
+        "mlock.c",
+        "mprec.c",
+        "mstats.c",
+        "rand.c",
+        "rand_r.c",
+        "realloc.c",
+        "reallocf.c",
+        "sb_charsets.c",
+        "strtod.c",
+        "strtol.c",
+        "strtoul.c",
+        "wcstod.c",
+        "wcstol.c",
+        "wcstoul.c",
+        "wcstombs.c",
+        "wcstombs_r.c",
+        "wctomb.c",
+        "wctomb_r.c",
+        "strtold.c",
+        "wcstold.c",
+        "cxa_atexit.c",
+        "cxa_finalize.c",
+        "drand48.c",
+        "ecvtbuf.c",
+        "efgcvt.c",
+        "erand48.c",
+        "jrand48.c",
+        "lcong48.c",
+        "lrand48.c",
+        "mrand48.c",
+        "msize.c",
+        "mtrim.c",
+        "nrand48.c",
+        "rand48.c",
+        "seed48.c",
+        "srand48.c",
+        "strtoll.c",
+        "strtoll_r.c",
+        "strtoull.c",
+        "strtoull_r.c",
+        "wcstoll.c",
+        "wcstoll_r.c",
+        "wcstoull.c",
+        "wcstoull_r.c",
+        "atoll.c",
+        "llabs.c",
+        "lldiv.c",
+        "a64l.c",
+        "btowc.c",
+        "getopt.c",
+        "getsubopt.c",
+        "l64a.c",
+        "malign.c",
+        "mbrlen.c",
+        "mbrtowc.c",
+        "mbsinit.c",
+        "mbsnrtowcs.c",
+        "mbsrtowcs.c",
+        "on_exit.c",
+        "valloc.c",
+        "wcrtomb.c",
+        "wcsnrtombs.c",
+        "wcsrtombs.c",
+        "wctob.c",
+        "putenv.c",
+        "putenv_r.c",
+        "setenv.c",
+        "setenv_r.c"
+        --"system.c"
+        ],
+      addCFlags = common_cflags,
+      addLibraries = [ "stdlib_free", "stdlib_realloc", "stdlib_calloc", "stdlib_cfree", "stdlib_mallinfo", "stdlib_mallstats", "stdlib_msize", "stdlib_malloc", "stdlib_malign", "stdlib_mallopt", "stdlib_pvalloc", "stdlib_valloc" ],
+      omitCFlags = common_omitcflags
+    } ]
+else []

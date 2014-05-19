@@ -1,0 +1,1724 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_gpmc.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_gpmc msbfirst ( addr base ) "" {
+    
+    
+    register gpmc_revision ro addr(base, 0x0) "This register contains the IP revision code." type(uint32);
+
+    constants sidlemode_status width(2) "" {
+        SIDLEMODE_1 = 1 "No-idle. An idle request is never acknowledged";
+        SIDLEMODE_2 = 2 "Smart-idle. Acknowledgment to an idle request is given based on the internal activity of the module";
+        SIDLEMODE_3 = 3 "Do not use";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "Normal mode";
+        SOFTRESET_1 = 1 "The module is reset";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "Interface clock is free-running";
+        AUTOIDLE_1 = 1 "Automatic Interface clock gating strategy is applied, based on the Interconnect activity";
+    };
+    
+    register gpmc_sysconfig addr(base, 0x10) "This register controls the various parameters of the Interconnect." {
+        _ 27 mbz;
+        sidlemode 2 rw type(sidlemode_status) "0x0: Force-idle. An idle request is acknowledged unconditionally";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Software reset. Set this bit to 1 triggers a module reset. This bit is automatically reset by hardware. During reads, it always returns 0.";
+        autoidle 1 rw type(autoidle_status) "Internal Interface clock gating strategy";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0 = 0 "Internal module reset in ongoing";
+        RESETDONE_1 = 1 "Reset completed";
+    };
+    
+    register gpmc_sysstatus addr(base, 0x14) "This register provides status information about the module, excluding the interrupt status information" {
+        _ 24 mbz;
+        _ 7 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal reset monitoring";
+    };
+
+    constants wait2edgedetection_status_status width(1) "" {
+        WAIT2EDGEDETECTION_STATUS_0_r = 0 "A transition on WAIT2 input pin has not been detected";
+        WAIT2EDGEDETECTION_STATUS_0_w = 0 "WAIT2EDGEDETECTIONSTATUS bit unchanged";
+        WAIT2EDGEDETECTION_STATUS_1_r = 1 "A transition on WAIT2 input pin has been detected";
+        WAIT2EDGEDETECTION_STATUS_1_w = 1 "WAIT2EDGEDETECTIONSTATUS bit is reset";
+    };
+
+    constants wait1edgedetection_status_status width(1) "" {
+        WAIT1EDGEDETECTION_STATUS_0_r = 0 "A transition on WAIT1 input pin has not been detected";
+        WAIT1EDGEDETECTION_STATUS_0_w = 0 "WAIT1EDGEDETECTIONSTATUS bit unchanged";
+        WAIT1EDGEDETECTION_STATUS_1_r = 1 "A transition on WAIT1 input pin has been detected";
+        WAIT1EDGEDETECTION_STATUS_1_w = 1 "WAIT1EDGEDETECTIONSTATUS bit is reset";
+    };
+
+    constants wait0edgedetection_status_status width(1) "" {
+        WAIT0EDGEDETECTION_STATUS_0_r = 0 "A transition on WAIT0 input pin has not been detected";
+        WAIT0EDGEDETECTION_STATUS_0_w = 0 "WAIT0EDGEDETECTIONSTATUS bit unchanged";
+        WAIT0EDGEDETECTION_STATUS_1_r = 1 "A transition on WAIT0 input pin has been detected";
+        WAIT0EDGEDETECTION_STATUS_1_w = 1 "WAIT0EDGEDETECTIONSTATUS bit is reset";
+    };
+
+    constants terminalcountstatus_status width(1) "" {
+        TERMINALCOUNTSTATUS_0_r = 0 "Indicates that CountValue is greater than 0";
+        TERMINALCOUNTSTATUS_0_w = 0 "TERMINALCOUNTSTATUS bit unchanged";
+        TERMINALCOUNTSTATUS_1_r = 1 "Indicates that CountValue is equal to 0";
+        TERMINALCOUNTSTATUS_1_w = 1 "TERMINALCOUNTSTATUS bit is reset";
+    };
+
+    constants fifoeventstatus_status width(1) "" {
+        FIFOEVENTSTATUS_0_r = 0 "Indicates than less than[16] FIFOTHRESHOLDSTATUS bytes are available in prefetch mode and less than FIFOTHRESHOLD bytes free places are available in write-posting mode.";
+        FIFOEVENTSTATUS_0_w = 0 "FIFOEVENTSTATUS bit unchanged";
+        FIFOEVENTSTATUS_1_r = 1 "Indicates than at least[16] FIFOTHRESHOLDSTATUS bytes are available in prefetch mode and at least FIFOTHRESHOLD bytes free places are available in write-posting mode.";
+        FIFOEVENTSTATUS_1_w = 1 "FIFOEVENTSTATUS bit is reset";
+    };
+    
+    register gpmc_irqstatus addr(base, 0x18) "This interrupt status register regroups all the status of the module internal events that can generate an interrupt." {
+        _ 21 mbz;
+        wait2edgedetection_status 1 rw type(wait2edgedetection_status_status) "Status of the Wait2 Edge Detection interrupt";
+        wait1edgedetection_status 1 rw type(wait1edgedetection_status_status) "Status of the Wait1 Edge Detection interrupt";
+        wait0edgedetection_status 1 rw type(wait0edgedetection_status_status) "Status of the Wait0 Edge Detection interrupt";
+        _ 6 mbz;
+        terminalcountstatus 1 rw type(terminalcountstatus_status) "Status of the TerminalCountEvent interrupt";
+        fifoeventstatus 1 rw type(fifoeventstatus_status) "Status of the FIFOEvent interrupt";
+    };
+
+    constants wait2edgedetection_enable_status width(1) "" {
+        WAIT2EDGEDETECTION_ENABLE_0 = 0 "Wait2EdgeDetection interrupt is masked";
+        WAIT2EDGEDETECTION_ENABLE_1 = 1 "Wait2EdgeDetection event generates an interrupt if occurs";
+    };
+
+    constants wait1edgedetection_enable_status width(1) "" {
+        WAIT1EDGEDETECTION_ENABLE_0 = 0 "Wait1EdgeDetection interrupt is masked";
+        WAIT1EDGEDETECTION_ENABLE_1 = 1 "Wait1EdgeDetection event generates an interrupt if occurs";
+    };
+
+    constants wait0edgedetection_enable_status width(1) "" {
+        WAIT0EDGEDETECTION_ENABLE_0 = 0 "Wait0EdgeDetection interrupt is masked";
+        WAIT0EDGEDETECTION_ENABLE_1 = 1 "Wait0EdgeDetection event generates an interrupt if occurs";
+    };
+
+    constants terminalcountevent_enable_status width(1) "" {
+        TERMINALCOUNTEVENT_ENABLE_0 = 0 "TerminalCountEvent interrupt is masked";
+        TERMINALCOUNTEVENT_ENABLE_1 = 1 "TerminalCountEvent interrupt is not masked";
+    };
+
+    constants fifoeventenable_status width(1) "" {
+        FIFOEVENTENABLE_0 = 0 "FIFOEvent interrupt is masked";
+        FIFOEVENTENABLE_1 = 1 "FIFOEvent interrupt is not masked";
+    };
+    
+    register gpmc_irqenable addr(base, 0x1C) "The interrupt enable register allows to mask/unmask the module internal sources of interrupt, on a event-by-event basis." {
+        _ 21 mbz;
+        wait2edgedetection_enable 1 rw type(wait2edgedetection_enable_status) "Enables the Wait2 Edge Detection interrupt";
+        wait1edgedetection_enable 1 rw type(wait1edgedetection_enable_status) "Enables the Wait1 Edge Detection interrupt";
+        wait0edgedetection_enable 1 rw type(wait0edgedetection_enable_status) "Enables the Wait0 Edge Detection interrupt";
+        _ 6 mbz;
+        terminalcountevent_enable 1 rw type(terminalcountevent_enable_status) "Enables TerminalCountEvent interrupt issuing in prefetch or write-posting mode";
+        fifoeventenable 1 rw type(fifoeventenable_status) "Enables the FIFOEvent interrupt";
+    };
+
+    constants timeoutenable_status width(1) "" {
+        TIMEOUTENABLE_0 = 0 "TimeOut feature is disabled";
+        TIMEOUTENABLE_1 = 1 "TimeOut feature is enabled";
+    };
+    
+    register gpmc_timeout_control addr(base, 0x40) "The register allows the user to set the start value of the timeout counter" {
+        _ 19 mbz;
+        timeoutstartvalue 9 rw "Start value of the time-out counter 0x000: Zero GPMC_FCLK cycle 0x001: One GPMC_FCLK cycle ... 0x1FF: 511 GPMC_FCLK cycles";
+        _ 3 mbz;
+        timeoutenable 1 rw type(timeoutenable_status) "Enable bit of the TimeOut feature";
+    };
+    
+    register gpmc_err_address addr(base, 0x44) "The register stores the address of the illegal access when an error occurs" {
+        _ 1 mbz;
+        illegaladd 31 ro "Address of illegal access A30: 0 for memory region, 1 for GPMC register region A29-A0: 1 GBytes max";
+    };
+
+    constants errornotsuppadd_status width(1) "" {
+        ERRORNOTSUPPADD_0 = 0 "No error occurs";
+        ERRORNOTSUPPADD_1 = 1 "The error is due to a non supported Address";
+    };
+
+    constants errortimeout_status width(1) "" {
+        ERRORTIMEOUT_0 = 0 "No error occurs";
+        ERRORTIMEOUT_1 = 1 "The error is due to a time out";
+    };
+
+    constants errorvalid_status width(1) "" {
+        ERRORVALID_0 = 0 "All error fields no longer valid";
+        ERRORVALID_1 = 1 "Error detected and logged in the other error fields";
+    };
+    
+    register gpmc_err_type addr(base, 0x48) "The register stores the type of error when an error occurs" {
+        _ 21 mbz;
+        illegalmcmd 3 ro "System Command of the transaction that caused the error";
+        _ 3 mbz;
+        errornotsuppadd 1 ro type(errornotsuppadd_status) "Not supported Address error";
+        errornotsuppmcmd 1 ro type(errornotsuppadd_status) "Not supported Command error";
+        errortimeout 1 ro type(errortimeout_status) "Time-out error";
+        _ 1 mbz;
+        errorvalid 1 rw type(errorvalid_status) "Error validity status - Must be explicitly cleared with a write 1 transaction";
+    };
+
+    constants wait2pinpolarity_status width(1) "" {
+        WAIT2PINPOLARITY_0 = 0 "WAIT2 active low";
+        WAIT2PINPOLARITY_1 = 1 "WAIT2 active high";
+    };
+
+    constants wait1pinpolarity_status width(1) "" {
+        WAIT1PINPOLARITY_0 = 0 "WAIT1 active low";
+        WAIT1PINPOLARITY_1 = 1 "WAIT1 active high";
+    };
+
+    constants wait0pinpolarity_status width(1) "" {
+        WAIT0PINPOLARITY_0 = 0 "WAIT0 active low";
+        WAIT0PINPOLARITY_1 = 1 "WAIT0 active high";
+    };
+
+    constants writeprotect_status width(1) "" {
+        WRITEPROTECT_0 = 0 "WP output pin is low";
+        WRITEPROTECT_1 = 1 "WP output pin is high";
+    };
+
+    constants limitedaddress_status width(1) "" {
+        LIMITEDADDRESS_0 = 0 "No effect";
+        LIMITEDADDRESS_1 = 1 "A26-A11 are not modified during an external memory access.";
+    };
+
+    constants nandforcepostedwrite_status width(1) "" {
+        NANDFORCEPOSTEDWRITE_0 = 0 "Disables Force Posted Write";
+        NANDFORCEPOSTEDWRITE_1 = 1 "Enables Force Posted Write";
+    };
+    
+    register gpmc_config addr(base, 0x50) "The configuration register allows global configuration of the GPMC" {
+        _ 21 rsvd;
+        wait2pinpolarity 1 rw type(wait2pinpolarity_status) "Selects the polarity of input pin WAIT2";
+        wait1pinpolarity 1 rw type(wait1pinpolarity_status) "Selects the polarity of input pin WAIT1";
+        wait0pinpolarity 1 rw type(wait0pinpolarity_status) "Selects the polarity of input pin WAIT0";
+        _ 3 mbz;
+        writeprotect 1 rw type(writeprotect_status) "Controls the WP output pin level";
+        _ 2 mbz;
+        limitedaddress 1 rw type(limitedaddress_status) "Limited Address device support";
+        nandforcepostedwrite 1 rw type(nandforcepostedwrite_status) "Enables the Force Posted Write feature to NAND Cmd/Add/Data location";
+    };
+
+    constants wait2status_status width(1) "" {
+        WAIT2STATUS_0 = 0 "WAIT2 asserted (inactive state)";
+        WAIT2STATUS_1 = 1 "WAIT2 deasserted";
+    };
+
+    constants wait1status_status width(1) "" {
+        WAIT1STATUS_0 = 0 "WAIT1 asserted (inactive state)";
+        WAIT1STATUS_1 = 1 "WAIT1 deasserted";
+    };
+
+    constants wait0status_status width(1) "" {
+        WAIT0STATUS_0 = 0 "WAIT0 asserted (inactive state)";
+        WAIT0STATUS_1 = 1 "WAIT0 deasserted";
+    };
+
+    constants emptywritebufferstatus_status width(1) "" {
+        EMPTYWRITEBUFFERSTATUS_0 = 0 "Write Buffer is not empty";
+        EMPTYWRITEBUFFERSTATUS_1 = 1 "Write Buffer is empty";
+    };
+    
+    register gpmc_status addr(base, 0x54) "The status register provides global status bits of the GPMC" {
+        _ 21 mbz;
+        wait2status 1 ro type(wait2status_status) "Is a copy of input pin WAIT2. (Reset value is WAIT2 input pin sampled at IC reset)";
+        wait1status 1 ro type(wait1status_status) "Is a copy of input pin WAIT1. (Reset value is WAIT1 input pin sampled at IC reset)";
+        wait0status 1 ro type(wait0status_status) "Is a copy of input pin WAIT0. (Reset value is WAIT0 input pin sampled at IC reset)";
+        _ 7 mbz;
+        emptywritebufferstatus 1 ro type(emptywritebufferstatus_status) "Stores the empty status of the write buffer";
+    };
+
+    constants wrapburst_status width(1) "" {
+        WRAPBURST_0 = 0 "Synchronous wrapping burst not supported";
+        WRAPBURST_1 = 1 "Synchronous wrapping burst supported";
+    };
+
+    constants readmultiple_status width(1) "" {
+        READMULTIPLE_0 = 0 "Single access";
+        READMULTIPLE_1 = 1 "Multiple access (burst if synchronous, page if asynchronous)";
+    };
+
+    constants readtype_status width(1) "" {
+        READTYPE_0 = 0 "Read Asynchronous";
+        READTYPE_1 = 1 "Read Synchronous";
+    };
+
+    constants writetype_status width(1) "" {
+        WRITETYPE_0 = 0 "Write Asynchronous";
+        WRITETYPE_1 = 1 "Write Synchronous";
+    };
+
+    constants clkactivationtime_status width(2) "" {
+        CLKACTIVATIONTIME_0 = 0 "First rising edge of GPMC_CLK at start access time";
+        CLKACTIVATIONTIME_1 = 1 "First rising edge of GPMC_CLK one GPMC_FCLK cycle after start access time";
+        CLKACTIVATIONTIME_2 = 2 "First rising edge of GPMC_CLK two GPMC_FCLK cycles after start access time";
+        CLKACTIVATIONTIME_3 = 3 "Reserved";
+    };
+
+    constants attacheddevicepage_length_status width(2) "" {
+        ATTACHEDDEVICEPAGE_LENGTH_0 = 0 "4 Words";
+        ATTACHEDDEVICEPAGE_LENGTH_1 = 1 "8 Words";
+        ATTACHEDDEVICEPAGE_LENGTH_2 = 2 "16 Words";
+        ATTACHEDDEVICEPAGE_LENGTH_3 = 3 "Reserved (1 Word = Interface size)";
+    };
+
+    constants waitreadmonitoring_status width(1) "" {
+        WAITREADMONITORING_0 = 0 "Wait pin is not monitored for read accesses";
+        WAITREADMONITORING_1 = 1 "Wait pin is monitored for read accesses";
+    };
+
+    constants waitwritemonitoring_status width(1) "" {
+        WAITWRITEMONITORING_0 = 0 "Wait pin is not monitored for write accesses";
+        WAITWRITEMONITORING_1 = 1 "Wait pin is monitored for write accesses";
+    };
+
+    constants waitmonitoringtime_status width(2) "" {
+        WAITMONITORINGTIME_0 = 0 "Wait pin is monitored with valid data";
+        WAITMONITORINGTIME_1 = 1 "Wait pin is monitored one GPMC_CLK cycle before valid data";
+        WAITMONITORINGTIME_2 = 2 "Wait pin is monitored two GPMC_CLK cycle before valid data";
+        WAITMONITORINGTIME_3 = 3 "Reserved";
+    };
+
+    constants waitpinselect_status width(2) "" {
+        WAITPINSELECT_0 = 0 "Wait input pin is WAIT0";
+        WAITPINSELECT_1 = 1 "Wait input pin is WAIT1";
+        WAITPINSELECT_2 = 2 "Wait input pin is WAIT2";
+        WAITPINSELECT_3 = 3 "Reserved";
+    };
+
+    constants devicesize_status width(2) "" {
+        DEVICESIZE_0 = 0 "8 bit";
+        DEVICESIZE_1 = 1 "16 bit";
+        DEVICESIZE_2 = 2 "Reserved";
+        DEVICESIZE_3 = 3 "Reserved";
+    };
+
+    constants devicetype_status width(2) "" {
+        DEVICETYPE_0 = 0 "NOR Flash like, asynchronous and synchronous devices";
+        DEVICETYPE_1 = 1 "Reserved";
+        DEVICETYPE_2 = 2 "NAND Flash like devices, stream mode";
+        DEVICETYPE_3 = 3 "Reserved";
+    };
+
+    constants muxadddata_status width(2) "" {
+        MUXADDDATA_0 = 0 "Non-multiplexed attached device";
+        MUXADDDATA_1 = 1 "AAD-mux protocol device";
+        MUXADDDATA_2 = 2 "Address and data multiplexed attached device";
+        MUXADDDATA_3 = 3 "Reserved";
+    };
+
+    constants timeparagranularity_status width(1) "" {
+        TIMEPARAGRANULARITY_0 = 0 "x1 latencies";
+        TIMEPARAGRANULARITY_1 = 1 "x2 latencies";
+    };
+
+    constants gpmcfclkdivider_status width(2) "" {
+        GPMCFCLKDIVIDER_0 = 0 "GPMC_CLK frequency = GPMC_FCLK frequency";
+        GPMCFCLKDIVIDER_1 = 1 "GPMC_CLK frequency = GPMC_FCLK frequency / 2";
+        GPMCFCLKDIVIDER_2 = 2 "GPMC_CLK frequency = GPMC_FCLK frequency / 3";
+        GPMCFCLKDIVIDER_3 = 3 "GPMC_CLK frequency = GPMC_FCLK frequency /4";
+    };
+    
+    register gpmc_config1_i_0 addr(base, 0x60) "The configuration register 1 sets signal control parameters per chip-select" {
+        wrapburst 1 rw type(wrapburst_status) "Enables the wrapping burst capability. Must be set if the attached device is configured in wrapping burst";
+        readmultiple 1 rw type(readmultiple_status) "Selects the read single or multiple access";
+        readtype 1 rw type(readtype_status) "Selects the read mode operation";
+        writemultiple 1 rw type(readmultiple_status) "Selects the write single or multiple access";
+        writetype 1 rw type(writetype_status) "Selects the write mode operation";
+        clkactivationtime 2 rw type(clkactivationtime_status) "Output GPMC_CLK activation time";
+        attacheddevicepage_length 2 rw type(attacheddevicepage_length_status) "Specifies the attached device page (burst) length";
+        waitreadmonitoring 1 rw type(waitreadmonitoring_status) "Selects the Wait monitoring configuration for Read accesses (Reset value is input pin sampled at IC reset)";
+        waitwritemonitoring 1 rw type(waitwritemonitoring_status) "Selects the Wait monitoring configuration for Write accesses";
+        _ 1 mbz;
+        waitmonitoringtime 2 rw type(waitmonitoringtime_status) "Selects input pin Wait monitoring time";
+        waitpinselect 2 rw type(waitpinselect_status) "Selects the input WAIT pin for this chip-select (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-7)";
+        _ 2 mbz;
+        devicesize 2 rw type(devicesize_status) "Selects the device size attached (Reset value is input pin sampled at IC reset for CS0 and 0x1 for CS1 to CS7)";
+        devicetype 2 rw type(devicetype_status) "Selects the attached device type";
+        muxadddata 2 rw type(muxadddata_status) "Enables the address and data multiplexed protocol (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-CS7)";
+        _ 3 mbz;
+        timeparagranularity 1 rw type(timeparagranularity_status) "Signals timing latencies scalar factor (RD/WRCYCLETIME, RD/WRACCESSTIME, PAGEBURSTACCESSTIME, CSONTIME, CSRD/WROFFTIME, ADVONTIME, ADVRD/WROFFTIME, OEONTIME, OEOFFTIME, WEONTIME, WEOFFTIME, CYCLE2CYCLEDELAY, BUSTURNAROUND, TIMEOUTSTARTVALUE, WRDATAONADMUXBUS)";
+        _ 2 mbz;
+        gpmcfclkdivider 2 rw type(gpmcfclkdivider_status) "Divides the GPMC_FCLK clock";
+    };
+    
+    register gpmc_config1_i_1 addr(base, 0x90) "The configuration register 1 sets signal control parameters per chip-select" {
+        wrapburst 1 rw type(wrapburst_status) "Enables the wrapping burst capability. Must be set if the attached device is configured in wrapping burst";
+        readmultiple 1 rw type(readmultiple_status) "Selects the read single or multiple access";
+        readtype 1 rw type(readtype_status) "Selects the read mode operation";
+        writemultiple 1 rw type(readmultiple_status) "Selects the write single or multiple access";
+        writetype 1 rw type(writetype_status) "Selects the write mode operation";
+        clkactivationtime 2 rw type(clkactivationtime_status) "Output GPMC_CLK activation time";
+        attacheddevicepage_length 2 rw type(attacheddevicepage_length_status) "Specifies the attached device page (burst) length";
+        waitreadmonitoring 1 rw type(waitreadmonitoring_status) "Selects the Wait monitoring configuration for Read accesses (Reset value is input pin sampled at IC reset)";
+        waitwritemonitoring 1 rw type(waitwritemonitoring_status) "Selects the Wait monitoring configuration for Write accesses";
+        _ 1 mbz;
+        waitmonitoringtime 2 rw type(waitmonitoringtime_status) "Selects input pin Wait monitoring time";
+        waitpinselect 2 rw type(waitpinselect_status) "Selects the input WAIT pin for this chip-select (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-7)";
+        _ 2 mbz;
+        devicesize 2 rw type(devicesize_status) "Selects the device size attached (Reset value is input pin sampled at IC reset for CS0 and 0x1 for CS1 to CS7)";
+        devicetype 2 rw type(devicetype_status) "Selects the attached device type";
+        muxadddata 2 rw type(muxadddata_status) "Enables the address and data multiplexed protocol (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-CS7)";
+        _ 3 mbz;
+        timeparagranularity 1 rw type(timeparagranularity_status) "Signals timing latencies scalar factor (RD/WRCYCLETIME, RD/WRACCESSTIME, PAGEBURSTACCESSTIME, CSONTIME, CSRD/WROFFTIME, ADVONTIME, ADVRD/WROFFTIME, OEONTIME, OEOFFTIME, WEONTIME, WEOFFTIME, CYCLE2CYCLEDELAY, BUSTURNAROUND, TIMEOUTSTARTVALUE, WRDATAONADMUXBUS)";
+        _ 2 mbz;
+        gpmcfclkdivider 2 rw type(gpmcfclkdivider_status) "Divides the GPMC_FCLK clock";
+    };
+    
+    register gpmc_config1_i_2 addr(base, 0xC0) "The configuration register 1 sets signal control parameters per chip-select" {
+        wrapburst 1 rw type(wrapburst_status) "Enables the wrapping burst capability. Must be set if the attached device is configured in wrapping burst";
+        readmultiple 1 rw type(readmultiple_status) "Selects the read single or multiple access";
+        readtype 1 rw type(readtype_status) "Selects the read mode operation";
+        writemultiple 1 rw type(readmultiple_status) "Selects the write single or multiple access";
+        writetype 1 rw type(writetype_status) "Selects the write mode operation";
+        clkactivationtime 2 rw type(clkactivationtime_status) "Output GPMC_CLK activation time";
+        attacheddevicepage_length 2 rw type(attacheddevicepage_length_status) "Specifies the attached device page (burst) length";
+        waitreadmonitoring 1 rw type(waitreadmonitoring_status) "Selects the Wait monitoring configuration for Read accesses (Reset value is input pin sampled at IC reset)";
+        waitwritemonitoring 1 rw type(waitwritemonitoring_status) "Selects the Wait monitoring configuration for Write accesses";
+        _ 1 mbz;
+        waitmonitoringtime 2 rw type(waitmonitoringtime_status) "Selects input pin Wait monitoring time";
+        waitpinselect 2 rw type(waitpinselect_status) "Selects the input WAIT pin for this chip-select (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-7)";
+        _ 2 mbz;
+        devicesize 2 rw type(devicesize_status) "Selects the device size attached (Reset value is input pin sampled at IC reset for CS0 and 0x1 for CS1 to CS7)";
+        devicetype 2 rw type(devicetype_status) "Selects the attached device type";
+        muxadddata 2 rw type(muxadddata_status) "Enables the address and data multiplexed protocol (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-CS7)";
+        _ 3 mbz;
+        timeparagranularity 1 rw type(timeparagranularity_status) "Signals timing latencies scalar factor (RD/WRCYCLETIME, RD/WRACCESSTIME, PAGEBURSTACCESSTIME, CSONTIME, CSRD/WROFFTIME, ADVONTIME, ADVRD/WROFFTIME, OEONTIME, OEOFFTIME, WEONTIME, WEOFFTIME, CYCLE2CYCLEDELAY, BUSTURNAROUND, TIMEOUTSTARTVALUE, WRDATAONADMUXBUS)";
+        _ 2 mbz;
+        gpmcfclkdivider 2 rw type(gpmcfclkdivider_status) "Divides the GPMC_FCLK clock";
+    };
+    
+    register gpmc_config1_i_3 addr(base, 0xF0) "The configuration register 1 sets signal control parameters per chip-select" {
+        wrapburst 1 rw type(wrapburst_status) "Enables the wrapping burst capability. Must be set if the attached device is configured in wrapping burst";
+        readmultiple 1 rw type(readmultiple_status) "Selects the read single or multiple access";
+        readtype 1 rw type(readtype_status) "Selects the read mode operation";
+        writemultiple 1 rw type(readmultiple_status) "Selects the write single or multiple access";
+        writetype 1 rw type(writetype_status) "Selects the write mode operation";
+        clkactivationtime 2 rw type(clkactivationtime_status) "Output GPMC_CLK activation time";
+        attacheddevicepage_length 2 rw type(attacheddevicepage_length_status) "Specifies the attached device page (burst) length";
+        waitreadmonitoring 1 rw type(waitreadmonitoring_status) "Selects the Wait monitoring configuration for Read accesses (Reset value is input pin sampled at IC reset)";
+        waitwritemonitoring 1 rw type(waitwritemonitoring_status) "Selects the Wait monitoring configuration for Write accesses";
+        _ 1 mbz;
+        waitmonitoringtime 2 rw type(waitmonitoringtime_status) "Selects input pin Wait monitoring time";
+        waitpinselect 2 rw type(waitpinselect_status) "Selects the input WAIT pin for this chip-select (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-7)";
+        _ 2 mbz;
+        devicesize 2 rw type(devicesize_status) "Selects the device size attached (Reset value is input pin sampled at IC reset for CS0 and 0x1 for CS1 to CS7)";
+        devicetype 2 rw type(devicetype_status) "Selects the attached device type";
+        muxadddata 2 rw type(muxadddata_status) "Enables the address and data multiplexed protocol (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-CS7)";
+        _ 3 mbz;
+        timeparagranularity 1 rw type(timeparagranularity_status) "Signals timing latencies scalar factor (RD/WRCYCLETIME, RD/WRACCESSTIME, PAGEBURSTACCESSTIME, CSONTIME, CSRD/WROFFTIME, ADVONTIME, ADVRD/WROFFTIME, OEONTIME, OEOFFTIME, WEONTIME, WEOFFTIME, CYCLE2CYCLEDELAY, BUSTURNAROUND, TIMEOUTSTARTVALUE, WRDATAONADMUXBUS)";
+        _ 2 mbz;
+        gpmcfclkdivider 2 rw type(gpmcfclkdivider_status) "Divides the GPMC_FCLK clock";
+    };
+    
+    register gpmc_config1_i_4 addr(base, 0x120) "The configuration register 1 sets signal control parameters per chip-select" {
+        wrapburst 1 rw type(wrapburst_status) "Enables the wrapping burst capability. Must be set if the attached device is configured in wrapping burst";
+        readmultiple 1 rw type(readmultiple_status) "Selects the read single or multiple access";
+        readtype 1 rw type(readtype_status) "Selects the read mode operation";
+        writemultiple 1 rw type(readmultiple_status) "Selects the write single or multiple access";
+        writetype 1 rw type(writetype_status) "Selects the write mode operation";
+        clkactivationtime 2 rw type(clkactivationtime_status) "Output GPMC_CLK activation time";
+        attacheddevicepage_length 2 rw type(attacheddevicepage_length_status) "Specifies the attached device page (burst) length";
+        waitreadmonitoring 1 rw type(waitreadmonitoring_status) "Selects the Wait monitoring configuration for Read accesses (Reset value is input pin sampled at IC reset)";
+        waitwritemonitoring 1 rw type(waitwritemonitoring_status) "Selects the Wait monitoring configuration for Write accesses";
+        _ 1 mbz;
+        waitmonitoringtime 2 rw type(waitmonitoringtime_status) "Selects input pin Wait monitoring time";
+        waitpinselect 2 rw type(waitpinselect_status) "Selects the input WAIT pin for this chip-select (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-7)";
+        _ 2 mbz;
+        devicesize 2 rw type(devicesize_status) "Selects the device size attached (Reset value is input pin sampled at IC reset for CS0 and 0x1 for CS1 to CS7)";
+        devicetype 2 rw type(devicetype_status) "Selects the attached device type";
+        muxadddata 2 rw type(muxadddata_status) "Enables the address and data multiplexed protocol (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-CS7)";
+        _ 3 mbz;
+        timeparagranularity 1 rw type(timeparagranularity_status) "Signals timing latencies scalar factor (RD/WRCYCLETIME, RD/WRACCESSTIME, PAGEBURSTACCESSTIME, CSONTIME, CSRD/WROFFTIME, ADVONTIME, ADVRD/WROFFTIME, OEONTIME, OEOFFTIME, WEONTIME, WEOFFTIME, CYCLE2CYCLEDELAY, BUSTURNAROUND, TIMEOUTSTARTVALUE, WRDATAONADMUXBUS)";
+        _ 2 mbz;
+        gpmcfclkdivider 2 rw type(gpmcfclkdivider_status) "Divides the GPMC_FCLK clock";
+    };
+    
+    register gpmc_config1_i_5 addr(base, 0x150) "The configuration register 1 sets signal control parameters per chip-select" {
+        wrapburst 1 rw type(wrapburst_status) "Enables the wrapping burst capability. Must be set if the attached device is configured in wrapping burst";
+        readmultiple 1 rw type(readmultiple_status) "Selects the read single or multiple access";
+        readtype 1 rw type(readtype_status) "Selects the read mode operation";
+        writemultiple 1 rw type(readmultiple_status) "Selects the write single or multiple access";
+        writetype 1 rw type(writetype_status) "Selects the write mode operation";
+        clkactivationtime 2 rw type(clkactivationtime_status) "Output GPMC_CLK activation time";
+        attacheddevicepage_length 2 rw type(attacheddevicepage_length_status) "Specifies the attached device page (burst) length";
+        waitreadmonitoring 1 rw type(waitreadmonitoring_status) "Selects the Wait monitoring configuration for Read accesses (Reset value is input pin sampled at IC reset)";
+        waitwritemonitoring 1 rw type(waitwritemonitoring_status) "Selects the Wait monitoring configuration for Write accesses";
+        _ 1 mbz;
+        waitmonitoringtime 2 rw type(waitmonitoringtime_status) "Selects input pin Wait monitoring time";
+        waitpinselect 2 rw type(waitpinselect_status) "Selects the input WAIT pin for this chip-select (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-7)";
+        _ 2 mbz;
+        devicesize 2 rw type(devicesize_status) "Selects the device size attached (Reset value is input pin sampled at IC reset for CS0 and 0x1 for CS1 to CS7)";
+        devicetype 2 rw type(devicetype_status) "Selects the attached device type";
+        muxadddata 2 rw type(muxadddata_status) "Enables the address and data multiplexed protocol (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-CS7)";
+        _ 3 mbz;
+        timeparagranularity 1 rw type(timeparagranularity_status) "Signals timing latencies scalar factor (RD/WRCYCLETIME, RD/WRACCESSTIME, PAGEBURSTACCESSTIME, CSONTIME, CSRD/WROFFTIME, ADVONTIME, ADVRD/WROFFTIME, OEONTIME, OEOFFTIME, WEONTIME, WEOFFTIME, CYCLE2CYCLEDELAY, BUSTURNAROUND, TIMEOUTSTARTVALUE, WRDATAONADMUXBUS)";
+        _ 2 mbz;
+        gpmcfclkdivider 2 rw type(gpmcfclkdivider_status) "Divides the GPMC_FCLK clock";
+    };
+    
+    register gpmc_config1_i_6 addr(base, 0x180) "The configuration register 1 sets signal control parameters per chip-select" {
+        wrapburst 1 rw type(wrapburst_status) "Enables the wrapping burst capability. Must be set if the attached device is configured in wrapping burst";
+        readmultiple 1 rw type(readmultiple_status) "Selects the read single or multiple access";
+        readtype 1 rw type(readtype_status) "Selects the read mode operation";
+        writemultiple 1 rw type(readmultiple_status) "Selects the write single or multiple access";
+        writetype 1 rw type(writetype_status) "Selects the write mode operation";
+        clkactivationtime 2 rw type(clkactivationtime_status) "Output GPMC_CLK activation time";
+        attacheddevicepage_length 2 rw type(attacheddevicepage_length_status) "Specifies the attached device page (burst) length";
+        waitreadmonitoring 1 rw type(waitreadmonitoring_status) "Selects the Wait monitoring configuration for Read accesses (Reset value is input pin sampled at IC reset)";
+        waitwritemonitoring 1 rw type(waitwritemonitoring_status) "Selects the Wait monitoring configuration for Write accesses";
+        _ 1 mbz;
+        waitmonitoringtime 2 rw type(waitmonitoringtime_status) "Selects input pin Wait monitoring time";
+        waitpinselect 2 rw type(waitpinselect_status) "Selects the input WAIT pin for this chip-select (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-7)";
+        _ 2 mbz;
+        devicesize 2 rw type(devicesize_status) "Selects the device size attached (Reset value is input pin sampled at IC reset for CS0 and 0x1 for CS1 to CS7)";
+        devicetype 2 rw type(devicetype_status) "Selects the attached device type";
+        muxadddata 2 rw type(muxadddata_status) "Enables the address and data multiplexed protocol (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-CS7)";
+        _ 3 mbz;
+        timeparagranularity 1 rw type(timeparagranularity_status) "Signals timing latencies scalar factor (RD/WRCYCLETIME, RD/WRACCESSTIME, PAGEBURSTACCESSTIME, CSONTIME, CSRD/WROFFTIME, ADVONTIME, ADVRD/WROFFTIME, OEONTIME, OEOFFTIME, WEONTIME, WEOFFTIME, CYCLE2CYCLEDELAY, BUSTURNAROUND, TIMEOUTSTARTVALUE, WRDATAONADMUXBUS)";
+        _ 2 mbz;
+        gpmcfclkdivider 2 rw type(gpmcfclkdivider_status) "Divides the GPMC_FCLK clock";
+    };
+    
+    register gpmc_config1_i_7 addr(base, 0x1B0) "The configuration register 1 sets signal control parameters per chip-select" {
+        wrapburst 1 rw type(wrapburst_status) "Enables the wrapping burst capability. Must be set if the attached device is configured in wrapping burst";
+        readmultiple 1 rw type(readmultiple_status) "Selects the read single or multiple access";
+        readtype 1 rw type(readtype_status) "Selects the read mode operation";
+        writemultiple 1 rw type(readmultiple_status) "Selects the write single or multiple access";
+        writetype 1 rw type(writetype_status) "Selects the write mode operation";
+        clkactivationtime 2 rw type(clkactivationtime_status) "Output GPMC_CLK activation time";
+        attacheddevicepage_length 2 rw type(attacheddevicepage_length_status) "Specifies the attached device page (burst) length";
+        waitreadmonitoring 1 rw type(waitreadmonitoring_status) "Selects the Wait monitoring configuration for Read accesses (Reset value is input pin sampled at IC reset)";
+        waitwritemonitoring 1 rw type(waitwritemonitoring_status) "Selects the Wait monitoring configuration for Write accesses";
+        _ 1 mbz;
+        waitmonitoringtime 2 rw type(waitmonitoringtime_status) "Selects input pin Wait monitoring time";
+        waitpinselect 2 rw type(waitpinselect_status) "Selects the input WAIT pin for this chip-select (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-7)";
+        _ 2 mbz;
+        devicesize 2 rw type(devicesize_status) "Selects the device size attached (Reset value is input pin sampled at IC reset for CS0 and 0x1 for CS1 to CS7)";
+        devicetype 2 rw type(devicetype_status) "Selects the attached device type";
+        muxadddata 2 rw type(muxadddata_status) "Enables the address and data multiplexed protocol (Reset value is input pin sampled at IC reset for CS0 and 0 for CS1-CS7)";
+        _ 3 mbz;
+        timeparagranularity 1 rw type(timeparagranularity_status) "Signals timing latencies scalar factor (RD/WRCYCLETIME, RD/WRACCESSTIME, PAGEBURSTACCESSTIME, CSONTIME, CSRD/WROFFTIME, ADVONTIME, ADVRD/WROFFTIME, OEONTIME, OEOFFTIME, WEONTIME, WEOFFTIME, CYCLE2CYCLEDELAY, BUSTURNAROUND, TIMEOUTSTARTVALUE, WRDATAONADMUXBUS)";
+        _ 2 mbz;
+        gpmcfclkdivider 2 rw type(gpmcfclkdivider_status) "Divides the GPMC_FCLK clock";
+    };
+
+    constants csextradelay_status width(1) "" {
+        CSEXTRADELAY_0 = 0 "CS i Timing control signal is not delayed";
+        CSEXTRADELAY_1 = 1 "CS i Timing control signal is delayed of half GPMC_FCLK clock cycle";
+    };
+    
+    register gpmc_config2_i_0 addr(base, 0x64) "CS signal timing parameter configuration" {
+        _ 11 mbz;
+        cswrofftime 5 rw "CS i de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        csrdofftime 5 rw "CS i de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        csextradelay 1 rw type(csextradelay_status) "CS i Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        csontime 4 rw "CS i assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config2_i_1 addr(base, 0x94) "CS signal timing parameter configuration" {
+        _ 11 mbz;
+        cswrofftime 5 rw "CS i de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        csrdofftime 5 rw "CS i de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        csextradelay 1 rw type(csextradelay_status) "CS i Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        csontime 4 rw "CS i assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config2_i_2 addr(base, 0xC4) "CS signal timing parameter configuration" {
+        _ 11 mbz;
+        cswrofftime 5 rw "CS i de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        csrdofftime 5 rw "CS i de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        csextradelay 1 rw type(csextradelay_status) "CS i Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        csontime 4 rw "CS i assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config2_i_3 addr(base, 0xF4) "CS signal timing parameter configuration" {
+        _ 11 mbz;
+        cswrofftime 5 rw "CS i de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        csrdofftime 5 rw "CS i de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        csextradelay 1 rw type(csextradelay_status) "CS i Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        csontime 4 rw "CS i assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config2_i_4 addr(base, 0x124) "CS signal timing parameter configuration" {
+        _ 11 mbz;
+        cswrofftime 5 rw "CS i de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        csrdofftime 5 rw "CS i de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        csextradelay 1 rw type(csextradelay_status) "CS i Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        csontime 4 rw "CS i assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config2_i_5 addr(base, 0x154) "CS signal timing parameter configuration" {
+        _ 11 mbz;
+        cswrofftime 5 rw "CS i de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        csrdofftime 5 rw "CS i de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        csextradelay 1 rw type(csextradelay_status) "CS i Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        csontime 4 rw "CS i assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config2_i_6 addr(base, 0x184) "CS signal timing parameter configuration" {
+        _ 11 mbz;
+        cswrofftime 5 rw "CS i de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        csrdofftime 5 rw "CS i de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        csextradelay 1 rw type(csextradelay_status) "CS i Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        csontime 4 rw "CS i assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config2_i_7 addr(base, 0x1B4) "CS signal timing parameter configuration" {
+        _ 11 mbz;
+        cswrofftime 5 rw "CS i de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        csrdofftime 5 rw "CS i de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        csextradelay 1 rw type(csextradelay_status) "CS i Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        csontime 4 rw "CS i assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+
+    constants advextradelay_status width(1) "" {
+        ADVEXTRADELAY_0 = 0 "nADV Timing control signal is not delayed";
+        ADVEXTRADELAY_1 = 1 "nADV Timing control signal is delayed of half GPMC_FCLK clock cycle";
+    };
+    
+    register gpmc_config3_i_0 addr(base, 0x68) "nADV signal timing parameter configuration" {
+        _ 1 mbz;
+        advaadmuxwrofftime 3 rw "nADV de-assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 1 mbz;
+        advaadmuxrdofftime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advwrofftime 5 rw "nADV de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advrdofftime 5 rw "nADV de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        advextradelay 1 rw type(advextradelay_status) "nADV Add Extra Half GPMC_FCLK cycle";
+        advaadmuxontime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        advontime 4 rw "nADV assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config3_i_1 addr(base, 0x98) "nADV signal timing parameter configuration" {
+        _ 1 mbz;
+        advaadmuxwrofftime 3 rw "nADV de-assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 1 mbz;
+        advaadmuxrdofftime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advwrofftime 5 rw "nADV de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advrdofftime 5 rw "nADV de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        advextradelay 1 rw type(advextradelay_status) "nADV Add Extra Half GPMC_FCLK cycle";
+        advaadmuxontime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        advontime 4 rw "nADV assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config3_i_2 addr(base, 0xC8) "nADV signal timing parameter configuration" {
+        _ 1 mbz;
+        advaadmuxwrofftime 3 rw "nADV de-assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 1 mbz;
+        advaadmuxrdofftime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advwrofftime 5 rw "nADV de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advrdofftime 5 rw "nADV de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        advextradelay 1 rw type(advextradelay_status) "nADV Add Extra Half GPMC_FCLK cycle";
+        advaadmuxontime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        advontime 4 rw "nADV assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config3_i_3 addr(base, 0xF8) "nADV signal timing parameter configuration" {
+        _ 1 mbz;
+        advaadmuxwrofftime 3 rw "nADV de-assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 1 mbz;
+        advaadmuxrdofftime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advwrofftime 5 rw "nADV de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advrdofftime 5 rw "nADV de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        advextradelay 1 rw type(advextradelay_status) "nADV Add Extra Half GPMC_FCLK cycle";
+        advaadmuxontime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        advontime 4 rw "nADV assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config3_i_4 addr(base, 0x128) "nADV signal timing parameter configuration" {
+        _ 1 mbz;
+        advaadmuxwrofftime 3 rw "nADV de-assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 1 mbz;
+        advaadmuxrdofftime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advwrofftime 5 rw "nADV de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advrdofftime 5 rw "nADV de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        advextradelay 1 rw type(advextradelay_status) "nADV Add Extra Half GPMC_FCLK cycle";
+        advaadmuxontime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        advontime 4 rw "nADV assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config3_i_5 addr(base, 0x158) "nADV signal timing parameter configuration" {
+        _ 1 mbz;
+        advaadmuxwrofftime 3 rw "nADV de-assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 1 mbz;
+        advaadmuxrdofftime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advwrofftime 5 rw "nADV de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advrdofftime 5 rw "nADV de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        advextradelay 1 rw type(advextradelay_status) "nADV Add Extra Half GPMC_FCLK cycle";
+        advaadmuxontime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        advontime 4 rw "nADV assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config3_i_6 addr(base, 0x188) "nADV signal timing parameter configuration" {
+        _ 1 mbz;
+        advaadmuxwrofftime 3 rw "nADV de-assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 1 mbz;
+        advaadmuxrdofftime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advwrofftime 5 rw "nADV de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advrdofftime 5 rw "nADV de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        advextradelay 1 rw type(advextradelay_status) "nADV Add Extra Half GPMC_FCLK cycle";
+        advaadmuxontime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        advontime 4 rw "nADV assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config3_i_7 addr(base, 0x1B8) "nADV signal timing parameter configuration" {
+        _ 1 mbz;
+        advaadmuxwrofftime 3 rw "nADV de-assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 1 mbz;
+        advaadmuxrdofftime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advwrofftime 5 rw "nADV de-assertion time from start cycle time for write accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        advrdofftime 5 rw "nADV de-assertion time from start cycle time for read accesses 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        advextradelay 1 rw type(advextradelay_status) "nADV Add Extra Half GPMC_FCLK cycle";
+        advaadmuxontime 3 rw "nADV assertion for first address phase when using the AAD-mux protocol 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        advontime 4 rw "nADV assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config4_i_0 addr(base, 0x6C) "nWE and nOE signals timing parameter configuration" {
+        _ 3 rsvd;
+        weofftime 5 rw "nWE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        weextradelay 1 rw type(advextradelay_status) "nWE Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        weontime 4 rw "nWE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        oeaadmux_offtime 3 rw "nOE de-assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeofftime 5 rw "nOE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        oeextradelay 1 rw type(advextradelay_status) "nOE Add Extra Half GPMC_FCLK cycle";
+        oeaadmux_ontime 3 rw "nOE assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeontime 4 rw "nOE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config4_i_1 addr(base, 0x9C) "nWE and nOE signals timing parameter configuration" {
+        _ 3 rsvd;
+        weofftime 5 rw "nWE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        weextradelay 1 rw type(advextradelay_status) "nWE Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        weontime 4 rw "nWE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        oeaadmux_offtime 3 rw "nOE de-assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeofftime 5 rw "nOE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        oeextradelay 1 rw type(advextradelay_status) "nOE Add Extra Half GPMC_FCLK cycle";
+        oeaadmux_ontime 3 rw "nOE assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeontime 4 rw "nOE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config4_i_2 addr(base, 0xCC) "nWE and nOE signals timing parameter configuration" {
+        _ 3 rsvd;
+        weofftime 5 rw "nWE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        weextradelay 1 rw type(advextradelay_status) "nWE Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        weontime 4 rw "nWE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        oeaadmux_offtime 3 rw "nOE de-assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeofftime 5 rw "nOE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        oeextradelay 1 rw type(advextradelay_status) "nOE Add Extra Half GPMC_FCLK cycle";
+        oeaadmux_ontime 3 rw "nOE assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeontime 4 rw "nOE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config4_i_3 addr(base, 0xFC) "nWE and nOE signals timing parameter configuration" {
+        _ 3 rsvd;
+        weofftime 5 rw "nWE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        weextradelay 1 rw type(advextradelay_status) "nWE Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        weontime 4 rw "nWE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        oeaadmux_offtime 3 rw "nOE de-assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeofftime 5 rw "nOE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        oeextradelay 1 rw type(advextradelay_status) "nOE Add Extra Half GPMC_FCLK cycle";
+        oeaadmux_ontime 3 rw "nOE assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeontime 4 rw "nOE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config4_i_4 addr(base, 0x12C) "nWE and nOE signals timing parameter configuration" {
+        _ 3 rsvd;
+        weofftime 5 rw "nWE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        weextradelay 1 rw type(advextradelay_status) "nWE Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        weontime 4 rw "nWE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        oeaadmux_offtime 3 rw "nOE de-assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeofftime 5 rw "nOE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        oeextradelay 1 rw type(advextradelay_status) "nOE Add Extra Half GPMC_FCLK cycle";
+        oeaadmux_ontime 3 rw "nOE assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeontime 4 rw "nOE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config4_i_5 addr(base, 0x15C) "nWE and nOE signals timing parameter configuration" {
+        _ 3 rsvd;
+        weofftime 5 rw "nWE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        weextradelay 1 rw type(advextradelay_status) "nWE Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        weontime 4 rw "nWE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        oeaadmux_offtime 3 rw "nOE de-assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeofftime 5 rw "nOE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        oeextradelay 1 rw type(advextradelay_status) "nOE Add Extra Half GPMC_FCLK cycle";
+        oeaadmux_ontime 3 rw "nOE assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeontime 4 rw "nOE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config4_i_6 addr(base, 0x18C) "nWE and nOE signals timing parameter configuration" {
+        _ 3 rsvd;
+        weofftime 5 rw "nWE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        weextradelay 1 rw type(advextradelay_status) "nWE Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        weontime 4 rw "nWE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        oeaadmux_offtime 3 rw "nOE de-assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeofftime 5 rw "nOE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        oeextradelay 1 rw type(advextradelay_status) "nOE Add Extra Half GPMC_FCLK cycle";
+        oeaadmux_ontime 3 rw "nOE assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeontime 4 rw "nOE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config4_i_7 addr(base, 0x1BC) "nWE and nOE signals timing parameter configuration" {
+        _ 3 rsvd;
+        weofftime 5 rw "nWE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        weextradelay 1 rw type(advextradelay_status) "nWE Add Extra Half GPMC_FCLK cycle";
+        _ 3 mbz;
+        weontime 4 rw "nWE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        oeaadmux_offtime 3 rw "nOE de-assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeofftime 5 rw "nOE de-assertion time from start cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        oeextradelay 1 rw type(advextradelay_status) "nOE Add Extra Half GPMC_FCLK cycle";
+        oeaadmux_ontime 3 rw "nOE assertion time for the first address phase in an AAD-mux access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        oeontime 4 rw "nOE assertion time from start cycle time 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config5_i_0 addr(base, 0x70) "RdAccessTime and CycleTime timing parameters configuration" {
+        _ 4 mbz;
+        pageburstaccesstime 4 rw "Delay between successive words in a multiple access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdaccesstime 5 rw "Delay between start cycle time and first data valid 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        wrcycletime 5 rw "Total write cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdcycletime 5 rw "Total read cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config5_i_1 addr(base, 0xA0) "RdAccessTime and CycleTime timing parameters configuration" {
+        _ 4 mbz;
+        pageburstaccesstime 4 rw "Delay between successive words in a multiple access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdaccesstime 5 rw "Delay between start cycle time and first data valid 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        wrcycletime 5 rw "Total write cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdcycletime 5 rw "Total read cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config5_i_2 addr(base, 0xD0) "RdAccessTime and CycleTime timing parameters configuration" {
+        _ 4 mbz;
+        pageburstaccesstime 4 rw "Delay between successive words in a multiple access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdaccesstime 5 rw "Delay between start cycle time and first data valid 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        wrcycletime 5 rw "Total write cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdcycletime 5 rw "Total read cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config5_i_3 addr(base, 0x100) "RdAccessTime and CycleTime timing parameters configuration" {
+        _ 4 mbz;
+        pageburstaccesstime 4 rw "Delay between successive words in a multiple access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdaccesstime 5 rw "Delay between start cycle time and first data valid 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        wrcycletime 5 rw "Total write cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdcycletime 5 rw "Total read cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config5_i_4 addr(base, 0x130) "RdAccessTime and CycleTime timing parameters configuration" {
+        _ 4 mbz;
+        pageburstaccesstime 4 rw "Delay between successive words in a multiple access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdaccesstime 5 rw "Delay between start cycle time and first data valid 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        wrcycletime 5 rw "Total write cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdcycletime 5 rw "Total read cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config5_i_5 addr(base, 0x160) "RdAccessTime and CycleTime timing parameters configuration" {
+        _ 4 mbz;
+        pageburstaccesstime 4 rw "Delay between successive words in a multiple access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdaccesstime 5 rw "Delay between start cycle time and first data valid 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        wrcycletime 5 rw "Total write cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdcycletime 5 rw "Total read cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config5_i_6 addr(base, 0x190) "RdAccessTime and CycleTime timing parameters configuration" {
+        _ 4 mbz;
+        pageburstaccesstime 4 rw "Delay between successive words in a multiple access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdaccesstime 5 rw "Delay between start cycle time and first data valid 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        wrcycletime 5 rw "Total write cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdcycletime 5 rw "Total read cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config5_i_7 addr(base, 0x1C0) "RdAccessTime and CycleTime timing parameters configuration" {
+        _ 4 mbz;
+        pageburstaccesstime 4 rw "Delay between successive words in a multiple access 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdaccesstime 5 rw "Delay between start cycle time and first data valid 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        wrcycletime 5 rw "Total write cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 3 mbz;
+        rdcycletime 5 rw "Total read cycle time 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+    };
+
+    constants cycle2cyclesamecsen_status width(1) "" {
+        CYCLE2CYCLESAMECSEN_0 = 0 "No delay between the two accesses";
+        CYCLE2CYCLESAMECSEN_1 = 1 "Add CYCLE2CYCLEDELAY";
+    };
+    
+    register gpmc_config6_i_0 addr(base, 0x74) "WrAccessTime, WrDataOnADmuxBus, Cycle2Cycle and BusTurnAround parameters configuration" {
+        _ 1 rsvd;
+        _ 2 mbz;
+        wraccesstime 5 rw "Delay from start access time to the GPMC_FCLK rising edge corresponding the the GPMC_CLK rising edge used by the attached memory for the first data capture 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 4 mbz;
+        wrdataonadmuxbus 4 rw "Specifies on which GPMC_FCLK rising edge the first data of the synchronous burst write is driven in the add/data mux bus";
+        _ 4 mbz;
+        cycle2cycledelay 4 rw "Chip-select high pulse delay between successive accesses 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        cycle2cyclesamecsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to the same CS (any access type)";
+        cycle2cyclediffcsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to a different CS (any access type)";
+        _ 2 mbz;
+        busturnaround 4 rw "Bus turn around latency between successive accesses to the same CS (read to write) or to a different CS (read to read and read to write) 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config6_i_1 addr(base, 0xA4) "WrAccessTime, WrDataOnADmuxBus, Cycle2Cycle and BusTurnAround parameters configuration" {
+        _ 1 rsvd;
+        _ 2 mbz;
+        wraccesstime 5 rw "Delay from start access time to the GPMC_FCLK rising edge corresponding the the GPMC_CLK rising edge used by the attached memory for the first data capture 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 4 mbz;
+        wrdataonadmuxbus 4 rw "Specifies on which GPMC_FCLK rising edge the first data of the synchronous burst write is driven in the add/data mux bus";
+        _ 4 mbz;
+        cycle2cycledelay 4 rw "Chip-select high pulse delay between successive accesses 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        cycle2cyclesamecsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to the same CS (any access type)";
+        cycle2cyclediffcsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to a different CS (any access type)";
+        _ 2 mbz;
+        busturnaround 4 rw "Bus turn around latency between successive accesses to the same CS (read to write) or to a different CS (read to read and read to write) 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config6_i_2 addr(base, 0xD4) "WrAccessTime, WrDataOnADmuxBus, Cycle2Cycle and BusTurnAround parameters configuration" {
+        _ 1 rsvd;
+        _ 2 mbz;
+        wraccesstime 5 rw "Delay from start access time to the GPMC_FCLK rising edge corresponding the the GPMC_CLK rising edge used by the attached memory for the first data capture 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 4 mbz;
+        wrdataonadmuxbus 4 rw "Specifies on which GPMC_FCLK rising edge the first data of the synchronous burst write is driven in the add/data mux bus";
+        _ 4 mbz;
+        cycle2cycledelay 4 rw "Chip-select high pulse delay between successive accesses 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        cycle2cyclesamecsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to the same CS (any access type)";
+        cycle2cyclediffcsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to a different CS (any access type)";
+        _ 2 mbz;
+        busturnaround 4 rw "Bus turn around latency between successive accesses to the same CS (read to write) or to a different CS (read to read and read to write) 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config6_i_3 addr(base, 0x104) "WrAccessTime, WrDataOnADmuxBus, Cycle2Cycle and BusTurnAround parameters configuration" {
+        _ 1 rsvd;
+        _ 2 mbz;
+        wraccesstime 5 rw "Delay from start access time to the GPMC_FCLK rising edge corresponding the the GPMC_CLK rising edge used by the attached memory for the first data capture 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 4 mbz;
+        wrdataonadmuxbus 4 rw "Specifies on which GPMC_FCLK rising edge the first data of the synchronous burst write is driven in the add/data mux bus";
+        _ 4 mbz;
+        cycle2cycledelay 4 rw "Chip-select high pulse delay between successive accesses 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        cycle2cyclesamecsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to the same CS (any access type)";
+        cycle2cyclediffcsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to a different CS (any access type)";
+        _ 2 mbz;
+        busturnaround 4 rw "Bus turn around latency between successive accesses to the same CS (read to write) or to a different CS (read to read and read to write) 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config6_i_4 addr(base, 0x134) "WrAccessTime, WrDataOnADmuxBus, Cycle2Cycle and BusTurnAround parameters configuration" {
+        _ 1 rsvd;
+        _ 2 mbz;
+        wraccesstime 5 rw "Delay from start access time to the GPMC_FCLK rising edge corresponding the the GPMC_CLK rising edge used by the attached memory for the first data capture 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 4 mbz;
+        wrdataonadmuxbus 4 rw "Specifies on which GPMC_FCLK rising edge the first data of the synchronous burst write is driven in the add/data mux bus";
+        _ 4 mbz;
+        cycle2cycledelay 4 rw "Chip-select high pulse delay between successive accesses 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        cycle2cyclesamecsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to the same CS (any access type)";
+        cycle2cyclediffcsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to a different CS (any access type)";
+        _ 2 mbz;
+        busturnaround 4 rw "Bus turn around latency between successive accesses to the same CS (read to write) or to a different CS (read to read and read to write) 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config6_i_5 addr(base, 0x164) "WrAccessTime, WrDataOnADmuxBus, Cycle2Cycle and BusTurnAround parameters configuration" {
+        _ 1 rsvd;
+        _ 2 mbz;
+        wraccesstime 5 rw "Delay from start access time to the GPMC_FCLK rising edge corresponding the the GPMC_CLK rising edge used by the attached memory for the first data capture 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 4 mbz;
+        wrdataonadmuxbus 4 rw "Specifies on which GPMC_FCLK rising edge the first data of the synchronous burst write is driven in the add/data mux bus";
+        _ 4 mbz;
+        cycle2cycledelay 4 rw "Chip-select high pulse delay between successive accesses 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        cycle2cyclesamecsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to the same CS (any access type)";
+        cycle2cyclediffcsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to a different CS (any access type)";
+        _ 2 mbz;
+        busturnaround 4 rw "Bus turn around latency between successive accesses to the same CS (read to write) or to a different CS (read to read and read to write) 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config6_i_6 addr(base, 0x194) "WrAccessTime, WrDataOnADmuxBus, Cycle2Cycle and BusTurnAround parameters configuration" {
+        _ 1 rsvd;
+        _ 2 mbz;
+        wraccesstime 5 rw "Delay from start access time to the GPMC_FCLK rising edge corresponding the the GPMC_CLK rising edge used by the attached memory for the first data capture 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 4 mbz;
+        wrdataonadmuxbus 4 rw "Specifies on which GPMC_FCLK rising edge the first data of the synchronous burst write is driven in the add/data mux bus";
+        _ 4 mbz;
+        cycle2cycledelay 4 rw "Chip-select high pulse delay between successive accesses 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        cycle2cyclesamecsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to the same CS (any access type)";
+        cycle2cyclediffcsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to a different CS (any access type)";
+        _ 2 mbz;
+        busturnaround 4 rw "Bus turn around latency between successive accesses to the same CS (read to write) or to a different CS (read to read and read to write) 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+    
+    register gpmc_config6_i_7 addr(base, 0x1C4) "WrAccessTime, WrDataOnADmuxBus, Cycle2Cycle and BusTurnAround parameters configuration" {
+        _ 1 rsvd;
+        _ 2 mbz;
+        wraccesstime 5 rw "Delay from start access time to the GPMC_FCLK rising edge corresponding the the GPMC_CLK rising edge used by the attached memory for the first data capture 0x00: 0 GPMC_FCLK cycle 0x01: 1 GPMC_FCLK cycle ... 0x1F: 31 GPMC_FCLK cycles";
+        _ 4 mbz;
+        wrdataonadmuxbus 4 rw "Specifies on which GPMC_FCLK rising edge the first data of the synchronous burst write is driven in the add/data mux bus";
+        _ 4 mbz;
+        cycle2cycledelay 4 rw "Chip-select high pulse delay between successive accesses 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+        cycle2cyclesamecsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to the same CS (any access type)";
+        cycle2cyclediffcsen 1 rw type(cycle2cyclesamecsen_status) "Add CYCLE2CYCLEDELAY between successive accesses to a different CS (any access type)";
+        _ 2 mbz;
+        busturnaround 4 rw "Bus turn around latency between successive accesses to the same CS (read to write) or to a different CS (read to read and read to write) 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0xF: 15 GPMC_FCLK cycles";
+    };
+
+    constants csvalid_status width(1) "" {
+        CSVALID_0 = 0 "CS disabled";
+        CSVALID_1 = 1 "CS enabled";
+    };
+    
+    register gpmc_config7_i_0 addr(base, 0x78) "CS address mapping configuration" {
+        _ 20 mbz;
+        maskaddress 4 rw "CS mask address. 0x1000: Chip-select size of 128 Mbytes 0x1100: Chip-select size of 64 Mbytes 0x1110: Chip-select size of 32 Mbytes 0x1111: Chip-select size of 16 Mbytes Other values must be avoided as they create holes in the chip-select address space.";
+        _ 1 mbz;
+        csvalid 1 rw type(csvalid_status) "CS enable";
+        baseaddress 6 rw "CSi base address where i = 0 to 7 (16M bytes minimum granularity) bits [5:0] corresponds to A29, A28, A27, A26, A25, and A24. See";
+    };
+    
+    register gpmc_config7_i_1 addr(base, 0xA8) "CS address mapping configuration" {
+        _ 20 mbz;
+        maskaddress 4 rw "CS mask address. 0x1000: Chip-select size of 128 Mbytes 0x1100: Chip-select size of 64 Mbytes 0x1110: Chip-select size of 32 Mbytes 0x1111: Chip-select size of 16 Mbytes Other values must be avoided as they create holes in the chip-select address space.";
+        _ 1 mbz;
+        csvalid 1 rw type(csvalid_status) "CS enable";
+        baseaddress 6 rw "CSi base address where i = 0 to 7 (16M bytes minimum granularity) bits [5:0] corresponds to A29, A28, A27, A26, A25, and A24. See";
+    };
+    
+    register gpmc_config7_i_2 addr(base, 0xD8) "CS address mapping configuration" {
+        _ 20 mbz;
+        maskaddress 4 rw "CS mask address. 0x1000: Chip-select size of 128 Mbytes 0x1100: Chip-select size of 64 Mbytes 0x1110: Chip-select size of 32 Mbytes 0x1111: Chip-select size of 16 Mbytes Other values must be avoided as they create holes in the chip-select address space.";
+        _ 1 mbz;
+        csvalid 1 rw type(csvalid_status) "CS enable";
+        baseaddress 6 rw "CSi base address where i = 0 to 7 (16M bytes minimum granularity) bits [5:0] corresponds to A29, A28, A27, A26, A25, and A24. See";
+    };
+    
+    register gpmc_config7_i_3 addr(base, 0x108) "CS address mapping configuration" {
+        _ 20 mbz;
+        maskaddress 4 rw "CS mask address. 0x1000: Chip-select size of 128 Mbytes 0x1100: Chip-select size of 64 Mbytes 0x1110: Chip-select size of 32 Mbytes 0x1111: Chip-select size of 16 Mbytes Other values must be avoided as they create holes in the chip-select address space.";
+        _ 1 mbz;
+        csvalid 1 rw type(csvalid_status) "CS enable";
+        baseaddress 6 rw "CSi base address where i = 0 to 7 (16M bytes minimum granularity) bits [5:0] corresponds to A29, A28, A27, A26, A25, and A24. See";
+    };
+    
+    register gpmc_config7_i_4 addr(base, 0x138) "CS address mapping configuration" {
+        _ 20 mbz;
+        maskaddress 4 rw "CS mask address. 0x1000: Chip-select size of 128 Mbytes 0x1100: Chip-select size of 64 Mbytes 0x1110: Chip-select size of 32 Mbytes 0x1111: Chip-select size of 16 Mbytes Other values must be avoided as they create holes in the chip-select address space.";
+        _ 1 mbz;
+        csvalid 1 rw type(csvalid_status) "CS enable";
+        baseaddress 6 rw "CSi base address where i = 0 to 7 (16M bytes minimum granularity) bits [5:0] corresponds to A29, A28, A27, A26, A25, and A24. See";
+    };
+    
+    register gpmc_config7_i_5 addr(base, 0x168) "CS address mapping configuration" {
+        _ 20 mbz;
+        maskaddress 4 rw "CS mask address. 0x1000: Chip-select size of 128 Mbytes 0x1100: Chip-select size of 64 Mbytes 0x1110: Chip-select size of 32 Mbytes 0x1111: Chip-select size of 16 Mbytes Other values must be avoided as they create holes in the chip-select address space.";
+        _ 1 mbz;
+        csvalid 1 rw type(csvalid_status) "CS enable";
+        baseaddress 6 rw "CSi base address where i = 0 to 7 (16M bytes minimum granularity) bits [5:0] corresponds to A29, A28, A27, A26, A25, and A24. See";
+    };
+    
+    register gpmc_config7_i_6 addr(base, 0x198) "CS address mapping configuration" {
+        _ 20 mbz;
+        maskaddress 4 rw "CS mask address. 0x1000: Chip-select size of 128 Mbytes 0x1100: Chip-select size of 64 Mbytes 0x1110: Chip-select size of 32 Mbytes 0x1111: Chip-select size of 16 Mbytes Other values must be avoided as they create holes in the chip-select address space.";
+        _ 1 mbz;
+        csvalid 1 rw type(csvalid_status) "CS enable";
+        baseaddress 6 rw "CSi base address where i = 0 to 7 (16M bytes minimum granularity) bits [5:0] corresponds to A29, A28, A27, A26, A25, and A24. See";
+    };
+    
+    register gpmc_config7_i_7 addr(base, 0x1C8) "CS address mapping configuration" {
+        _ 20 mbz;
+        maskaddress 4 rw "CS mask address. 0x1000: Chip-select size of 128 Mbytes 0x1100: Chip-select size of 64 Mbytes 0x1110: Chip-select size of 32 Mbytes 0x1111: Chip-select size of 16 Mbytes Other values must be avoided as they create holes in the chip-select address space.";
+        _ 1 mbz;
+        csvalid 1 rw type(csvalid_status) "CS enable";
+        baseaddress 6 rw "CSi base address where i = 0 to 7 (16M bytes minimum granularity) bits [5:0] corresponds to A29, A28, A27, A26, A25, and A24. See";
+    };
+    
+    register gpmc_nand_command_i_0 wo addr(base, 0x7C) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_command_i_1 wo addr(base, 0xAC) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_command_i_2 wo addr(base, 0xDC) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_command_i_3 wo addr(base, 0x10C) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_command_i_4 wo addr(base, 0x13C) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_command_i_5 wo addr(base, 0x16C) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_command_i_6 wo addr(base, 0x19C) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_command_i_7 wo addr(base, 0x1CC) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_address_i_0 wo addr(base, 0x80) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_address_i_1 wo addr(base, 0xB0) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_address_i_2 wo addr(base, 0xE0) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_address_i_3 wo addr(base, 0x110) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_address_i_4 wo addr(base, 0x140) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_address_i_5 wo addr(base, 0x170) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_address_i_6 wo addr(base, 0x1A0) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_address_i_7 wo addr(base, 0x1D0) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_data_i_0 wo addr(base, 0x84) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_data_i_1 wo addr(base, 0xB4) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_data_i_2 wo addr(base, 0xE4) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_data_i_3 wo addr(base, 0x114) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_data_i_4 wo addr(base, 0x144) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_data_i_5 wo addr(base, 0x174) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_data_i_6 wo addr(base, 0x1A4) "This register is not a true register, just an address location." type(uint32);
+    
+    register gpmc_nand_data_i_7 wo addr(base, 0x1D4) "This register is not a true register, just an address location." type(uint32);
+
+    constants enableoptimizedaccess_status width(1) "" {
+        ENABLEOPTIMIZEDACCESS_0 = 0 "Access cycle optimization is disabled";
+        ENABLEOPTIMIZEDACCESS_1 = 1 "Access cycle optimization is enabled";
+    };
+
+    constants enableengine_status width(1) "" {
+        ENABLEENGINE_0 = 0 "Prefetch Postwrite engine is disabled";
+        ENABLEENGINE_1 = 1 "Prefetch Postwrite engine is enabled";
+    };
+
+    constants waitpinselector_status width(2) "" {
+        WAITPINSELECTOR_0 = 0 "Selects Wait0 EdgeDetection";
+        WAITPINSELECTOR_1 = 1 "Selects Wait1 EdgeDetection";
+        WAITPINSELECTOR_2 = 2 "Selects Wait2 EdgeDetection";
+        WAITPINSELECTOR_3 = 3 "Reserved";
+    };
+
+    constants synchromode_status width(1) "" {
+        SYNCHROMODE_0 = 0 "Engine starts the access to CS as soon as STARTENGINE is set";
+        SYNCHROMODE_1 = 1 "Engine starts the access to CS as soon as STARTENGINE is set AND wait to non wait edge detection on the selected wait pin";
+    };
+
+    constants dmamode_status width(1) "" {
+        DMAMODE_0 = 0 "Interrupt synchronization is enabled. Only interrupt line will be activated on FIFO threshold crossing.";
+        DMAMODE_1 = 1 "DMA request synchronization is enabled. A DMA request protocol is used.";
+    };
+
+    constants accessmode_status width(1) "" {
+        ACCESSMODE_0 = 0 "Prefetch read mode";
+        ACCESSMODE_1 = 1 "Write-posting mode";
+    };
+    
+    register gpmc_prefetch_config1 addr(base, 0x1E0) "Prefetch engine configuration 1" {
+        _ 1 mbz;
+        cycleoptimization 3 rw "Define the number of GPMC_FCLK cycles to be subtracted from RDCYCLETIME, WRCYCLETIME, ACCESSTIME, CSRDOFFTIME, CSWROFFTIME, ADVRDOFFTIME, ADVWROFFTIME, OEOFFTIME, WEOFFTIME 0x0: 0 GPMC_FCLK cycle 0x1: 1 GPMC_FCLK cycle ... 0x7: 7 GPMC_FCLK cycles";
+        enableoptimizedaccess 1 rw type(enableoptimizedaccess_status) "Enables access cycle optimization";
+        enginecsselector 3 rw "Selects the CS where Prefetch Postwrite engine is active 0x0: CS0 0x1: CS1 0x2: CS2 0x3: CS3 0x4: CS4 0x5: CS5 0x6: CS6 0x7: CS7";
+        pfpwenroundrobin 1 rw type(waitwritemonitoring_status) "Enables the PFPW RoundRobin arbitration";
+        _ 3 mbz;
+        pfpwweightedprio 4 rw "When an arbitration occurs between a DMA and a PFPW engine access, the DMA is always serviced. If the PFPWEnRoundRobin is enabled, 0x0: the next access is granted to the PFPW engine, 0x1: the two next accesses are granted to the PFPW engine, ..., 0xF: the 16 next accesses are granted to the PFPW engine.";
+        _ 1 mbz;
+        fifothreshold 7 rw "Selects the maximum number of bytes read from the FIFO or written to the FIFO by the host on a DMA or interrupt request 0x00: 0 byte 0x01: 1 byte ... 0x40: 64 bytes";
+        enableengine 1 rw type(enableengine_status) "Enables the Prefetch Postwite engine";
+        _ 1 mbz;
+        waitpinselector 2 rw type(waitpinselector_status) "Select which wait pin edge detector should start the engine in synchronized mode";
+        synchromode 1 rw type(synchromode_status) "Selects when the engine starts the access to CS";
+        dmamode 1 rw type(dmamode_status) "Selects interrupt synchronization or DMA request synchronization";
+        _ 1 mbz;
+        accessmode 1 rw type(accessmode_status) "Selects prefetch read or write-posting accesses";
+    };
+    
+    register gpmc_prefetch_config2 addr(base, 0x1E4) "Prefetch engine configuration 2" {
+        _ 18 mbz;
+        transfercount 14 rw "Selects the number of bytes to be read or written by the engine to the selected CS 0x0000: 0 byte 0x0001: 1 byte ... 0x2000: 8 Kbytes";
+    };
+
+    constants startengine_status width(1) "" {
+        STARTENGINE_0_r = 0 "Engine is stopped";
+        STARTENGINE_1_r = 1 "Engine is running";
+    };
+    
+    register gpmc_prefetch_control addr(base, 0x1EC) "Prefetch engine control" {
+        _ 31 mbz;
+        startengine 1 rw type(startengine_status) "Resets the FIFO pointer and starts the engineWrite 0x0 stops the engine . Write 0x1 resets the FIFO pointer to 0x0 in prefetch mode and 0x40 in postwrite mode and starts the engine .";
+    };
+    
+    register gpmc_prefetch_status addr(base, 0x1F0) "Prefetch engine status" {
+        _ 1 mbz;
+        fifopointer 7 ro "Number of available bytes to be read or number of free empty byte places to be written 0x00: 0 byte available to be read or 0 free empty place to be written ... 0x40: 64 bytes available to be read or 64 empty places to be written";
+        _ 7 mbz;
+        fifothresholdstatus 1 ro type(waitwritemonitoring_status) "Set when FIFOPointer exceeds FIFOThreshold value";
+        _ 2 mbz;
+        countvalue 14 ro "Number of remaining bytes to be read or to be written by the engine according to the TransferCount value 0x0000: 0 byte remaining to be read or to be written 0x0001: 1 byte remaining to be read or to be written ... 0x2000: 8 Kbytes remaining to be read or to be written";
+    };
+
+    constants eccalgorithm_status width(1) "" {
+        ECCALGORITHM_0 = 0 "Hamming code";
+        ECCALGORITHM_1 = 1 "BCH code";
+    };
+
+    constants eccbchtsel_status width(2) "" {
+        ECCBCHTSEL_0 = 0 "Up to 4 bits error correction (t = 4)";
+        ECCBCHTSEL_1 = 1 "Up to 8 bits error correction (t = 8)";
+        ECCBCHTSEL_2 = 2 "Up to 16 bits error correction (t = 16)";
+        ECCBCHTSEL_3 = 3 "Reserved";
+    };
+
+    constants ecc16b_status width(1) "" {
+        ECC16B_0 = 0 "ECC calculated on 8 columns";
+        ECC16B_1 = 1 "ECC calculated on 16 columns";
+    };
+
+    constants ecccs_status width(3) "" {
+        ECCCS_0 = 0 "Chip-select 0";
+        ECCCS_1 = 1 "Chip-select 1";
+        ECCCS_2 = 2 "Chip-select 2";
+        ECCCS_3 = 3 "Chip-select 3";
+    };
+
+    constants eccenable_status width(1) "" {
+        ECCENABLE_0 = 0 "ECC disabled";
+        ECCENABLE_1 = 1 "ECC enabled";
+    };
+    
+    register gpmc_ecc_config addr(base, 0x1F4) "ECC configuration" {
+        _ 15 mbz;
+        eccalgorithm 1 rw type(eccalgorithm_status) "ECC algorithm used";
+        _ 2 mbz;
+        eccbchtsel 2 rw type(eccbchtsel_status) "Error correction capability used for BCH";
+        eccwrapmode 4 rw "Spare area organization definition for the BCH algorithm. See the BCH syndrome/parity calculator module functional specification for more details";
+        ecc16b 1 rw type(ecc16b_status) "Selects an ECC calculated on 16 columns";
+        ecctopsector 3 rw "Number of sectors to process with the BCH algorithm 0x0: 1 sector (512kB page) 0x1: 2 sectors ... 0x3: 4 sectors (2kB page) ... 0x7: 8 sectors (4kB page)";
+        ecccs 3 rw type(ecccs_status) "Selects the CS where ECC is computedOther: Reserved .";
+        eccenable 1 rw type(eccenable_status) "Enables the ECC feature";
+    };
+
+    constants eccpointer_status width(4) "" {
+        ECCPOINTER_0 = 0 "Writing 0x0 disables the ECC engine (ECCENABLE bit of set to 0)";
+        ECCPOINTER_1 = 1 "ECC result register 1 selected";
+        ECCPOINTER_2 = 2 "ECC result register 2 selected";
+        ECCPOINTER_3 = 3 "ECC result register 3 selected";
+        ECCPOINTER_4 = 4 "ECC result register 4 selected";
+        ECCPOINTER_5 = 5 "ECC result register 5 selected";
+        ECCPOINTER_6 = 6 "ECC result register 6 selected";
+        ECCPOINTER_7 = 7 "ECC result register 7 selected";
+        ECCPOINTER_8 = 8 "ECC result register 8 selected";
+        ECCPOINTER_9 = 9 "ECC result register 9 selected";
+    };
+    
+    register gpmc_ecc_control addr(base, 0x1F8) "ECC control" {
+        _ 23 mbz;
+        eccclear 1 rw "Clear all ECC result registers Reads returns 0 Write 0x1 to this field clear all ECC result registers Write 0x0 is ignored";
+        _ 4 mbz;
+        eccpointer 4 rw type(eccpointer_status) "Selects ECC result register (Reads to this field give the dynamic position of the ECC pointer - Writes to this field select the ECC result register where the first ECC computation will be stored); Other enums: writing other values disables the ECC engine (ECCENABLE bit ofGPMC_ECC_CONFIG set to 0)";
+    };
+
+    constants ecc9resultsize_status width(1) "" {
+        ECC9RESULTSIZE_0 = 0 "ECCSIZE0 selected";
+        ECC9RESULTSIZE_1 = 1 "ECCSIZE1 selected";
+    };
+    
+    register gpmc_ecc_size_config addr(base, 0x1FC) "ECC size" {
+        _ 2 mbz;
+        eccsize1 8 rw "Defines Hamming code ECC size 1 in bytes 0x00: 2 Bytes 0x01: 4 Bytes 0x02: 6 Bytes 0x03: 8 Bytes ... 0xFF: 512 Bytes For BCH code ECC, the size 1 is programmed directly with the number of nibbles (see , ).";
+        _ 2 mbz;
+        eccsize0 8 rw "Defines Hamming code ECC size 0 in bytes 0x00: 2 Bytes 0x01: 4 Bytes 0x02: 6 Bytes 0x03: 8 Bytes ... 0xFF: 512 Bytes For BCH code ECC, the size 0 is programmed directly with the number of nibbles (see , ).";
+        _ 3 mbz;
+        ecc9resultsize 1 rw type(ecc9resultsize_status) "Selects ECC size for ECC 9 result register";
+        ecc8resultsize 1 rw type(ecc9resultsize_status) "Selects ECC size for ECC 8 result register";
+        ecc7resultsize 1 rw type(ecc9resultsize_status) "Selects ECC size for ECC 7 result register";
+        ecc6resultsize 1 rw type(ecc9resultsize_status) "Selects ECC size for ECC 6 result register";
+        ecc5resultsize 1 rw type(ecc9resultsize_status) "Selects ECC size for ECC 5 result register";
+        ecc4resultsize 1 rw type(ecc9resultsize_status) "Selects ECC size for ECC 4 result register";
+        ecc3resultsize 1 rw type(ecc9resultsize_status) "Selects ECC size for ECC 3 result register";
+        ecc2resultsize 1 rw type(ecc9resultsize_status) "Selects ECC size for ECC 2 result register";
+        ecc1resultsize 1 rw type(ecc9resultsize_status) "Selects ECC size for ECC 1 result register";
+    };
+    
+    register gpmc_eccj_result_0 addr(base, 0x200) "ECC result register" {
+        _ 4 mbz;
+        p2048o 1 ro "Odd row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024o 1 ro "Odd row parity bit 1024";
+        p512o 1 ro "Odd row parity bit 512";
+        p256o 1 ro "Odd row parity bit 256";
+        p128o 1 ro "Odd row parity bit 128";
+        p64o 1 ro "Odd row parity bit 64";
+        p32o 1 ro "Odd row parity bit 32";
+        p16o 1 ro "Odd row parity bit 16";
+        p8o 1 ro "Odd row parity bit 8";
+        p4o 1 ro "Odd Column Parity bit 4";
+        p2o 1 ro "Odd Column Parity bit 2";
+        p1o 1 ro "Odd Column Parity bit 1";
+        _ 4 mbz;
+        p2048e 1 ro "Even row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024e 1 ro "Even row parity bit 1024";
+        p512e 1 ro "Even row parity bit 512";
+        p256e 1 ro "Even row parity bit 256";
+        p128e 1 ro "Even row parity bit 128";
+        p64e 1 ro "Even row parity bit 64";
+        p32e 1 ro "Even row parity bit 32";
+        p16e 1 ro "Even row parity bit 16";
+        p8e 1 ro "Even row parity bit 8";
+        p4e 1 ro "Even column parity bit 4";
+        p2e 1 ro "Even column parity bit 2";
+        p1e 1 ro "Even column parity bit 1";
+    };
+    
+    register gpmc_eccj_result_1 addr(base, 0x204) "ECC result register" {
+        _ 4 mbz;
+        p2048o 1 ro "Odd row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024o 1 ro "Odd row parity bit 1024";
+        p512o 1 ro "Odd row parity bit 512";
+        p256o 1 ro "Odd row parity bit 256";
+        p128o 1 ro "Odd row parity bit 128";
+        p64o 1 ro "Odd row parity bit 64";
+        p32o 1 ro "Odd row parity bit 32";
+        p16o 1 ro "Odd row parity bit 16";
+        p8o 1 ro "Odd row parity bit 8";
+        p4o 1 ro "Odd Column Parity bit 4";
+        p2o 1 ro "Odd Column Parity bit 2";
+        p1o 1 ro "Odd Column Parity bit 1";
+        _ 4 mbz;
+        p2048e 1 ro "Even row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024e 1 ro "Even row parity bit 1024";
+        p512e 1 ro "Even row parity bit 512";
+        p256e 1 ro "Even row parity bit 256";
+        p128e 1 ro "Even row parity bit 128";
+        p64e 1 ro "Even row parity bit 64";
+        p32e 1 ro "Even row parity bit 32";
+        p16e 1 ro "Even row parity bit 16";
+        p8e 1 ro "Even row parity bit 8";
+        p4e 1 ro "Even column parity bit 4";
+        p2e 1 ro "Even column parity bit 2";
+        p1e 1 ro "Even column parity bit 1";
+    };
+    
+    register gpmc_eccj_result_2 addr(base, 0x208) "ECC result register" {
+        _ 4 mbz;
+        p2048o 1 ro "Odd row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024o 1 ro "Odd row parity bit 1024";
+        p512o 1 ro "Odd row parity bit 512";
+        p256o 1 ro "Odd row parity bit 256";
+        p128o 1 ro "Odd row parity bit 128";
+        p64o 1 ro "Odd row parity bit 64";
+        p32o 1 ro "Odd row parity bit 32";
+        p16o 1 ro "Odd row parity bit 16";
+        p8o 1 ro "Odd row parity bit 8";
+        p4o 1 ro "Odd Column Parity bit 4";
+        p2o 1 ro "Odd Column Parity bit 2";
+        p1o 1 ro "Odd Column Parity bit 1";
+        _ 4 mbz;
+        p2048e 1 ro "Even row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024e 1 ro "Even row parity bit 1024";
+        p512e 1 ro "Even row parity bit 512";
+        p256e 1 ro "Even row parity bit 256";
+        p128e 1 ro "Even row parity bit 128";
+        p64e 1 ro "Even row parity bit 64";
+        p32e 1 ro "Even row parity bit 32";
+        p16e 1 ro "Even row parity bit 16";
+        p8e 1 ro "Even row parity bit 8";
+        p4e 1 ro "Even column parity bit 4";
+        p2e 1 ro "Even column parity bit 2";
+        p1e 1 ro "Even column parity bit 1";
+    };
+    
+    register gpmc_eccj_result_3 addr(base, 0x20C) "ECC result register" {
+        _ 4 mbz;
+        p2048o 1 ro "Odd row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024o 1 ro "Odd row parity bit 1024";
+        p512o 1 ro "Odd row parity bit 512";
+        p256o 1 ro "Odd row parity bit 256";
+        p128o 1 ro "Odd row parity bit 128";
+        p64o 1 ro "Odd row parity bit 64";
+        p32o 1 ro "Odd row parity bit 32";
+        p16o 1 ro "Odd row parity bit 16";
+        p8o 1 ro "Odd row parity bit 8";
+        p4o 1 ro "Odd Column Parity bit 4";
+        p2o 1 ro "Odd Column Parity bit 2";
+        p1o 1 ro "Odd Column Parity bit 1";
+        _ 4 mbz;
+        p2048e 1 ro "Even row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024e 1 ro "Even row parity bit 1024";
+        p512e 1 ro "Even row parity bit 512";
+        p256e 1 ro "Even row parity bit 256";
+        p128e 1 ro "Even row parity bit 128";
+        p64e 1 ro "Even row parity bit 64";
+        p32e 1 ro "Even row parity bit 32";
+        p16e 1 ro "Even row parity bit 16";
+        p8e 1 ro "Even row parity bit 8";
+        p4e 1 ro "Even column parity bit 4";
+        p2e 1 ro "Even column parity bit 2";
+        p1e 1 ro "Even column parity bit 1";
+    };
+    
+    register gpmc_eccj_result_4 addr(base, 0x210) "ECC result register" {
+        _ 4 mbz;
+        p2048o 1 ro "Odd row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024o 1 ro "Odd row parity bit 1024";
+        p512o 1 ro "Odd row parity bit 512";
+        p256o 1 ro "Odd row parity bit 256";
+        p128o 1 ro "Odd row parity bit 128";
+        p64o 1 ro "Odd row parity bit 64";
+        p32o 1 ro "Odd row parity bit 32";
+        p16o 1 ro "Odd row parity bit 16";
+        p8o 1 ro "Odd row parity bit 8";
+        p4o 1 ro "Odd Column Parity bit 4";
+        p2o 1 ro "Odd Column Parity bit 2";
+        p1o 1 ro "Odd Column Parity bit 1";
+        _ 4 mbz;
+        p2048e 1 ro "Even row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024e 1 ro "Even row parity bit 1024";
+        p512e 1 ro "Even row parity bit 512";
+        p256e 1 ro "Even row parity bit 256";
+        p128e 1 ro "Even row parity bit 128";
+        p64e 1 ro "Even row parity bit 64";
+        p32e 1 ro "Even row parity bit 32";
+        p16e 1 ro "Even row parity bit 16";
+        p8e 1 ro "Even row parity bit 8";
+        p4e 1 ro "Even column parity bit 4";
+        p2e 1 ro "Even column parity bit 2";
+        p1e 1 ro "Even column parity bit 1";
+    };
+    
+    register gpmc_eccj_result_5 addr(base, 0x214) "ECC result register" {
+        _ 4 mbz;
+        p2048o 1 ro "Odd row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024o 1 ro "Odd row parity bit 1024";
+        p512o 1 ro "Odd row parity bit 512";
+        p256o 1 ro "Odd row parity bit 256";
+        p128o 1 ro "Odd row parity bit 128";
+        p64o 1 ro "Odd row parity bit 64";
+        p32o 1 ro "Odd row parity bit 32";
+        p16o 1 ro "Odd row parity bit 16";
+        p8o 1 ro "Odd row parity bit 8";
+        p4o 1 ro "Odd Column Parity bit 4";
+        p2o 1 ro "Odd Column Parity bit 2";
+        p1o 1 ro "Odd Column Parity bit 1";
+        _ 4 mbz;
+        p2048e 1 ro "Even row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024e 1 ro "Even row parity bit 1024";
+        p512e 1 ro "Even row parity bit 512";
+        p256e 1 ro "Even row parity bit 256";
+        p128e 1 ro "Even row parity bit 128";
+        p64e 1 ro "Even row parity bit 64";
+        p32e 1 ro "Even row parity bit 32";
+        p16e 1 ro "Even row parity bit 16";
+        p8e 1 ro "Even row parity bit 8";
+        p4e 1 ro "Even column parity bit 4";
+        p2e 1 ro "Even column parity bit 2";
+        p1e 1 ro "Even column parity bit 1";
+    };
+    
+    register gpmc_eccj_result_6 addr(base, 0x218) "ECC result register" {
+        _ 4 mbz;
+        p2048o 1 ro "Odd row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024o 1 ro "Odd row parity bit 1024";
+        p512o 1 ro "Odd row parity bit 512";
+        p256o 1 ro "Odd row parity bit 256";
+        p128o 1 ro "Odd row parity bit 128";
+        p64o 1 ro "Odd row parity bit 64";
+        p32o 1 ro "Odd row parity bit 32";
+        p16o 1 ro "Odd row parity bit 16";
+        p8o 1 ro "Odd row parity bit 8";
+        p4o 1 ro "Odd Column Parity bit 4";
+        p2o 1 ro "Odd Column Parity bit 2";
+        p1o 1 ro "Odd Column Parity bit 1";
+        _ 4 mbz;
+        p2048e 1 ro "Even row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024e 1 ro "Even row parity bit 1024";
+        p512e 1 ro "Even row parity bit 512";
+        p256e 1 ro "Even row parity bit 256";
+        p128e 1 ro "Even row parity bit 128";
+        p64e 1 ro "Even row parity bit 64";
+        p32e 1 ro "Even row parity bit 32";
+        p16e 1 ro "Even row parity bit 16";
+        p8e 1 ro "Even row parity bit 8";
+        p4e 1 ro "Even column parity bit 4";
+        p2e 1 ro "Even column parity bit 2";
+        p1e 1 ro "Even column parity bit 1";
+    };
+    
+    register gpmc_eccj_result_7 addr(base, 0x21C) "ECC result register" {
+        _ 4 mbz;
+        p2048o 1 ro "Odd row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024o 1 ro "Odd row parity bit 1024";
+        p512o 1 ro "Odd row parity bit 512";
+        p256o 1 ro "Odd row parity bit 256";
+        p128o 1 ro "Odd row parity bit 128";
+        p64o 1 ro "Odd row parity bit 64";
+        p32o 1 ro "Odd row parity bit 32";
+        p16o 1 ro "Odd row parity bit 16";
+        p8o 1 ro "Odd row parity bit 8";
+        p4o 1 ro "Odd Column Parity bit 4";
+        p2o 1 ro "Odd Column Parity bit 2";
+        p1o 1 ro "Odd Column Parity bit 1";
+        _ 4 mbz;
+        p2048e 1 ro "Even row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024e 1 ro "Even row parity bit 1024";
+        p512e 1 ro "Even row parity bit 512";
+        p256e 1 ro "Even row parity bit 256";
+        p128e 1 ro "Even row parity bit 128";
+        p64e 1 ro "Even row parity bit 64";
+        p32e 1 ro "Even row parity bit 32";
+        p16e 1 ro "Even row parity bit 16";
+        p8e 1 ro "Even row parity bit 8";
+        p4e 1 ro "Even column parity bit 4";
+        p2e 1 ro "Even column parity bit 2";
+        p1e 1 ro "Even column parity bit 1";
+    };
+    
+    register gpmc_eccj_result_8 addr(base, 0x220) "ECC result register" {
+        _ 4 mbz;
+        p2048o 1 ro "Odd row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024o 1 ro "Odd row parity bit 1024";
+        p512o 1 ro "Odd row parity bit 512";
+        p256o 1 ro "Odd row parity bit 256";
+        p128o 1 ro "Odd row parity bit 128";
+        p64o 1 ro "Odd row parity bit 64";
+        p32o 1 ro "Odd row parity bit 32";
+        p16o 1 ro "Odd row parity bit 16";
+        p8o 1 ro "Odd row parity bit 8";
+        p4o 1 ro "Odd Column Parity bit 4";
+        p2o 1 ro "Odd Column Parity bit 2";
+        p1o 1 ro "Odd Column Parity bit 1";
+        _ 4 mbz;
+        p2048e 1 ro "Even row parity bit 2048, only used for ECC computed on 512 Bytes";
+        p1024e 1 ro "Even row parity bit 1024";
+        p512e 1 ro "Even row parity bit 512";
+        p256e 1 ro "Even row parity bit 256";
+        p128e 1 ro "Even row parity bit 128";
+        p64e 1 ro "Even row parity bit 64";
+        p32e 1 ro "Even row parity bit 32";
+        p16e 1 ro "Even row parity bit 16";
+        p8e 1 ro "Even row parity bit 8";
+        p4e 1 ro "Even column parity bit 4";
+        p2e 1 ro "Even column parity bit 2";
+        p1e 1 ro "Even column parity bit 1";
+    };
+    
+    register gpmc_bch_result0_i_0 rw addr(base, 0x240) "BCH ECC result (bits 0 to 31)" type(uint32);
+    
+    register gpmc_bch_result0_i_1 rw addr(base, 0x250) "BCH ECC result (bits 0 to 31)" type(uint32);
+    
+    register gpmc_bch_result0_i_2 rw addr(base, 0x260) "BCH ECC result (bits 0 to 31)" type(uint32);
+    
+    register gpmc_bch_result0_i_3 rw addr(base, 0x270) "BCH ECC result (bits 0 to 31)" type(uint32);
+    
+    register gpmc_bch_result0_i_4 rw addr(base, 0x280) "BCH ECC result (bits 0 to 31)" type(uint32);
+    
+    register gpmc_bch_result0_i_5 rw addr(base, 0x290) "BCH ECC result (bits 0 to 31)" type(uint32);
+    
+    register gpmc_bch_result0_i_6 rw addr(base, 0x2A0) "BCH ECC result (bits 0 to 31)" type(uint32);
+    
+    register gpmc_bch_result0_i_7 rw addr(base, 0x2B0) "BCH ECC result (bits 0 to 31)" type(uint32);
+    
+    register gpmc_bch_result1_i_0 rw addr(base, 0x244) "BCH ECC result (bits 32 to 63)" type(uint32);
+    
+    register gpmc_bch_result1_i_1 rw addr(base, 0x254) "BCH ECC result (bits 32 to 63)" type(uint32);
+    
+    register gpmc_bch_result1_i_2 rw addr(base, 0x264) "BCH ECC result (bits 32 to 63)" type(uint32);
+    
+    register gpmc_bch_result1_i_3 rw addr(base, 0x274) "BCH ECC result (bits 32 to 63)" type(uint32);
+    
+    register gpmc_bch_result1_i_4 rw addr(base, 0x284) "BCH ECC result (bits 32 to 63)" type(uint32);
+    
+    register gpmc_bch_result1_i_5 rw addr(base, 0x294) "BCH ECC result (bits 32 to 63)" type(uint32);
+    
+    register gpmc_bch_result1_i_6 rw addr(base, 0x2A4) "BCH ECC result (bits 32 to 63)" type(uint32);
+    
+    register gpmc_bch_result1_i_7 rw addr(base, 0x2B4) "BCH ECC result (bits 32 to 63)" type(uint32);
+    
+    register gpmc_bch_result2_i_0 rw addr(base, 0x248) "BCH ECC result (bits 64 to 95)" type(uint32);
+    
+    register gpmc_bch_result2_i_1 rw addr(base, 0x258) "BCH ECC result (bits 64 to 95)" type(uint32);
+    
+    register gpmc_bch_result2_i_2 rw addr(base, 0x268) "BCH ECC result (bits 64 to 95)" type(uint32);
+    
+    register gpmc_bch_result2_i_3 rw addr(base, 0x278) "BCH ECC result (bits 64 to 95)" type(uint32);
+    
+    register gpmc_bch_result2_i_4 rw addr(base, 0x288) "BCH ECC result (bits 64 to 95)" type(uint32);
+    
+    register gpmc_bch_result2_i_5 rw addr(base, 0x298) "BCH ECC result (bits 64 to 95)" type(uint32);
+    
+    register gpmc_bch_result2_i_6 rw addr(base, 0x2A8) "BCH ECC result (bits 64 to 95)" type(uint32);
+    
+    register gpmc_bch_result2_i_7 rw addr(base, 0x2B8) "BCH ECC result (bits 64 to 95)" type(uint32);
+    
+    register gpmc_bch_result3_i_0 rw addr(base, 0x24C) "BCH ECC result (bits 96 to 127)" type(uint32);
+    
+    register gpmc_bch_result3_i_1 rw addr(base, 0x25C) "BCH ECC result (bits 96 to 127)" type(uint32);
+    
+    register gpmc_bch_result3_i_2 rw addr(base, 0x26C) "BCH ECC result (bits 96 to 127)" type(uint32);
+    
+    register gpmc_bch_result3_i_3 rw addr(base, 0x27C) "BCH ECC result (bits 96 to 127)" type(uint32);
+    
+    register gpmc_bch_result3_i_4 rw addr(base, 0x28C) "BCH ECC result (bits 96 to 127)" type(uint32);
+    
+    register gpmc_bch_result3_i_5 rw addr(base, 0x29C) "BCH ECC result (bits 96 to 127)" type(uint32);
+    
+    register gpmc_bch_result3_i_6 rw addr(base, 0x2AC) "BCH ECC result (bits 96 to 127)" type(uint32);
+    
+    register gpmc_bch_result3_i_7 rw addr(base, 0x2BC) "BCH ECC result (bits 96 to 127)" type(uint32);
+    
+    register gpmc_bch_swdata addr(base, 0x2D0) "This register is used to directly pass data to the BCH ECC calculator without accessing the actual NAND flash interface." {
+        _ 16 mbz;
+        bch_data 16 rw "Data to be included in the BCH calculation. Only bits 0 to 7 are taken into account if the calculator is configured to use 8 bits data (GPMC_ECC_CONFIG[7] ECC16B = 0)";
+    };
+    
+    register gpmc_bch_result4_i_0 rw addr(base, 0x300) "BCH ECC result (bits 128 to 159)" type(uint32);
+    
+    register gpmc_bch_result4_i_1 rw addr(base, 0x310) "BCH ECC result (bits 128 to 159)" type(uint32);
+    
+    register gpmc_bch_result4_i_2 rw addr(base, 0x320) "BCH ECC result (bits 128 to 159)" type(uint32);
+    
+    register gpmc_bch_result4_i_3 rw addr(base, 0x330) "BCH ECC result (bits 128 to 159)" type(uint32);
+    
+    register gpmc_bch_result4_i_4 rw addr(base, 0x340) "BCH ECC result (bits 128 to 159)" type(uint32);
+    
+    register gpmc_bch_result4_i_5 rw addr(base, 0x350) "BCH ECC result (bits 128 to 159)" type(uint32);
+    
+    register gpmc_bch_result4_i_6 rw addr(base, 0x360) "BCH ECC result (bits 128 to 159)" type(uint32);
+    
+    register gpmc_bch_result4_i_7 rw addr(base, 0x370) "BCH ECC result (bits 128 to 159)" type(uint32);
+    
+    register gpmc_bch_result5_i_0 rw addr(base, 0x304) "BCH ECC result (bits 160 to 191)" type(uint32);
+    
+    register gpmc_bch_result5_i_1 rw addr(base, 0x314) "BCH ECC result (bits 160 to 191)" type(uint32);
+    
+    register gpmc_bch_result5_i_2 rw addr(base, 0x324) "BCH ECC result (bits 160 to 191)" type(uint32);
+    
+    register gpmc_bch_result5_i_3 rw addr(base, 0x334) "BCH ECC result (bits 160 to 191)" type(uint32);
+    
+    register gpmc_bch_result5_i_4 rw addr(base, 0x344) "BCH ECC result (bits 160 to 191)" type(uint32);
+    
+    register gpmc_bch_result5_i_5 rw addr(base, 0x354) "BCH ECC result (bits 160 to 191)" type(uint32);
+    
+    register gpmc_bch_result5_i_6 rw addr(base, 0x364) "BCH ECC result (bits 160 to 191)" type(uint32);
+    
+    register gpmc_bch_result5_i_7 rw addr(base, 0x374) "BCH ECC result (bits 160 to 191)" type(uint32);
+    
+    register gpmc_bch_result6_i_0 addr(base, 0x308) "BCH ECC result (bits 192 to 207)" {
+        _ 16 mbz;
+        bch_result_6 16 rw "BCH ECC result (bits 192 to 207)";
+    };
+    
+    register gpmc_bch_result6_i_1 addr(base, 0x318) "BCH ECC result (bits 192 to 207)" {
+        _ 16 mbz;
+        bch_result_6 16 rw "BCH ECC result (bits 192 to 207)";
+    };
+    
+    register gpmc_bch_result6_i_2 addr(base, 0x328) "BCH ECC result (bits 192 to 207)" {
+        _ 16 mbz;
+        bch_result_6 16 rw "BCH ECC result (bits 192 to 207)";
+    };
+    
+    register gpmc_bch_result6_i_3 addr(base, 0x338) "BCH ECC result (bits 192 to 207)" {
+        _ 16 mbz;
+        bch_result_6 16 rw "BCH ECC result (bits 192 to 207)";
+    };
+    
+    register gpmc_bch_result6_i_4 addr(base, 0x348) "BCH ECC result (bits 192 to 207)" {
+        _ 16 mbz;
+        bch_result_6 16 rw "BCH ECC result (bits 192 to 207)";
+    };
+    
+    register gpmc_bch_result6_i_5 addr(base, 0x358) "BCH ECC result (bits 192 to 207)" {
+        _ 16 mbz;
+        bch_result_6 16 rw "BCH ECC result (bits 192 to 207)";
+    };
+    
+    register gpmc_bch_result6_i_6 addr(base, 0x368) "BCH ECC result (bits 192 to 207)" {
+        _ 16 mbz;
+        bch_result_6 16 rw "BCH ECC result (bits 192 to 207)";
+    };
+    
+    register gpmc_bch_result6_i_7 addr(base, 0x378) "BCH ECC result (bits 192 to 207)" {
+        _ 16 mbz;
+        bch_result_6 16 rw "BCH ECC result (bits 192 to 207)";
+    };
+};

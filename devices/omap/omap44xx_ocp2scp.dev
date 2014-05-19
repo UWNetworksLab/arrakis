@@ -1,0 +1,73 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_ocp2scp.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_ocp2scp msbfirst ( addr base ) "" {
+    
+    
+    register ocp2scp_revision ro addr(base, 0x0) "IP revision identifier" type(uint32);
+
+    constants idlemode_status width(2) "" {
+        IDLEMODE_0 = 0 "Force-idle mode. An idle request is acknowledged unconditionally.";
+        IDLEMODE_1 = 1 "No-idle mode. An idle request is never acknowledged.";
+        IDLEMODE_2 = 2 "Smart-idle mode. The acknowledgment to an idle request is given based on the internal activity.";
+        IDLEMODE_3 = 3 "Reserved";
+    };
+
+    constants softreset_status width(1) "" {
+        SOFTRESET_0 = 0 "Normal mode";
+        SOFTRESET_1 = 1 "The module is reset.";
+    };
+
+    constants autoidle_status width(1) "" {
+        AUTOIDLE_0 = 0 "Internal interface OCP clock is free-running.";
+        AUTOIDLE_1 = 1 "Automatic internal OCP clock gating, based on the OCP interface activity";
+    };
+    
+    register ocp2scp_sysconfig addr(base, 0x10) "System configuration register" {
+        _ 27 mbz;
+        idlemode 2 rw type(idlemode_status) "Module power management control";
+        _ 1 mbz;
+        softreset 1 rw type(softreset_status) "Software reset. Set this bit to 1 to trigger a module reset. During reads, it always returns 0.";
+        autoidle 1 rw type(autoidle_status) "OCP clock-gating control";
+    };
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_1 = 1 "Reset is complete.";
+    };
+    
+    register ocp2scp_sysstatus addr(base, 0x14) "System status register" {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "0: Internal reset is on-going.";
+    };
+    
+    register ocp2scp_timing addr(base, 0x18) "Timing configuration register" {
+        _ 22 mbz;
+        divisionratio 3 rw "Division ratio of the SCP clock in relation to the OCP input clock. When the value 0x0 is programmed, and the transaction to be made is a valid transaction on the SCP interface, the value of DIVISIONRATIO is set to 0x7 by hardware to avoid a block on the OCP interface.CAUTION:To ensure correct operation, DIVISIONRATIO must not be modified. See also the SYNC2 description. .";
+        sync1 3 rw "Number of SCP clock cycles defining SYNC1 delay";
+        sync2 4 ro "Number of SCP clock cycles defining the SYNC2 delay. When the value 0x0 is programmed, and the transaction to be made is a valid transaction on the SCP interface, SYNC2 is set to the minimum allowed value 0x1 to avoid a block on the OCP interface.CAUTION:To ensure correct operation, the value of SYNC2 must be set to 0x6 or more. RW 0x1 .";
+    };
+};

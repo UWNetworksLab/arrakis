@@ -1,0 +1,140 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_cortexa9_cpu0.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_cortexa9_cpu0 msbfirst ( addr base ) "" {
+    
+
+    constants l1_bank_onstate_status width(2) "" {
+        L1_BANK_ONSTATE_3_r = 3 "Memory bank is on when the domain is ON.";
+    };
+
+    constants l1_bank_retstate_status width(1) "" {
+        L1_BANK_RETSTATE_1_r = 1 "Memory bank is retained when domain is in RETENTION state.";
+    };
+
+    constants logicretstate_status width(1) "" {
+        LOGICRETSTATE_0 = 0 "All CPU logic is off when the domain is in RETENTION state.";
+        LOGICRETSTATE_1 = 1 "Whole logic is retained when domain is in RETENTION state.";
+    };
+
+    constants powerstate_status width(2) "" {
+        POWERSTATE_0 = 0 "OFF state";
+        POWERSTATE_1 = 1 "RETENTION state";
+        POWERSTATE_2 = 2 "INACTIVE state";
+        POWERSTATE_3 = 3 "ON State";
+    };
+    
+    register pm_pda_cpui_pwrstctrl addr(base, 0x0) "This register controls the CPU domain power state to reach upon a domain sleep transition" {
+        _ 14 mbz;
+        l1_bank_onstate 2 ro type(l1_bank_onstate_status) "CPU_L1 memory state when domain is ON.";
+        _ 7 mbz;
+        l1_bank_retstate 1 ro type(l1_bank_retstate_status) "CPU L1 memory state when domain is RETENTION state.";
+        _ 5 mbz;
+        logicretstate 1 rw type(logicretstate_status) "Logic state control when power domain is RETENTION";
+        powerstate 2 rw type(powerstate_status) "Power state control";
+    };
+
+    constants intransition_status width(1) "" {
+        INTRANSITION_0_r = 0 "No ongoing transition on power domain";
+        INTRANSITION_1_r = 1 "Power domain transition is in progress.";
+    };
+
+    constants l1_bank_statest_status width(2) "" {
+        L1_BANK_STATEST_0_r = 0 "Memory is OFF";
+        L1_BANK_STATEST_1_r = 1 "Memory is RET";
+        L1_BANK_STATEST_2_r = 2 "Reserved";
+        L1_BANK_STATEST_3_r = 3 "Memory is ON";
+    };
+
+    constants logicstatest_status width(1) "" {
+        LOGICSTATEST_0_r = 0 "Logic in domain is OFF";
+        LOGICSTATEST_1_r = 1 "Logic in domain is ON";
+    };
+
+    constants powerstatest_status width(2) "" {
+        POWERSTATEST_0_r = 0 "Power domain is OFF";
+        POWERSTATEST_1_r = 1 "Power domain is in RETENTION";
+        POWERSTATEST_2_r = 2 "Power domain is ON-INACTIVE";
+        POWERSTATEST_3_r = 3 "Power domain is ON-ACTIVE";
+    };
+    
+    register pm_pda_cpui_pwrstst addr(base, 0x4) "This register provides a status on the CPU domain current power state. [warm reset insensitive]" {
+        _ 6 mbz;
+        lastpowerstateentered 2 rw "Last low power state entered. The software has to write 0x3 in this field to update this register. 0x0: Power domain was previously in OFF 0x1: Power domain was previously in RETENTION 0x2: Power domain was previously INACTIVE 0x3: Power domain was previously ON";
+        _ 3 mbz;
+        intransition 1 ro type(intransition_status) "Domain transition status";
+        _ 14 mbz;
+        l1_bank_statest 2 ro type(l1_bank_statest_status) "CPU_L1 memory state status";
+        _ 1 mbz;
+        logicstatest 1 ro type(logicstatest_status) "Logic state status";
+        powerstatest 2 ro type(powerstatest_status) "Current power state status";
+    };
+
+    constants lostmem_cpu_l1_status width(1) "" {
+        LOSTMEM_CPU_L1_0 = 0 "Context has been maintained";
+        LOSTMEM_CPU_L1_1 = 1 "Context has been lost";
+    };
+    
+    register rm_pda_cpui_context addr(base, 0x8) "This register contains dedicated CPU context statuses. [warm reset insensitive]" {
+        _ 23 mbz;
+        lostmem_cpu_l1 1 rw1c type(lostmem_cpu_l1_status) "Specify if memory-based context in CPU_L1 memory bank has been lost due to a previous power transition or other reset source.";
+        _ 7 mbz;
+        lostcontext_dff 1 rw1c type(lostmem_cpu_l1_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source.";
+    };
+
+    constants rst_status width(1) "" {
+        RST_0 = 0 "Reset is cleared";
+        RST_1 = 1 "Reset is asserted";
+    };
+    
+    register rm_pda_cpui_rstctrl addr(base, 0xC) "This register controls the assertion/release of the CPU CORE reset. This is basically a software warm reset (that asserts CPUx_RST) per CPU. One CPU can set this bit to reset the other CPU. Actually the CPU can set this bit to reset itself as well (and it will be kept in reset until the other active CPU clears this bit)." {
+        _ 31 mbz;
+        rst 1 rw type(rst_status) "CPU warm local reset control";
+    };
+
+    constants stbyst_status width(1) "" {
+        STBYST_0_r = 0 "Module is functional (not in standby)";
+        STBYST_1_r = 1 "Module is in standby";
+    };
+    
+    register cm_pda_cpui_clkctrl addr(base, 0x14) "This register manages the CPU clocks." {
+        _ 31 mbz;
+        stbyst 1 ro type(stbyst_status) "Module standby status. [warm reset insensitive]";
+    };
+
+    constants clktrctrl_status width(2) "" {
+        CLKTRCTRL_0 = 0 "NO_SLEEP: Sleep transition cannot be initiated. Wake-up transition may however occur.";
+        CLKTRCTRL_1_r = 1 "Reserved";
+        CLKTRCTRL_2 = 2 "Start a software forced wake-up transition on the domain. The software forced wake-up transition allows the software to wakeup a powered-down CPU by a method other than an externally triggered interrupt.";
+        CLKTRCTRL_3 = 3 "HW_AUTO: Automatic transition is enabled. Sleep and wake-up transition are based upon hardware conditions. WFI triggers the sleep transition based on settings in and registers.";
+    };
+    
+    register cm_pda_cpui_clkstctrl addr(base, 0x18) "This register enables the CPU domain power state transition. It controls the hardware-supervised domain power state transition between ON-ACTIVE and ON-INACTIVE states. It also holds 1 status bit per clock input of the domain." {
+        _ 30 mbz;
+        clktrctrl 2 rw type(clktrctrl_status) "Controls the full domain transition of the CPU domain.";
+    };
+};

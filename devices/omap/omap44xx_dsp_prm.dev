@@ -1,0 +1,175 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_dsp_prm.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_dsp_prm msbfirst ( addr base ) "" {
+    
+
+    constants dsp_edma_onstate_status width(2) "" {
+        DSP_EDMA_ONSTATE_3_r = 3 "Memory bank is on when the domain is ON.";
+    };
+
+    constants dsp_edma_retstate_status width(1) "" {
+        DSP_EDMA_RETSTATE_1_r = 1 "Memory bank is retained when domain is in RETENTION state.";
+    };
+
+    constants dsp_l2_retstate_status width(1) "" {
+        DSP_L2_RETSTATE_0 = 0 "Memory bank is off when the domain is in the RETENTION state.";
+        DSP_L2_RETSTATE_1 = 1 "Memory bank is retained when domain is in RETENTION state.";
+    };
+
+    constants lowpowerstatechange_status width(1) "" {
+        LOWPOWERSTATECHANGE_0 = 0 "Do not request a low power state change.";
+        LOWPOWERSTATECHANGE_1 = 1 "Request a low power state change. This bit is automatically cleared when the power state is effectively changed or when power state is ON.";
+    };
+
+    constants powerstate_status width(2) "" {
+        POWERSTATE_0 = 0 "OFF state";
+        POWERSTATE_1 = 1 "RETENTION state";
+        POWERSTATE_2 = 2 "INACTIVE state";
+        POWERSTATE_3 = 3 "ON State";
+    };
+    
+    register pm_dsp_pwrstctrl addr(base, 0x0) "This register controls the DSP power state to reach upon a domain sleep transition" {
+        _ 10 mbz;
+        dsp_edma_onstate 2 ro type(dsp_edma_onstate_status) "DSP_EDMA state when domain is ON.";
+        dsp_l2_onstate 2 ro type(dsp_edma_onstate_status) "DSP_L2 state when domain is ON.";
+        dsp_l1_onstate 2 ro type(dsp_edma_onstate_status) "DSP_L1 state when domain is ON.";
+        _ 5 mbz;
+        dsp_edma_retstate 1 ro type(dsp_edma_retstate_status) "DSP_EDMA state when domain is RETENTION.";
+        dsp_l2_retstate 1 rw type(dsp_l2_retstate_status) "DSP_L2 state when domain is RETENTION.";
+        dsp_l1_retstate 1 rw type(dsp_l2_retstate_status) "DSP_L2 state when domain is RETENTION.";
+        _ 3 mbz;
+        lowpowerstatechange 1 rw type(lowpowerstatechange_status) "Power state change request when domain has already performed a sleep transition. Allows going into deeper low power state without waking up the power domain.";
+        _ 1 mbz;
+        logicretstate 1 rw type(dsp_l2_retstate_status) "Logic state when power domain is RETENTION";
+        powerstate 2 rw type(powerstate_status) "Power state control";
+    };
+
+    constants lastpowerstateentered_status width(2) "" {
+        LASTPOWERSTATEENTERED_3_r = 3 "Power domain was previously ON-ACTIVE";
+        LASTPOWERSTATEENTERED_2_r = 2 "Power domain was previously ON-INACTIVE";
+        LASTPOWERSTATEENTERED_1_r = 1 "Power domain was previously in RETENTION";
+        LASTPOWERSTATEENTERED_0_r = 0 "Power domain was previously OFF";
+    };
+
+    constants intransition_status width(1) "" {
+        INTRANSITION_0_r = 0 "No ongoing transition on power domain";
+        INTRANSITION_1_r = 1 "Power domain transition is in progress.";
+    };
+
+    constants dsp_edma_statest_status width(2) "" {
+        DSP_EDMA_STATEST_0_r = 0 "Memory is OFF";
+        DSP_EDMA_STATEST_1_r = 1 "Memory is RETENTION";
+        DSP_EDMA_STATEST_2_r = 2 "Reserved";
+        DSP_EDMA_STATEST_3_r = 3 "Memory is ON";
+    };
+
+    constants logicstatest_status width(1) "" {
+        LOGICSTATEST_0_r = 0 "Logic in domain is OFF";
+        LOGICSTATEST_1_r = 1 "Logic in domain is ON";
+    };
+
+    constants powerstatest_status width(2) "" {
+        POWERSTATEST_0_r = 0 "Power domain is OFF";
+        POWERSTATEST_1_r = 1 "Power domain is in RETENTION";
+        POWERSTATEST_2_r = 2 "Power domain is ON-INACTIVE";
+        POWERSTATEST_3_r = 3 "Power domain is ON-ACTIVE";
+    };
+    
+    register pm_dsp_pwrstst addr(base, 0x4) "This register provides a status on the DSP domain current power state. [warm reset insensitive]" {
+        _ 6 mbz;
+        lastpowerstateentered 2 rw type(lastpowerstateentered_status) "Last low power state entered. Set to 0x3 upon write of the same only. This register is intended for debug purpose only.";
+        _ 3 mbz;
+        intransition 1 ro type(intransition_status) "Domain transition status";
+        _ 10 mbz;
+        dsp_edma_statest 2 ro type(dsp_edma_statest_status) "DSP_EDMA memory state status";
+        dsp_l2_statest 2 ro type(dsp_edma_statest_status) "DSP_L2 memory state status";
+        dsp_l1_statest 2 ro type(dsp_edma_statest_status) "DSP_L1 memory state status";
+        _ 1 mbz;
+        logicstatest 1 ro type(logicstatest_status) "Logic state status";
+        powerstatest 2 ro type(powerstatest_status) "Current power state status";
+    };
+
+    constants rst2_status width(1) "" {
+        RST2_0 = 0 "Reset is cleared for the MMU, cache and slave interface";
+        RST2_1 = 1 "Reset is asserted for the MMU, cache and slave interface";
+    };
+
+    constants rst1_status width(1) "" {
+        RST1_0 = 0 "Reset is cleared for the DSP - DSP";
+        RST1_1 = 1 "Reset is asserted for the DSP - DSP";
+    };
+    
+    register rm_dsp_rstctrl addr(base, 0x10) "This register controls the release of the DSP sub-system resets." {
+        _ 30 mbz;
+        rst2 1 rw type(rst2_status) "DSP - MMU, cache and slave interface reset control";
+        rst1 1 rw type(rst1_status) "DSP - DSP reset control";
+    };
+
+    constants dsp_dsp_emu_req_rstst_status width(1) "" {
+        DSP_DSP_EMU_REQ_RSTST_0 = 0 "No emulation reset";
+        DSP_DSP_EMU_REQ_RSTST_1 = 1 "DSP DSP has been reset upon emulation reset request";
+    };
+
+    constants dspss_emu_rstst_status width(1) "" {
+        DSPSS_EMU_RSTST_0 = 0 "No emulation reset";
+        DSPSS_EMU_RSTST_1 = 1 "DSP has been reset upon emulation reset";
+    };
+
+    constants rst2st_status width(1) "" {
+        RST2ST_0 = 0 "No software reset occured";
+        RST2ST_1 = 1 "MMU, cache and slave interface has been reset upon software reset";
+    };
+
+    constants rst1st_status width(1) "" {
+        RST1ST_0 = 0 "No software reset occured";
+        RST1ST_1 = 1 "DSP has been reset upon software reset";
+    };
+    
+    register rm_dsp_rstst addr(base, 0x14) "This register logs the different reset sources of the DSP domain. Each bit is set upon release of the domain reset signal. Must be cleared by software. [warm reset insensitive]" {
+        _ 28 mbz;
+        dsp_dsp_emu_req_rstst 1 rw1c type(dsp_dsp_emu_req_rstst_status) "DSP DSP processor has been reset due to DSP emulation reset request driven from DSPSS";
+        dspss_emu_rstst 1 rw1c type(dspss_emu_rstst_status) "DSP domain has been reset due to emulation reset source e.g. assert reset command initiated by the icepick module";
+        rst2st 1 rw1c type(rst2st_status) "DSP MMU, cache and slave interface software reset status";
+        rst1st 1 rw1c type(rst1st_status) "DSP DSP software reset";
+    };
+
+    constants lostmem_dsp_edma_status width(1) "" {
+        LOSTMEM_DSP_EDMA_0 = 0 "Context has been maintained";
+        LOSTMEM_DSP_EDMA_1 = 1 "Context has been lost";
+    };
+    
+    register rm_dsp_dsp_context addr(base, 0x24) "This register contains dedicated DSP context statuses. [warm reset insensitive]" {
+        _ 21 mbz;
+        lostmem_dsp_edma 1 rw1c type(lostmem_dsp_edma_status) "Specify if memory-based context in DSP_EDMA memory bank has been lost due to a previous power transition or other reset source.";
+        lostmem_dsp_l2 1 rw1c type(lostmem_dsp_edma_status) "Specify if memory-based context in DSP_L2 memory bank has been lost due to a previous power transition or other reset source.";
+        lostmem_dsp_l1 1 rw1c type(lostmem_dsp_edma_status) "Specify if memory-based context in DSP_L1 memory bank has been lost due to a previous power transition or other reset source.";
+        _ 6 mbz;
+        lostcontext_rff 1 rw1c type(lostmem_dsp_edma_status) "Specify if RFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of DSP_RET_RST signal)";
+        lostcontext_dff 1 rw1c type(lostmem_dsp_edma_status) "Specify if DFF-based context has been lost due to a previous power transition or other reset source. (set upon assertion of DSP_SYS_RST signal)";
+    };
+};

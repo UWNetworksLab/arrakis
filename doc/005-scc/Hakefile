@@ -1,0 +1,20 @@
+----------------------------------------------------------------------
+-- Copyright (c) 2010, ETH Zurich.
+-- All rights reserved.
+--
+-- This file is distributed under the terms in the attached LICENSE file.
+-- If you do not find this file, copies can be found by writing to:
+-- ETH Zurich D-INFK, Universitaetstr. 6, CH-8092 Zurich. Attn: Systems Group.
+--
+-- Hakefile for /doc/005-scc
+--
+----------------------------------------------------------------------
+
+[ buildTechNote "SCC.tex" "TN-005-SCC.pdf" True False
+                    [ "figures/exp1", "figures/exp2",
+                      "plots/mpbbench/mpbbench_oneway", 
+                      "plots/rcce_bench/rcce_bt",
+                      "plots/rcce_bench/rcce_bt_speedup",
+                      "plots/rcce_bench/rcce_lu",
+                      "plots/rcce_bench/rcce_lu_speedup" ]
+]

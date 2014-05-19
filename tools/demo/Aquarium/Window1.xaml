@@ -1,0 +1,97 @@
+﻿<Window x:Class="Aquarium.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="BarrelfishDemo" Height="430" Width="1000">
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Menu Grid.Column="0">
+                <MenuItem Header="File">
+                    <MenuItem Header="Open trace" Click="FileOpen_Click"/>
+                    <MenuItem Header="Read DCB table" Click="FileDcb_Click"/>
+                    <MenuItem Header="Save" Click="FileSave_Click"/>
+                </MenuItem>
+                <MenuItem Header="Connect" Name="menuitem_Connect">
+                    <MenuItem Header="Disconnect" Click="Disconnect_Click"/>
+                    <MenuItem Header="127.0.0.1" Click="Connect_Click"/>
+                    <MenuItem Header="127.0.0.1:667" Click="Connect_Click"/>
+                    <MenuItem Header="192.168.1.25" Click="Connect_Click"/>
+                    <MenuItem Header="192.168.1.26" Click="Connect_Click"/>
+                    <MenuItem Header="192.168.1.27" Click="Connect_Click"/>
+                    <MenuItem Header="192.168.1.28" Click="Connect_Click"/>
+                    <MenuItem Header="192.168.1.29" Click="Connect_Click"/>
+                    <MenuItem Header="10.37.37.37" Click="Connect_Click"/>
+                    <MenuItem Header="10.110.4.66" Click="Connect_Click"/>
+                </MenuItem>
+                <MenuItem Header="Cores">
+                    <MenuItem Header="16" Name="Cores16" IsCheckable="True" IsChecked="True" Click="Cores_Click"/>
+                    <MenuItem Header="24" Name="Cores24" IsCheckable="True" IsChecked="False" Click="Cores_Click"/>
+                    <MenuItem Header="32" Name="Cores32" IsCheckable="True" IsChecked="False" Click="Cores_Click"/>
+                    <MenuItem Header="64" Name="Cores64" IsCheckable="True" IsChecked="False" Click="Cores_Click"/>
+                </MenuItem>
+                <MenuItem Header="Events">
+                    <MenuItem Header="Kernel Events" Name="optKernel" IsCheckable="True" IsChecked="True" Click="Option_Click"/>
+                    <MenuItem Header="Monitor Events" Name="optMonitor" IsCheckable="True" IsChecked="True" Click="Option_Click"/>
+                    <MenuItem Header="Channel Events" Name="optChannel" IsCheckable="True" IsChecked="True" Click="Option_Click"/>
+                    <MenuItem Header="Tweed Events" Name="optTweed" IsCheckable="True" IsChecked="False" Click="Option_Click"/>
+                    <MenuItem Header="Allocation Events" Name="optAlloc" IsCheckable="True" IsChecked="False" Click="Option_Click"/>
+                    <MenuItem Header="Generic Events" Name="optGeneric" IsCheckable="True" IsChecked="False" Click="Option_Click"/>
+                </MenuItem>
+                <MenuItem Header="Options">
+                    <MenuItem Header="Tooltips" Name="optTooltips" IsCheckable="True" IsChecked="False" Click="Option_Click"/>
+                    <MenuItem Header="Arrow Heads" Name="optHeads" IsCheckable="True" IsChecked="True" Click="Option_Click"/>
+                    <MenuItem Header="Tweed Arrows" Name="optTweedArrows" IsCheckable="True" IsChecked="False" Click="Option_Click"/>
+                </MenuItem>
+                <MenuItem Header="View">
+                    <MenuItem Header="Key" Click="ViewKey_Click"/>
+                </MenuItem>
+            </Menu>
+            <Button Grid.Column="1" Name="RunCancel" Click="RunCancel_Click">Run</Button>
+            <Button Grid.Column="2" Name="Single" Click="Single_Click">Single Trace</Button>
+            <Button Grid.Column="3" 
+                    Name="ZoomOut" Click="zoomOut_Click"
+                    HorizontalAlignment="Right">Zoom Out</Button>
+            <Slider Grid.Column="4"
+                    Name="Zoom" Thumb.DragCompleted="Zoom_DragCompleted" ValueChanged="Zoom_ValueChanged"
+                    HorizontalAlignment="Right" Width="201.707" Height="26.342" VerticalAlignment="Top"
+                    Minimum="3" SmallChange="1" TickPlacement="Both" Value="9" Maximum="30" LargeChange="1"
+                    IsSnapToTickEnabled="True" Margin="0,0,-27,0" />
+        </Grid>
+        
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="100*"/>
+            </Grid.RowDefinitions>
+            <ScrollBar
+                Grid.Row="0"
+                Name="XScrollBar" Scroll="XScrollBar_Scroll" 
+				Minimum="0" Maximum="100" ViewportSize="10" Value="0"
+                Orientation="Horizontal" 
+            	Width="Auto" Height="Auto" VerticalContentAlignment="Stretch" Margin="1">
+            </ScrollBar>
+
+            <GridSplitter
+                Grid.Row="1"
+                Height="5" HorizontalAlignment="Stretch"/>
+
+            <DockPanel 
+                Grid.Row="2"
+                Name="dockPanel3" 
+				HorizontalAlignment="Stretch" SizeChanged="dockPanel3_SizeChanged"
+			    LastChildFill="True" ClipToBounds="True">
+
+                <Canvas DockPanel.Dock="Bottom" Height="Auto" Name="mainCanvas"
+				    Width="Auto" ClipToBounds="True" Background="White">
+                </Canvas>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>

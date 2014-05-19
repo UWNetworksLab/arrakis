@@ -1,0 +1,197 @@
+/*
+ * Copyright (c) 2013 ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, CAB F.78, Universitaetstr. 6, CH-8092 Zurich,
+ * Attn: Systems Group.
+ */
+
+/*
+ * omap44xx_dss_l4_per.dev
+ *
+ * DESCRIPTION: 
+ *
+ * NOTE: This file has been automatically generated based on the
+ * XML files extracted from the TI RDT v1.0.0.4p Tool.
+ * Download from here: http://www.ti.com/product/omap4460
+ * This means that the file might not be optimal in terms of naming
+ * conventions for constants and registers (duplicated
+ * namespaces in register and device name etc.).
+ * Also, because of the underlying structure from the original XML
+ * it's possible that some constants appear multiple times (if they
+ * have slightly different descriptions for example).
+ *
+ * You want to clean that up before using the files for the first time!
+ */
+ 
+device omap44xx_dss_l4_per msbfirst ( addr base ) "" {
+    
+    
+    register dss_revision ro addr(base, 0x0) "This register contains the DSS revision number." type(uint32);
+
+    constants resetdone_status width(1) "" {
+        RESETDONE_0_r = 0 "Internal module reset is ongoing.";
+        RESETDONE_1_r = 1 "Reset complete";
+    };
+    
+    register dss_sysstatus addr(base, 0x14) "This register provides status information about the module." {
+        _ 31 mbz;
+        resetdone 1 ro type(resetdone_status) "Internal reset monitoring";
+    };
+
+    constants venc_hdmi_switch_status width(1) "" {
+        VENC_HDMI_SWITCH_0 = 0 "VENC selected";
+        VENC_HDMI_SWITCH_1 = 1 "HDMI selected";
+    };
+
+    constants rfbi_switch_status width(1) "" {
+        RFBI_SWITCH_0_r = 0 "Video port 1 (also named primary LCD output or LCD1) is selected (backward-compatible mode).";
+        RFBI_SWITCH_1_r = 1 "Video port 2 (also named secondary LCD output or LCD2) is selected.";
+    };
+
+    constants sync_switch_status width(1) "" {
+        SYNC_SWITCH_0_r = 0 "Internal VENC IP selected";
+        SYNC_SWITCH_1_r = 1 "Component VENC IP selected";
+    };
+
+    constants lcd2_clk_switch_status width(1) "" {
+        LCD2_CLK_SWITCH_0 = 0 "DSS_CLK selected (from PRCM)";
+        LCD2_CLK_SWITCH_1 = 1 "PLL2_CLK1 selected";
+    };
+
+    constants tv_clk_switch_status width(1) "" {
+        TV_CLK_SWITCH_0 = 0 "PLL3_CLK1 selected (from HDMI PLL)";
+        TV_CLK_SWITCH_1 = 1 "DSS_TV_CLK selected (from PAD)";
+    };
+
+    constants dsi2_clk_switch_status width(1) "" {
+        DSI2_CLK_SWITCH_0 = 0 "DSS_CLK selected (from PRCM)";
+        DSI2_CLK_SWITCH_1 = 1 "PLL2_CLK2 selected (from DSI2 PLL)";
+    };
+
+    constants fck_clk_switch_status width(2) "" {
+        FCK_CLK_SWITCH_0 = 0 "DSS_CLK selected (from PRCM)";
+        FCK_CLK_SWITCH_1 = 1 "PLL1_CLK1 selected (from DSI1 PLL)";
+        FCK_CLK_SWITCH_2 = 2 "PLL2_CLK1 selected (from DSI2 PLL)";
+        FCK_CLK_SWITCH_3 = 3 "PLL3_CLK1 selected (from HDMI PLL)";
+    };
+
+    constants venc_out_sel_status width(1) "" {
+        VENC_OUT_SEL_0 = 0 "Composite VENC output selected";
+        VENC_OUT_SEL_1 = 1 "Luminance VENC output selected";
+    };
+
+    constants dac_powerdn_bgz_status width(1) "" {
+        DAC_POWERDN_BGZ_0 = 0 "DAC power-down band gap disabled";
+        DAC_POWERDN_BGZ_1 = 1 "DAC power-down band gap enabled";
+    };
+
+    constants dac_demen_status width(1) "" {
+        DAC_DEMEN_0 = 0 "DAC dynamic element matching disabled";
+        DAC_DEMEN_1 = 1 "DAC dynamic element matching enabled";
+    };
+
+    constants venc_clock_4x_enable_status width(1) "" {
+        VENC_CLOCK_4X_ENABLE_0 = 0 "Disable";
+        VENC_CLOCK_4X_ENABLE_1 = 1 "Enable";
+    };
+
+    constants venc_clock_mode_status width(1) "" {
+        VENC_CLOCK_MODE_0 = 0 "Clock Mode 0.";
+        VENC_CLOCK_MODE_1 = 1 "Clock Mode 1. In both clock modes, all three balanced clocks, derived from the TV_CLK clock, are provided to the VENC, if the VENC_CLOCK_4X_ENABLE [3] bit is set to 1 by software.";
+    };
+
+    constants dsi1_clk_switch_status width(1) "" {
+        DSI1_CLK_SWITCH_0 = 0 "DSS_CLK selected (from PRCM)";
+        DSI1_CLK_SWITCH_1 = 1 "PLL1_CLK2 selected (from DSI1 PLL)";
+    };
+    
+    register dss_ctrl addr(base, 0x40) "This register contains the DSS control bits." {
+        _ 14 mbz;
+        lcd2_tv_sel 1 rw "Selection between LCD2 and TV channel out on the LCD2 parallel output (multiplexer 13) 0x0: Select LCD2 channel output (default selection) 0x1: Select TV channel output";
+        _ 1 mbz;
+        venc_hdmi_switch 1 rw type(venc_hdmi_switch_status) "Selects HDMI sync and associated clock or VENC and its associated TV_CLK";
+        rfbi_switch 1 rw type(rfbi_switch_status) "Selects the video port from DISPC between video port 1 and video port 2 (multiplexer 11).";
+        sync_switch 1 rw type(sync_switch_status) "Selects the sync generator for SD video (DSS VENC IP, or component VENC IP connected at the top)";
+        lcd2_clk_switch 1 rw type(lcd2_clk_switch_status) "DSS_CLK/PLL2_CLK1 clock switch (multiplexer 3) Selects the clock source for the DISPC LCD2_CLK clock";
+        tv_clk_switch 1 rw type(tv_clk_switch_status) "DSS_TV_CLK/PLL3_CLK clock switch Selects the clock source for the VENC/HDMI functional clock";
+        dsi2_clk_switch 1 rw type(dsi2_clk_switch_status) "DSS_CLK/PLL2_CLK2 clock switch Selects the clock source for the DSI2 functional clock DSI2_CLK";
+        fck_clk_switch 2 rw type(fck_clk_switch_status) "Selects the clock source for the DISPC functional clock DISPC_FCLK";
+        _ 1 mbz;
+        venc_out_sel 1 rw type(venc_out_sel_status) "VENC mode selection for VENC output multiplexer";
+        dac_powerdn_bgz 1 rw type(dac_powerdn_bgz_status) "DAC Power-down band gap control";
+        dac_demen 1 rw type(dac_demen_status) "DAC Dynamic Element Matching Enable";
+        venc_clock_4x_enable 1 rw type(venc_clock_4x_enable_status) "VENC clock CLK4X enable This bit is used to control the CLK4X clock gating.";
+        venc_clock_mode 1 rw type(venc_clock_mode_status) "VENC clock mode. See, .";
+        dsi1_clk_switch 1 rw type(dsi1_clk_switch_status) "DSS_CLK/PLL1_CLK2 clock switch Selects the clock source for the DSI1 functional clock DSI1_CLK";
+        lcd1_clk_switch 1 rw type(fck_clk_switch_status) "DSS_CLK/PLL1_CLK1 clock switch (multiplexer 2) Selects the clock source for the DISPC LCD1_CLK clock";
+    };
+
+    constants rfbi_status_status width(1) "" {
+        RFBI_STATUS_0_r = 0 "Video port 1 (named also primary LCD output or LCD1) used to provide data to RFBI";
+        RFBI_STATUS_1_r = 1 "Video port 2 (named also secondary LCD output or LCD2) used to provide data to RFBI";
+    };
+
+    constants sync_status_status width(2) "" {
+        SYNC_STATUS_0_r = 0 "Internal VENC IP selected";
+        SYNC_STATUS_1_r = 1 "Component VENC IP selected";
+        SYNC_STATUS_2_r = 2 "HDMI IP selected";
+    };
+
+    constants fck_clk_status_status width(4) "" {
+        FCK_CLK_STATUS_0_r = 0 "DSS_CLK clock switching is ongoing.";
+        FCK_CLK_STATUS_1_r = 1 "DSS_CLK is used by DISPC as DISPC_FCLK clock.";
+        FCK_CLK_STATUS_2_r = 2 "PLL1_CLK1 is used by DISPC as DISPC_FCLK clock.";
+        FCK_CLK_STATUS_4_r = 4 "PLL2_CLK1 is used by DISPC as DISPC_FCLK clock.";
+        FCK_CLK_STATUS_8_r = 8 "PLL3_CLK1 (TV_CLK) is used by DISPC as DISPC_FCLK clock.";
+    };
+
+    constants tv_clk_status_status width(2) "" {
+        TV_CLK_STATUS_1_r = 1 "PLL3_CLK1 is used as TV_CLK.";
+        TV_CLK_STATUS_2_r = 2 "DSS_TV_CLK is used as TV_CLK.";
+    };
+
+    constants lcd2_clk_status_status width(2) "" {
+        LCD2_CLK_STATUS_0_r = 0 "LCD2_CLK clock switching is ongoing.";
+        LCD2_CLK_STATUS_1_r = 1 "DSS_CLK is used as LCD2_CLK.";
+        LCD2_CLK_STATUS_2_r = 2 "PLL2_CLK1 is used by DISPC as LCD2_CLK clock.";
+    };
+
+    constants dsi2_clk_status_status width(2) "" {
+        DSI2_CLK_STATUS_0_r = 0 "DSI2_CLK clock switching is ongoing";
+        DSI2_CLK_STATUS_1_r = 1 "DSS_CLK is used by DSI2 as DSI2_CLK clock.";
+        DSI2_CLK_STATUS_2_r = 2 "PLL2_CLK2 is used by DSI2 as DSI2_CLK clock.";
+    };
+
+    constants dsi1_clk_status_status width(2) "" {
+        DSI1_CLK_STATUS_0_r = 0 "DSI1_CLK clock switching is ongoing.";
+        DSI1_CLK_STATUS_1_r = 1 "DSS_CLK is used by DSI1 as DSI1_CLK clock.";
+        DSI1_CLK_STATUS_2_r = 2 "PLL1_CLK2 is used by DSI1 as DSI1_CLK clock.";
+    };
+
+    constants tv_clk_out_status_status width(2) "" {
+        TV_CLK_OUT_STATUS_1_r = 1 "TV_CLK is used by DISPC as TV_CLK_OUT clock.";
+        TV_CLK_OUT_STATUS_2_r = 2 "HDMI_M_PCLK is used by DISPC as TV_CLK_OUT clock.";
+    };
+
+    constants lcd1_clk_status_status width(2) "" {
+        LCD1_CLK_STATUS_0_r = 0 "LCD1_CLK clock switching is ongoing.";
+        LCD1_CLK_STATUS_1_r = 1 "DSS_CLK is used as LCD1_CLK.";
+        LCD1_CLK_STATUS_2_r = 2 "PLL1_CLK1 is used by DISPC as LCD1_CLK clock.";
+    };
+    
+    register dss_status addr(base, 0x5C) "This register contains the DSS status." {
+        _ 10 mbz;
+        rfbi_status 1 ro type(rfbi_status_status) "Video port selection status (multiplexer 11) Indicates if video port 1 or video 2 from DISPC is used to provide data to the RFBI";
+        sync_status 2 ro type(sync_status_status) "Sync generator selection status (multiplexer 9) Indicates if DSS VENC IP or external component VENC IP is selected as syncs generator (master mode)";
+        fck_clk_status 4 ro type(fck_clk_status_status) "DISPC_FCLK clock selection status (multiplexer 1), indicates which clock is used by the glitch-free multiplexer selecting the source of DISPC_FCLK. The current and the new-selected clocks must be running to be able to switch. Both clocks are used at the same time while the switching is ongoing.";
+        tv_clk_status 2 ro type(tv_clk_status_status) "TV_CLK clock selection status (multiplexer 7), indicates which clock is used by the multiplexer selecting the source of TV_CLK. The current and the new-selected clocks must be running to be able to switch. Both clocks are used at the same time while the switching is ongoing.";
+        lcd2_clk_status 2 ro type(lcd2_clk_status_status) "LCD2_CLK clock selection status (multiplexer 3), indicates which clock is used by the glitch-free multiplexer selecting the source of LCD2_CLK. The current and the new-selected clocks must be running to be able to switch. Both clocks are used at the same time while the switching is ongoing.";
+        dsi2_clk_status 2 ro type(dsi2_clk_status_status) "DSI2_CLK clock selection status (multiplexer 5), indicates which clock is used by the glitch-free multiplexer selecting the source of DSI2_CLK. The current and the new-selected clocks must be running to be able to switch. Both clocks are used at the same time while the switching is ongoing.";
+        dsi1_clk_status 2 ro type(dsi1_clk_status_status) "DSI1_CLK clock selection status (multiplexer 4), indicates which clock is used by the glitch-free multiplexer selecting the source of DSI1_CLK. The current and the new-selected clocks must be running to be able to switch. Both clocks are used at the same time while the switching is ongoing.";
+        tv_clk_out_status 2 ro type(tv_clk_out_status_status) "TV_CLK_OUT selection status (multiplexer 12) indicates which clock is used by the multiplexer selecting the TV_CLK_OUT of the DISPC. The current and the new-selected clocks must be running to be able to switch. Both clocks are used at the same time while the switching is ongoing.";
+        _ 3 mbz;
+        lcd1_clk_status 2 ro type(lcd1_clk_status_status) "LCD1_CLK clock selection status (multiplexer 2), indicates which clock is used by the glitch-free multiplexer selecting the source of LCD1_CLK. The current and the new-selected clocks must be running to be able to switch. Both clocks are used at the same time while the switching is ongoing.";
+    };
+};

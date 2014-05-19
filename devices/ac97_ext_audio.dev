@@ -1,0 +1,115 @@
+/*
+ * Copyright (c) 2007, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * ac97_ext_audio.dev
+ *
+ * DESCRIPTION: AC'97 Extended Audio Register Set
+ * 
+ * Numbers in comments refer to the Intel Audio Codec '97 specification, 
+ * revision 2.3 revision 1.0, April, 2002
+ */
+
+device ac97_ext_audio msbfirst ( io base ) "AC97 Extended Audio" {
+
+  // 5.8.1
+  constants rev_id "Revison ID" {
+    r21		= 0 "Rev. 2.1 or earlier";
+    r22		= 1 "Rev. 2.2";
+    r23		= 2 "Rev. 2.3";
+    unk		= 3 "Unknown";
+  };
+  register eaid ro io( base, 0x28) "Extended audio id" {
+    id		2 "Id";
+    _		2 rsvd;
+    rev		2 type(rev_id) "Revision ID";
+    amap	1 "Slot/DAC mapping support";
+    ldac	1 "PCM LFE DAC support";
+    sdac	1 "PCM Surround L&R DACs support";
+    cdac	1 "PCM Center DAC support";
+    dsa		2 rw "DAC slot assignment";
+    vrm		1 "Variable rate mic support";
+    spdif	1 "SPDIF transmitter support";
+    dra		1 "Double-rate PCM audio support";
+    vra		1 "Variable rate PCM audion support";
+  };
+
+  // 5.8.2
+  register easc rw io( base, 0x2a ) "Extended audio status and control" {
+    vcfg	1 "S/PDIF validity flag";
+    prl		1 "MIC ADC off";
+    prk		1 "PCM LFE DACs off";
+    prj		1 "PCM surround DACs off";
+    pri		1 "PCM center DAC off";
+    spcv	1 ro "S/PDIF configuration valid";
+    madc	1 ro "Mic ADC ready";
+    ldac	1 ro "PCM LFE DAC ready";
+    sdac	1 ro "PCM Surround L&R DACs ready";
+    cdac	1 ro "PCM Center DAC ready";
+    dsa		2 "DAC slot assignment";
+    vrm		1 "Variable rate mic enable";
+    spdif	1 "SPDIF transmitter enable";
+    dra		1 "Double-rate PCM audio enable";
+    vra		1 "Variable rate PCM audion enable";
+  };
+
+  // 5.8.3
+  register front_sr rw io( base, 0x2c) "PCM front DAC rate" type(uint16);
+  register surr_sr rw io( base, 0x2e) "PCM surround DAC rate" type(uint16);
+  register lfe_sr rw io( base, 0x30) "PCM LFE DAC rate" type(uint16);
+  register lr_sr rw io( base, 0x32) "PCM left/right DAC rate" type(uint16);
+  register mic_sr rw io( base, 0x34) "MIC ADC rate" type(uint16);
+
+  // 5.8.4
+  register center_vc rw io( base, 0x36) "Center/LFE volume" {
+    lfe_mute	1 "LFE mute";
+    _		1 rsvd;
+    lfe_vol	6 "LFE volume";
+    cntr_mute	1 "Center mute";
+    _		1 rsvd;
+    cntr_vol	6 "Center volume";
+  };
+  register surr_vc rw io( base, 0x38) "Surround volume" {
+    left_mute	1 "Left mute";
+    _		1 rsvd;
+    left_vol	6 "Left volume";
+    right_mute	1 "Right mute";
+    _		1 rsvd;
+    right_vol	6 "Right volume";
+  };
+
+  // 5.8.5
+  constants spdif_sr "S/PDIF sample rate" {
+    sr_441	= 0 "44.1kHz";
+    sr_rsvd	= 0 "reserved";
+    sr_48	= 0 "48kHz";
+    sr_32	= 0 "32Hz";
+  };
+  register spdif_cntl rw io( base, 0x3a) "S/PDIF control" {
+    v		1 "validity";
+    drs		1 "Double rate";
+    spsr	2 type(spdif_sr) "Sample rate";
+    l		1 "General level";
+    cc		7 "Category code";
+    pre		1 "Preemphasis";
+    copy	1 "Copyright";
+    notaudio	1 "Non-PCM format";
+    pro		1 "Professional";
+  };
+
+  // 5.8.8
+  register vid1 ro io( base, 0x7c) "Vendor ID 1" {
+    f		8 "First PnP vendor ID code";
+    s		8 "Second PnP vendor ID code";
+  };
+  register vid2 ro io( base, 0x7e) "Vendor ID 2" {
+    t		8 "Third PnP vendor ID code";
+    dev		8 "Vendor-specific device ID";
+  };    
+
+};

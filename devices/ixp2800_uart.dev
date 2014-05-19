@@ -1,0 +1,150 @@
+/*
+ * Copyright (c) 2007, 2008, 2009, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * netronome_uart.dev
+ *
+ * DESCRIPTION: Netronome Universal Asynchronous Receiver Transmitter
+ *              similar to 16550 UART
+ *
+ * This is derived from the Intel IXP2400/IXP2800 Network Processor 
+ * Programmer's Reference Manual (November 2003), p. 364ff
+ */
+
+device ixp2800_uart msbfirst ( addr base ) "Netronome UART Memory Represenation" {
+
+
+
+/* Bram: I cannot verify this, maybe p.365 gives hints? */
+/* ******************************************************/
+
+  constants divisor "Baud Rate Divisor" {
+    baud50          = 2304     "50 bps";
+    baud75          = 1536     "75 bps";
+    baud110         = 1047     "110 bps";
+    baud134_5       = 857      "134.5 bps";
+    baud150         = 768      "150 bps";
+    baud300         = 384      "300 bps";
+    baud600         = 192      "600 bps";
+    baud1200        = 96       "1200 bps";
+    baud1800        = 64       "1800 bps";
+    baud2000        = 58       "2000 bps";
+    baud2400        = 48       "2400 bps";
+    baud4800        = 24       "4800 bps";
+    baud7200        = 16       "7200 bps";
+    baud9600        = 12       "9600 bps";
+    baud19200       = 6        "19200 bps";
+    baud38400       = 3        "38400 bps";
+    baud57600       = 2        "57600 bps";
+    baud115200      = 1        "115200 bps";
+  };
+
+  constants interrupt_source "Interrupt Source Encoded" {
+    request_data   = 0b01   "Transmit FIFO requests data";
+    recv_data_av   = 0b10   "Received Data Available";
+    recv_error	   = 0b11   "Receive error";
+   };
+
+  constants fifo_type "FIFO Mode Enable Status" {
+    no_fifo         = 0b00      "No FIFO";
+    fifo_enabled    = 0b11      "FIFO enabled";
+  };
+
+  constants interrupt_trigger "Interrupt Trigger Level" {
+    bytes01  = 0b00   "1  byte in FIFO causes interrupt";
+    bytes08  = 0b01   "8  byte in FIFO causes interrupt";
+    bytes16  = 0b10   "16 byte in FIFO causes interrupt";
+    bytes32  = 0b11   "32 byte in FIFO causes interrupt";
+  };
+
+  constants char_len "Character Length" {
+    bits5   = 0b00   "5 Bits";
+    bits6   = 0b01   "6 Bits";
+    bits7   = 0b10   "7 Bits";
+    bits8   = 0b11   "8 Bits";
+  };
+
+  register RBR ro addr ( base, 0x0 ) "Receiver buffer" {
+    _	       	  24 ro "Reserved";
+    rbr		  8  ro "Receive Buffer Register. Data byte received, least significant bit first";
+  };
+
+  register THR also addr ( base , 0x0 ) "Transmitter holding" {
+    _	       	  24 ro "Reserved";
+    thr		  8  wo "Data byte transmitted, least significant bit first";
+  };
+
+  register DLRL also addr (base , 0x0) "Divisor Latch low" {
+    _	       	  24 ro "Reserved";
+    lb		  8  rw "Low byte for generating baud rate";
+  };
+  
+  register DLRH addr (base , 0x4) "Divisor Latch high" {
+    _	       	  24 ro "Reserved";
+    hb		  8  rw "High byte for generating baud rate";
+  };
+    
+  register IER also addr ( base, 0x4 ) "Interrupt enable" {
+    _	       	  25 ro	"Reserved";
+    uue		  1  rw "UART Unit Enable";
+    nrze	  1  rw "NRZ coding Enable";
+    rtoie	  1  rw	"Receiver Time out Interrupt Enable";
+    _		  1  rw	"Reserved";
+    rlse	  1  rw	"Receiver Line Status Interrupt Enable";
+    tie		  1  rw	"Transmit Data request Interrupt Enable";
+    ravie	  1  rw	"Receiver Data Available Interrupt Enable";
+  };
+
+  register iir addr ( base, 0x8 ) "Interrupt identification" {
+    _	       	 24 ro "Reserved";
+    FIFOES	 2  ro type(fifo_type) "FIFO Mode Enable Status"; 
+    _		 2  ro "Reserved";
+    TOD		 1  ro "Time Out Detected (0: No time out interrupt is pending)";
+    IID		 2  ro type(interrupt_source) "Interrupt Source Encoded";
+    IP		 1  ro "Interrupt Pending";
+  };
+
+  register fcr rw also addr ( base, 0x8 ) "FIFO control" {
+    _	         24 ro "Reserved";
+    ITL 	 2  wo type(interrupt_trigger) "Interrupt Trigger Level";
+    _		 3  ro "Reserved";
+    RESETTF 	 1  wo "Reset transmitter FIFO";
+    RESETRF 	 1  wo "Reset Receiver FIFO";
+    TRFIFOE 	 1  wo "Transmit and Receive FIFO Enable";
+  };
+
+  register LCR addr ( base, 0xC ) "Line control" {
+    _	       	  24 ro "Reserved";
+    dlab          1  rw "Divisor latch access";
+    sb            1  rw "Set break";
+    stkyp         1  rw "Stick parity";
+    eps           1  rw "Even parity select";
+    pen           1  rw "Parity enable";
+    stb           1  rw "Number of stop bits";
+    wls           2  rw type(char_len) "Word length select";
+  };
+
+  register LSR addr ( base, 0x14 ) "Line status" {
+    _	          24 ro "Reserved";
+    fifoe         1  ro "FIFO Error Status ";
+    temt          1  ro "Transmitter empty";
+    tdrq	  1  ro	"Transmit Data Request";
+    bi            1  ro "Break interrupt";
+    fe            1  ro "Framing error";
+    pe            1  ro "Parity error";
+    oe            1  ro "Overrun error";
+    dr            1  ro "Data ready";
+  };
+
+
+  register spr addr ( base, 0x1c ) "Scratchpad register" {
+    _	       	  24 ro "Reserved";
+    scratch	  8  rw	"No effect on UART functionality";
+  };
+
+};

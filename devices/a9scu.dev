@@ -1,0 +1,68 @@
+/*
+ * Copyright (c) 2012, ETH Zurich. All rights reserved.
+ *
+ * This file is distributed under the terms in the attached LICENSE file.
+ * If you do not find this file, copies can be found by writing to:
+ * ETH Zurich D-INFK, Haldeneggsteig 4, CH-8092 Zurich. Attn: Systems Group.
+ */
+
+/*
+ * a9scu.dev
+ *
+ * DESCRIPTION: Cortex A9 Snoop Control Unit
+ *
+ * This is derived from:
+ *
+ * ARM Cortex-A9 MPCore Technical Reference Manual
+ *
+ */
+ 
+device a9scu msbfirst ( addr base ) "Cortex A9 SCU" {
+ 
+    register SCUControl addr(base, 0x0) "SCU Control" {
+	_			25 rsvd;
+	IC_standby		1 rw	"IC standby enable";
+	SCU_standby		1 rw	"SCU standby enable";
+	all_device_to_port0	1 rw	"Force all Device to port 0 enable";
+	SCU_spec_linefill	1 rw	"SCU speculative linefills enable";
+	SCU_ram_parity		1 rw	"SCU RAMs parity enable";
+	address_filtering	1 rw	"Address Filtering enable";
+	SCU_enable		1 rw	"SCU enable";
+    };
+ 	 
+    register SCUConfig	ro addr(base, 0x4) "SCU Configuration" {
+	_		16;
+	tag_ram_sizes	8 ro	"Tag RAM sizes";
+	cpu_smp		4 ro	"CPUs SMP bits";
+	_		2;
+	cpu_number	2 ro	"Number of CPUs present";
+    };
+    
+    constants cpu_status "CPU Status" {
+	normal_mode	 = 0b00		"Normal mode";
+	dormant_mode	 = 0b10		"Dormant mode";
+	powered_off_mode = 0b11		"Powered-off mode";
+    };
+    
+    register SCUPowerStatus addr(base, 0x8) "SCU CPU Power Status" {
+	_		6;
+	cpu3_status	2 rw	"Status CPU3";
+	_		6;
+	cpu2_status	2 rw	"Status CPU2";
+	_		6;	
+	cpu1_status	2 rw	"Status CPU1";
+	_		6;
+	cpu0_status	2 rw	"Status CPU0";
+    };
+    
+    register SCUFilteringStart addr(base, 0x40) "Filtering Start Address" {
+	start_address	12 rw	"Filtering Start address";
+	_		20;
+    };
+    
+    register SCUFilteringEnd addr(base, 0x44) "Filtering End Address" {
+	end_address	12 rw	"Filtering Start address";
+	_		20;
+    };
+ 
+ };

@@ -1,0 +1,57 @@
+
+Flounder:
+
+ - Interface files are in /if/<foo>.if
+ - Header files go into /include/if/<foo>_types.h
+ - Server stub is ./<foo>_server_stub_<suffix>.c
+ - Client stub is ./<foo>_client_stub_<suffix>.c
+
+Out of tree builds:
+
+ - There are n trees...
+ 
+ - Current "source" tree (which may be small, just the app being
+   built).
+ 
+ - Current "build" tree, which is where the output files go.
+
+ - Current "install" tree, which is where we look for include files
+   and libraries.   This might be a subset of a full core OS build
+   tree. 
+
+ - Include paths, etc. must therefore specify if they refer to the
+   build tree or the install tree, and we must copy all include files
+   from the source tree to the build tree. 
+
+ - Dependencies must now specify "tree", "arch", and "path". 
+
+ - Tokens are currently:
+
+data RuleToken = In String String       -- Input to the computation
+               | Out String String      -- Output of the computation
+               | Dep String String      -- Extra (implicit) dependency
+               | NoDep String String    -- File that's not a dependency
+               | PreDep String String   -- One-time dependency
+               | Target String String   -- Target that's not involved
+               | Str String             -- String with trailing " "
+               | NStr String             -- Just a string
+               | NL                     -- New line
+
+This becomes:
+
+data TreeRef = SourceTree | BuildTree | InstallTree
+
+data RuleToken = In     TreeRef String String -- Input to the computation
+               | Dep    TreeRef String String -- Extra (implicit) dependency
+               | NoDep  TreeRef String String -- File that's not a dependency
+               | PreDep TreeRef String String -- One-time dependency
+               | Out    String String   -- Always Build
+               | Target String String   -- Always Build
+               | Str String             -- String with trailing " "
+               | NStr String             -- Just a string
+               | NL                     -- New line
+
+-----------
+Later: 
+
+data Arch = ARM | ARM11MP | Beehive | SCC | X86_32 | X86_64 
