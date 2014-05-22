@@ -306,12 +306,12 @@ snputs_like_call s = snprintf_like_call "snprintf" [ C.StringConstant $ percent_
 --
 -- Functions to generate masks to select or deselect a subfield of bits
 --
-select_mask :: (Bits a) => Integer -> Integer -> Integer -> a
+select_mask :: (Num a, Bits a) => Integer -> Integer -> Integer -> a
 select_mask word_size start width = 
     foldl setBit 0 (enumFromTo (fromInteger $ start) 
                                (fromInteger $ start + width - 1))
 
-deselect_mask :: (Bits a) => Integer -> Integer -> Integer -> a
+deselect_mask :: (Num a, Bits a) => Integer -> Integer -> Integer -> a
 deselect_mask word_size start width = 
     foldl complementBit (select_mask word_size start width) 
               (enumFromTo 0 (fromInteger word_size - 1))
