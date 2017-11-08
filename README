@@ -90,6 +90,15 @@ The following are required to build Barrelfish and its tools:
    - older versions of the tree supported v6.10 or v6.12.2 with Parsec 2.1
    - GHC v6.12.1 has a known bug and is unable to build our tools
    - earlier versions of GHC are unsupported
+ * Cabal and the following Haskell packages:
+   - async
+   -  bytestring-trie
+   - exceptions
+   - ghc-mtl
+   - ghc-paths
+   - haskell-src-exts < 1.18 (the newer versions have a different interface)
+   - parsec
+   - random
 
 Our build system may not be very portable; if in doubt, try building on a
 recent Debian or Ubuntu system, as these are what we use.
@@ -104,7 +113,7 @@ Building
 
     $ mkdir build && cd build
 
-1. Run ``hake.sh``, giving it the path to the source directory and target
+2. Run ``hake.sh``, giving it the path to the source directory and target
 architecture(s) ::
 
     $ ../hake/hake.sh -s ../ -a x86_64
